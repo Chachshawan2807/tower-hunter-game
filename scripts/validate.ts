@@ -21,6 +21,11 @@ import {
   applySkillCooldown,
   tickSkillCooldowns,
 } from "../src/engine/skills";
+import {
+  deriveAutoSkills,
+  getDefaultLoadout,
+  validateLoadout,
+} from "../src/engine/skills/loadout";
 import { SKILL_UNLOCK_LEVELS } from "../src/engine/skills/types";
 import { toCombatStats } from "../src/server/db/playerStats";
 import {
@@ -163,6 +168,23 @@ const tickedCds = tickSkillCooldowns(palmCds);
 assert(
   tickedCds.murim_palm === palm.cooldownTurns - 1,
   "cooldown decrements each turn"
+);
+
+console.log("\n=== Validation: Skill Loadout ===");
+const defaultMurim = getDefaultLoadout("murim", 1);
+assert(defaultMurim.activeSlots[0] === "murim_palm", "default active slot 1");
+
+const unlocked3 = ["murim_palm", "murim_dash", "murim_qi"];
+const auto = deriveAutoSkills(unlocked3, ["murim_palm", "murim_qi"]);
+assert(auto.length === 1 && auto[0] === "murim_dash", "auto derives remainder");
+
+assert(
+  !validateLoadout("murim", ["murim_palm", "murim_palm"], 5).valid,
+  "duplicate active slots rejected"
+);
+assert(
+  !validateLoadout("murim", ["murim_dash", "murim_palm"], 1).valid,
+  "locked skill cannot be active"
 );
 
 console.log("\n=== Validation: Status On Hit ===");
