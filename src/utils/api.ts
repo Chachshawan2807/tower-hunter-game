@@ -85,6 +85,27 @@ export interface SkillLoadout {
   activeSlots: [string, string];
 }
 
+export interface SkillUpgradeRanks {
+  damage: 0 | 1 | 2 | 3;
+  cooldown: 0 | 1 | 2 | 3;
+  mpCost: 0 | 1 | 2 | 3;
+}
+
+export interface SkillProgressionResponse {
+  skillPoints: number;
+  upgrades: Record<string, SkillUpgradeRanks>;
+  path: "murim" | "knight" | "fantasy";
+  skills: (SkillCatalogEntry & {
+    unlocked: boolean;
+    upgrades: SkillUpgradeRanks;
+  })[];
+}
+
+export interface SkillUpgradeResponse {
+  ranks: SkillUpgradeRanks;
+  skillPoints: number;
+}
+
 export interface InventoryItem {
   id: string;
   user_id: string;
@@ -206,6 +227,20 @@ export const api = {
   ) {
     return request<{ loadout: SkillLoadout }>(`/api/skills/${userId}/loadout`, {
       method: "PATCH",
+      body: JSON.stringify(payload),
+    });
+  },
+
+  getSkillProgression(userId: string) {
+    return request<SkillProgressionResponse>(`/api/skills/${userId}/progression`);
+  },
+
+  upgradeSkill(
+    userId: string,
+    payload: { skillId: string; branch: "damage" | "cooldown" | "mpCost" }
+  ) {
+    return request<SkillUpgradeResponse>(`/api/skills/${userId}/upgrade`, {
+      method: "POST",
       body: JSON.stringify(payload),
     });
   },

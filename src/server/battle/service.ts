@@ -7,7 +7,7 @@ import {
 import type { AnimationEvent, PlayerIntent } from "../../engine/types";
 import { getDefaultLoadout } from "../../engine/skills/loadout";
 import { toCombatStats, resetPlayerHpAfterDefeat } from "../db/playerStats";
-import { getPlayerLoadout, getUserById, type DbPool } from "../db";
+import { getPlayerLoadout, getPlayerUpgrades, getUserById, type DbPool } from "../db";
 import { createBattleState } from "./factory";
 import { grantBattleRewards } from "./rewards";
 import {
@@ -59,6 +59,7 @@ export async function startBattle(
     );
     const playerLoadout =
       dbLoadout ?? getDefaultLoadout(playerSkillPath, playerStats.level);
+    const playerSkillUpgrades = await getPlayerUpgrades(pool, input.userId);
 
     const state = createBattleState(input.floor, {
       autoBattle: input.autoBattle ?? true,
@@ -66,6 +67,7 @@ export async function startBattle(
       playerName: user.display_name,
       playerSkillPath,
       playerLoadout,
+      playerSkillUpgrades,
     });
 
     return createSession({
