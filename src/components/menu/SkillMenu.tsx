@@ -3,6 +3,7 @@ import { getDefaultLoadout } from "../../engine/skills/loadout";
 import type { SkillPath } from "../../engine/types";
 import { api, type SkillProgressionResponse } from "../../utils/api";
 import { t, type Locale } from "../../utils/i18n";
+import { GameIcon, pathIconName, skillIconName } from "../ui/icons";
 import { SkillLoadoutPanel } from "./SkillLoadoutPanel";
 import { SkillUpgradePanel } from "./SkillUpgradePanel";
 
@@ -14,10 +15,10 @@ interface SkillMenuProps {
   onPathChange: (path: SkillPath) => void;
 }
 
-const PATHS: Array<{ id: SkillPath; icon: string; nameKey: string }> = [
-  { id: "murim", icon: "🥋", nameKey: "skills.murim" },
-  { id: "knight", icon: "🛡", nameKey: "skills.knight" },
-  { id: "fantasy", icon: "🐉", nameKey: "skills.fantasy" },
+const PATHS: Array<{ id: SkillPath; nameKey: string }> = [
+  { id: "murim", nameKey: "skills.murim" },
+  { id: "knight", nameKey: "skills.knight" },
+  { id: "fantasy", nameKey: "skills.fantasy" },
 ];
 
 export function SkillMenu({
@@ -113,8 +114,9 @@ export function SkillMenu({
 
   return (
     <div className="skill-menu">
-      <p className="skill-sp-balance">
-        ✨ {t("skills.skill_points", locale)}: {progression?.skillPoints ?? "—"}
+      <p className="skill-sp-balance ui-balance">
+        <GameIcon name="skill-spark" size={18} className="skill-sp-balance__icon" />
+        {t("skills.skill_points", locale)}: {progression?.skillPoints ?? "—"}
       </p>
 
       <p className="menu-subtitle">
@@ -126,11 +128,11 @@ export function SkillMenu({
           <button
             key={p.id}
             type="button"
-            className={`skill-path-tab ${activePath === p.id ? "skill-path-tab--active" : ""}`}
+            className={`skill-path-tab skill-path-tab--${p.id} ${activePath === p.id ? "skill-path-tab--active" : ""}`}
             onClick={() => selectPath(p.id)}
             disabled={savingPath}
           >
-            <span>{p.icon}</span>
+            <GameIcon name={pathIconName(p.id)} size={22} />
             <span>{t(p.nameKey, locale)}</span>
           </button>
         ))}
@@ -160,7 +162,11 @@ export function SkillMenu({
                   } ${!skill.unlocked ? "skill-picker__item--locked" : ""}`}
                   onClick={() => setSelectedSkillId(skill.id)}
                 >
-                  <span>{skill.unlocked ? skill.icon : "🔒"}</span>
+                  {skill.unlocked ? (
+                    <GameIcon name={skillIconName(skill.id)} size={20} />
+                  ) : (
+                    <GameIcon name="lock" size={20} />
+                  )}
                   <span>{t(skill.stringId, locale)}</span>
                 </button>
               </li>

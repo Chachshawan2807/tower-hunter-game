@@ -51,9 +51,19 @@ export {
 } from "./skillUpgrades";
 
 export {
-  addItemToInventory,
+  listPlayerEquipment,
+  upsertEquipmentSlot,
+  seedDefaultEquipment,
+  rowsToEquipmentDto,
+  type PlayerEquipmentDto,
+  type EquipmentSlotDto,
+} from "./equipment";
+
+export {
   listInventoryItems,
   countInventoryQuantity,
+  addItemToInventory,
+  getInventoryItemById,
   COMMON_DISMANTLE_GOLD,
 } from "./inventory";
 

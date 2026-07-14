@@ -15,7 +15,7 @@ export function calculateCriticalDamage(
   critResist: StatValue
 ): StatValue {
   const effectiveMultiplier = Math.max(1, critDamage - critResist);
-  return baseDamage * effectiveMultiplier;
+  return Math.ceil(baseDamage * effectiveMultiplier);
 }
 
 export function rollCritical(

@@ -24,6 +24,7 @@ export {
   scaleExponentialStat,
   scaleLinearStat,
   scaleEnemyStatsForFloor,
+  applyBossStatMultiplier,
   DEFAULT_LINEAR_SCALING,
   type LinearScalingConfig,
 } from "./enemyScaling";
@@ -33,6 +34,13 @@ export {
   tickStatusEffects,
 } from "./statusEffects";
 export {
+  calculateStatusProcChance,
+  rollStatusProc,
+  BASE_STATUS_CHANCE,
+  MIN_STATUS_CHANCE,
+  MAX_STATUS_CHANCE,
+} from "./statusRoll";
+export {
   getDropChance,
   rollItemDrop,
   isValidBossDropRarity,
@@ -41,9 +49,22 @@ export {
   calculateFloorGoldReward,
 } from "./rewards";
 export {
+  PLAYER_STAT_GROWTH_BASE,
+  expToNextLevel,
+  totalExpForLevel,
+  levelFromTotalExp,
+  expProgressRatio,
+  combatStatsForLevel,
+} from "./playerProgression";
+export {
   resolveAttack,
   resolveAttackWithModifiers,
   type AttackResolutionInput,
   type AttackResolutionResult,
   type EffectiveCombatInput,
 } from "./attackResolution";
+export {
+  bonusesFromEquipmentLoadout,
+  applyEquipmentBonuses,
+  combatStatsWithEquipment,
+} from "./equipmentStats";

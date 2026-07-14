@@ -1,0 +1,108 @@
+/* Art Bible §09 — Combat & status effects (CSS placeholders until sprite particles) */
+
+.fx-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+}
+
+/* Poison DoT — dark purple aura §09 */
+.fx-status--poison {
+  box-shadow: 0 0 20px 6px rgba(74, 48, 96, 0.55);
+  outline: 2px solid rgba(107, 64, 136, 0.45);
+  border-radius: inherit;
+}
+
+.fx-status--poison::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: inherit;
+  background: radial-gradient(circle, rgba(74, 48, 96, 0.25) 0%, transparent 70%);
+  animation: fx-poison-pulse 2s ease-in-out infinite;
+}
+
+/* Bleed — crimson §02 */
+.fx-status--bleed {
+  box-shadow: 0 0 16px 4px var(--crimson-glow);
+}
+
+/* Freeze CC — translucent ice shell, 1 turn §09 */
+.fx-status--freeze {
+  position: relative;
+}
+
+.fx-status--freeze::before {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border-radius: 12px;
+  background: linear-gradient(
+    135deg,
+    rgba(200, 230, 255, 0.35) 0%,
+    rgba(255, 255, 255, 0.15) 50%,
+    rgba(180, 210, 240, 0.3) 100%
+  );
+  border: 2px solid rgba(220, 240, 255, 0.5);
+  backdrop-filter: blur(1px);
+  pointer-events: none;
+}
+
+/* Fire / explosion burst — execution phase only §09 */
+.fx-burst--fire {
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(
+    circle,
+    rgba(218, 165, 32, 0.9) 0%,
+    rgba(178, 34, 34, 0.7) 40%,
+    transparent 70%
+  );
+  border-radius: 50%;
+  animation: fx-fire-burst 0.45s var(--ease-out) forwards;
+  pointer-events: none;
+}
+
+/* Critical hit flash */
+.fx-flash--critical {
+  animation: fx-critical-flash 0.35s var(--ease-out);
+}
+
+/* Defeat dissolve — black smoke §06 */
+.fx-defeat--dissolve {
+  animation: fx-defeat-smoke 1.2s var(--ease-out) forwards;
+}
+
+@keyframes fx-poison-pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+@keyframes fx-fire-burst {
+  0% { transform: translate(-50%, -50%) scale(0.3); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(1.4); opacity: 0; }
+}
+
+@keyframes fx-critical-flash {
+  0% { filter: brightness(2) saturate(1.4); }
+  100% { filter: none; }
+}
+
+@keyframes fx-defeat-smoke {
+  0% { opacity: 1; transform: translateY(0); filter: none; }
+  100% { opacity: 0; transform: translateY(12px); filter: blur(4px) brightness(0.2); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fx-status--poison::after,
+  .fx-burst--fire,
+  .fx-flash--critical,
+  .fx-defeat--dissolve {
+    animation: none;
+  }
+}

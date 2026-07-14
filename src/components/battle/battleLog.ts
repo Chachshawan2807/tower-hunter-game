@@ -2,6 +2,11 @@ import { getSkillById } from "../../engine/skills";
 import type { AnimationEvent, BattleEntity } from "../../engine/types";
 import { t, type Locale } from "../../utils/i18n";
 
+export function formatBattleValue(value: number | undefined): number {
+  if (value === undefined || Number.isNaN(value)) return 0;
+  return Math.ceil(value);
+}
+
 function fillTemplate(
   template: string,
   values: Record<string, string>
@@ -41,13 +46,13 @@ export function formatBattleEvent(
     case "attack":
       return formatAttackEvent(event, locale, entities);
     case "damage":
-      return `−${event.value ?? 0}`;
+      return `−${formatBattleValue(event.value)}`;
     case "miss":
       return "Miss";
     case "critical":
-      return `Crit ${event.value ?? ""}`;
+      return `Crit ${formatBattleValue(event.value)}`;
     case "dot_damage":
-      return `DoT ${event.value ?? 0}`;
+      return `DoT ${formatBattleValue(event.value)}`;
     case "cc_skip":
       return "Stunned";
     case "debuff_apply":
@@ -55,7 +60,7 @@ export function formatBattleEvent(
     case "buff_apply":
       return String(event.metadata?.effectType ?? "Buff");
     case "heal":
-      return `+${event.value ?? 0}`;
+      return `+${formatBattleValue(event.value)}`;
     case "battle_win":
       return "Victory";
     case "battle_lose":

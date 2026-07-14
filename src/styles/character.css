@@ -1,0 +1,485 @@
+/* Production character figures — isometric chibi (Art Bible §06) */
+
+
+
+.character-figure {
+
+  position: relative;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: flex-end;
+
+  margin: 0;
+
+}
+
+
+
+.character-figure--stage {
+  width: 168px;
+  height: 252px;
+  /* Soft shadow only — hard drop-shadow ghosted overlapping limbs */
+  filter: drop-shadow(0 10px 14px rgba(0, 0, 0, 0.14));
+}
+
+
+
+.character-figure--battle {
+
+  width: 110px;
+
+  height: 168px;
+
+}
+
+
+
+.character-figure--menu {
+
+  width: 140px;
+
+  height: 210px;
+
+}
+
+
+
+.character-figure--npc {
+
+  width: 96px;
+
+  height: 144px;
+
+}
+
+
+
+.character-figure__sprite-wrap {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  transform: scale(var(--char-scale, 1));
+  transform-origin: 50% 90%;
+}
+
+.character-sprite-sheet {
+  display: block;
+  flex-shrink: 0;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+.character-sprite-sheet--enemy {
+  transform: scaleX(-1);
+}
+
+.character-figure--idle .character-sprite-sheet {
+  animation: sprite-idle-frames 1.1s steps(4) infinite;
+}
+
+.character-figure--attack .character-sprite-sheet {
+  animation: sprite-attack-frames 0.42s steps(4) forwards;
+}
+
+.character-figure--hit_cc .character-sprite-sheet {
+  animation: sprite-hit-frames 0.38s steps(4) forwards;
+}
+
+.character-figure--defeat .character-sprite-sheet {
+  animation: sprite-defeat-frames 1s steps(4) forwards;
+}
+
+@keyframes sprite-idle-frames {
+  from { background-position: 0 var(--sprite-row-y); }
+  to { background-position: calc(-3 * var(--sprite-frame-w)) var(--sprite-row-y); }
+}
+
+@keyframes sprite-attack-frames {
+  from { background-position: 0 var(--sprite-row-y); }
+  to { background-position: calc(-3 * var(--sprite-frame-w)) var(--sprite-row-y); }
+}
+
+@keyframes sprite-hit-frames {
+  from { background-position: 0 var(--sprite-row-y); }
+  to { background-position: calc(-3 * var(--sprite-frame-w)) var(--sprite-row-y); }
+}
+
+@keyframes sprite-defeat-frames {
+  from { background-position: 0 var(--sprite-row-y); }
+  to { background-position: calc(-3 * var(--sprite-frame-w)) var(--sprite-row-y); }
+}
+
+.character-figure__iso {
+
+  display: block;
+
+  width: 100%;
+
+  height: 100%;
+
+  transform: scale(var(--char-scale, 1));
+
+  transform-origin: 50% 90%;
+
+  flex-shrink: 0;
+
+}
+
+
+
+/*
+ * PNG sheets already encode idle/attack/hit/defeat frames.
+ * Do NOT also transform the wrap — double motion + drop-shadow = ghost/overlap look.
+ */
+.character-figure--idle .character-figure__sprite-wrap,
+.character-figure--attack .character-figure__sprite-wrap,
+.character-figure--hit_cc .character-figure__sprite-wrap,
+.character-figure--defeat .character-figure__sprite-wrap {
+  animation: none;
+}
+
+.character-figure--enemy .character-figure__sprite-wrap {
+  filter: drop-shadow(0 4px 8px rgba(139, 0, 0, 0.35));
+}
+
+.character-figure--npc .character-figure__sprite-wrap {
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.25));
+}
+
+/* Legacy ISO fallback (unused) */
+.character-figure--idle .character-figure__iso {
+
+  animation: iso-idle-bob 1.4s ease-in-out infinite;
+
+}
+
+
+
+/* Attack — lunge forward */
+
+.character-figure--attack .character-figure__iso {
+
+  animation: iso-attack-lunge 0.42s ease-out forwards;
+
+}
+
+
+
+.character-figure--enemy.character-figure--attack .character-figure__iso {
+
+  animation-name: iso-attack-lunge-enemy;
+
+}
+
+
+
+/* Hit / CC — knockback shake */
+
+.character-figure--hit_cc .character-figure__iso {
+
+  animation: iso-hit-shake 0.38s ease-out forwards;
+
+}
+
+
+
+/* Defeat — topple + fade */
+
+.character-figure--defeat .character-figure__iso {
+
+  animation: iso-defeat-fall 1.1s ease-in forwards;
+
+}
+
+
+
+.character-figure--enemy .character-figure__iso {
+
+  filter: drop-shadow(0 4px 8px rgba(139, 0, 0, 0.35));
+
+}
+
+
+
+.character-figure--npc .character-figure__iso {
+
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.25));
+
+}
+
+
+
+@keyframes iso-idle-bob {
+
+  0%, 100% { transform: scale(var(--char-scale, 1)) translateY(0); }
+
+  50% { transform: scale(var(--char-scale, 1)) translateY(-4px); }
+
+}
+
+
+
+@keyframes iso-attack-lunge {
+
+  0% { transform: scale(var(--char-scale, 1)) translateX(0); }
+
+  35% { transform: scale(calc(var(--char-scale, 1) * 1.06)) translateX(14px); }
+
+  100% { transform: scale(var(--char-scale, 1)) translateX(0); }
+
+}
+
+
+
+@keyframes iso-attack-lunge-enemy {
+
+  0% { transform: scale(var(--char-scale, 1)) translateX(0); }
+
+  35% { transform: scale(calc(var(--char-scale, 1) * 1.06)) translateX(-14px); }
+
+  100% { transform: scale(var(--char-scale, 1)) translateX(0); }
+
+}
+
+
+
+@keyframes iso-hit-shake {
+
+  0% { transform: scale(var(--char-scale, 1)) translateX(0) rotate(0deg); }
+
+  20% { transform: scale(var(--char-scale, 1)) translateX(-8px) rotate(-4deg); }
+
+  45% { transform: scale(var(--char-scale, 1)) translateX(6px) rotate(3deg); }
+
+  70% { transform: scale(var(--char-scale, 1)) translateX(-4px) rotate(-2deg); }
+
+  100% { transform: scale(var(--char-scale, 1)) translateX(0) rotate(0deg); }
+
+}
+
+
+
+@keyframes iso-defeat-fall {
+
+  0% { transform: scale(var(--char-scale, 1)) rotate(0deg) translateY(0); opacity: 1; }
+
+  40% { transform: scale(var(--char-scale, 1)) rotate(-18deg) translateY(6px); opacity: 0.85; }
+
+  100% { transform: scale(calc(var(--char-scale, 1) * 0.9)) rotate(-42deg) translateY(18px); opacity: 0.2; }
+
+}
+
+
+
+.character-figure__smoke {
+
+  position: absolute;
+
+  bottom: 12%;
+
+  width: 70%;
+
+  height: 28%;
+
+  background: radial-gradient(ellipse, rgba(0, 0, 0, 0.65) 0%, transparent 70%);
+
+  animation: char-smoke-rise 1s ease-out forwards;
+
+  pointer-events: none;
+
+}
+
+
+
+@keyframes char-smoke-rise {
+
+  from { opacity: 0.85; transform: scale(0.6); }
+
+  to { opacity: 0; transform: scale(1.3) translateY(-16px); }
+
+}
+
+
+
+@media (prefers-reduced-motion: reduce) {
+  .character-figure--idle .character-figure__sprite-wrap,
+  .character-figure--attack .character-figure__sprite-wrap,
+  .character-figure--hit_cc .character-figure__sprite-wrap,
+  .character-figure--defeat .character-figure__sprite-wrap,
+  .character-figure--idle .character-sprite-sheet,
+  .character-figure--attack .character-sprite-sheet,
+  .character-figure--hit_cc .character-sprite-sheet,
+  .character-figure--defeat .character-sprite-sheet,
+
+  .character-figure--idle .character-figure__iso,
+
+  .character-figure--attack .character-figure__iso,
+
+  .character-figure--hit_cc .character-figure__iso,
+
+  .character-figure--defeat .character-figure__iso {
+
+    animation: none;
+
+  }
+
+}
+
+
+
+/* Equipment paper doll (Character menu) */
+.char-equip-doll {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--section-gap);
+}
+
+.char-equip-stage {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  max-width: 220px;
+  min-height: 210px;
+  padding: var(--space-3) var(--space-2) var(--space-1);
+  border-radius: var(--radius-lg);
+  background:
+    radial-gradient(ellipse 70% 55% at 50% 42%, rgba(218, 165, 32, 0.14), transparent 70%),
+    var(--surface-readable-muted);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65);
+}
+
+.char-equip-stage__ring {
+  position: absolute;
+  bottom: 18px;
+  left: 50%;
+  width: 58%;
+  height: 14px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(0, 0, 0, 0.22), transparent 70%);
+  pointer-events: none;
+}
+
+.char-equip-slots {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2);
+  width: 100%;
+}
+
+.char-equip-slot {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  color: var(--ink-black);
+  text-align: left;
+}
+
+.char-equip-slot__rarity--rare {
+  border-color: rgba(197, 160, 89, 0.55);
+  box-shadow: inset 0 0 0 1px rgba(197, 160, 89, 0.2);
+}
+
+.char-equip-slot__rarity--epic {
+  border-color: rgba(155, 93, 229, 0.55);
+}
+
+.char-equip-slot__rarity--legendary {
+  border-color: var(--antique-gold-deep);
+  box-shadow: 0 0 10px rgba(153, 101, 21, 0.18);
+}
+
+.char-equip-slot__badge {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  background: #1a1a1a;
+  color: #f0ebe0;
+  flex-shrink: 0;
+}
+
+.char-equip-slot__copy {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.char-equip-slot__type {
+  font-family: var(--font-display);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.55;
+}
+
+.char-equip-slot__name {
+  font-size: 0.78rem;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.view-readable .char-equip-slot {
+  background: var(--surface-readable-muted);
+  color: var(--ink-black);
+}
+
+
+
+/* Shop merchant NPC */
+
+.shop-merchant {
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  gap: var(--space-1);
+
+  margin-bottom: var(--section-gap);
+
+  padding: var(--space-2) 0;
+
+}
+
+
+
+.shop-merchant__label {
+
+  font-size: 0.72rem;
+
+  font-weight: 700;
+
+  color: var(--ink-black);
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.06em;
+
+}
+

@@ -174,10 +174,10 @@ export async function resetPlayerHpAfterDefeat(
 }
 
 export async function getPlayerSkillPath(
-  pool: DbPool,
+  poolOrClient: DbPool | DbClient,
   userId: string
 ): Promise<SkillPath> {
-  const result = await pool.query<{ active_skill_path: SkillPath }>(
+  const result = await poolOrClient.query<{ active_skill_path: SkillPath }>(
     `SELECT active_skill_path FROM player_stats WHERE user_id = $1`,
     [userId]
   );

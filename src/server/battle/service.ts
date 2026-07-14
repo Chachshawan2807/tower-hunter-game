@@ -6,7 +6,8 @@ import {
 } from "../../engine/states";
 import type { AnimationEvent, PlayerIntent } from "../../engine/types";
 import { getDefaultLoadout } from "../../engine/skills/loadout";
-import { toCombatStats, resetPlayerHpAfterDefeat } from "../db/playerStats";
+import { resetPlayerHpAfterDefeat } from "../db/playerStats";
+import { getPlayerCombatStatsWithEquipment } from "../equipment/playerCombatStats";
 import { getPlayerLoadout, getPlayerUpgrades, getUserById, type DbPool } from "../db";
 import { createBattleState } from "./factory";
 import { grantBattleRewards } from "./rewards";
@@ -51,7 +52,7 @@ export async function startBattle(
     }
 
     const playerSkillPath = statsRow.active_skill_path ?? "murim";
-    const playerStats = toCombatStats(statsRow);
+    const playerStats = await getPlayerCombatStatsWithEquipment(pool, statsRow);
     const dbLoadout = await getPlayerLoadout(
       pool,
       input.userId,

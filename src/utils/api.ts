@@ -33,6 +33,20 @@ export interface UserProfile {
   auto_dismantle_common?: boolean;
 }
 
+export interface GearStatBonusDto {
+  maxHp?: number;
+  maxMp?: number;
+  atk?: number;
+  def?: number;
+  speed?: number;
+  critChance?: number;
+  critDamage?: number;
+  accuracy?: number;
+  evasion?: number;
+  statusChance?: number;
+  statusResist?: number;
+}
+
 export interface PlayerStatsResponse {
   stats: {
     user_id: string;
@@ -56,6 +70,7 @@ export interface PlayerStatsResponse {
     active_skill_path?: "murim" | "knight" | "fantasy";
   };
   goldBalance: string;
+  equipmentStatBonus?: GearStatBonusDto;
 }
 
 export interface SkillCatalogEntry {
@@ -155,6 +170,22 @@ export interface BattleStepResponse {
   rewards?: { exp: number; gold: string; items: unknown[] };
 }
 
+export interface PlayerEquipmentResponse {
+  slots: Partial<Record<
+    "weapon" | "helm" | "chest" | "gloves" | "boots" | "cloak",
+    { gearId: string; rarity: "common" | "rare" | "epic" | "legendary" }
+  >>;
+  path: "murim" | "knight" | "fantasy";
+  statBonus?: GearStatBonusDto;
+}
+
+export interface EquipFromBagResponse {
+  slot: string;
+  equipped: { gearId: string; rarity: string };
+  loadout: PlayerEquipmentResponse["slots"];
+  statBonusLines: string[];
+}
+
 export const api = {
   createUser(externalId: string, displayName: string) {
     return request<UserProfile>("/api/users", {
@@ -167,6 +198,10 @@ export const api = {
     return request<UserProfile>(`/api/users/external/${externalId}`);
   },
 
+  getUser(userId: string) {
+    return request<UserProfile>(`/api/users/${userId}`);
+  },
+
   getPlayerStats(userId: string) {
     return request<PlayerStatsResponse>(`/api/users/${userId}/stats`);
   },
@@ -177,6 +212,21 @@ export const api = {
 
   getInventory(userId: string) {
     return request<{ items: InventoryItem[] }>(`/api/users/${userId}/inventory`);
+  },
+
+  getPlayerEquipment(userId: string) {
+    return request<PlayerEquipmentResponse>(`/api/users/${userId}/equipment`);
+  },
+
+  equipFromBag(
+    userId: string,
+    slot: "weapon" | "helm" | "chest" | "gloves" | "boots" | "cloak",
+    inventoryId: string
+  ) {
+    return request<EquipFromBagResponse>(`/api/users/${userId}/equipment`, {
+      method: "PATCH",
+      body: JSON.stringify({ slot, inventoryId }),
+    });
   },
 
   getMailbox(userId: string) {

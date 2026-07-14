@@ -7,21 +7,78 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: "autoUpdate",
-      includeAssets: ["favicon.svg"],
+      includeAssets: ["favicon.svg", "icons/*.svg"],
       manifest: {
         name: "Tower Hunter",
         short_name: "TowerHunter",
-        description: "100-floor turn-based tower climbing RPG",
-        theme_color: "#3d5240",
-        background_color: "#2c3e2d",
+        description: "100-floor turn-based tower climbing RPG — Aggressive Minimalism",
+        theme_color: "#0d0d0d",
+        background_color: "#0d0d0d",
         display: "standalone",
-        orientation: "portrait",
+        orientation: "portrait-primary",
+        start_url: "/",
+        scope: "/",
+        lang: "en",
+        categories: ["games", "entertainment"],
         icons: [
           {
             src: "/favicon.svg",
             sizes: "any",
             type: "image/svg+xml",
-            purpose: "any maskable",
+            purpose: "any",
+          },
+          {
+            src: "/icons/maskable.svg",
+            sizes: "512x512",
+            type: "image/svg+xml",
+            purpose: "maskable",
+          },
+          {
+            src: "/icons/splash.svg",
+            sizes: "512x512",
+            type: "image/svg+xml",
+            purpose: "any",
+          },
+        ],
+      },
+      workbox: {
+        globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
+        navigateFallback: "index.html",
+        navigateFallbackDenylist: [/^\/api/, /^\/health/],
+        runtimeCaching: [
+          {
+            urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
+            handler: "CacheFirst",
+            options: {
+              cacheName: "google-fonts-stylesheets",
+              expiration: {
+                maxEntries: 10,
+                maxAgeSeconds: 60 * 60 * 24 * 365,
+              },
+            },
+          },
+          {
+            urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i,
+            handler: "CacheFirst",
+            options: {
+              cacheName: "google-fonts-webfonts",
+              expiration: {
+                maxEntries: 30,
+                maxAgeSeconds: 60 * 60 * 24 * 365,
+              },
+            },
+          },
+          {
+            urlPattern: /^\/api\/.*/i,
+            handler: "NetworkFirst",
+            options: {
+              cacheName: "tower-hunter-api",
+              networkTimeoutSeconds: 8,
+              expiration: {
+                maxEntries: 64,
+                maxAgeSeconds: 60 * 10,
+              },
+            },
           },
         ],
       },

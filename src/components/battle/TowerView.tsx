@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { getTowerZone } from "../../engine/art";
 import {
   deriveAutoSkills,
   getDefaultLoadout,
@@ -6,8 +7,10 @@ import {
   isSkillUnlocked,
 } from "../../engine/skills";
 import { t, type Locale } from "../../utils/i18n";
+import { playUiClick } from "../../hooks/useGameAudio";
 import { BattleArena } from "./BattleArena";
 import { TowerFloorBlock } from "./TowerFloorBlock";
+import type { CharacterEquipmentVisual } from "../../engine/art/equipment/catalog";
 import type { useBattle } from "../../hooks/useBattle";
 import type { SkillPath } from "../../engine/types";
 
@@ -17,16 +20,20 @@ const VISIBLE_FLOORS = 7;
 interface TowerViewProps {
   locale: Locale;
   currentFloor: number;
+  climbFloor: number;
   skillPath: SkillPath;
   playerLevel: number;
+  playerEquipment: CharacterEquipmentVisual;
   battle: ReturnType<typeof useBattle>;
 }
 
 export function TowerView({
   locale,
   currentFloor,
+  climbFloor,
   skillPath,
   playerLevel,
+  playerEquipment,
   battle,
 }: TowerViewProps) {
   const inBattle =
@@ -36,6 +43,7 @@ export function TowerView({
 
   const isBossFloor = currentFloor % 10 === 0;
   const floorLabel = t("tower.floor", locale);
+  const towerZone = useMemo(() => getTowerZone(currentFloor), [currentFloor]);
 
   const floors = useMemo(() => {
     const start = Math.max(
@@ -88,6 +96,8 @@ export function TowerView({
         ))}
       </div>
 
+      <span className="tower-zone-label">{t(towerZone.nameKey, locale)}</span>
+
       <span className="tower-floor-label">
         {floorLabel} {currentFloor}
         <span className="tabular-nums"> / {TOTAL_FLOORS}</span>
@@ -110,6 +120,8 @@ export function TowerView({
           busy={battle.busy}
           isPlaying={battle.isPlaying}
           speed={battle.speed}
+          skillPath={skillPath}
+          playerEquipment={playerEquipment}
           onSpeedChange={battle.setSpeed}
           onSkip={battle.skip}
           onAttack={() => battle.manualAttack(`enemy_floor_${currentFloor}`)}
@@ -122,14 +134,24 @@ export function TowerView({
           onReset={battle.resetBattle}
         />
       ) : (
-        <button
-          className="action-btn action-btn--climb"
-          disabled={battle.busy}
-          onClick={() => battle.startBattle(currentFloor)}
-          aria-label={t("tower.climb", locale)}
-        >
-          ▶ {t("tower.climb", locale)}
-        </button>
+        <>
+          {battle.startError && (
+            <p className="tower-start-error" role="alert">
+              {battle.startError}
+            </p>
+          )}
+          <button
+            className="action-btn action-btn--climb"
+            disabled={battle.busy || !climbFloor}
+            onClick={() => {
+              playUiClick();
+              void battle.startBattle(climbFloor);
+            }}
+            aria-label={t("tower.climb", locale)}
+          >
+            ▶ {t("tower.climb", locale)}
+          </button>
+        </>
       )}
     </div>
   );

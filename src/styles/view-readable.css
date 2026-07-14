@@ -1,0 +1,221 @@
+/* Art Bible §08 — High-visibility black ink on readable surfaces */
+
+.view-readable {
+  color: var(--ink-black);
+}
+
+/* HUD — single frosted chrome bar */
+.view-readable .top-hud {
+  padding-bottom: 6px;
+}
+
+.view-readable .hud-chrome {
+  background: rgba(255, 252, 245, 0.88);
+  border-color: rgba(0, 0, 0, 0.1);
+  box-shadow:
+    0 4px 18px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+.view-readable .hud-name,
+.view-readable .hud-level-badge,
+.view-readable .hud-exp,
+.view-readable .hud-gold {
+  color: var(--ink-black);
+}
+
+.view-readable .hud-name {
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.view-readable .hud-level-badge {
+  background: var(--surface-readable-muted);
+  border-color: rgba(0, 0, 0, 0.12);
+  color: var(--ink-black);
+  font-family: var(--font-stat);
+  font-weight: 700;
+  font-size: var(--text-xs);
+  letter-spacing: 0.04em;
+}
+
+.view-readable .hud-exp {
+  background: var(--surface-exp-tint);
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  color: var(--dark-yellow-deep);
+  font-weight: 700;
+}
+
+.view-readable .hud-gold {
+  background: var(--surface-gold-tint);
+  border-color: rgba(0, 0, 0, 0.14);
+  color: var(--antique-gold-deep);
+}
+
+.view-readable .icon-btn {
+  color: var(--ink-black);
+  background: var(--surface-readable-muted);
+  border-color: rgba(0, 0, 0, 0.14);
+}
+
+.view-readable .icon-btn--settings {
+  color: var(--antique-gold-deep);
+  border-color: rgba(153, 101, 21, 0.35);
+}
+
+/* Bottom nav — stone dock (no full-bleed fade overlaying stage) */
+.view-readable .bottom-nav {
+  background: transparent;
+  border-top: none;
+  box-shadow: none;
+}
+
+.view-readable .bottom-nav__dock,
+.view-readable .bottom-nav__tabs {
+  background: linear-gradient(180deg, #f7f2e8 0%, #e8e0d2 100%);
+  border-color: rgba(0, 0, 0, 0.12);
+  box-shadow: 0 -6px 22px rgba(0, 0, 0, 0.1);
+}
+
+.view-readable .nav-btn {
+  color: rgba(0, 0, 0, 0.42);
+}
+
+.view-readable .nav-btn:hover {
+  color: var(--ink-black);
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.view-readable .nav-btn--active {
+  color: var(--dark-yellow-deep);
+}
+
+.view-readable .nav-btn--tower .nav-btn__icon-wrap {
+  background: linear-gradient(145deg, #f3eee4, #ddd4c4);
+  border-color: rgba(0, 0, 0, 0.14);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+}
+
+.view-readable .nav-btn--tower .game-icon {
+  color: rgba(0, 0, 0, 0.45);
+}
+
+.view-readable .nav-btn--tower.nav-btn--active .nav-btn__icon-wrap {
+  background: linear-gradient(145deg, #fffaf0, #e8dfcf);
+  border-color: var(--dark-yellow-deep);
+  box-shadow:
+    0 4px 14px rgba(0, 0, 0, 0.12),
+    0 0 12px var(--dark-yellow-glow);
+}
+
+.view-readable .nav-btn--tower.nav-btn--active .game-icon {
+  color: var(--dark-yellow-deep);
+}
+
+.view-readable .overlay__panel {
+  background: var(--surface-readable);
+  color: var(--ink-black);
+  border-top-color: var(--antique-gold);
+}
+
+.view-readable .overlay__title {
+  color: var(--ink-black);
+}
+
+.view-readable .overlay__header {
+  border-bottom-color: rgba(0, 0, 0, 0.1);
+}
+
+.view-readable .menu-subtitle,
+.view-readable .menu-empty,
+.view-readable .stat-item,
+.view-readable .stat-item span,
+.view-readable .skill-path,
+.view-readable .bag-menu,
+.view-readable .shop-menu,
+.view-readable .skill-menu,
+.view-readable .bag-tab,
+.view-readable .skill-path-tab,
+.view-readable .bag-toggle,
+.view-readable .bag-item__rarity,
+.view-readable .shop-message,
+.view-readable .shop-item__name,
+.view-readable .shop-item__cost,
+.view-readable .skill-card__name,
+.view-readable .skill-card__desc,
+.view-readable .bag-item__main,
+.view-readable .shop-balance {
+  color: var(--ink-black);
+}
+
+.view-readable .stat-item,
+.view-readable .skill-path,
+.view-readable .bag-item,
+.view-readable .shop-item,
+.view-readable .skill-card,
+.view-readable .bag-tab,
+.view-readable .skill-path-tab,
+.view-readable .shop-message {
+  background: var(--surface-readable-muted);
+  border-color: rgba(0, 0, 0, 0.12);
+}
+
+.view-readable .bag-tab--active,
+.view-readable .skill-path-tab--active {
+  background: rgba(197, 160, 89, 0.22);
+  border-color: var(--antique-gold-deep);
+  color: var(--ink-black);
+}
+
+.view-readable .shop-balance {
+  background: var(--surface-gold-tint);
+  border-color: rgba(0, 0, 0, 0.12);
+}
+
+.view-readable .bag-item__expiry {
+  color: var(--crimson-deep);
+}
+
+.view-readable .tower-floor-label {
+  color: var(--ink-black);
+}
+
+.view-readable .tower-floor-sublabel--boss {
+  color: var(--crimson-deep);
+}
+
+/* Battle frame — Art Bible §08 readable ink on aged stone */
+.view-readable .battle-arena__frame {
+  background: var(--surface-readable);
+  color: var(--ink-black);
+  border-color: rgba(0, 0, 0, 0.14);
+}
+
+.view-readable .battle-log__entry,
+.view-readable .battle-turn-hint,
+.view-readable .battle-auto-info,
+.view-readable .speed-btn,
+.view-readable .action-btn,
+.view-readable .battle-skill-btn__label {
+  color: var(--ink-black);
+}
+
+.view-readable .battle-log {
+  background: var(--surface-readable-muted);
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+.view-readable .speed-btn,
+.view-readable .action-btn,
+.view-readable .battle-skill-btn {
+  background: var(--surface-readable-muted);
+  border-color: rgba(0, 0, 0, 0.12);
+  color: var(--ink-black);
+}
+
+.view-readable .hp-bar__label {
+  color: var(--ink-black);
+}

@@ -12,15 +12,15 @@ import {
   type SkillUpgradeResponse,
 } from "../../utils/api";
 import { t, type Locale } from "../../utils/i18n";
+import { GameIcon, skillIconName, upgradeBranchIconName } from "../ui/icons";
 
 const BRANCHES: Array<{
   branch: UpgradeBranch;
   labelKey: string;
-  icon: string;
 }> = [
-  { branch: "damage", labelKey: "skills.upgrade.damage", icon: "⚔" },
-  { branch: "cooldown", labelKey: "skills.upgrade.cd", icon: "⏱" },
-  { branch: "mpCost", labelKey: "skills.upgrade.mp", icon: "💧" },
+  { branch: "damage", labelKey: "skills.upgrade.damage" },
+  { branch: "cooldown", labelKey: "skills.upgrade.cd" },
+  { branch: "mpCost", labelKey: "skills.upgrade.mp" },
 ];
 
 function renderStars(rank: number): string {
@@ -86,7 +86,11 @@ export function SkillUpgradePanel({
     <div className="skill-upgrade">
       <div className="skill-upgrade__header">
         <span className="skill-upgrade__icon">
-          {skill.unlocked ? skill.icon : "🔒"}
+          {skill.unlocked ? (
+            <GameIcon name={skillIconName(skill.id)} size={28} />
+          ) : (
+            <GameIcon name="lock" size={28} />
+          )}
         </span>
         <div>
           <div className="skill-upgrade__name">{t(skill.stringId, locale)}</div>
@@ -100,7 +104,7 @@ export function SkillUpgradePanel({
       </div>
 
       <div className="skill-upgrade__branches">
-        {BRANCHES.map(({ branch, labelKey, icon }) => {
+        {BRANCHES.map(({ branch, labelKey }) => {
           const rank = skill.upgrades[branch];
           const check = canUpgradeBranch(baseSkill, branch, skill.upgrades);
           const cost = spCostForNextRank(rank);
@@ -118,7 +122,8 @@ export function SkillUpgradePanel({
               className={`skill-upgrade__row ${disabled ? "skill-upgrade__row--disabled" : ""}`}
             >
               <span className="skill-upgrade__branch">
-                {icon} {t(labelKey, locale)}
+                <GameIcon name={upgradeBranchIconName(branch)} size={18} />
+                {t(labelKey, locale)}
               </span>
               <span className="skill-upgrade__stars" aria-label={`Rank ${rank}`}>
                 {renderStars(rank)}

@@ -112,7 +112,7 @@ export function SkillLoadoutPanel({
       >
         {unlockedOptions.map((skill) => (
           <option key={skill.id} value={skill.id}>
-            {skill.icon} {t(skill.stringId, locale)}
+            {t(skill.stringId, locale)}
           </option>
         ))}
       </select>

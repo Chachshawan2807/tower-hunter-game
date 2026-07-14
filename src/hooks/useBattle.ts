@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   deriveAutoSkills,
   getSkillsForPath,
@@ -35,7 +35,7 @@ function extractLoadoutContext(
   };
 }
 
-export function useBattle(userId: string | null, onComplete?: () => void) {
+export function useBattle(userId: string | null, onComplete?: () => void | Promise<void>) {
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [floor, setFloor] = useState(1);
   const [battleSnapshot, setBattleSnapshot] = useState<BattleSnapshot | null>(null);
@@ -46,7 +46,9 @@ export function useBattle(userId: string | null, onComplete?: () => void) {
   const [isComplete, setIsComplete] = useState(false);
   const [result, setResult] = useState<"win" | "lose" | null>(null);
   const [busy, setBusy] = useState(false);
+  const [startError, setStartError] = useState<string | null>(null);
   const [rewards, setRewards] = useState<BattleStepResponse["rewards"]>();
+  const startingRef = useRef(false);
 
   const animation = useAnimationQueue({
     onQueueComplete: (snapshot) => {
@@ -54,7 +56,7 @@ export function useBattle(userId: string | null, onComplete?: () => void) {
       setIsComplete(snapshot.isComplete);
       setResult(snapshot.result ?? null);
       if (snapshot.isComplete) {
-        onComplete?.();
+        void Promise.resolve(onComplete?.());
       }
     },
   });
@@ -80,9 +82,11 @@ export function useBattle(userId: string | null, onComplete?: () => void) {
 
   const startBattle = useCallback(
     async (targetFloor: number) => {
-      if (!userId || busy) return;
+      if (!userId || startingRef.current) return;
 
+      startingRef.current = true;
       setBusy(true);
+      setStartError(null);
       animation.reset();
       setBattleSnapshot(null);
       setLoadoutContext(null);
@@ -100,11 +104,15 @@ export function useBattle(userId: string | null, onComplete?: () => void) {
         }
         const step = await api.battleStep(session.id, 20);
         applyStep(step);
+      } catch (err) {
+        console.error("Failed to start battle:", err);
+        setStartError(err instanceof Error ? err.message : "Battle failed");
       } finally {
+        startingRef.current = false;
         setBusy(false);
       }
     },
-    [userId, busy, applyStep, animation]
+    [userId, applyStep, animation]
   );
 
   const continueBattle = useCallback(async () => {
@@ -201,6 +209,7 @@ export function useBattle(userId: string | null, onComplete?: () => void) {
 
   const resetBattle = useCallback(() => {
     setSessionId(null);
+    setStartError(null);
     animation.reset();
     setBattleSnapshot(null);
     setLoadoutContext(null);
@@ -209,6 +218,18 @@ export function useBattle(userId: string | null, onComplete?: () => void) {
     setResult(null);
     setRewards(undefined);
   }, [animation]);
+
+  useEffect(() => {
+    if (!isComplete || animation.isPlaying || result !== "win" || !loadoutContext?.autoBattle) {
+      return;
+    }
+
+    const timer = window.setTimeout(() => {
+      resetBattle();
+    }, 2200);
+
+    return () => window.clearTimeout(timer);
+  }, [isComplete, animation.isPlaying, result, loadoutContext?.autoBattle, resetBattle]);
 
   return {
     floor,
@@ -220,6 +241,7 @@ export function useBattle(userId: string | null, onComplete?: () => void) {
     result,
     rewards,
     busy,
+    startError,
     isPlaying: animation.isPlaying,
     speed: animation.speed,
     setSpeed: animation.setSpeed,

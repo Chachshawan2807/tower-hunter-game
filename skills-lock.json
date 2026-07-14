@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "skills": {
+    "ai-game-art-generation": {
+      "source": "omer-metin/skills-for-antigravity",
+      "sourceType": "github",
+      "skillPath": "skills/ai-game-art-generation/SKILL.md",
+      "computedHash": "e1d0cc5dd30126348c9db8b97c7965c8e9a81c7f07030afa4745f597d7493e52"
+    },
+    "art-bible": {
+      "source": "donchitos/claude-code-game-studios",
+      "sourceType": "github",
+      "skillPath": ".claude/skills/art-bible/SKILL.md",
+      "computedHash": "3522f700d8b7f4e882d8d4da163ae20914fbbd86e3bf77401fcb842d862b620b"
+    },
+    "game-ui-ux": {
+      "source": "gamedev-skills/awesome-gamedev-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/disciplines/game-ui-ux/SKILL.md",
+      "computedHash": "03750fba98e36165ed9a8470cf3df1a4aac0e06d687b9b5b7ee02bdf3599c19c"
+    },
+    "pixel-art-sprites": {
+      "source": "omer-metin/skills-for-antigravity",
+      "sourceType": "github",
+      "skillPath": "skills/pixel-art-sprites/SKILL.md",
+      "computedHash": "6d7f3d45af2fa94e0fe9abe08575e859aa0f24297305ee8b89ac64a7534c9825"
+    }
+  }
+}
