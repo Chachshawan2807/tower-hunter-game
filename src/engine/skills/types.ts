@@ -18,7 +18,7 @@ export interface SkillSelfStatus {
 
 export interface SkillDefinition {
   id: string;
-  path: SkillPath | "basic";
+  path: SkillPath | "basic" | "enemy";
   stringId: string;
   icon: string;
   mpCost: StatValue;

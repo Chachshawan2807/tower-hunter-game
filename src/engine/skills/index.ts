@@ -10,6 +10,7 @@ export { BASIC_ATTACK } from "./basicAttack";
 export { MURIM_SKILLS } from "./murim";
 export { KNIGHT_SKILLS } from "./knight";
 export { FANTASY_SKILLS } from "./fantasy";
+export { ENEMY_SKILLS } from "./enemy";
 
 export {
   getSkillById,
