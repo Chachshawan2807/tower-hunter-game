@@ -1,6 +1,9 @@
 import {
   canUseSkill,
+  deriveAutoSkills,
   getSkillById,
+  getSkillsForPath,
+  isSkillUnlocked,
   pickAutoSkill,
   pickEnemySkill,
   resolveEnemyTemplate,
@@ -50,7 +53,22 @@ export function resolveActionChoice(
   let skillId = "basic_attack";
 
   if (actor.side === "player") {
-    const skill = pickAutoSkill(actor, state.playerSkillPath);
+    const { activeSlots } = state.playerLoadout;
+    const unlocked = getSkillsForPath(state.playerSkillPath)
+      .filter((s) => isSkillUnlocked(s, actor.stats.level))
+      .map((s) => s.id);
+
+    const autoIds = deriveAutoSkills(unlocked, activeSlots);
+    const skillPool = state.autoBattle
+      ? [...new Set([...activeSlots, ...autoIds])]
+      : autoIds;
+
+    const skill = pickAutoSkill(
+      actor,
+      state.playerSkillPath,
+      skillPool,
+      state.playerSkillUpgrades
+    );
     skillId = skill.id;
     if (skill.targetType === "self") {
       return { type: "basic_attack", targetId: actor.id, skillId };
@@ -82,6 +100,13 @@ export function validateManualAction(
   const skillId = resolveSkillId(action.skillId, state.playerSkillPath);
   const resolved = getSkillById(skillId);
   const playerLevel = actor.stats.level;
+
+  if (
+    skillId !== "basic_attack" &&
+    !state.playerLoadout.activeSlots.includes(skillId)
+  ) {
+    return false;
+  }
 
   if (
     skillId !== "basic_attack" &&

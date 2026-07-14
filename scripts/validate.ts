@@ -12,6 +12,7 @@ import {
 } from "../src/engine/formulas";
 import { createBattleState } from "../src/server/battle/factory";
 import { advanceBattleStep } from "../src/engine/states";
+import { validateManualAction } from "../src/engine/states/actionChoice";
 import { applyStatusOnHit } from "../src/engine/status";
 import {
   getSkillById,
@@ -166,15 +167,62 @@ assert(
 );
 
 const knightPlayer = battleState.entities[0];
-const slashPick = pickAutoSkill(knightPlayer, "knight", () => 0.99);
-assert(slashPick.id === "knight_slash", "level 1 knight AI uses slash");
+const knightFullPool = [
+  ...new Set([
+    ...battleState.playerLoadout.activeSlots,
+    ...deriveAutoSkills(
+      ["knight_slash"],
+      battleState.playerLoadout.activeSlots
+    ),
+  ]),
+];
+const slashPick = pickAutoSkill(
+  knightPlayer,
+  "knight",
+  knightFullPool,
+  {},
+  () => 0.99
+);
+assert(slashPick.id === "knight_slash", "level 1 knight AI uses slash from loadout pool");
 
 const highLevelKnight = {
   ...knightPlayer,
   stats: { ...knightPlayer.stats, level: 15, mp: 200 },
 };
-const chargePick = pickAutoSkill(highLevelKnight, "knight", () => 0.99);
-assert(chargePick.id === "knight_charge", "level 15 knight AI uses charge");
+const knightL15Loadout: [string, string] = ["knight_slash", "knight_charge"];
+const knightL15Pool = [
+  ...new Set([
+    ...knightL15Loadout,
+    ...deriveAutoSkills(
+      ["knight_slash", "knight_guard", "knight_bash", "knight_charge"],
+      knightL15Loadout
+    ),
+  ]),
+];
+const chargePick = pickAutoSkill(
+  highLevelKnight,
+  "knight",
+  knightL15Pool,
+  {},
+  () => 0.99
+);
+assert(chargePick.id === "knight_charge", "level 15 knight AI picks highest autoPriority attack");
+
+const knightAutoOnlyPool = deriveAutoSkills(
+  ["knight_slash", "knight_guard", "knight_bash", "knight_charge"],
+  knightL15Loadout
+);
+const autoOnlyPick = pickAutoSkill(
+  highLevelKnight,
+  "knight",
+  knightAutoOnlyPool,
+  {},
+  () => 0.99
+);
+assert(
+  autoOnlyPick.id === "knight_bash",
+  "auto-only pool excludes active slots and picks best auto skill"
+);
 
 assert(isSkillUnlocked(getSkillById("murim_palm"), 1), "slot 1 unlocked at Lv1");
 assert(!isSkillUnlocked(getSkillById("murim_dash"), 1), "slot 2 locked before Lv5");
@@ -205,6 +253,29 @@ assert(
 assert(
   !validateLoadout("murim", ["murim_dash", "murim_palm"], 1).valid,
   "locked skill cannot be active"
+);
+
+console.log("\n=== Validation: Loadout Integration ===");
+const loadoutState = createBattleState(1, {
+  playerSkillPath: "murim",
+  autoBattle: false,
+  playerLoadout: { path: "murim", activeSlots: ["murim_palm", "murim_dash"] },
+});
+assert(
+  validateManualAction(loadoutState, "player", {
+    type: "basic_attack",
+    targetId: "enemy_floor_1",
+    skillId: "murim_qi",
+  }) === false,
+  "manual action rejects non-active skill"
+);
+assert(
+  validateManualAction(loadoutState, "player", {
+    type: "basic_attack",
+    targetId: "enemy_floor_1",
+    skillId: "murim_palm",
+  }) === true,
+  "manual action accepts active slot skill"
 );
 
 console.log("\n=== Validation: Effective Skill ===");
