@@ -1,6 +1,9 @@
 # Dependencies
 node_modules/
 
+# Build / fetch caches (Kenney mirror, ffmpeg temp)
+.cache/
+
 # Environment variables
 .env
 .env.local

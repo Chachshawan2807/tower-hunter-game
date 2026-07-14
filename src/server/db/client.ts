@@ -13,9 +13,18 @@ export function createDbPool(config: DbClientConfig): DbPool {
     return sharedPool;
   }
 
+  const connectionString = config.connectionString.replace(
+    /[?&]sslmode=[^&]*/g,
+    ""
+  );
+  const needsSsl =
+    config.connectionString.includes("sslmode=") ||
+    config.connectionString.includes("supabase.co");
+
   sharedPool = new Pool({
-    connectionString: config.connectionString,
+    connectionString,
     max: config.maxConnections ?? 10,
+    ...(needsSsl ? { ssl: { rejectUnauthorized: false } } : {}),
   });
 
   return sharedPool;

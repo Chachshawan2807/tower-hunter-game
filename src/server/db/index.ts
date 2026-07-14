@@ -20,11 +20,14 @@ export {
   processWalletTransaction,
   processWalletTransactionClient,
   getWalletBalance,
+  listWalletLedger,
 } from "./wallet";
 
 export {
   createUser,
   getUserById,
+  getUserByExternalId,
+  updateDisplayName,
   setAutoDismantleCommon,
 } from "./users";
 
@@ -32,13 +35,35 @@ export {
   getPlayerStats,
   toCombatStats,
   applyBattleWinProgress,
+  getPlayerSkillPath,
+  setPlayerSkillPath,
   type PlayerStatsRow,
 } from "./playerStats";
 
 export {
-  addItemToInventory,
+  getPlayerLoadout,
+  upsertPlayerLoadout,
+} from "./skillLoadout";
+
+export {
+  getPlayerUpgrades,
+  upgradeSkillBranch,
+} from "./skillUpgrades";
+
+export {
+  listPlayerEquipment,
+  upsertEquipmentSlot,
+  seedDefaultEquipment,
+  rowsToEquipmentDto,
+  type PlayerEquipmentDto,
+  type EquipmentSlotDto,
+} from "./equipment";
+
+export {
   listInventoryItems,
   countInventoryQuantity,
+  addItemToInventory,
+  getInventoryItemById,
   COMMON_DISMANTLE_GOLD,
 } from "./inventory";
 

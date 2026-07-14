@@ -1,8 +1,11 @@
+import type { SkillLoadout } from "../skills/loadout";
+import type { SkillUpgradeRanks } from "../skills/types";
 import type {
   AnimationEvent,
   BattleEntity,
   BattleSnapshot,
   EntitySide,
+  SkillPath,
 } from "../types";
 
 export interface BattleAction {
@@ -16,6 +19,9 @@ export interface BattleState {
   floor: number;
   turnNumber: number;
   autoBattle: boolean;
+  playerSkillPath: SkillPath;
+  playerLoadout: SkillLoadout;
+  playerSkillUpgrades: Record<string, SkillUpgradeRanks>;
   isComplete: boolean;
   result?: "win" | "lose";
 }
@@ -31,10 +37,12 @@ export interface TurnProcessResult {
 export function cloneBattleState(state: BattleState): BattleState {
   return {
     ...state,
+    playerSkillUpgrades: { ...state.playerSkillUpgrades },
     entities: state.entities.map((e) => ({
       ...e,
       stats: { ...e.stats },
       statusEffects: [...e.statusEffects],
+      skillCooldowns: { ...e.skillCooldowns },
     })),
   };
 }

@@ -1,5 +1,6 @@
 import { parseBigInt, withTransaction, type DbPool } from "./client";
 import { createDefaultPlayerStats } from "./playerStats";
+import { seedNewPlayerKit } from "./newPlayerKit";
 import type { SupportedLocale, UserRow } from "./types";
 interface CreateUserInput {
   externalId: string;
@@ -51,6 +52,7 @@ export async function createUser(
     );
 
     await createDefaultPlayerStats(client, result.rows[0].id);
+    await seedNewPlayerKit(client, result.rows[0].id, "murim");
     return mapUserRow(result.rows[0]);
   });
 }
@@ -68,6 +70,42 @@ export async function getUserById(
   );
 
   return result.rows[0] ? mapUserRow(result.rows[0]) : null;
+}
+
+export async function getUserByExternalId(
+  pool: DbPool,
+  externalId: string
+): Promise<UserRow | null> {
+  const result = await pool.query<UserRowDb>(
+    `SELECT id, external_id, display_name, gold_balance, auto_dismantle_common,
+            preferred_locale, created_at, updated_at
+     FROM users
+     WHERE external_id = $1`,
+    [externalId]
+  );
+
+  return result.rows[0] ? mapUserRow(result.rows[0]) : null;
+}
+
+export async function updateDisplayName(
+  pool: DbPool,
+  userId: string,
+  displayName: string
+): Promise<UserRow> {
+  const result = await pool.query<UserRowDb>(
+    `UPDATE users
+     SET display_name = $2
+     WHERE id = $1
+     RETURNING id, external_id, display_name, gold_balance, auto_dismantle_common,
+               preferred_locale, created_at, updated_at`,
+    [userId, displayName]
+  );
+
+  if (!result.rowCount) {
+    throw new Error(`User ${userId} not found`);
+  }
+
+  return mapUserRow(result.rows[0]);
 }
 
 export async function setAutoDismantleCommon(

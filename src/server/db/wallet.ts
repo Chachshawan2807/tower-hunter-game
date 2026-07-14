@@ -151,3 +151,22 @@ export async function getWalletBalance(
 
   return parseBigInt(result.rows[0].gold_balance);
 }
+
+export async function listWalletLedger(
+  pool: DbPool,
+  userId: string,
+  limit: number = 50
+): Promise<WalletLedgerRow[]> {
+  const safeLimit = Math.min(Math.max(1, limit), 200);
+
+  const result = await pool.query<WalletLedgerRow>(
+    `SELECT id, user_id, amount, transaction_type, idempotency_key, metadata, created_at
+     FROM wallet_ledger
+     WHERE user_id = $1
+     ORDER BY created_at DESC
+     LIMIT $2`,
+    [userId, safeLimit]
+  );
+
+  return result.rows;
+}

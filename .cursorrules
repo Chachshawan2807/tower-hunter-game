@@ -15,3 +15,8 @@ CRITICAL CODE STANDARDS & ARCHITECTURE RULES:
    - Virtual currency must be handled as BIGINT (integers representing the lowest denomination).
 4. File Modification Rule:
    - When updating features, rewrite only the specific module or functional component. DO NOT erase existing architectural abstractions.
+5. Art Bible (Visual Standard):
+   - All UI colors, typography, tower zones, and visual effects MUST follow `docs/art-bible/MASTER_ART_BIBLE.md`.
+   - Use design tokens from `src/styles/tokens.css` and engine constants from `src/engine/art/` — never hardcode colors outside the palette.
+   - Tower floor themes: 1–30 Forgotten Dungeon, 31–60 Murim Pagoda, 61–90 Knight's Citadel, 91–100 Void Pinnacle.
+   - UI text on readable surfaces uses Pure Black (`--ink-black`); semantic accents: Crimson (danger), Dark Yellow (EXP/Murim), Antique Gold (currency/settings).

@@ -1,0 +1,245 @@
+/* Art Bible §04 — Environment (9:16 vertical perspective, performance-safe CSS) */
+
+.game-frame[class*="env-zone--"] {
+  position: relative;
+}
+
+.env-backdrop {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.env-zone-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center bottom;
+  opacity: 0.62;
+  pointer-events: none;
+}
+
+.env-zone--void-pinnacle .env-zone-bg {
+  opacity: 0.72;
+}
+
+/* Vertical stone walls — narrow/claustrophobic tower feel */
+.env-wall {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 18%;
+  background: linear-gradient(
+    90deg,
+    var(--primary-black-deep) 0%,
+    var(--stone-800) 40%,
+    var(--primary-black) 100%
+  );
+  opacity: 0.85;
+  filter: contrast(1.08) saturate(0.8);
+}
+
+.env-wall--left {
+  left: 0;
+  border-right: 2px solid rgba(0, 0, 0, 0.4);
+}
+
+.env-wall--right {
+  right: 0;
+  transform: scaleX(-1);
+  border-right: 2px solid rgba(0, 0, 0, 0.4);
+}
+
+/* Hanging chains — vertical emphasis */
+.env-chains {
+  position: absolute;
+  top: -8%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60%;
+  height: 35%;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0,
+    transparent 28%,
+    rgba(60, 60, 60, 0.35) 28%,
+    rgba(60, 60, 60, 0.35) 32%,
+    transparent 32%,
+    transparent 48%,
+    rgba(50, 50, 50, 0.3) 48%,
+    rgba(50, 50, 50, 0.3) 52%
+  );
+  opacity: 0.5;
+  animation: env-chains-sway 12s ease-in-out infinite;
+}
+
+/* Fog / smoke — slow drifting depth layer §09 */
+.env-fog {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 120% 80% at 50% 100%,
+    rgba(20, 20, 20, 0.55) 0%,
+    transparent 65%
+  );
+  animation: env-fog-drift 18s ease-in-out infinite alternate;
+  opacity: 0.7;
+}
+
+/* Rain — thin vertical lines §09 */
+.env-rain {
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    175deg,
+    transparent 0,
+    transparent 14px,
+    rgba(255, 255, 255, 0.04) 14px,
+    rgba(255, 255, 255, 0.04) 15px
+  );
+  animation: env-rain-fall 0.8s linear infinite;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.env-zone--forgotten-dungeon .env-rain,
+.env-zone--knight-citadel .env-rain {
+  opacity: 0.35;
+}
+
+/* Zone-specific atmosphere */
+.env-zone--forgotten-dungeon {
+  background:
+    radial-gradient(ellipse 90% 40% at 50% 0%, rgba(139, 0, 0, 0.08) 0%, transparent 55%),
+    linear-gradient(180deg, var(--stone-850) 0%, var(--primary-black-deep) 100%);
+}
+
+.env-zone--murim-pagoda {
+  background:
+    radial-gradient(ellipse 80% 35% at 50% 0%, rgba(218, 165, 32, 0.1) 0%, transparent 50%),
+    linear-gradient(180deg, #1a1410 0%, var(--primary-black-deep) 100%);
+}
+
+.env-zone--murim-pagoda .env-wall {
+  background: linear-gradient(90deg, #1a100c 0%, #2a1810 50%, #1a100c 100%);
+}
+
+.env-zone--knight-citadel {
+  background:
+    radial-gradient(ellipse 70% 30% at 50% 0%, rgba(100, 100, 110, 0.12) 0%, transparent 50%),
+    linear-gradient(180deg, #141418 0%, var(--primary-black-deep) 100%);
+}
+
+.env-zone--void-pinnacle {
+  background:
+    radial-gradient(ellipse 60% 50% at 50% 45%, rgba(197, 160, 89, 0.12) 0%, transparent 55%),
+    radial-gradient(ellipse 40% 30% at 50% 60%, rgba(178, 34, 34, 0.1) 0%, transparent 50%),
+    var(--primary-black-deep);
+}
+
+.env-zone--void-pinnacle .env-fog {
+  background: radial-gradient(
+    ellipse 80% 60% at 50% 50%,
+    rgba(0, 0, 0, 0.7) 0%,
+    transparent 70%
+  );
+}
+
+.env-zone--void-pinnacle .env-chains {
+  opacity: 0.15;
+}
+
+/* Tower floor blocks per zone */
+.tower-floor-block--zone-forgotten-dungeon {
+  background: var(--stone-800);
+  border-color: rgba(255, 255, 255, 0.06);
+}
+
+.tower-floor-block--zone-murim-pagoda {
+  background: linear-gradient(90deg, #2a1810, #1f1410);
+  border-color: rgba(178, 34, 34, 0.25);
+}
+
+.tower-floor-block--zone-knight-citadel {
+  background: linear-gradient(90deg, #2a2a32, #1e1e24);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.tower-floor-block--zone-void-pinnacle {
+  background: linear-gradient(90deg, #1a1a1a, #0d0d0d);
+  border-color: rgba(197, 160, 89, 0.3);
+}
+
+.tower-zone-label {
+  font-family: var(--font-display);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.view-readable .tower-zone-label {
+  color: var(--ink-black);
+  opacity: 0.65;
+}
+
+/* Home stage — vignette atmosphere, no grid-like wall bands §04 */
+.env-backdrop--home .env-wall {
+  display: none;
+}
+
+.env-backdrop--home::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 75% 65% at 50% 45%,
+    transparent 50%,
+    rgba(26, 22, 18, 0.06) 100%
+  );
+}
+
+.env-fog--home {
+  background: radial-gradient(
+    ellipse 100% 60% at 50% 80%,
+    rgba(218, 165, 32, 0.06) 0%,
+    transparent 60%
+  );
+  opacity: 0.5;
+  animation: env-fog-drift 24s ease-in-out infinite alternate;
+}
+
+.env-backdrop--home .env-illustration {
+  opacity: 0.2;
+  background-image:
+    radial-gradient(ellipse 40% 25% at 50% 90%, rgba(197, 160, 89, 0.12) 0%, transparent 70%);
+}
+
+@keyframes env-fog-drift {
+  from { transform: translateY(0); opacity: 0.65; }
+  to { transform: translateY(-3%); opacity: 0.8; }
+}
+
+@keyframes env-chains-sway {
+  0%, 100% { transform: translateX(-50%) rotate(0deg); }
+  50% { transform: translateX(-50%) rotate(0.6deg); }
+}
+
+@keyframes env-rain-fall {
+  from { background-position: 0 0; }
+  to { background-position: 0 24px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .env-fog,
+  .env-chains,
+  .env-rain {
+    animation: none;
+  }
+}

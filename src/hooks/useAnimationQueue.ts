@@ -8,6 +8,7 @@ import type {
 export type AnimationSpeed = 1 | 2 | 4;
 
 const BASE_EVENT_MS = 500;
+const MAX_DISPLAYED_EVENTS = 24;
 
 interface UseAnimationQueueOptions {
   onQueueComplete?: (finalState: BattleSnapshot) => void;
@@ -53,7 +54,12 @@ export function useAnimationQueue(options: UseAnimationQueueOptions = {}) {
       return;
     }
 
-    setDisplayedEvents((prev) => [...prev, next]);
+    setDisplayedEvents((prev) => {
+      const merged = [...prev, next];
+      return merged.length > MAX_DISPLAYED_EVENTS
+        ? merged.slice(-MAX_DISPLAYED_EVENTS)
+        : merged;
+    });
     timerRef.current = setTimeout(tick, BASE_EVENT_MS / speedRef.current);
   }, [complete]);
 

@@ -3,7 +3,10 @@ import { createDbPool } from "../db";
 import { errorHandler } from "./middleware/errorHandler";
 import { battleRoutes } from "./routes/battle";
 import { healthRoutes } from "./routes/health";
+import { shopRoutes } from "./routes/shop";
+import { skillRoutes } from "./routes/skills";
 import { userRoutes } from "./routes/users";
+import { walletRoutes } from "./routes/wallet";
 import type { ServerBindings, ServerVariables } from "./types";
 
 export function createApp(): Hono<{
@@ -34,6 +37,9 @@ export function createApp(): Hono<{
 
   app.route("/", healthRoutes);
   app.route("/api/users", userRoutes);
+  app.route("/api/users", walletRoutes);
+  app.route("/api/shop", shopRoutes);
+  app.route("/api/skills", skillRoutes);
   app.route("/api/battle", battleRoutes);
 
   return app;

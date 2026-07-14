@@ -1,0 +1,569 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 800" width="480" height="800">
+<defs>
+  <radialGradient id="kn-skin" cx="38%" cy="28%" r="68%">
+    <stop offset="0%" stop-color="#e8c9a8"/>
+    <stop offset="55%" stop-color="#c49a6c"/>
+    <stop offset="100%" stop-color="#8b6914"/>
+  </radialGradient>
+  <linearGradient id="kn-metal" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0%" stop-color="#8a8a96"/>
+    <stop offset="48%" stop-color="#5a5a64"/>
+    <stop offset="100%" stop-color="#3a3a44"/>
+  </linearGradient>
+  <radialGradient id="kn-demon" cx="35%" cy="25%" r="70%">
+    <stop offset="0%" stop-color="#b04040"/>
+    <stop offset="100%" stop-color="#8b2020"/>
+  </radialGradient>
+  <linearGradient id="kn-fur" x1="0.2" y1="0" x2="0.8" y2="1">
+    <stop offset="0%" stop-color="#5a4030"/>
+    <stop offset="100%" stop-color="#3a2820"/>
+  </linearGradient>
+  <filter id="kn-soft" x="-12%" y="-12%" width="124%" height="124%">
+    <feDropShadow dx="0" dy="2" stdDeviation="1.6" flood-color="#000" flood-opacity="0.35"/>
+  </filter>
+</defs>
+  <g transform="translate(0,4)">
+<ellipse cx="60" cy="186" rx="26" ry="6" fill="rgba(0,0,0,0.38)"/>
+  <g>
+    <path d="M36 58 Q60 46 84 58 L90 150 Q60 162 30 150 Z"
+      fill="#4a1010" stroke="#0d0d0d" stroke-width="1.05" opacity="0.92"/>
+    
+  <path d="M47 58 C36 66 30 88 32 114 L40 116 C38 92 42 72 52 64 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <circle cx="34" cy="118" r="6.5" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M53 110 C48 130 47 152 49 170 L58 170 C56 150 56 128 59 112 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <ellipse cx="53" cy="174" rx="8" ry="4.5" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M67 110 C72 130 73 152 71 170 L62 170 C64 150 64 128 61 112 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <ellipse cx="67" cy="174" rx="8" ry="4.5" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M50 104 Q60 112 70 104 L68 116 Q60 122 52 116 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M48 54 Q60 46 72 54 L76 108 Q60 116 44 108 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M73 58 C84 66 90 88 88 114 L80 116 C82 92 78 72 68 64 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <circle cx="86" cy="118" r="6.5" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <rect x="56.5" y="46" width="7" height="10" rx="2" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <ellipse cx="60" cy="38" rx="9" ry="10" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+    <path d="M50 68 L70 68" stroke="#3a3a44" stroke-width="1.8" opacity="0.4"/>
+    <ellipse cx="42" cy="58" rx="10" ry="7" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.95"/>
+    <ellipse cx="78" cy="58" rx="10" ry="7" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.95"/>
+    <path d="M48 28 Q60 16 72 28 L74 48 Q60 56 46 48 Z"
+      fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="1.25"/>
+    <rect x="52" y="38" width="16" height="4" rx="1" fill="#0d0d0d" opacity="0.9"/>
+    <ellipse cx="28" cy="100" rx="12" ry="16" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="1.1"/>
+    <ellipse cx="28" cy="100" rx="5.5" ry="8" fill="#8b0000" opacity="0.55"/>
+  </g>
+  </g>
+  <g transform="translate(120,1)">
+<ellipse cx="60" cy="186" rx="26" ry="6" fill="rgba(0,0,0,0.38)"/>
+  <g>
+    <path d="M36 58 Q60 46 84 58 L90 150 Q60 162 30 150 Z"
+      fill="#4a1010" stroke="#0d0d0d" stroke-width="1.05" opacity="0.92"/>
+    
+  <path d="M47 58 C36 66 30 88 32 114 L40 116 C38 92 42 72 52 64 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <circle cx="34" cy="118" r="6.5" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M53 110 C48 130 47 152 49 170 L58 170 C56 150 56 128 59 112 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <ellipse cx="53" cy="174" rx="8" ry="4.5" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M67 110 C72 130 73 152 71 170 L62 170 C64 150 64 128 61 112 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <ellipse cx="67" cy="174" rx="8" ry="4.5" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M50 104 Q60 112 70 104 L68 116 Q60 122 52 116 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M48 54 Q60 46 72 54 L76 108 Q60 116 44 108 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M73 58 C84 66 90 88 88 114 L80 116 C82 92 78 72 68 64 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <circle cx="86" cy="118" r="6.5" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <rect x="56.5" y="46" width="7" height="10" rx="2" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <ellipse cx="60" cy="38" rx="9" ry="10" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+    <path d="M50 68 L70 68" stroke="#3a3a44" stroke-width="1.8" opacity="0.4"/>
+    <ellipse cx="42" cy="58" rx="10" ry="7" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.95"/>
+    <ellipse cx="78" cy="58" rx="10" ry="7" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.95"/>
+    <path d="M48 28 Q60 16 72 28 L74 48 Q60 56 46 48 Z"
+      fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="1.25"/>
+    <rect x="52" y="38" width="16" height="4" rx="1" fill="#0d0d0d" opacity="0.9"/>
+    <ellipse cx="28" cy="100" rx="12" ry="16" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="1.1"/>
+    <ellipse cx="28" cy="100" rx="5.5" ry="8" fill="#8b0000" opacity="0.55"/>
+  </g>
+  </g>
+  <g transform="translate(240,4)">
+<ellipse cx="60" cy="186" rx="26" ry="6" fill="rgba(0,0,0,0.38)"/>
+  <g>
+    <path d="M36 58 Q60 46 84 58 L90 150 Q60 162 30 150 Z"
+      fill="#4a1010" stroke="#0d0d0d" stroke-width="1.05" opacity="0.92"/>
+    
+  <path d="M47 58 C36 66 30 88 32 114 L40 116 C38 92 42 72 52 64 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <circle cx="34" cy="118" r="6.5" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M53 110 C48 130 47 152 49 170 L58 170 C56 150 56 128 59 112 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <ellipse cx="53" cy="174" rx="8" ry="4.5" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M67 110 C72 130 73 152 71 170 L62 170 C64 150 64 128 61 112 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <ellipse cx="67" cy="174" rx="8" ry="4.5" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M50 104 Q60 112 70 104 L68 116 Q60 122 52 116 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M48 54 Q60 46 72 54 L76 108 Q60 116 44 108 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M73 58 C84 66 90 88 88 114 L80 116 C82 92 78 72 68 64 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <circle cx="86" cy="118" r="6.5" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <rect x="56.5" y="46" width="7" height="10" rx="2" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <ellipse cx="60" cy="38" rx="9" ry="10" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+    <path d="M50 68 L70 68" stroke="#3a3a44" stroke-width="1.8" opacity="0.4"/>
+    <ellipse cx="42" cy="58" rx="10" ry="7" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.95"/>
+    <ellipse cx="78" cy="58" rx="10" ry="7" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.95"/>
+    <path d="M48 28 Q60 16 72 28 L74 48 Q60 56 46 48 Z"
+      fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="1.25"/>
+    <rect x="52" y="38" width="16" height="4" rx="1" fill="#0d0d0d" opacity="0.9"/>
+    <ellipse cx="28" cy="100" rx="12" ry="16" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="1.1"/>
+    <ellipse cx="28" cy="100" rx="5.5" ry="8" fill="#8b0000" opacity="0.55"/>
+  </g>
+  </g>
+  <g transform="translate(360,2)">
+<ellipse cx="60" cy="186" rx="26" ry="6" fill="rgba(0,0,0,0.38)"/>
+  <g>
+    <path d="M36 58 Q60 46 84 58 L90 150 Q60 162 30 150 Z"
+      fill="#4a1010" stroke="#0d0d0d" stroke-width="1.05" opacity="0.92"/>
+    
+  <path d="M47 58 C36 66 30 88 32 114 L40 116 C38 92 42 72 52 64 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <circle cx="34" cy="118" r="6.5" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M53 110 C48 130 47 152 49 170 L58 170 C56 150 56 128 59 112 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <ellipse cx="53" cy="174" rx="8" ry="4.5" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M67 110 C72 130 73 152 71 170 L62 170 C64 150 64 128 61 112 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <ellipse cx="67" cy="174" rx="8" ry="4.5" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M50 104 Q60 112 70 104 L68 116 Q60 122 52 116 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M48 54 Q60 46 72 54 L76 108 Q60 116 44 108 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M73 58 C84 66 90 88 88 114 L80 116 C82 92 78 72 68 64 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <circle cx="86" cy="118" r="6.5" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <rect x="56.5" y="46" width="7" height="10" rx="2" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <ellipse cx="60" cy="38" rx="9" ry="10" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+    <path d="M50 68 L70 68" stroke="#3a3a44" stroke-width="1.8" opacity="0.4"/>
+    <ellipse cx="42" cy="58" rx="10" ry="7" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.95"/>
+    <ellipse cx="78" cy="58" rx="10" ry="7" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.95"/>
+    <path d="M48 28 Q60 16 72 28 L74 48 Q60 56 46 48 Z"
+      fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="1.25"/>
+    <rect x="52" y="38" width="16" height="4" rx="1" fill="#0d0d0d" opacity="0.9"/>
+    <ellipse cx="28" cy="100" rx="12" ry="16" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="1.1"/>
+    <ellipse cx="28" cy="100" rx="5.5" ry="8" fill="#8b0000" opacity="0.55"/>
+  </g>
+  </g>
+  <g transform="translate(0,203)">
+<ellipse cx="60" cy="186" rx="26" ry="6" fill="rgba(0,0,0,0.38)"/>
+  <g>
+    <path d="M36 58 Q60 46 84 58 L90 150 Q60 162 30 150 Z"
+      fill="#4a1010" stroke="#0d0d0d" stroke-width="1.05" opacity="0.92"/>
+    
+  <path d="M47 58 C36 66 30 88 32 114 L40 116 C38 92 42 72 52 64 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <circle cx="34" cy="118" r="6.5" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M53 110 C48 130 47 152 49 170 L58 170 C56 150 56 128 59 112 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <ellipse cx="53" cy="174" rx="8" ry="4.5" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M67 110 C72 130 73 152 71 170 L62 170 C64 150 64 128 61 112 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <ellipse cx="67" cy="174" rx="8" ry="4.5" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M50 104 Q60 112 70 104 L68 116 Q60 122 52 116 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M48 54 Q60 46 72 54 L76 108 Q60 116 44 108 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M73 58 C84 66 90 88 88 114 L80 116 C82 92 78 72 68 64 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <circle cx="86" cy="118" r="6.5" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <rect x="56.5" y="46" width="7" height="10" rx="2" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <ellipse cx="60" cy="38" rx="9" ry="10" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+    <path d="M50 68 L70 68" stroke="#3a3a44" stroke-width="1.8" opacity="0.4"/>
+    <ellipse cx="42" cy="58" rx="10" ry="7" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.95"/>
+    <ellipse cx="78" cy="58" rx="10" ry="7" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.95"/>
+    <path d="M48 28 Q60 16 72 28 L74 48 Q60 56 46 48 Z"
+      fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="1.25"/>
+    <rect x="52" y="38" width="16" height="4" rx="1" fill="#0d0d0d" opacity="0.9"/>
+    <ellipse cx="28" cy="100" rx="12" ry="16" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="1.1"/>
+    <ellipse cx="28" cy="100" rx="5.5" ry="8" fill="#8b0000" opacity="0.55"/>
+  </g>
+  </g>
+  <g transform="translate(126,202)">
+<ellipse cx="60" cy="186" rx="26" ry="6" fill="rgba(0,0,0,0.38)"/>
+  <g>
+    <path d="M36 58 Q60 46 84 58 L90 150 Q60 162 30 150 Z"
+      fill="#4a1010" stroke="#0d0d0d" stroke-width="1.05" opacity="0.92"/>
+    
+  <path d="M47 58 C36 66 30 88 32 114 L40 116 C38 92 42 72 52 64 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <circle cx="34" cy="118" r="6.5" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M53 110 C48 130 47 152 49 170 L58 170 C56 150 56 128 59 112 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <ellipse cx="53" cy="174" rx="8" ry="4.5" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M67 110 C72 130 73 152 71 170 L62 170 C64 150 64 128 61 112 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <ellipse cx="67" cy="174" rx="8" ry="4.5" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M50 104 Q60 112 70 104 L68 116 Q60 122 52 116 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M48 54 Q60 46 72 54 L76 108 Q60 116 44 108 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M73 58 C84 66 90 88 88 114 L80 116 C82 92 78 72 68 64 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <circle cx="86" cy="118" r="6.5" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <rect x="56.5" y="46" width="7" height="10" rx="2" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <ellipse cx="60" cy="38" rx="9" ry="10" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+    <path d="M50 68 L70 68" stroke="#3a3a44" stroke-width="1.8" opacity="0.4"/>
+    <ellipse cx="42" cy="58" rx="10" ry="7" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.95"/>
+    <ellipse cx="78" cy="58" rx="10" ry="7" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.95"/>
+    <path d="M48 28 Q60 16 72 28 L74 48 Q60 56 46 48 Z"
+      fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="1.25"/>
+    <rect x="52" y="38" width="16" height="4" rx="1" fill="#0d0d0d" opacity="0.9"/>
+    <ellipse cx="28" cy="100" rx="12" ry="16" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="1.1"/>
+    <ellipse cx="28" cy="100" rx="5.5" ry="8" fill="#8b0000" opacity="0.55"/>
+  </g>
+  </g>
+  <g transform="translate(252,200)">
+<ellipse cx="60" cy="186" rx="26" ry="6" fill="rgba(0,0,0,0.38)"/>
+  <g>
+    <path d="M36 58 Q60 46 84 58 L90 150 Q60 162 30 150 Z"
+      fill="#4a1010" stroke="#0d0d0d" stroke-width="1.05" opacity="0.92"/>
+    
+  <path d="M47 58 C36 66 30 88 32 114 L40 116 C38 92 42 72 52 64 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <circle cx="34" cy="118" r="6.5" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M53 110 C48 130 47 152 49 170 L58 170 C56 150 56 128 59 112 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <ellipse cx="53" cy="174" rx="8" ry="4.5" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M67 110 C72 130 73 152 71 170 L62 170 C64 150 64 128 61 112 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <ellipse cx="67" cy="174" rx="8" ry="4.5" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M50 104 Q60 112 70 104 L68 116 Q60 122 52 116 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M48 54 Q60 46 72 54 L76 108 Q60 116 44 108 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M73 58 C84 66 90 88 88 114 L80 116 C82 92 78 72 68 64 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <circle cx="86" cy="118" r="6.5" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <rect x="56.5" y="46" width="7" height="10" rx="2" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <ellipse cx="60" cy="38" rx="9" ry="10" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+    <path d="M50 68 L70 68" stroke="#3a3a44" stroke-width="1.8" opacity="0.4"/>
+    <ellipse cx="42" cy="58" rx="10" ry="7" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.95"/>
+    <ellipse cx="78" cy="58" rx="10" ry="7" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.95"/>
+    <path d="M48 28 Q60 16 72 28 L74 48 Q60 56 46 48 Z"
+      fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="1.25"/>
+    <rect x="52" y="38" width="16" height="4" rx="1" fill="#0d0d0d" opacity="0.9"/>
+    <ellipse cx="28" cy="100" rx="12" ry="16" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="1.1"/>
+    <ellipse cx="28" cy="100" rx="5.5" ry="8" fill="#8b0000" opacity="0.55"/>
+  </g>
+  </g>
+  <g transform="translate(365,202)">
+<ellipse cx="60" cy="186" rx="26" ry="6" fill="rgba(0,0,0,0.38)"/>
+  <g>
+    <path d="M36 58 Q60 46 84 58 L90 150 Q60 162 30 150 Z"
+      fill="#4a1010" stroke="#0d0d0d" stroke-width="1.05" opacity="0.92"/>
+    
+  <path d="M47 58 C36 66 30 88 32 114 L40 116 C38 92 42 72 52 64 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <circle cx="34" cy="118" r="6.5" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M53 110 C48 130 47 152 49 170 L58 170 C56 150 56 128 59 112 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <ellipse cx="53" cy="174" rx="8" ry="4.5" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M67 110 C72 130 73 152 71 170 L62 170 C64 150 64 128 61 112 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <ellipse cx="67" cy="174" rx="8" ry="4.5" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M50 104 Q60 112 70 104 L68 116 Q60 122 52 116 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M48 54 Q60 46 72 54 L76 108 Q60 116 44 108 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M73 58 C84 66 90 88 88 114 L80 116 C82 92 78 72 68 64 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <circle cx="86" cy="118" r="6.5" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <rect x="56.5" y="46" width="7" height="10" rx="2" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <ellipse cx="60" cy="38" rx="9" ry="10" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+    <path d="M50 68 L70 68" stroke="#3a3a44" stroke-width="1.8" opacity="0.4"/>
+    <ellipse cx="42" cy="58" rx="10" ry="7" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.95"/>
+    <ellipse cx="78" cy="58" rx="10" ry="7" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.95"/>
+    <path d="M48 28 Q60 16 72 28 L74 48 Q60 56 46 48 Z"
+      fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="1.25"/>
+    <rect x="52" y="38" width="16" height="4" rx="1" fill="#0d0d0d" opacity="0.9"/>
+    <ellipse cx="28" cy="100" rx="12" ry="16" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="1.1"/>
+    <ellipse cx="28" cy="100" rx="5.5" ry="8" fill="#8b0000" opacity="0.55"/>
+  </g>
+  </g>
+  <g transform="translate(-3,403)">
+<ellipse cx="60" cy="186" rx="26" ry="6" fill="rgba(0,0,0,0.38)"/>
+  <g>
+    <path d="M36 58 Q60 46 84 58 L90 150 Q60 162 30 150 Z"
+      fill="#4a1010" stroke="#0d0d0d" stroke-width="1.05" opacity="0.92"/>
+    
+  <path d="M47 58 C36 66 30 88 32 114 L40 116 C38 92 42 72 52 64 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <circle cx="34" cy="118" r="6.5" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M53 110 C48 130 47 152 49 170 L58 170 C56 150 56 128 59 112 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <ellipse cx="53" cy="174" rx="8" ry="4.5" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M67 110 C72 130 73 152 71 170 L62 170 C64 150 64 128 61 112 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <ellipse cx="67" cy="174" rx="8" ry="4.5" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M50 104 Q60 112 70 104 L68 116 Q60 122 52 116 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M48 54 Q60 46 72 54 L76 108 Q60 116 44 108 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M73 58 C84 66 90 88 88 114 L80 116 C82 92 78 72 68 64 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <circle cx="86" cy="118" r="6.5" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <rect x="56.5" y="46" width="7" height="10" rx="2" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <ellipse cx="60" cy="38" rx="9" ry="10" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+    <path d="M50 68 L70 68" stroke="#3a3a44" stroke-width="1.8" opacity="0.4"/>
+    <ellipse cx="42" cy="58" rx="10" ry="7" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.95"/>
+    <ellipse cx="78" cy="58" rx="10" ry="7" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.95"/>
+    <path d="M48 28 Q60 16 72 28 L74 48 Q60 56 46 48 Z"
+      fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="1.25"/>
+    <rect x="52" y="38" width="16" height="4" rx="1" fill="#0d0d0d" opacity="0.9"/>
+    <ellipse cx="28" cy="100" rx="12" ry="16" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="1.1"/>
+    <ellipse cx="28" cy="100" rx="5.5" ry="8" fill="#8b0000" opacity="0.55"/>
+  </g>
+  </g>
+  <g transform="translate(112,402) rotate(-4 60 100)">
+<ellipse cx="60" cy="186" rx="26" ry="6" fill="rgba(0,0,0,0.38)"/>
+  <g>
+    <path d="M36 58 Q60 46 84 58 L90 150 Q60 162 30 150 Z"
+      fill="#4a1010" stroke="#0d0d0d" stroke-width="1.05" opacity="0.92"/>
+    
+  <path d="M47 58 C36 66 30 88 32 114 L40 116 C38 92 42 72 52 64 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <circle cx="34" cy="118" r="6.5" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M53 110 C48 130 47 152 49 170 L58 170 C56 150 56 128 59 112 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <ellipse cx="53" cy="174" rx="8" ry="4.5" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M67 110 C72 130 73 152 71 170 L62 170 C64 150 64 128 61 112 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <ellipse cx="67" cy="174" rx="8" ry="4.5" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M50 104 Q60 112 70 104 L68 116 Q60 122 52 116 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M48 54 Q60 46 72 54 L76 108 Q60 116 44 108 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M73 58 C84 66 90 88 88 114 L80 116 C82 92 78 72 68 64 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <circle cx="86" cy="118" r="6.5" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <rect x="56.5" y="46" width="7" height="10" rx="2" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <ellipse cx="60" cy="38" rx="9" ry="10" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+    <path d="M50 68 L70 68" stroke="#3a3a44" stroke-width="1.8" opacity="0.4"/>
+    <ellipse cx="42" cy="58" rx="10" ry="7" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.95"/>
+    <ellipse cx="78" cy="58" rx="10" ry="7" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.95"/>
+    <path d="M48 28 Q60 16 72 28 L74 48 Q60 56 46 48 Z"
+      fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="1.25"/>
+    <rect x="52" y="38" width="16" height="4" rx="1" fill="#0d0d0d" opacity="0.9"/>
+    <ellipse cx="28" cy="100" rx="12" ry="16" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="1.1"/>
+    <ellipse cx="28" cy="100" rx="5.5" ry="8" fill="#8b0000" opacity="0.55"/>
+  </g>
+  </g>
+  <g transform="translate(234,404)">
+<ellipse cx="60" cy="186" rx="26" ry="6" fill="rgba(0,0,0,0.38)"/>
+  <g>
+    <path d="M36 58 Q60 46 84 58 L90 150 Q60 162 30 150 Z"
+      fill="#4a1010" stroke="#0d0d0d" stroke-width="1.05" opacity="0.92"/>
+    
+  <path d="M47 58 C36 66 30 88 32 114 L40 116 C38 92 42 72 52 64 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <circle cx="34" cy="118" r="6.5" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M53 110 C48 130 47 152 49 170 L58 170 C56 150 56 128 59 112 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <ellipse cx="53" cy="174" rx="8" ry="4.5" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M67 110 C72 130 73 152 71 170 L62 170 C64 150 64 128 61 112 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <ellipse cx="67" cy="174" rx="8" ry="4.5" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M50 104 Q60 112 70 104 L68 116 Q60 122 52 116 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M48 54 Q60 46 72 54 L76 108 Q60 116 44 108 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M73 58 C84 66 90 88 88 114 L80 116 C82 92 78 72 68 64 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <circle cx="86" cy="118" r="6.5" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <rect x="56.5" y="46" width="7" height="10" rx="2" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <ellipse cx="60" cy="38" rx="9" ry="10" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+    <path d="M50 68 L70 68" stroke="#3a3a44" stroke-width="1.8" opacity="0.4"/>
+    <ellipse cx="42" cy="58" rx="10" ry="7" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.95"/>
+    <ellipse cx="78" cy="58" rx="10" ry="7" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.95"/>
+    <path d="M48 28 Q60 16 72 28 L74 48 Q60 56 46 48 Z"
+      fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="1.25"/>
+    <rect x="52" y="38" width="16" height="4" rx="1" fill="#0d0d0d" opacity="0.9"/>
+    <ellipse cx="28" cy="100" rx="12" ry="16" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="1.1"/>
+    <ellipse cx="28" cy="100" rx="5.5" ry="8" fill="#8b0000" opacity="0.55"/>
+  </g>
+  </g>
+  <g transform="translate(357,405)">
+<ellipse cx="60" cy="186" rx="26" ry="6" fill="rgba(0,0,0,0.38)"/>
+  <g>
+    <path d="M36 58 Q60 46 84 58 L90 150 Q60 162 30 150 Z"
+      fill="#4a1010" stroke="#0d0d0d" stroke-width="1.05" opacity="0.92"/>
+    
+  <path d="M47 58 C36 66 30 88 32 114 L40 116 C38 92 42 72 52 64 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <circle cx="34" cy="118" r="6.5" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M53 110 C48 130 47 152 49 170 L58 170 C56 150 56 128 59 112 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <ellipse cx="53" cy="174" rx="8" ry="4.5" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M67 110 C72 130 73 152 71 170 L62 170 C64 150 64 128 61 112 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <ellipse cx="67" cy="174" rx="8" ry="4.5" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M50 104 Q60 112 70 104 L68 116 Q60 122 52 116 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M48 54 Q60 46 72 54 L76 108 Q60 116 44 108 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M73 58 C84 66 90 88 88 114 L80 116 C82 92 78 72 68 64 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <circle cx="86" cy="118" r="6.5" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <rect x="56.5" y="46" width="7" height="10" rx="2" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <ellipse cx="60" cy="38" rx="9" ry="10" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+    <path d="M50 68 L70 68" stroke="#3a3a44" stroke-width="1.8" opacity="0.4"/>
+    <ellipse cx="42" cy="58" rx="10" ry="7" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.95"/>
+    <ellipse cx="78" cy="58" rx="10" ry="7" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.95"/>
+    <path d="M48 28 Q60 16 72 28 L74 48 Q60 56 46 48 Z"
+      fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="1.25"/>
+    <rect x="52" y="38" width="16" height="4" rx="1" fill="#0d0d0d" opacity="0.9"/>
+    <ellipse cx="28" cy="100" rx="12" ry="16" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="1.1"/>
+    <ellipse cx="28" cy="100" rx="5.5" ry="8" fill="#8b0000" opacity="0.55"/>
+  </g>
+  </g>
+  <g transform="translate(0,604) rotate(-5 60 100)" opacity="1">
+<ellipse cx="60" cy="186" rx="26" ry="6" fill="rgba(0,0,0,0.38)"/>
+  <g>
+    <path d="M36 58 Q60 46 84 58 L90 150 Q60 162 30 150 Z"
+      fill="#4a1010" stroke="#0d0d0d" stroke-width="1.05" opacity="0.92"/>
+    
+  <path d="M47 58 C36 66 30 88 32 114 L40 116 C38 92 42 72 52 64 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <circle cx="34" cy="118" r="6.5" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M53 110 C48 130 47 152 49 170 L58 170 C56 150 56 128 59 112 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <ellipse cx="53" cy="174" rx="8" ry="4.5" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M67 110 C72 130 73 152 71 170 L62 170 C64 150 64 128 61 112 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <ellipse cx="67" cy="174" rx="8" ry="4.5" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M50 104 Q60 112 70 104 L68 116 Q60 122 52 116 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M48 54 Q60 46 72 54 L76 108 Q60 116 44 108 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M73 58 C84 66 90 88 88 114 L80 116 C82 92 78 72 68 64 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <circle cx="86" cy="118" r="6.5" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <rect x="56.5" y="46" width="7" height="10" rx="2" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <ellipse cx="60" cy="38" rx="9" ry="10" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+    <path d="M50 68 L70 68" stroke="#3a3a44" stroke-width="1.8" opacity="0.4"/>
+    <ellipse cx="42" cy="58" rx="10" ry="7" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.95"/>
+    <ellipse cx="78" cy="58" rx="10" ry="7" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.95"/>
+    <path d="M48 28 Q60 16 72 28 L74 48 Q60 56 46 48 Z"
+      fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="1.25"/>
+    <rect x="52" y="38" width="16" height="4" rx="1" fill="#0d0d0d" opacity="0.9"/>
+    <ellipse cx="28" cy="100" rx="12" ry="16" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="1.1"/>
+    <ellipse cx="28" cy="100" rx="5.5" ry="8" fill="#8b0000" opacity="0.55"/>
+  </g>
+  </g>
+  <g transform="translate(120,612) rotate(-14 60 100)" opacity="0.85">
+<ellipse cx="60" cy="186" rx="26" ry="6" fill="rgba(0,0,0,0.38)"/>
+  <g>
+    <path d="M36 58 Q60 46 84 58 L90 150 Q60 162 30 150 Z"
+      fill="#4a1010" stroke="#0d0d0d" stroke-width="1.05" opacity="0.92"/>
+    
+  <path d="M47 58 C36 66 30 88 32 114 L40 116 C38 92 42 72 52 64 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <circle cx="34" cy="118" r="6.5" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M53 110 C48 130 47 152 49 170 L58 170 C56 150 56 128 59 112 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <ellipse cx="53" cy="174" rx="8" ry="4.5" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M67 110 C72 130 73 152 71 170 L62 170 C64 150 64 128 61 112 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <ellipse cx="67" cy="174" rx="8" ry="4.5" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M50 104 Q60 112 70 104 L68 116 Q60 122 52 116 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M48 54 Q60 46 72 54 L76 108 Q60 116 44 108 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M73 58 C84 66 90 88 88 114 L80 116 C82 92 78 72 68 64 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <circle cx="86" cy="118" r="6.5" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <rect x="56.5" y="46" width="7" height="10" rx="2" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <ellipse cx="60" cy="38" rx="9" ry="10" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+    <path d="M50 68 L70 68" stroke="#3a3a44" stroke-width="1.8" opacity="0.4"/>
+    <ellipse cx="42" cy="58" rx="10" ry="7" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.95"/>
+    <ellipse cx="78" cy="58" rx="10" ry="7" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.95"/>
+    <path d="M48 28 Q60 16 72 28 L74 48 Q60 56 46 48 Z"
+      fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="1.25"/>
+    <rect x="52" y="38" width="16" height="4" rx="1" fill="#0d0d0d" opacity="0.9"/>
+    <ellipse cx="28" cy="100" rx="12" ry="16" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="1.1"/>
+    <ellipse cx="28" cy="100" rx="5.5" ry="8" fill="#8b0000" opacity="0.55"/>
+  </g>
+  </g>
+  <g transform="translate(240,620) rotate(-24 60 100)" opacity="0.5">
+<ellipse cx="60" cy="186" rx="26" ry="6" fill="rgba(0,0,0,0.38)"/>
+  <g>
+    <path d="M36 58 Q60 46 84 58 L90 150 Q60 162 30 150 Z"
+      fill="#4a1010" stroke="#0d0d0d" stroke-width="1.05" opacity="0.92"/>
+    
+  <path d="M47 58 C36 66 30 88 32 114 L40 116 C38 92 42 72 52 64 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <circle cx="34" cy="118" r="6.5" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M53 110 C48 130 47 152 49 170 L58 170 C56 150 56 128 59 112 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <ellipse cx="53" cy="174" rx="8" ry="4.5" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M67 110 C72 130 73 152 71 170 L62 170 C64 150 64 128 61 112 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <ellipse cx="67" cy="174" rx="8" ry="4.5" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M50 104 Q60 112 70 104 L68 116 Q60 122 52 116 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M48 54 Q60 46 72 54 L76 108 Q60 116 44 108 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M73 58 C84 66 90 88 88 114 L80 116 C82 92 78 72 68 64 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <circle cx="86" cy="118" r="6.5" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <rect x="56.5" y="46" width="7" height="10" rx="2" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <ellipse cx="60" cy="38" rx="9" ry="10" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+    <path d="M50 68 L70 68" stroke="#3a3a44" stroke-width="1.8" opacity="0.4"/>
+    <ellipse cx="42" cy="58" rx="10" ry="7" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.95"/>
+    <ellipse cx="78" cy="58" rx="10" ry="7" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.95"/>
+    <path d="M48 28 Q60 16 72 28 L74 48 Q60 56 46 48 Z"
+      fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="1.25"/>
+    <rect x="52" y="38" width="16" height="4" rx="1" fill="#0d0d0d" opacity="0.9"/>
+    <ellipse cx="28" cy="100" rx="12" ry="16" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="1.1"/>
+    <ellipse cx="28" cy="100" rx="5.5" ry="8" fill="#8b0000" opacity="0.55"/>
+  </g>
+  </g>
+  <g transform="translate(360,628) rotate(-32 60 100)" opacity="0.22">
+<ellipse cx="60" cy="186" rx="26" ry="6" fill="rgba(0,0,0,0.38)"/>
+  <g>
+    <path d="M36 58 Q60 46 84 58 L90 150 Q60 162 30 150 Z"
+      fill="#4a1010" stroke="#0d0d0d" stroke-width="1.05" opacity="0.92"/>
+    
+  <path d="M47 58 C36 66 30 88 32 114 L40 116 C38 92 42 72 52 64 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <circle cx="34" cy="118" r="6.5" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M53 110 C48 130 47 152 49 170 L58 170 C56 150 56 128 59 112 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <ellipse cx="53" cy="174" rx="8" ry="4.5" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M67 110 C72 130 73 152 71 170 L62 170 C64 150 64 128 61 112 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <ellipse cx="67" cy="174" rx="8" ry="4.5" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M50 104 Q60 112 70 104 L68 116 Q60 122 52 116 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M48 54 Q60 46 72 54 L76 108 Q60 116 44 108 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <path d="M73 58 C84 66 90 88 88 114 L80 116 C82 92 78 72 68 64 Z"
+    fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <circle cx="86" cy="118" r="6.5" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <rect x="56.5" y="46" width="7" height="10" rx="2" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+  <ellipse cx="60" cy="38" rx="9" ry="10" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.65"/>
+    <path d="M50 68 L70 68" stroke="#3a3a44" stroke-width="1.8" opacity="0.4"/>
+    <ellipse cx="42" cy="58" rx="10" ry="7" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.95"/>
+    <ellipse cx="78" cy="58" rx="10" ry="7" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="0.95"/>
+    <path d="M48 28 Q60 16 72 28 L74 48 Q60 56 46 48 Z"
+      fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="1.25"/>
+    <rect x="52" y="38" width="16" height="4" rx="1" fill="#0d0d0d" opacity="0.9"/>
+    <ellipse cx="28" cy="100" rx="12" ry="16" fill="url(#kn-metal)" stroke="#0d0d0d" stroke-width="1.1"/>
+    <ellipse cx="28" cy="100" rx="5.5" ry="8" fill="#8b0000" opacity="0.55"/>
+  </g>
+  </g>
+</svg>

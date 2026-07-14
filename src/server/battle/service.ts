@@ -5,8 +5,10 @@ import {
   findEntity,
 } from "../../engine/states";
 import type { AnimationEvent, PlayerIntent } from "../../engine/types";
-import { toCombatStats, resetPlayerHpAfterDefeat } from "../db/playerStats";
-import { getUserById, type DbPool } from "../db";
+import { getDefaultLoadout } from "../../engine/skills/loadout";
+import { resetPlayerHpAfterDefeat } from "../db/playerStats";
+import { getPlayerCombatStatsWithEquipment } from "../equipment/playerCombatStats";
+import { getPlayerLoadout, getPlayerUpgrades, getUserById, type DbPool } from "../db";
 import { createBattleState } from "./factory";
 import { grantBattleRewards } from "./rewards";
 import {
@@ -49,10 +51,24 @@ export async function startBattle(
       throw new BattleServiceError("User not found", "USER_NOT_FOUND", 404);
     }
 
+    const playerSkillPath = statsRow.active_skill_path ?? "murim";
+    const playerStats = await getPlayerCombatStatsWithEquipment(pool, statsRow);
+    const dbLoadout = await getPlayerLoadout(
+      pool,
+      input.userId,
+      playerSkillPath
+    );
+    const playerLoadout =
+      dbLoadout ?? getDefaultLoadout(playerSkillPath, playerStats.level);
+    const playerSkillUpgrades = await getPlayerUpgrades(pool, input.userId);
+
     const state = createBattleState(input.floor, {
       autoBattle: input.autoBattle ?? true,
-      playerStats: toCombatStats(statsRow),
+      playerStats,
       playerName: user.display_name,
+      playerSkillPath,
+      playerLoadout,
+      playerSkillUpgrades,
     });
 
     return createSession({

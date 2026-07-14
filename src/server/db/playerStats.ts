@@ -1,4 +1,7 @@
-import type { CombatStats } from "../../engine/types";
+import { calculateSpGrant } from "../../engine/skills/skillPoints";
+import type { CombatStats, SkillPath } from "../../engine/types";
+import { isBossFloor } from "../../engine/types";
+import { combatStatsForLevel, levelFromTotalExp } from "../../engine/formulas/playerProgression";
 import { parseBigInt, withTransaction, type DbClient, type DbPool } from "./client";
 
 export interface PlayerStatsRow {
@@ -20,12 +23,14 @@ export interface PlayerStatsRow {
   status_chance: string;
   status_resist: string;
   current_floor: number;
+  active_skill_path: SkillPath;
+  skill_points: number;
   updated_at: Date;
 }
 
 const STATS_COLUMNS = `user_id, level, exp, hp, max_hp, mp, max_mp, atk, def, speed,
   crit_chance, crit_damage, crit_resist, accuracy, evasion, status_chance, status_resist,
-  current_floor, updated_at`;
+  current_floor, active_skill_path, skill_points, updated_at`;
 
 function toNumber(value: string | number): number {
   return typeof value === "number" ? value : Number(value);
@@ -115,19 +120,41 @@ export async function applyBattleWinProgress(
       throw new Error(`Player stats not found for user ${userId}`);
     }
 
+    const oldLevel = stats.level;
     const newExp = parseBigInt(stats.exp) + BigInt(expGained);
     const nextFloor = Math.min(floor + 1, 100);
+    const newLevel = levelFromTotalExp(Number(newExp));
+    const levelStats = combatStatsForLevel(newLevel);
+    const spGrant = calculateSpGrant(oldLevel, newLevel, isBossFloor(floor));
 
     const result = await client.query<PlayerStatsRow>(
       `UPDATE player_stats
        SET exp = $2,
-           current_floor = GREATEST(current_floor, $3),
-           hp = max_hp,
-           mp = max_mp,
+           level = $3,
+           max_hp = $4,
+           max_mp = $5,
+           atk = $6,
+           def = $7,
+           speed = $8,
+           current_floor = GREATEST(current_floor, $9),
+           hp = $4,
+           mp = $5,
+           skill_points = skill_points + $10,
            updated_at = NOW()
        WHERE user_id = $1
        RETURNING ${STATS_COLUMNS}`,
-      [userId, newExp.toString(), nextFloor]
+      [
+        userId,
+        newExp.toString(),
+        levelStats.level,
+        levelStats.maxHp.toString(),
+        levelStats.maxMp.toString(),
+        levelStats.atk.toString(),
+        levelStats.def.toString(),
+        levelStats.speed.toString(),
+        nextFloor,
+        spGrant,
+      ]
     );
 
     return result.rows[0];
@@ -144,4 +171,40 @@ export async function resetPlayerHpAfterDefeat(
      WHERE user_id = $1`,
     [userId]
   );
+}
+
+export async function getPlayerSkillPath(
+  poolOrClient: DbPool | DbClient,
+  userId: string
+): Promise<SkillPath> {
+  const result = await poolOrClient.query<{ active_skill_path: SkillPath }>(
+    `SELECT active_skill_path FROM player_stats WHERE user_id = $1`,
+    [userId]
+  );
+
+  if (!result.rowCount) {
+    throw new Error(`Player stats not found for user ${userId}`);
+  }
+
+  return result.rows[0].active_skill_path;
+}
+
+export async function setPlayerSkillPath(
+  pool: DbPool,
+  userId: string,
+  path: SkillPath
+): Promise<SkillPath> {
+  const result = await pool.query<{ active_skill_path: SkillPath }>(
+    `UPDATE player_stats
+     SET active_skill_path = $2, updated_at = NOW()
+     WHERE user_id = $1
+     RETURNING active_skill_path`,
+    [userId, path]
+  );
+
+  if (!result.rowCount) {
+    throw new Error(`Player stats not found for user ${userId}`);
+  }
+
+  return result.rows[0].active_skill_path;
 }

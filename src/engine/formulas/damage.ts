@@ -11,5 +11,5 @@ export function calculateBaseDamage(
 ): StatValue {
   const defPercent = defToPercent(targetDef);
   const raw = attackerAtk * (1 - defPercent);
-  return Math.max(1, raw);
+  return Math.ceil(Math.max(1, raw));
 }

@@ -8,6 +8,8 @@ import type {
   InventoryItemRow,
 } from "./types";
 
+export type { InventoryItemRow };
+
 /** Gold credited when auto-dismantling one common item (lowest denomination). */
 export const COMMON_DISMANTLE_GOLD = 1n;
 
@@ -160,4 +162,20 @@ export async function listInventoryItems(
   );
 
   return result.rows;
+}
+
+export async function getInventoryItemById(
+  client: DbClient,
+  userId: string,
+  inventoryId: string
+): Promise<InventoryItemRow | null> {
+  const result = await client.query<InventoryItemRow>(
+    `SELECT id, user_id, item_id, quantity, rarity, created_at, updated_at
+     FROM inventory_items
+     WHERE id = $1 AND user_id = $2
+     FOR UPDATE`,
+    [inventoryId, userId]
+  );
+
+  return result.rows[0] ?? null;
 }

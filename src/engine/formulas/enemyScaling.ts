@@ -1,4 +1,10 @@
-import { ENEMY_EXPONENT_BASE, type EnemyBaseStats, type StatValue } from "../types";
+import {
+  BOSS_STAT_MULTIPLIER,
+  ENEMY_EXPONENT_BASE,
+  isBossFloor,
+  type EnemyBaseStats,
+  type StatValue,
+} from "../types";
 
 /**
  * Exponential scaling for HP, ATK, DEF:
@@ -36,12 +42,28 @@ export const DEFAULT_LINEAR_SCALING: LinearScalingConfig = {
   evasionIncrement: 0.5,
 };
 
+export function applyBossStatMultiplier(
+  stats: EnemyBaseStats,
+  floor: StatValue
+): EnemyBaseStats {
+  if (!isBossFloor(floor)) return stats;
+
+  return {
+    hp: Math.floor(stats.hp * BOSS_STAT_MULTIPLIER),
+    atk: Math.floor(stats.atk * BOSS_STAT_MULTIPLIER),
+    def: Math.floor(stats.def * BOSS_STAT_MULTIPLIER),
+    speed: stats.speed,
+    accuracy: stats.accuracy,
+    evasion: stats.evasion,
+  };
+}
+
 export function scaleEnemyStatsForFloor(
   base: EnemyBaseStats,
   floor: StatValue,
   linear: LinearScalingConfig = DEFAULT_LINEAR_SCALING
 ): EnemyBaseStats {
-  return {
+  const scaled = {
     hp: scaleExponentialStat(base.hp, floor),
     atk: scaleExponentialStat(base.atk, floor),
     def: scaleExponentialStat(base.def, floor),
@@ -49,4 +71,6 @@ export function scaleEnemyStatsForFloor(
     accuracy: scaleLinearStat(base.accuracy, floor, linear.accuracyIncrement),
     evasion: scaleLinearStat(base.evasion, floor, linear.evasionIncrement),
   };
+
+  return applyBossStatMultiplier(scaled, floor);
 }

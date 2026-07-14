@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "mcp-game-helper": {
+      "command": "node",
+      "args": ["node_modules/mcp-game-helper/dist/index.js"]
+    }
+  }
+}

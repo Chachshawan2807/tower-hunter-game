@@ -8,7 +8,7 @@ export function calculateDotDamage(
   percent: StatValue = DOT_HP_PERCENT
 ): StatValue {
   if (maxHp <= 0 || percent <= 0) return 0;
-  return Math.max(1, maxHp * percent);
+  return Math.ceil(Math.max(1, maxHp * percent));
 }
 
 export function applyDotDamage(

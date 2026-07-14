@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 640" fill="none">
+  <rect width="360" height="640" fill="#0d0d0d"/>
+  <rect x="0" y="0" width="80" height="640" fill="#18181c"/>
+  <rect x="280" y="0" width="80" height="640" fill="#18181c"/>
+  <!-- gothic arches -->
+  <path d="M72 80 Q180 20 288 80 L288 200 Q180 140 72 200 Z" fill="#2a2a32" opacity="0.5" stroke="#525252" stroke-width="1"/>
+  <path d="M72 280 Q180 220 288 280 L288 400 Q180 340 72 400 Z" fill="#1e1e24" opacity="0.45" stroke="#3d3d3d"/>
+  <path d="M72 480 Q180 420 288 480 L288 600 Q180 540 72 600 Z" fill="#2a2a32" opacity="0.4" stroke="#525252"/>
+  <!-- iron ribs -->
+  <path d="M80 0v640M280 0v640" stroke="#4a4a52" stroke-width="2" opacity="0.35"/>
+  <!-- rain atmosphere -->
+  <g opacity="0.08" stroke="#fff" stroke-width="1">
+    <path d="M40 0l-8 24M100 40l-8 24M200 20l-8 24M300 60l-8 24M320 100l-8 24"/>
+    <path d="M60 120l-8 24M160 80l-8 24M260 140l-8 24"/>
+  </g>
+  <ellipse cx="180" cy="120" rx="80" ry="40" fill="url(#citadel-light)"/>
+  <defs>
+    <radialGradient id="citadel-light" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#b4b4be" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#0d0d0d" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+</svg>
