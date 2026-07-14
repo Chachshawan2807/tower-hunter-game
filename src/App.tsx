@@ -1,32 +1,20 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { TowerView } from "./components/battle/TowerView";
-import { BottomNav, type NavTab } from "./components/layouts/BottomNav";
+import { BottomNav } from "./components/layouts/BottomNav";
 import { GameShell } from "./components/layouts/GameShell";
 import { MainStage } from "./components/layouts/MainStage";
-import { OverlayModal } from "./components/layouts/OverlayModal";
+import { MenuOverlay } from "./components/layouts/MenuOverlay";
 import { TopHud } from "./components/layouts/TopHud";
-import { BagMenu } from "./components/menu/BagMenu";
-import { CharacterMenu } from "./components/menu/CharacterMenu";
-import { ShopMenu } from "./components/menu/ShopMenu";
-import { SkillMenu } from "./components/menu/SkillMenu";
 import { useBattle } from "./hooks/useBattle";
 import { useLocale } from "./hooks/useLocale";
+import { isOverlayMenu, useMenuNavigation } from "./hooks/useMenuNavigation";
 import { usePlayer } from "./hooks/usePlayer";
 import { t } from "./utils/i18n";
-
-const OVERLAY_TABS: NavTab[] = ["character", "skills", "bag", "shop"];
-
-const OVERLAY_TITLES: Record<string, string> = {
-  character: "nav.character",
-  skills: "nav.skills",
-  bag: "nav.bag",
-  shop: "nav.shop",
-};
 
 export function App() {
   const { locale, toggleLocale } = useLocale();
   const player = usePlayer();
-  const [activeTab, setActiveTab] = useState<NavTab>("tower");
+  const { activeMenu, overlayOpen, selectTab, closeMenu } = useMenuNavigation();
   const [currentFloor, setCurrentFloor] = useState(1);
 
   useEffect(() => {
@@ -49,53 +37,105 @@ export function App() {
     }
   }, [battle.isComplete, battle.result, player.currentFloor]);
 
-  const overlayOpen = OVERLAY_TABS.includes(activeTab);
+  const isMainView = activeMenu === null;
+  const isTowerView = activeMenu === "tower";
+  const readableHud = isMainView || overlayOpen;
+
+  const battleLogEntries = useMemo(() => {
+    return battle.displayedEvents.map((ev) => {
+      switch (ev.type) {
+        case "damage":
+          return `💥 ${ev.value ?? 0}`;
+        case "miss":
+          return "💨 Miss";
+        case "critical":
+          return `⚡ Crit ${ev.value ?? ""}`;
+        case "dot_damage":
+          return `☠ DoT ${ev.value ?? 0}`;
+        case "cc_skip":
+          return "⏸ CC Skip";
+        case "debuff_apply":
+          return `☣ ${String(ev.metadata?.effectType ?? "debuff")}`;
+        case "heal":
+          return `💚 +${ev.value ?? 0}`;
+        case "battle_win":
+          return "🏆 Victory";
+        case "battle_lose":
+          return "💀 Defeat";
+        default:
+          return ev.type;
+      }
+    });
+  }, [battle.displayedEvents]);
 
   if (player.loading) {
-    return <div className="loading-screen">⚔</div>;
+    return (
+      <div className="loading-screen" role="status" aria-live="polite">
+        <div className="loading-screen__inner">
+          <span className="loading-screen__icon" aria-hidden="true">
+            ⚔
+          </span>
+          <span className="loading-screen__title">{t("loading", locale)}</span>
+          <div className="loading-screen__bar" aria-hidden="true">
+            <div className="loading-screen__bar-fill" />
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <GameShell locale={locale}>
-      <TopHud
-        locale={locale}
-        displayName={player.displayName}
-        level={player.level}
-        exp={player.exp}
-        gold={player.gold}
-        onToggleLocale={toggleLocale}
-      />
-
-      {activeTab === "tower" ? (
-        <div className="stage">
-          <TowerView
-            locale={locale}
-            currentFloor={currentFloor}
-            battle={battle}
-          />
-        </div>
-      ) : (
-        !overlayOpen && <MainStage />
-      )}
-
-      {overlayOpen && (
-        <OverlayModal
-          title={t(OVERLAY_TITLES[activeTab], locale)}
+    <GameShell locale={locale} battleLog={battleLogEntries} homeMode={isMainView}>
+      <div className={`game-viewport${readableHud ? " view-readable" : ""}`}>
+        <TopHud
           locale={locale}
-          onClose={() => setActiveTab("tower")}
-        >
-          {activeTab === "character" && (
-            <CharacterMenu locale={locale} stats={player.stats} />
-          )}
-          {activeTab === "skills" && <SkillMenu locale={locale} />}
-          {activeTab === "bag" && (
-            <BagMenu locale={locale} userId={player.userId} />
-          )}
-          {activeTab === "shop" && <ShopMenu locale={locale} />}
-        </OverlayModal>
-      )}
+          displayName={player.displayName}
+          level={player.level}
+          exp={player.exp}
+          gold={player.gold}
+          onToggleLocale={toggleLocale}
+        />
 
-      <BottomNav locale={locale} active={activeTab} onSelect={setActiveTab} />
+        {isMainView && (
+          <MainStage
+            locale={locale}
+            displayName={player.displayName}
+            skillPath={player.skillPath}
+            level={player.level}
+          />
+        )}
+
+        {isTowerView && (
+          <div className="stage">
+            <TowerView
+              locale={locale}
+              currentFloor={currentFloor}
+              skillPath={player.skillPath}
+              playerLevel={player.level}
+              battle={battle}
+            />
+          </div>
+        )}
+
+        {overlayOpen && isOverlayMenu(activeMenu) && (
+          <MenuOverlay
+            menu={activeMenu}
+            locale={locale}
+            userId={player.userId}
+            playerLevel={player.level}
+            skillPath={player.skillPath}
+            gold={player.gold}
+            stats={player.stats}
+            onClose={closeMenu}
+            onPathChange={player.changeSkillPath}
+            onPurchase={() => {
+              if (player.userId) player.refreshStats(player.userId);
+            }}
+          />
+        )}
+
+        <BottomNav locale={locale} active={activeMenu} onSelect={selectTab} />
+      </div>
     </GameShell>
   );
 }
