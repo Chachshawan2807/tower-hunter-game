@@ -217,7 +217,9 @@ export const BattleArena = memo(function BattleArena({
                 key={`${ev.type}-${i}-${ev.value ?? ""}`}
                 className={`battle-log__entry ${getBattleEventClass(ev)}`.trim()}
               >
-                <span className="battle-log__text">{formatBattleEvent(ev)}</span>
+                <span className="battle-log__text">
+                  {formatBattleEvent(ev, locale, snapshot?.entities)}
+                </span>
               </div>
             ))
           )}

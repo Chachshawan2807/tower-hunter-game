@@ -94,6 +94,8 @@ const STRINGS: Record<string, Record<Locale, string>> = {
   "loading": { en: "Ascending the tower…", th: "กำลังไต่หอคอย…" },
   "battle.player": { en: "You", th: "คุณ" },
   "battle.enemy": { en: "Enemy", th: "ศัตรู" },
+  "battle.used_player": { en: "You used {skill}", th: "คุณใช้ {skill}" },
+  "battle.used_enemy": { en: "{name} used {skill}", th: "{name} ใช้ {skill}" },
   "tower.boss": { en: "Boss floor", th: "ชั้นบอส" },
 };
 

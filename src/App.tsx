@@ -9,6 +9,7 @@ import { useBattle } from "./hooks/useBattle";
 import { useLocale } from "./hooks/useLocale";
 import { isOverlayMenu, useMenuNavigation } from "./hooks/useMenuNavigation";
 import { usePlayer } from "./hooks/usePlayer";
+import { formatBattleEvent } from "./components/battle/battleLog";
 import { t } from "./utils/i18n";
 
 export function App() {
@@ -44,6 +45,8 @@ export function App() {
   const battleLogEntries = useMemo(() => {
     return battle.displayedEvents.map((ev) => {
       switch (ev.type) {
+        case "attack":
+          return `⚔ ${formatBattleEvent(ev, locale, battle.battleSnapshot?.entities)}`;
         case "damage":
           return `💥 ${ev.value ?? 0}`;
         case "miss":
@@ -66,7 +69,7 @@ export function App() {
           return ev.type;
       }
     });
-  }, [battle.displayedEvents]);
+  }, [battle.displayedEvents, battle.battleSnapshot?.entities, locale]);
 
   if (player.loading) {
     return (
