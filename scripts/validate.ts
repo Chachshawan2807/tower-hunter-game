@@ -10,11 +10,12 @@ import {
   levelFromTotalExp,
   totalExpForLevel,
 } from "../src/engine/formulas";
-import { createBattleState } from "../src/server/battle/factory";
-import { advanceBattleStep } from "../src/engine/states";
+import { createBattleState, DEFAULT_PLAYER_STATS } from "../src/server/battle/factory";
+import { advanceBattleStep, resolveActionChoice } from "../src/engine/states";
 import { validateManualAction } from "../src/engine/states/actionChoice";
 import { applyStatusOnHit } from "../src/engine/status";
 import {
+  canUseSkill,
   getSkillById,
   getSkillsForPath,
   pickAutoSkill,
@@ -57,6 +58,18 @@ function assert(condition: boolean, label: string) {
     failed++;
     console.error(`  ✗ ${label}`);
   }
+}
+
+function withReadyActor(
+  state: ReturnType<typeof createBattleState>,
+  actorId: string
+) {
+  return {
+    ...state,
+    entities: state.entities.map((entity) =>
+      entity.id === actorId ? { ...entity, actionGauge: 100 } : entity
+    ),
+  };
 }
 
 console.log("=== Validation: Player Stats Mapping ===");
@@ -117,7 +130,6 @@ for (let i = 0; i < 10; i++) {
 assert(isGaugeReady(gauge), "speed 100 fills gauge in 10 ticks");
 
 console.log("\n=== Validation: Player Progression ===");
-
 assert(levelFromTotalExp(0) === 1, "0 exp is level 1");
 assert(levelFromTotalExp(35) === 2, "35 exp reaches level 2");
 assert(levelFromTotalExp(170) === 5, "170 exp unlocks slot-2 skills");
@@ -137,7 +149,7 @@ const floor10Boss = scaleEnemyStatsForFloor(
 assert(floor10Boss.hp > 400, "boss floor 10 has 1.5x HP multiplier");
 assert(totalExpForLevel(15) <= 1050, "level 15 reachable by floor 15 climb");
 
-console.log("\n=== Validation: Skill System ===");
+console.log("\n=== Validation: Skill Catalog ===");
 assert(
   SKILL_UNLOCK_LEVELS.join(",") === "1,5,10,15",
   "unlock levels are 1/5/10/15"
@@ -155,83 +167,22 @@ assert(bash.guaranteedStatus === "stun" && bash.unlockLevel === 10, "knight bash
 const meteor = getSkillById("fantasy_meteor");
 assert(meteor.defPierce === 0.5 && meteor.unlockLevel === 15, "fantasy meteor");
 
-const battleState = createBattleState(1, { playerSkillPath: "knight" });
-assert(battleState.playerSkillPath === "knight", "battle state stores skill path");
-assert(
-  battleState.playerLoadout.activeSlots[0] === "knight_slash",
-  "battle state has default knight loadout"
-);
-assert(
-  Object.keys(battleState.playerSkillUpgrades).length === 0,
-  "battle state defaults empty skill upgrades"
-);
-
-const knightPlayer = battleState.entities[0];
-const knightFullPool = [
-  ...new Set([
-    ...battleState.playerLoadout.activeSlots,
-    ...deriveAutoSkills(
-      ["knight_slash"],
-      battleState.playerLoadout.activeSlots
-    ),
-  ]),
-];
-const slashPick = pickAutoSkill(
-  knightPlayer,
-  "knight",
-  knightFullPool,
-  {},
-  () => 0.99
-);
-assert(slashPick.id === "knight_slash", "level 1 knight AI uses slash from loadout pool");
-
-const highLevelKnight = {
-  ...knightPlayer,
-  stats: { ...knightPlayer.stats, level: 15, mp: 200 },
-};
-const knightL15Loadout: [string, string] = ["knight_slash", "knight_charge"];
-const knightL15Pool = [
-  ...new Set([
-    ...knightL15Loadout,
-    ...deriveAutoSkills(
-      ["knight_slash", "knight_guard", "knight_bash", "knight_charge"],
-      knightL15Loadout
-    ),
-  ]),
-];
-const chargePick = pickAutoSkill(
-  highLevelKnight,
-  "knight",
-  knightL15Pool,
-  {},
-  () => 0.99
-);
-assert(chargePick.id === "knight_charge", "level 15 knight AI picks highest autoPriority attack");
-
-const knightAutoOnlyPool = deriveAutoSkills(
-  ["knight_slash", "knight_guard", "knight_bash", "knight_charge"],
-  knightL15Loadout
-);
-const autoOnlyPick = pickAutoSkill(
-  highLevelKnight,
-  "knight",
-  knightAutoOnlyPool,
-  {},
-  () => 0.99
-);
-assert(
-  autoOnlyPick.id === "knight_bash",
-  "auto-only pool excludes active slots and picks best auto skill"
-);
-
-assert(isSkillUnlocked(getSkillById("murim_palm"), 1), "slot 1 unlocked at Lv1");
+assert(isSkillUnlocked(palm, 1), "slot 1 unlocked at Lv1");
 assert(!isSkillUnlocked(getSkillById("murim_dash"), 1), "slot 2 locked before Lv5");
 assert(isSkillUnlocked(getSkillById("murim_qi"), 10), "slot 3 unlocked at Lv10");
 assert(!isSkillUnlocked(getSkillById("murim_qi"), 9), "slot 3 locked before Lv10");
 
-const palmCds = applySkillCooldown(knightPlayer.skillCooldowns, palm);
+const cooldownEntity: BattleEntity = {
+  id: "player",
+  side: "player",
+  name: "Hero",
+  stats: DEFAULT_PLAYER_STATS,
+  actionGauge: 0,
+  statusEffects: [],
+  skillCooldowns: {},
+};
+const palmCds = applySkillCooldown(cooldownEntity.skillCooldowns, palm);
 assert(palmCds.murim_palm === palm.cooldownTurns, "skill cooldown applied on use");
-
 const tickedCds = tickSkillCooldowns(palmCds);
 assert(
   tickedCds.murim_palm === palm.cooldownTurns - 1,
@@ -239,12 +190,52 @@ assert(
 );
 
 console.log("\n=== Validation: Skill Loadout ===");
-const defaultMurim = getDefaultLoadout("murim", 1);
-assert(defaultMurim.activeSlots[0] === "murim_palm", "default active slot 1");
+assert(
+  getDefaultLoadout("murim", 1).activeSlots[0] === "murim_palm",
+  "murim default active slot 1 at Lv1"
+);
+assert(
+  getDefaultLoadout("knight", 1).activeSlots[0] === "knight_slash",
+  "knight default active slot 1 at Lv1"
+);
+assert(
+  getDefaultLoadout("fantasy", 1).activeSlots[0] === "fantasy_bolt",
+  "fantasy default active slot 1 at Lv1"
+);
+assert(
+  getDefaultLoadout("murim", 15).activeSlots[1] === "murim_dragon",
+  "murim default slot 2 uses dragon at Lv15"
+);
 
-const unlocked3 = ["murim_palm", "murim_dash", "murim_qi"];
-const auto = deriveAutoSkills(unlocked3, ["murim_palm", "murim_qi"]);
-assert(auto.length === 1 && auto[0] === "murim_dash", "auto derives remainder");
+assert(
+  deriveAutoSkills(["murim_palm"], ["murim_palm", "murim_palm"]).length === 0,
+  "1 unlocked skill → 0 auto slots"
+);
+assert(
+  deriveAutoSkills(
+    ["murim_palm", "murim_dash"],
+    ["murim_palm", "murim_dash"]
+  ).length === 0,
+  "2 unlocked skills → 0 auto slots"
+);
+assert(
+  deriveAutoSkills(
+    ["murim_palm", "murim_dash", "murim_qi"],
+    ["murim_palm", "murim_qi"]
+  ).length === 1 &&
+    deriveAutoSkills(
+      ["murim_palm", "murim_dash", "murim_qi"],
+      ["murim_palm", "murim_qi"]
+    )[0] === "murim_dash",
+  "3 unlocked skills → 1 auto slot"
+);
+assert(
+  deriveAutoSkills(
+    ["murim_palm", "murim_dash", "murim_qi", "murim_dragon"],
+    ["murim_palm", "murim_dragon"]
+  ).length === 2,
+  "4 unlocked skills → 2 auto slots"
+);
 
 assert(
   !validateLoadout("murim", ["murim_palm", "murim_palm"], 5).valid,
@@ -314,18 +305,41 @@ assert(
   "buff skill ignores damage branch"
 );
 
-console.log("\n=== Validation: Enemy Templates ===");
-assert(resolveEnemyTemplate(15).id === "guardian_low", "floor 15 normal");
-assert(resolveEnemyTemplate(50).id === "boss_mid", "floor 50 boss mid");
+console.log("\n=== Validation: Skill Points ===");
+assert(spCostForNextRank(0) === 1, "rank 0→1 costs 1 SP");
+assert(spCostForNextRank(1) === 2, "rank 1→2 costs 2 SP");
+assert(spCostForNextRank(2) === 3, "rank 2→3 costs 3 SP");
 assert(
-  resolveEnemyTemplate(50).skillIds.length === 3,
-  "boss mid has 3 skills"
+  spCostForNextRank(0) + spCostForNextRank(1) + spCostForNextRank(2) === 6,
+  "escalating SP cost totals 6 for full branch"
 );
 
-const floor15Battle = createBattleState(15, { playerSkillPath: "knight" });
-const floor15Enemy = floor15Battle.entities.find((e) => e.side === "enemy")!;
+assert(calculateSpGrant(4, 5, false) === 1, "single level up grants +1 SP");
+assert(calculateSpGrant(1, 3, false) === 2, "two level ups grant +2 SP");
+assert(calculateSpGrant(5, 5, true) === 2, "boss floor grants +2 SP");
+
 assert(
-  floor15Enemy.enemyTemplateId === "guardian_low",
+  canUpgradeBranch(palm, "damage", { damage: 3, cooldown: 0, mpCost: 0 })
+    .allowed === false,
+  "cannot upgrade beyond rank 3"
+);
+
+console.log("\n=== Validation: Enemy Templates ===");
+const floor15Template = resolveEnemyTemplate(15);
+assert(floor15Template.id === "guardian_low", "floor 15 → guardian_low");
+assert(
+  floor15Template.skillIds.includes("enemy_heavy_blow"),
+  "floor 15 guardian uses heavy_blow"
+);
+
+const floor50Template = resolveEnemyTemplate(50);
+assert(floor50Template.id === "boss_mid", "floor 50 boss → boss_mid");
+assert(floor50Template.skillIds.length === 3, "boss mid has 3 skills");
+
+const floor15Battle = createBattleState(15, { playerSkillPath: "knight" });
+const floor15EnemyEntity = floor15Battle.entities.find((e) => e.side === "enemy")!;
+assert(
+  floor15EnemyEntity.enemyTemplateId === "guardian_low",
   "factory sets enemyTemplateId on normal floor"
 );
 
@@ -357,9 +371,23 @@ const bossEnemyBase: BattleEntity = {
   skillCooldowns: {},
 };
 
+assert(
+  canUseSkill(bossEnemyBase, palm, 1),
+  "canUseSkill skips MP check for enemies"
+);
+const playerNoMp: BattleEntity = {
+  ...bossEnemyBase,
+  side: "player",
+  stats: { ...bossEnemyBase.stats, mp: 0, maxMp: 100 },
+};
+assert(
+  !canUseSkill(playerNoMp, palm, 10),
+  "player cannot use skill without MP"
+);
+
 const bossMidPick = pickEnemySkill(
   bossEnemyBase,
-  resolveEnemyTemplate(50),
+  floor50Template,
   () => 0.5
 );
 assert(
@@ -373,7 +401,7 @@ const bossMidOnCd: BattleEntity = {
 };
 const bossMidFallback = pickEnemySkill(
   bossMidOnCd,
-  resolveEnemyTemplate(50),
+  floor50Template,
   () => 0.5
 );
 assert(
@@ -388,7 +416,7 @@ const lowHpBoss: BattleEntity = {
 const healPick = pickEnemySkill(lowHpBoss, BOSS_LATE, () => 0.99);
 assert(
   healPick.id === "enemy_regenerate",
-  "low HP boss forces regenerate when ready"
+  "enemy HP < 30% prefers regenerate"
 );
 
 const lowHpBossRegenCd: BattleEntity = {
@@ -401,17 +429,87 @@ assert(
   "regenerate not forced when on cooldown"
 );
 
-console.log("\n=== Validation: Skill Points ===");
-assert(spCostForNextRank(0) === 1, "rank 0→1 costs 1 SP");
-assert(spCostForNextRank(2) === 3, "rank 2→3 costs 3 SP");
+console.log("\n=== Validation: Battle Integration ===");
+const knightL15Stats = {
+  ...DEFAULT_PLAYER_STATS,
+  level: 15,
+  mp: 200,
+};
+const knightL15Loadout: [string, string] = ["knight_slash", "knight_charge"];
+const knightUnlocked = [
+  "knight_slash",
+  "knight_guard",
+  "knight_bash",
+  "knight_charge",
+];
 
-assert(calculateSpGrant(1, 3, false) === 2, "2 level ups = 2 SP");
-assert(calculateSpGrant(5, 5, true) === 2, "boss grants 2 SP");
+const highLevelKnight: BattleEntity = {
+  id: "player",
+  side: "player",
+  name: "Hero",
+  stats: knightL15Stats,
+  actionGauge: 100,
+  statusEffects: [],
+  skillCooldowns: {},
+};
 
+const autoOnlyPool = deriveAutoSkills(knightUnlocked, knightL15Loadout);
+const autoOnlyPick = pickAutoSkill(
+  highLevelKnight,
+  "knight",
+  autoOnlyPool,
+  {},
+  () => 0.99
+);
 assert(
-  canUpgradeBranch(palm, "damage", { damage: 3, cooldown: 0, mpCost: 0 })
-    .allowed === false,
-  "cannot upgrade beyond rank 3"
+  autoOnlyPick.id === "knight_bash",
+  "auto pool excludes active slots when no manual input"
+);
+
+const autoBattleState = withReadyActor(
+  createBattleState(1, {
+    autoBattle: true,
+    playerSkillPath: "knight",
+    playerStats: knightL15Stats,
+    playerLoadout: { path: "knight", activeSlots: knightL15Loadout },
+  }),
+  "player"
+);
+const autoBattleAction = resolveActionChoice(autoBattleState, "player");
+assert(
+  autoBattleAction?.skillId === "knight_charge",
+  "auto-battle uses full pool including active slots"
+);
+
+const manualBattleState = withReadyActor(
+  createBattleState(1, {
+    autoBattle: false,
+    playerSkillPath: "knight",
+    playerStats: knightL15Stats,
+    playerLoadout: { path: "knight", activeSlots: knightL15Loadout },
+  }),
+  "player"
+);
+assert(
+  resolveActionChoice(manualBattleState, "player") === null,
+  "manual mode waits for player input"
+);
+
+const bossBattle = withReadyActor(
+  createBattleState(50, { playerSkillPath: "murim" }),
+  "enemy_floor_50"
+);
+const enemyAction = resolveActionChoice(bossBattle, "enemy_floor_50");
+assert(
+  enemyAction !== null && enemyAction.skillId.startsWith("enemy_"),
+  "enemy turn executes enemy skill"
+);
+
+const battleState = createBattleState(1, { playerSkillPath: "knight" });
+assert(battleState.playerSkillPath === "knight", "battle state stores skill path");
+assert(
+  battleState.playerLoadout.activeSlots[0] === "knight_slash",
+  "battle state has default knight loadout"
 );
 
 console.log("\n=== Validation: Status On Hit ===");
