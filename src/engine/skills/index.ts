@@ -25,6 +25,8 @@ export {
 } from "./enemyTemplates";
 export type { EnemyTemplate } from "./enemyTemplates";
 
+export { pickEnemySkill } from "./enemyAi";
+
 export {
   getSkillById,
   getSkillsForPath,

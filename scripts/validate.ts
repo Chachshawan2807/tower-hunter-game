@@ -33,7 +33,12 @@ import {
   canUpgradeBranch,
 } from "../src/engine/skills/skillPoints";
 import { SKILL_UNLOCK_LEVELS } from "../src/engine/skills/types";
-import { resolveEnemyTemplate } from "../src/engine/skills/enemyTemplates";
+import {
+  BOSS_LATE,
+  resolveEnemyTemplate,
+} from "../src/engine/skills/enemyTemplates";
+import { pickEnemySkill } from "../src/engine/skills/enemyAi";
+import type { BattleEntity } from "../src/engine/types";
 import { toCombatStats } from "../src/server/db/playerStats";
 import {
   BattleValidationError,
@@ -251,6 +256,78 @@ const floor15Enemy = floor15Battle.entities.find((e) => e.side === "enemy")!;
 assert(
   floor15Enemy.enemyTemplateId === "guardian_low",
   "factory sets enemyTemplateId on normal floor"
+);
+
+console.log("\n=== Validation: Enemy AI ===");
+const bossEnemyBase: BattleEntity = {
+  id: "enemy_test",
+  side: "enemy",
+  name: "Boss",
+  stats: {
+    level: 1,
+    exp: 0,
+    hp: 500,
+    maxHp: 1000,
+    mp: 0,
+    maxMp: 0,
+    atk: 50,
+    def: 20,
+    speed: 80,
+    critChance: 0,
+    critDamage: 1.5,
+    critResist: 0,
+    accuracy: 90,
+    evasion: 5,
+    statusChance: 0,
+    statusResist: 0,
+  },
+  actionGauge: 100,
+  statusEffects: [],
+  skillCooldowns: {},
+};
+
+const bossMidPick = pickEnemySkill(
+  bossEnemyBase,
+  resolveEnemyTemplate(50),
+  () => 0.5
+);
+assert(
+  bossMidPick.id === "enemy_stun_smash",
+  "boss mid AI picks highest-priority ready skill"
+);
+
+const bossMidOnCd: BattleEntity = {
+  ...bossEnemyBase,
+  skillCooldowns: { enemy_stun_smash: 2 },
+};
+const bossMidFallback = pickEnemySkill(
+  bossMidOnCd,
+  resolveEnemyTemplate(50),
+  () => 0.5
+);
+assert(
+  bossMidFallback.id === "enemy_slam",
+  "enemy AI skips skills on cooldown"
+);
+
+const lowHpBoss: BattleEntity = {
+  ...bossEnemyBase,
+  stats: { ...bossEnemyBase.stats, hp: 200, maxHp: 1000 },
+};
+const healPick = pickEnemySkill(lowHpBoss, BOSS_LATE, () => 0.99);
+assert(
+  healPick.id === "enemy_regenerate",
+  "low HP boss forces regenerate when ready"
+);
+
+const lowHpBossRegenCd: BattleEntity = {
+  ...lowHpBoss,
+  skillCooldowns: { enemy_regenerate: 3 },
+};
+const noHealPick = pickEnemySkill(lowHpBossRegenCd, BOSS_LATE, () => 0.5);
+assert(
+  noHealPick.id !== "enemy_regenerate",
+  "regenerate not forced when on cooldown"
 );
 
 console.log("\n=== Validation: Skill Points ===");
