@@ -20,11 +20,14 @@ export {
   processWalletTransaction,
   processWalletTransactionClient,
   getWalletBalance,
+  listWalletLedger,
 } from "./wallet";
 
 export {
   createUser,
   getUserById,
+  getUserByExternalId,
+  updateDisplayName,
   setAutoDismantleCommon,
 } from "./users";
 
@@ -32,8 +35,15 @@ export {
   getPlayerStats,
   toCombatStats,
   applyBattleWinProgress,
+  getPlayerSkillPath,
+  setPlayerSkillPath,
   type PlayerStatsRow,
 } from "./playerStats";
+
+export {
+  getPlayerLoadout,
+  upsertPlayerLoadout,
+} from "./skillLoadout";
 
 export {
   addItemToInventory,
