@@ -1,4 +1,5 @@
 import { scaleEnemyStatsForFloor } from "../../engine/formulas";
+import { resolveEnemyTemplate } from "../../engine/skills/enemyTemplates";
 import { getDefaultLoadout, type SkillLoadout } from "../../engine/skills/loadout";
 import type { SkillUpgradeRanks } from "../../engine/skills/types";
 import type { BattleState } from "../../engine/states";
@@ -23,15 +24,6 @@ export const DEFAULT_PLAYER_STATS: CombatStats = {
   statusResist: 0.05,
 };
 
-const ENEMY_BASE = {
-  hp: 200,
-  atk: 30,
-  def: 15,
-  speed: 80,
-  accuracy: 90,
-  evasion: 5,
-};
-
 function buildPlayerEntity(stats: CombatStats, name: string): BattleEntity {
   return {
     id: "player",
@@ -45,13 +37,14 @@ function buildPlayerEntity(stats: CombatStats, name: string): BattleEntity {
 }
 
 function buildEnemyEntity(floor: number): BattleEntity {
-  const scaled = scaleEnemyStatsForFloor(ENEMY_BASE, floor);
-  const boss = floor > 0 && floor % 10 === 0;
+  const template = resolveEnemyTemplate(floor);
+  const scaled = scaleEnemyStatsForFloor(template.baseStats, floor);
 
   return {
     id: `enemy_floor_${floor}`,
     side: "enemy",
-    name: boss ? `Floor ${floor} Boss` : `Floor ${floor} Guardian`,
+    name: template.nameKey,
+    enemyTemplateId: template.id,
     stats: {
       level: floor,
       exp: 0,

@@ -33,6 +33,7 @@ import {
   canUpgradeBranch,
 } from "../src/engine/skills/skillPoints";
 import { SKILL_UNLOCK_LEVELS } from "../src/engine/skills/types";
+import { resolveEnemyTemplate } from "../src/engine/skills/enemyTemplates";
 import { toCombatStats } from "../src/server/db/playerStats";
 import {
   BattleValidationError,
@@ -235,6 +236,21 @@ const qiDamage3 = resolveEffectiveSkill(qi, {
 assert(
   qiDamage3.damageMultiplier === undefined,
   "buff skill ignores damage branch"
+);
+
+console.log("\n=== Validation: Enemy Templates ===");
+assert(resolveEnemyTemplate(15).id === "guardian_low", "floor 15 normal");
+assert(resolveEnemyTemplate(50).id === "boss_mid", "floor 50 boss mid");
+assert(
+  resolveEnemyTemplate(50).skillIds.length === 3,
+  "boss mid has 3 skills"
+);
+
+const floor15Battle = createBattleState(15, { playerSkillPath: "knight" });
+const floor15Enemy = floor15Battle.entities.find((e) => e.side === "enemy")!;
+assert(
+  floor15Enemy.enemyTemplateId === "guardian_low",
+  "factory sets enemyTemplateId on normal floor"
 );
 
 console.log("\n=== Validation: Skill Points ===");

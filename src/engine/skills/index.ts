@@ -13,6 +13,19 @@ export { FANTASY_SKILLS } from "./fantasy";
 export { ENEMY_SKILLS } from "./enemy";
 
 export {
+  resolveEnemyTemplate,
+  getEnemyTemplateById,
+  ENEMY_TEMPLATES,
+  GUARDIAN_LOW,
+  GUARDIAN_MID,
+  GUARDIAN_HIGH,
+  BOSS_EARLY,
+  BOSS_MID,
+  BOSS_LATE,
+} from "./enemyTemplates";
+export type { EnemyTemplate } from "./enemyTemplates";
+
+export {
   getSkillById,
   getSkillsForPath,
   getAllSkills,
