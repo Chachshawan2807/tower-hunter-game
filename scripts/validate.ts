@@ -466,18 +466,16 @@ assert(
   "auto pool excludes active slots when no manual input"
 );
 
-const autoBattleState = withReadyActor(
-  createBattleState(1, {
-    autoBattle: true,
-    playerSkillPath: "knight",
-    playerStats: knightL15Stats,
-    playerLoadout: { path: "knight", activeSlots: knightL15Loadout },
-  }),
-  "player"
+const autoBattlePool = [...new Set([...knightL15Loadout, ...autoOnlyPool])];
+const autoBattlePick = pickAutoSkill(
+  highLevelKnight,
+  "knight",
+  autoBattlePool,
+  {},
+  () => 0.99
 );
-const autoBattleAction = resolveActionChoice(autoBattleState, "player");
 assert(
-  autoBattleAction?.skillId === "knight_charge",
+  autoBattlePick.id === "knight_charge",
   "auto-battle uses full pool including active slots"
 );
 

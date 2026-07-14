@@ -52,7 +52,7 @@ export const KNIGHT_SHIELD_BASH: SkillDefinition = {
   slotTier: 3,
   autoPriority: 65,
   cooldownTurns: 3,
-  damageMultiplier: 1.25,
+  damageMultiplier: 1.3,
   guaranteedStatus: "stun",
 };
 
@@ -68,7 +68,7 @@ export const KNIGHT_CHARGE: SkillDefinition = {
   slotTier: 4,
   autoPriority: 90,
   cooldownTurns: 4,
-  damageMultiplier: 1.7,
+  damageMultiplier: 1.75,
   guaranteedStatus: "stun",
   statusProcBonus: 0.2,
 };

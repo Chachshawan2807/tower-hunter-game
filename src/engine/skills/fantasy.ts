@@ -62,7 +62,7 @@ export const FANTASY_METEOR: SkillDefinition = {
   slotTier: 4,
   autoPriority: 95,
   cooldownTurns: 5,
-  damageMultiplier: 1.9,
+  damageMultiplier: 1.85,
   defPierce: 0.5,
 };
 
