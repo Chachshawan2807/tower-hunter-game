@@ -16,9 +16,9 @@ export const KNIGHT_SLASH: SkillDefinition = {
   targetType: "enemy",
   unlockLevel: SKILL_UNLOCK_LEVELS[0],
   slotTier: 1,
-  autoPriority: 1,
+  autoPriority: 70,
   cooldownTurns: 1,
-  damageMultiplier: 1.15,
+  damageMultiplier: 1.2,
 };
 
 export const KNIGHT_GUARD: SkillDefinition = {
@@ -31,7 +31,7 @@ export const KNIGHT_GUARD: SkillDefinition = {
   targetType: "self",
   unlockLevel: SKILL_UNLOCK_LEVELS[1],
   slotTier: 2,
-  autoPriority: 2,
+  autoPriority: 30,
   cooldownTurns: 2,
   selfStatus: {
     type: "def_buff",
@@ -40,19 +40,35 @@ export const KNIGHT_GUARD: SkillDefinition = {
   },
 };
 
+export const KNIGHT_SHIELD_BASH: SkillDefinition = {
+  id: "knight_bash",
+  path: "knight",
+  stringId: "skills.knight.bash",
+  icon: "💥",
+  mpCost: 20,
+  kind: "attack",
+  targetType: "enemy",
+  unlockLevel: SKILL_UNLOCK_LEVELS[2],
+  slotTier: 3,
+  autoPriority: 65,
+  cooldownTurns: 3,
+  damageMultiplier: 1.25,
+  guaranteedStatus: "stun",
+};
+
 export const KNIGHT_CHARGE: SkillDefinition = {
   id: "knight_charge",
   path: "knight",
   stringId: "skills.knight.charge",
   icon: "🏇",
-  mpCost: 25,
+  mpCost: 28,
   kind: "attack",
   targetType: "enemy",
-  unlockLevel: SKILL_UNLOCK_LEVELS[2],
-  slotTier: 3,
-  autoPriority: 3,
-  cooldownTurns: 3,
-  damageMultiplier: 1.55,
+  unlockLevel: SKILL_UNLOCK_LEVELS[3],
+  slotTier: 4,
+  autoPriority: 90,
+  cooldownTurns: 4,
+  damageMultiplier: 1.7,
   guaranteedStatus: "stun",
   statusProcBonus: 0.2,
 };
@@ -60,6 +76,7 @@ export const KNIGHT_CHARGE: SkillDefinition = {
 export const KNIGHT_SKILLS: SkillDefinition[] = [
   KNIGHT_SLASH,
   KNIGHT_GUARD,
+  KNIGHT_SHIELD_BASH,
   KNIGHT_CHARGE,
 ];
 

@@ -16,7 +16,7 @@ export const MURIM_IRON_PALM: SkillDefinition = {
   targetType: "enemy",
   unlockLevel: SKILL_UNLOCK_LEVELS[0],
   slotTier: 1,
-  autoPriority: 1,
+  autoPriority: 75,
   cooldownTurns: 2,
   damageMultiplier: 1.35,
   guaranteedStatus: "bleed",
@@ -33,7 +33,7 @@ export const MURIM_SHADOW_STEP: SkillDefinition = {
   targetType: "enemy",
   unlockLevel: SKILL_UNLOCK_LEVELS[1],
   slotTier: 2,
-  autoPriority: 2,
+  autoPriority: 55,
   cooldownTurns: 1,
   damageMultiplier: 1,
   accuracyBonus: 30,
@@ -49,7 +49,7 @@ export const MURIM_INNER_QI: SkillDefinition = {
   targetType: "self",
   unlockLevel: SKILL_UNLOCK_LEVELS[2],
   slotTier: 3,
-  autoPriority: 3,
+  autoPriority: 35,
   cooldownTurns: 3,
   selfStatus: {
     type: "atk_buff",
@@ -58,10 +58,28 @@ export const MURIM_INNER_QI: SkillDefinition = {
   },
 };
 
+export const MURIM_DRAGON_FIST: SkillDefinition = {
+  id: "murim_dragon",
+  path: "murim",
+  stringId: "skills.murim.dragon",
+  icon: "🐉",
+  mpCost: 30,
+  kind: "attack",
+  targetType: "enemy",
+  unlockLevel: SKILL_UNLOCK_LEVELS[3],
+  slotTier: 4,
+  autoPriority: 90,
+  cooldownTurns: 4,
+  damageMultiplier: 1.75,
+  guaranteedStatus: "bleed",
+  statusProcBonus: 0.25,
+};
+
 export const MURIM_SKILLS: SkillDefinition[] = [
   MURIM_IRON_PALM,
   MURIM_SHADOW_STEP,
   MURIM_INNER_QI,
+  MURIM_DRAGON_FIST,
 ];
 
 export const MURIM_BLEED_TURNS = DOT_DEFAULT_TURNS;

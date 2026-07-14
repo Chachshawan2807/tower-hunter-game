@@ -127,7 +127,15 @@ assert(
 assert(getSkillsForPath("murim").length === 4, "murim path has 4 skills");
 
 const palm = getSkillById("murim_palm");
-assert(palm.guaranteedStatus === "bleed", "iron palm applies bleed");
+assert(palm.slotTier === 1 && palm.autoPriority === 75, "palm tier 1");
+const dragon = getSkillById("murim_dragon");
+assert(dragon.unlockLevel === 15 && dragon.damageMultiplier === 1.75, "dragon ultimate");
+
+const bash = getSkillById("knight_bash");
+assert(bash.guaranteedStatus === "stun" && bash.unlockLevel === 10, "knight bash stun");
+
+const meteor = getSkillById("fantasy_meteor");
+assert(meteor.defPierce === 0.5 && meteor.unlockLevel === 15, "fantasy meteor");
 
 const battleState = createBattleState(1, { playerSkillPath: "knight" });
 assert(battleState.playerSkillPath === "knight", "battle state stores skill path");
@@ -145,7 +153,8 @@ assert(chargePick.id === "knight_charge", "level 15 knight AI uses charge");
 
 assert(isSkillUnlocked(getSkillById("murim_palm"), 1), "slot 1 unlocked at Lv1");
 assert(!isSkillUnlocked(getSkillById("murim_dash"), 1), "slot 2 locked before Lv5");
-assert(isSkillUnlocked(getSkillById("murim_qi"), 15), "slot 3 unlocked at Lv15");
+assert(isSkillUnlocked(getSkillById("murim_qi"), 10), "slot 3 unlocked at Lv10");
+assert(!isSkillUnlocked(getSkillById("murim_qi"), 9), "slot 3 locked before Lv10");
 
 const palmCds = applySkillCooldown(knightPlayer.skillCooldowns, palm);
 assert(palmCds.murim_palm === palm.cooldownTurns, "skill cooldown applied on use");

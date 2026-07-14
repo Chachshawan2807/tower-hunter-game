@@ -12,7 +12,7 @@ export const FANTASY_ARCANE_BOLT: SkillDefinition = {
   targetType: "enemy",
   unlockLevel: SKILL_UNLOCK_LEVELS[0],
   slotTier: 1,
-  autoPriority: 1,
+  autoPriority: 70,
   cooldownTurns: 1,
   damageMultiplier: 1.25,
   defPierce: 0.3,
@@ -28,7 +28,7 @@ export const FANTASY_FROST_NOVA: SkillDefinition = {
   targetType: "enemy",
   unlockLevel: SKILL_UNLOCK_LEVELS[1],
   slotTier: 2,
-  autoPriority: 2,
+  autoPriority: 60,
   cooldownTurns: 2,
   damageMultiplier: 1,
   guaranteedStatus: "freeze",
@@ -45,15 +45,32 @@ export const FANTASY_HOLY_LIGHT: SkillDefinition = {
   targetType: "self",
   unlockLevel: SKILL_UNLOCK_LEVELS[2],
   slotTier: 3,
-  autoPriority: 3,
+  autoPriority: 40,
   cooldownTurns: 3,
   healPercent: 0.25,
+};
+
+export const FANTASY_METEOR: SkillDefinition = {
+  id: "fantasy_meteor",
+  path: "fantasy",
+  stringId: "skills.fantasy.meteor",
+  icon: "☄",
+  mpCost: 35,
+  kind: "attack",
+  targetType: "enemy",
+  unlockLevel: SKILL_UNLOCK_LEVELS[3],
+  slotTier: 4,
+  autoPriority: 95,
+  cooldownTurns: 5,
+  damageMultiplier: 1.9,
+  defPierce: 0.5,
 };
 
 export const FANTASY_SKILLS: SkillDefinition[] = [
   FANTASY_ARCANE_BOLT,
   FANTASY_FROST_NOVA,
   FANTASY_HOLY_LIGHT,
+  FANTASY_METEOR,
 ];
 
 export const FANTASY_FREEZE_TURNS = CC_DEFAULT_TURNS;
