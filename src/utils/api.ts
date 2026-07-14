@@ -95,6 +95,7 @@ export interface SkillProgressionResponse {
   skillPoints: number;
   upgrades: Record<string, SkillUpgradeRanks>;
   path: "murim" | "knight" | "fantasy";
+  loadout: SkillLoadout;
   skills: (SkillCatalogEntry & {
     unlocked: boolean;
     upgrades: SkillUpgradeRanks;

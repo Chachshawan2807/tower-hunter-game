@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 import {
   getAllSkills,
+  getDefaultLoadout,
   getSkillById,
   getSkillsForPath,
   getUnlockedSkills,
@@ -15,7 +16,7 @@ import {
   getPlayerStats,
   setPlayerSkillPath,
 } from "../../db/playerStats";
-import { upsertPlayerLoadout } from "../../db/skillLoadout";
+import { getPlayerLoadout, upsertPlayerLoadout } from "../../db/skillLoadout";
 import { getPlayerUpgrades, upgradeSkillBranch } from "../../db/skillUpgrades";
 import type { SkillPath } from "../../../engine/types";
 import type { ServerBindings, ServerVariables } from "../types";
@@ -106,14 +107,16 @@ skillRoutes.patch("/:userId/path", async (c) => {
 
 skillRoutes.get("/:userId/progression", async (c) => {
   const userId = c.req.param("userId");
-  const [path, stats, upgrades] = await Promise.all([
-    getPlayerSkillPath(c.get("db"), userId),
+  const path = await getPlayerSkillPath(c.get("db"), userId);
+  const [stats, upgrades, dbLoadout] = await Promise.all([
     getPlayerStats(c.get("db"), userId),
     getPlayerUpgrades(c.get("db"), userId),
+    getPlayerLoadout(c.get("db"), userId, path),
   ]);
 
   const playerLevel = stats?.level ?? 1;
   const skillPoints = stats?.skill_points ?? 0;
+  const loadout = dbLoadout ?? getDefaultLoadout(path, playerLevel);
 
   const skills = getSkillsForPath(path).map((skill) => {
     const skillUpgrades = upgrades[skill.id] ?? EMPTY_RANKS;
@@ -126,7 +129,7 @@ skillRoutes.get("/:userId/progression", async (c) => {
     };
   });
 
-  return c.json({ skillPoints, upgrades, path, skills });
+  return c.json({ skillPoints, upgrades, path, skills, loadout });
 });
 
 skillRoutes.post("/:userId/upgrade", async (c) => {
