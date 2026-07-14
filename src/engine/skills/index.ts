@@ -3,6 +3,7 @@ export type {
   SkillKind,
   SkillTargetType,
   SkillSelfStatus,
+  SkillUpgradeRanks,
 } from "./types";
 
 export { BASIC_ATTACK } from "./basicAttack";
@@ -37,5 +38,7 @@ export {
   validateLoadout,
 } from "./loadout";
 export type { SkillLoadout } from "./loadout";
+
+export { resolveEffectiveSkill } from "./effectiveSkill";
 
 export { SKILL_UNLOCK_LEVELS } from "./types";

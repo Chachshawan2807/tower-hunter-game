@@ -26,6 +26,7 @@ import {
   getDefaultLoadout,
   validateLoadout,
 } from "../src/engine/skills/loadout";
+import { resolveEffectiveSkill } from "../src/engine/skills/effectiveSkill";
 import { SKILL_UNLOCK_LEVELS } from "../src/engine/skills/types";
 import { toCombatStats } from "../src/server/db/playerStats";
 import {
@@ -185,6 +186,42 @@ assert(
 assert(
   !validateLoadout("murim", ["murim_dash", "murim_palm"], 1).valid,
   "locked skill cannot be active"
+);
+
+console.log("\n=== Validation: Effective Skill ===");
+const palmDamage3 = resolveEffectiveSkill(palm, {
+  damage: 3,
+  cooldown: 0,
+  mpCost: 0,
+});
+assert(
+  palmDamage3.damageMultiplier === 1.35 * 1.15,
+  "damage rank 3 adds +15% multiplier on attack"
+);
+
+const palmCd3 = resolveEffectiveSkill(palm, {
+  damage: 0,
+  cooldown: 3,
+  mpCost: 0,
+});
+assert(palmCd3.cooldownTurns === 0, "cooldown rank 3 floors at 0");
+
+const palmMp3 = resolveEffectiveSkill(palm, {
+  damage: 0,
+  cooldown: 0,
+  mpCost: 3,
+});
+assert(palmMp3.mpCost === 10, "mp rank 3 reduces 15 MP to 10");
+
+const qi = getSkillById("murim_qi");
+const qiDamage3 = resolveEffectiveSkill(qi, {
+  damage: 3,
+  cooldown: 0,
+  mpCost: 0,
+});
+assert(
+  qiDamage3.damageMultiplier === undefined,
+  "buff skill ignores damage branch"
 );
 
 console.log("\n=== Validation: Status On Hit ===");
