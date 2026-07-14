@@ -1,26 +1,30 @@
 import { t, type Locale } from "../../utils/i18n";
+import type { PlayerStatsResponse } from "../../utils/api";
 
 interface CharacterMenuProps {
   locale: Locale;
+  stats: PlayerStatsResponse["stats"] | null;
 }
 
-const STATS = [
-  { key: "HP", value: "500" },
-  { key: "MP", value: "100" },
-  { key: "ATK", value: "50" },
-  { key: "DEF", value: "20" },
-  { key: "SPD", value: "100" },
-  { key: "CRIT", value: "10%" },
-];
+export function CharacterMenu({ locale, stats }: CharacterMenuProps) {
+  if (!stats) {
+    return <p className="menu-empty">{t("char.stats", locale)}...</p>;
+  }
 
-export function CharacterMenu({ locale }: CharacterMenuProps) {
+  const rows = [
+    { key: "HP", value: `${stats.hp}/${stats.max_hp}` },
+    { key: "MP", value: `${stats.mp}/${stats.max_mp}` },
+    { key: "ATK", value: stats.atk },
+    { key: "DEF", value: stats.def },
+    { key: "SPD", value: stats.speed },
+    { key: "LV", value: stats.level },
+  ];
+
   return (
     <div>
-      <p style={{ marginBottom: 12, color: "var(--text-dim)", fontSize: "0.85rem" }}>
-        {t("char.stats", locale)}
-      </p>
+      <p className="menu-subtitle">{t("char.stats", locale)}</p>
       <div className="stat-grid">
-        {STATS.map((stat) => (
+        {rows.map((stat) => (
           <div key={stat.key} className="stat-item">
             <span>{stat.key}</span>
             {stat.value}

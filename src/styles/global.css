@@ -7,17 +7,17 @@
 }
 
 :root {
-  --bg-deep: #2c3e2d;
-  --bg-panel: #3d5240;
-  --bg-panel-light: #4a6350;
-  --accent-gold: #c9a84c;
-  --accent-gold-dim: #8f7a3e;
-  --accent-red: #a64b4b;
-  --accent-blue: #5a7a8c;
-  --text-light: #e8e0d0;
-  --text-dim: #b5aa96;
-  --border: #5a6e5c;
-  --shadow: rgba(0, 0, 0, 0.35);
+  --bg-deep: #c8d4c0;
+  --bg-panel: #dce6d6;
+  --bg-panel-light: #e8efe4;
+  --accent-gold: #8f7a3e;
+  --accent-gold-dim: #6d5c2e;
+  --accent-red: #8b3a3a;
+  --accent-blue: #3d5a6c;
+  --text-primary: #000000;
+  --text-secondary: #1a1a1a;
+  --border: #9aaa94;
+  --shadow: rgba(0, 0, 0, 0.2);
   --frame-width: min(100vw, calc(100vh * 9 / 16));
   --frame-height: min(100vh, calc(100vw * 16 / 9));
 }
@@ -28,8 +28,8 @@ body,
   height: 100%;
   width: 100%;
   overflow: hidden;
-  background: #1a241b;
-  color: var(--text-light);
+  background: #a8b4a0;
+  color: var(--text-primary);
   font-family: "Segoe UI", system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
@@ -54,15 +54,16 @@ button {
   flex-direction: column;
   gap: 12px;
   padding: 24px 16px;
-  background: #1e2a1f;
+  background: #b8c4b0;
   border-inline: 1px solid var(--border);
 }
 
 .side-panel__title {
   font-size: 0.85rem;
-  color: var(--accent-gold);
+  color: var(--text-primary);
   letter-spacing: 0.08em;
   text-transform: uppercase;
+  font-weight: 700;
 }
 
 .side-panel__placeholder {
@@ -71,15 +72,16 @@ button {
   border-radius: 8px;
   display: grid;
   place-items: center;
-  color: var(--text-dim);
+  color: var(--text-primary);
   font-size: 0.9rem;
+  background: var(--bg-panel-light);
 }
 
 .game-frame {
   width: var(--frame-width);
   height: var(--frame-height);
   margin: auto;
-  background: linear-gradient(180deg, #3a5240 0%, var(--bg-deep) 55%, #243328 100%);
+  background: linear-gradient(180deg, #e0e8da 0%, var(--bg-deep) 55%, #b8c8b0 100%);
   display: flex;
   flex-direction: column;
   position: relative;
@@ -115,7 +117,7 @@ button {
 .hud-name {
   font-weight: 700;
   font-size: 0.95rem;
-  color: var(--accent-gold);
+  color: var(--text-primary);
 }
 
 .hud-gold {
@@ -190,7 +192,7 @@ button {
   justify-content: space-around;
   align-items: flex-end;
   padding: 8px 6px 12px;
-  background: linear-gradient(0deg, rgba(20, 28, 21, 0.95), transparent);
+  background: linear-gradient(0deg, rgba(220, 230, 214, 0.95), transparent);
   z-index: 3;
 }
 
@@ -201,15 +203,24 @@ button {
   gap: 2px;
   padding: 6px 8px;
   border-radius: 10px;
-  min-width: 52px;
-  color: var(--text-dim);
-  transition: color 0.15s, background 0.15s;
+  min-width: 44px;
+  color: var(--text-primary);
+  transition: background 0.15s;
 }
 
 .nav-btn--active,
 .nav-btn:hover {
-  color: var(--accent-gold);
-  background: rgba(201, 168, 76, 0.12);
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.nav-btn__label--desktop {
+  display: none;
+}
+
+@media (min-width: 480px) {
+  .nav-btn__label--desktop {
+    display: block;
+  }
 }
 
 .nav-btn--tower {
@@ -270,7 +281,7 @@ button {
 .overlay__title {
   font-size: 1rem;
   font-weight: 700;
-  color: var(--accent-gold);
+  color: var(--text-primary);
 }
 
 .overlay__body {
@@ -321,7 +332,50 @@ button {
 .tower-floor-label {
   font-size: 1.4rem;
   font-weight: 700;
-  color: var(--accent-gold);
+  color: var(--text-primary);
+}
+
+.battle-controls {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  width: 100%;
+}
+
+.speed-btn {
+  min-width: 36px;
+  height: 32px;
+  border-radius: 8px;
+  background: var(--bg-panel-light);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  font-weight: 700;
+  font-size: 0.8rem;
+}
+
+.speed-btn--active {
+  background: var(--accent-gold);
+  border-color: var(--accent-gold-dim);
+}
+
+.speed-btn--skip {
+  font-size: 1rem;
+}
+
+.speed-btn:disabled {
+  opacity: 0.4;
+}
+
+.battle-vs {
+  font-size: 1.2rem;
+  opacity: 0.6;
+  color: var(--text-primary);
+}
+
+.battle-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
 }
 
 .battle-arena {
@@ -389,10 +443,11 @@ button {
   max-height: 80px;
   overflow-y: auto;
   font-size: 0.72rem;
-  color: var(--text-dim);
-  background: rgba(0, 0, 0, 0.25);
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.5);
   border-radius: 8px;
   padding: 8px;
+  border: 1px solid var(--border);
 }
 
 .battle-log__entry {
@@ -403,9 +458,9 @@ button {
   padding: 10px 20px;
   border-radius: 10px;
   background: var(--accent-gold);
-  color: #1a241b;
+  color: var(--text-primary);
   font-weight: 700;
-  font-size: 0.9rem;
+  font-size: 1rem;
   border: 1px solid var(--accent-gold-dim);
 }
 
@@ -416,7 +471,7 @@ button {
 
 .action-btn--secondary {
   background: var(--bg-panel-light);
-  color: var(--text-light);
+  color: var(--text-primary);
   border-color: var(--border);
 }
 
@@ -425,16 +480,15 @@ button {
   border-radius: 8px;
   font-weight: 700;
   text-align: center;
+  color: var(--text-primary);
 }
 
 .result-banner--win {
-  background: rgba(106, 154, 106, 0.3);
-  color: #8fd48f;
+  background: rgba(106, 154, 106, 0.45);
 }
 
 .result-banner--lose {
-  background: rgba(166, 75, 75, 0.3);
-  color: #e88;
+  background: rgba(200, 120, 120, 0.45);
 }
 
 .stat-grid {
@@ -451,9 +505,17 @@ button {
 }
 
 .stat-item span {
-  color: var(--text-dim);
+  color: var(--text-primary);
   font-size: 0.72rem;
   display: block;
+  opacity: 0.7;
+}
+
+.menu-subtitle,
+.menu-empty {
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  margin-bottom: 12px;
 }
 
 .skill-path {
@@ -474,6 +536,6 @@ button {
   height: 100%;
   display: grid;
   place-items: center;
-  color: var(--accent-gold);
-  font-size: 1.1rem;
+  color: var(--text-primary);
+  font-size: 1.4rem;
 }

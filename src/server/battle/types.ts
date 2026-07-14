@@ -1,5 +1,11 @@
 import type { BattleState } from "../../engine/states";
-import type { AnimationEvent, PlayerIntent, RewardPayload } from "../../engine/types";
+import type {
+  AnimationEvent,
+  AnimationQueuePayload,
+  BattleSnapshot,
+  PlayerIntent,
+  RewardPayload,
+} from "../../engine/types";
 
 export interface BattleSession {
   id: string;
@@ -10,6 +16,7 @@ export interface BattleSession {
   priorEvents?: AnimationEvent[];
   rewardsGranted: boolean;
   rewards?: RewardPayload;
+  outcomeProcessed: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -18,11 +25,11 @@ export interface BattleStepResponse {
   sessionId: string;
   state: BattleState;
   events: AnimationEvent[];
+  animationQueue: AnimationQueuePayload;
   actionRequired: boolean;
   waitingActorId?: string;
   rewards?: RewardPayload;
 }
-
 export interface StartBattleInput {
   userId: string;
   floor: number;

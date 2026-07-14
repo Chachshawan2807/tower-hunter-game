@@ -2,13 +2,15 @@ import type { ContentfulStatusCode } from "hono/utils/http-status";
 import type { Context } from "hono";
 import { DbError } from "../../db";
 import { BattleServiceError } from "../../battle";
+import { BattleValidationError } from "../../battle/validation";
 import { serializeJson } from "../serialize";
 
 export function errorHandler(err: Error, c: Context): Response {
-  if (err instanceof BattleServiceError) {
+  if (err instanceof BattleServiceError || err instanceof BattleValidationError) {
+    const status = err instanceof BattleServiceError ? err.status : 400;
     return c.json(
       { error: err.message, code: err.code },
-      err.status as ContentfulStatusCode
+      status as ContentfulStatusCode
     );
   }
 

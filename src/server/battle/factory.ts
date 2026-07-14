@@ -30,12 +30,12 @@ const ENEMY_BASE = {
   evasion: 5,
 };
 
-function buildPlayerEntity(stats: CombatStats): BattleEntity {
+function buildPlayerEntity(stats: CombatStats, name: string): BattleEntity {
   return {
     id: "player",
     side: "player",
-    name: "Hero",
-    stats: { ...stats, hp: stats.maxHp },
+    name,
+    stats: { ...stats, hp: Math.min(stats.hp, stats.maxHp) },
     actionGauge: 0,
     statusEffects: [],
   };
@@ -73,12 +73,20 @@ function buildEnemyEntity(floor: number): BattleEntity {
 
 export function createBattleState(
   floor: number,
-  options?: { autoBattle?: boolean; playerStats?: CombatStats }
+  options?: {
+    autoBattle?: boolean;
+    playerStats?: CombatStats;
+    playerName?: string;
+  }
 ): BattleState {
   const playerStats = options?.playerStats ?? DEFAULT_PLAYER_STATS;
+  const playerName = options?.playerName ?? "Hero";
 
   return {
-    entities: [buildPlayerEntity(playerStats), buildEnemyEntity(floor)],
+    entities: [
+      buildPlayerEntity(playerStats, playerName),
+      buildEnemyEntity(floor),
+    ],
     floor,
     turnNumber: 1,
     autoBattle: options?.autoBattle ?? true,

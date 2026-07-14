@@ -1,4 +1,9 @@
-import type { AnimationEvent, BattleSnapshot, PlayerIntent } from "../engine/types";
+import type {
+  AnimationEvent,
+  AnimationQueuePayload,
+  BattleSnapshot,
+  PlayerIntent,
+} from "../engine/types";
 
 const API_BASE = import.meta.env.VITE_API_URL ?? "";
 
@@ -27,6 +32,23 @@ export interface UserProfile {
   preferred_locale: "th" | "en";
 }
 
+export interface PlayerStatsResponse {
+  stats: {
+    user_id: string;
+    level: number;
+    exp: string;
+    hp: string;
+    max_hp: string;
+    mp: string;
+    max_mp: string;
+    atk: string;
+    def: string;
+    speed: string;
+    current_floor: number;
+  };
+  goldBalance: string;
+}
+
 export interface BattleSessionResponse {
   id: string;
   userId: string;
@@ -40,6 +62,7 @@ export interface BattleStepResponse {
   sessionId: string;
   state: BattleSnapshot & { autoBattle: boolean };
   events: AnimationEvent[];
+  animationQueue: AnimationQueuePayload;
   actionRequired: boolean;
   waitingActorId?: string;
   rewards?: { exp: number; gold: string; items: unknown[] };
@@ -51,6 +74,10 @@ export const api = {
       method: "POST",
       body: JSON.stringify({ externalId, displayName }),
     });
+  },
+
+  getPlayerStats(userId: string) {
+    return request<PlayerStatsResponse>(`/api/users/${userId}/stats`);
   },
 
   getWallet(userId: string) {

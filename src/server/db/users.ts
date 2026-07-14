@@ -1,6 +1,6 @@
-import { parseBigInt, type DbPool } from "./client";
+import { parseBigInt, withTransaction, type DbPool } from "./client";
+import { createDefaultPlayerStats } from "./playerStats";
 import type { SupportedLocale, UserRow } from "./types";
-
 interface CreateUserInput {
   externalId: string;
   displayName: string;
@@ -36,20 +36,23 @@ export async function createUser(
   pool: DbPool,
   input: CreateUserInput
 ): Promise<UserRow> {
-  const result = await pool.query<UserRowDb>(
-    `INSERT INTO users (external_id, display_name, preferred_locale, auto_dismantle_common)
-     VALUES ($1, $2, $3, $4)
-     RETURNING id, external_id, display_name, gold_balance, auto_dismantle_common,
-               preferred_locale, created_at, updated_at`,
-    [
-      input.externalId,
-      input.displayName,
-      input.preferredLocale ?? "en",
-      input.autoDismantleCommon ?? false,
-    ]
-  );
+  return withTransaction(pool, async (client) => {
+    const result = await client.query<UserRowDb>(
+      `INSERT INTO users (external_id, display_name, preferred_locale, auto_dismantle_common)
+       VALUES ($1, $2, $3, $4)
+       RETURNING id, external_id, display_name, gold_balance, auto_dismantle_common,
+                 preferred_locale, created_at, updated_at`,
+      [
+        input.externalId,
+        input.displayName,
+        input.preferredLocale ?? "en",
+        input.autoDismantleCommon ?? false,
+      ]
+    );
 
-  return mapUserRow(result.rows[0]);
+    await createDefaultPlayerStats(client, result.rows[0].id);
+    return mapUserRow(result.rows[0]);
+  });
 }
 
 export async function getUserById(

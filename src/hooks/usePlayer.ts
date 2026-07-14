@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { api } from "../utils/api";
+import { api, type PlayerStatsResponse } from "../utils/api";
 
 const USER_KEY = "tower_hunter_user_id";
 
@@ -9,13 +9,19 @@ export function usePlayer() {
   );
   const [displayName, setDisplayName] = useState("Hero");
   const [gold, setGold] = useState("0");
-  const [level] = useState(1);
-  const [exp] = useState(0);
+  const [level, setLevel] = useState(1);
+  const [exp, setExp] = useState(0);
+  const [currentFloor, setCurrentFloor] = useState(1);
+  const [stats, setStats] = useState<PlayerStatsResponse["stats"] | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const refreshWallet = useCallback(async (id: string) => {
-    const wallet = await api.getWallet(id);
-    setGold(wallet.goldBalance);
+  const refreshStats = useCallback(async (id: string) => {
+    const data = await api.getPlayerStats(id);
+    setStats(data.stats);
+    setGold(data.goldBalance);
+    setLevel(data.stats.level);
+    setExp(Number(data.stats.exp));
+    setCurrentFloor(data.stats.current_floor);
   }, []);
 
   useEffect(() => {
@@ -30,9 +36,10 @@ export function usePlayer() {
           localStorage.setItem(USER_KEY, id);
           setUserId(id);
           setDisplayName(user.display_name);
-          setGold(user.gold_balance);
-        } else {
-          await refreshWallet(id);
+        }
+
+        if (id) {
+          await refreshStats(id);
         }
       } catch (err) {
         console.error("Player bootstrap failed:", err);
@@ -42,7 +49,7 @@ export function usePlayer() {
     }
 
     bootstrap();
-  }, [userId, refreshWallet]);
+  }, [userId, refreshStats]);
 
   return {
     userId,
@@ -50,7 +57,9 @@ export function usePlayer() {
     gold,
     level,
     exp,
+    currentFloor,
+    stats,
     loading,
-    refreshWallet,
+    refreshStats,
   };
 }

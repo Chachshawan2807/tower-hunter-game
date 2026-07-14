@@ -26,9 +26,12 @@ export function BottomNav({ locale, active, onSelect }: BottomNavProps) {
             active === item.id ? "nav-btn--active" : ""
           }`}
           onClick={() => onSelect(item.id)}
+          aria-label={t(item.labelKey, locale)}
         >
           <span className="nav-btn__icon">{item.icon}</span>
-          <span className="nav-btn__label">{t(item.labelKey, locale)}</span>
+          <span className="nav-btn__label nav-btn__label--desktop">
+            {t(item.labelKey, locale)}
+          </span>
         </button>
       ))}
     </nav>

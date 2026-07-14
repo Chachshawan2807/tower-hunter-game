@@ -29,24 +29,30 @@ export function App() {
   const [activeTab, setActiveTab] = useState<NavTab>("tower");
   const [currentFloor, setCurrentFloor] = useState(1);
 
+  useEffect(() => {
+    if (player.currentFloor > 0) {
+      setCurrentFloor(player.currentFloor);
+    }
+  }, [player.currentFloor]);
+
   const onBattleComplete = useCallback(() => {
     if (player.userId) {
-      player.refreshWallet(player.userId);
+      player.refreshStats(player.userId);
     }
-  }, [player.userId, player.refreshWallet]);
+  }, [player.userId, player.refreshStats]);
 
   const battle = useBattle(player.userId, onBattleComplete);
 
   useEffect(() => {
-    if (battle.isComplete && battle.result === "win") {
-      setCurrentFloor((f) => Math.min(f + 1, 100));
+    if (battle.isComplete && battle.result === "win" && player.currentFloor) {
+      setCurrentFloor(player.currentFloor);
     }
-  }, [battle.isComplete, battle.result]);
+  }, [battle.isComplete, battle.result, player.currentFloor]);
 
   const overlayOpen = OVERLAY_TABS.includes(activeTab);
 
   if (player.loading) {
-    return <div className="loading-screen">⚔ ...</div>;
+    return <div className="loading-screen">⚔</div>;
   }
 
   return (
@@ -78,7 +84,9 @@ export function App() {
           locale={locale}
           onClose={() => setActiveTab("tower")}
         >
-          {activeTab === "character" && <CharacterMenu locale={locale} />}
+          {activeTab === "character" && (
+            <CharacterMenu locale={locale} stats={player.stats} />
+          )}
           {activeTab === "skills" && <SkillMenu locale={locale} />}
           {activeTab === "bag" && (
             <BagMenu locale={locale} userId={player.userId} />
@@ -87,11 +95,7 @@ export function App() {
         </OverlayModal>
       )}
 
-      <BottomNav
-        locale={locale}
-        active={activeTab}
-        onSelect={setActiveTab}
-      />
+      <BottomNav locale={locale} active={activeTab} onSelect={setActiveTab} />
     </GameShell>
   );
 }

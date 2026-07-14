@@ -7,6 +7,7 @@ import {
 import type { ItemDefinition, ItemRarity, RewardPayload } from "../../engine/types";
 import {
   addItemToInventory,
+  applyBattleWinProgress,
   processWalletTransaction,
   type DbPool,
 } from "../db";
@@ -93,6 +94,8 @@ export async function grantBattleRewards(
       { idempotencyKey: `battle_drop:${sessionId}:${item.id}` }
     );
   }
+
+  await applyBattleWinProgress(pool, userId, floor, rewards.exp);
 
   return rewards;
 }

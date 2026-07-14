@@ -1,28 +1,42 @@
 import { useCallback, useState } from "react";
-import type { AnimationEvent } from "../engine/types";
+import type { BattleSnapshot, PlayerIntent } from "../engine/types";
 import { api, type BattleStepResponse } from "../utils/api";
+import { useAnimationQueue } from "./useAnimationQueue";
 
 export function useBattle(userId: string | null, onComplete?: () => void) {
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [floor, setFloor] = useState(1);
-  const [events, setEvents] = useState<AnimationEvent[]>([]);
+  const [battleSnapshot, setBattleSnapshot] = useState<BattleSnapshot | null>(null);
   const [actionRequired, setActionRequired] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
   const [result, setResult] = useState<"win" | "lose" | null>(null);
   const [busy, setBusy] = useState(false);
+  const [rewards, setRewards] = useState<BattleStepResponse["rewards"]>();
 
-  const applyStep = useCallback(
-    (step: BattleStepResponse) => {
-      setEvents((prev) => [...prev, ...step.events]);
-      setActionRequired(step.actionRequired);
-      setIsComplete(step.state.isComplete);
-      setResult(step.state.result ?? null);
-
-      if (step.state.isComplete) {
+  const animation = useAnimationQueue({
+    onQueueComplete: (snapshot) => {
+      setBattleSnapshot(snapshot);
+      setIsComplete(snapshot.isComplete);
+      setResult(snapshot.result ?? null);
+      if (snapshot.isComplete) {
         onComplete?.();
       }
     },
-    [onComplete]
+  });
+
+  const applyStep = useCallback(
+    (step: BattleStepResponse) => {
+      setActionRequired(step.actionRequired);
+      setRewards(step.rewards);
+      animation.enqueue(step.animationQueue);
+
+      if (step.animationQueue.events.length === 0) {
+        setBattleSnapshot(step.animationQueue.finalState);
+        setIsComplete(step.state.isComplete);
+        setResult(step.state.result ?? null);
+      }
+    },
+    [animation]
   );
 
   const startBattle = useCallback(
@@ -30,9 +44,11 @@ export function useBattle(userId: string | null, onComplete?: () => void) {
       if (!userId || busy) return;
 
       setBusy(true);
-      setEvents([]);
+      animation.reset();
+      setBattleSnapshot(null);
       setIsComplete(false);
       setResult(null);
+      setRewards(undefined);
       setFloor(targetFloor);
 
       try {
@@ -44,11 +60,11 @@ export function useBattle(userId: string | null, onComplete?: () => void) {
         setBusy(false);
       }
     },
-    [userId, busy, applyStep]
+    [userId, busy, applyStep, animation]
   );
 
   const continueBattle = useCallback(async () => {
-    if (!sessionId || busy || isComplete) return;
+    if (!sessionId || busy || isComplete || animation.isPlaying) return;
 
     setBusy(true);
     try {
@@ -57,7 +73,7 @@ export function useBattle(userId: string | null, onComplete?: () => void) {
     } finally {
       setBusy(false);
     }
-  }, [sessionId, busy, isComplete, applyStep]);
+  }, [sessionId, busy, isComplete, animation.isPlaying, applyStep]);
 
   const manualAttack = useCallback(
     async (targetId: string) => {
@@ -69,7 +85,7 @@ export function useBattle(userId: string | null, onComplete?: () => void) {
           type: "request_action",
           skillId: "basic_attack",
           targetId,
-        });
+        } satisfies PlayerIntent);
         applyStep(step);
       } finally {
         setBusy(false);
@@ -80,19 +96,27 @@ export function useBattle(userId: string | null, onComplete?: () => void) {
 
   const resetBattle = useCallback(() => {
     setSessionId(null);
-    setEvents([]);
+    animation.reset();
+    setBattleSnapshot(null);
     setActionRequired(false);
     setIsComplete(false);
     setResult(null);
-  }, []);
+    setRewards(undefined);
+  }, [animation]);
 
   return {
     floor,
-    events,
+    battleSnapshot,
+    displayedEvents: animation.displayedEvents,
     actionRequired,
     isComplete,
     result,
+    rewards,
     busy,
+    isPlaying: animation.isPlaying,
+    speed: animation.speed,
+    setSpeed: animation.setSpeed,
+    skip: animation.skip,
     startBattle,
     continueBattle,
     manualAttack,

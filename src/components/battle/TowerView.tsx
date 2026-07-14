@@ -9,7 +9,10 @@ interface TowerViewProps {
 }
 
 export function TowerView({ locale, currentFloor, battle }: TowerViewProps) {
-  const inBattle = battle.events.length > 0 || battle.busy;
+  const inBattle =
+    battle.displayedEvents.length > 0 ||
+    battle.battleSnapshot !== null ||
+    battle.busy;
 
   return (
     <div className="tower-view">
@@ -31,12 +34,17 @@ export function TowerView({ locale, currentFloor, battle }: TowerViewProps) {
       {inBattle ? (
         <BattleArena
           locale={locale}
-          events={battle.events}
+          snapshot={battle.battleSnapshot}
+          displayedEvents={battle.displayedEvents}
           actionRequired={battle.actionRequired}
           isComplete={battle.isComplete}
           result={battle.result}
           busy={battle.busy}
-          onAttack={() => battle.manualAttack("enemy_floor_" + currentFloor)}
+          isPlaying={battle.isPlaying}
+          speed={battle.speed}
+          onSpeedChange={battle.setSpeed}
+          onSkip={battle.skip}
+          onAttack={() => battle.manualAttack(`enemy_floor_${currentFloor}`)}
           onContinue={battle.continueBattle}
           onReset={battle.resetBattle}
         />
@@ -46,7 +54,7 @@ export function TowerView({ locale, currentFloor, battle }: TowerViewProps) {
           disabled={battle.busy}
           onClick={() => battle.startBattle(currentFloor)}
         >
-          {t("tower.climb", locale)} ▶
+          ▶
         </button>
       )}
     </div>

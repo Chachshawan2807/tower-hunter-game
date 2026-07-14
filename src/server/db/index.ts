@@ -29,6 +29,13 @@ export {
 } from "./users";
 
 export {
+  getPlayerStats,
+  toCombatStats,
+  applyBattleWinProgress,
+  type PlayerStatsRow,
+} from "./playerStats";
+
+export {
   addItemToInventory,
   listInventoryItems,
   countInventoryQuantity,

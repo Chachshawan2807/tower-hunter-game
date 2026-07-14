@@ -2,6 +2,7 @@ import { Hono } from "hono";
 import {
   createUser,
   getUserById,
+  getPlayerStats,
   getWalletBalance,
   listInventoryItems,
   listMailboxItems,
@@ -37,6 +38,16 @@ userRoutes.get("/:userId", async (c) => {
   }
 
   return jsonBigInt(c, user);
+});
+
+userRoutes.get("/:userId/stats", async (c) => {
+  const stats = await getPlayerStats(c.get("db"), c.req.param("userId"));
+  if (!stats) {
+    return c.json({ error: "Player stats not found", code: "STATS_NOT_FOUND" }, 404);
+  }
+
+  const wallet = await getWalletBalance(c.get("db"), c.req.param("userId"));
+  return jsonBigInt(c, { stats, goldBalance: wallet });
 });
 
 userRoutes.get("/:userId/wallet", async (c) => {
