@@ -1,4 +1,6 @@
+import { calculateSpGrant } from "../../engine/skills/skillPoints";
 import type { CombatStats, SkillPath } from "../../engine/types";
+import { isBossFloor } from "../../engine/types";
 import { combatStatsForLevel, levelFromTotalExp } from "../../engine/formulas/playerProgression";
 import { parseBigInt, withTransaction, type DbClient, type DbPool } from "./client";
 
@@ -118,10 +120,12 @@ export async function applyBattleWinProgress(
       throw new Error(`Player stats not found for user ${userId}`);
     }
 
+    const oldLevel = stats.level;
     const newExp = parseBigInt(stats.exp) + BigInt(expGained);
     const nextFloor = Math.min(floor + 1, 100);
     const newLevel = levelFromTotalExp(Number(newExp));
     const levelStats = combatStatsForLevel(newLevel);
+    const spGrant = calculateSpGrant(oldLevel, newLevel, isBossFloor(floor));
 
     const result = await client.query<PlayerStatsRow>(
       `UPDATE player_stats
@@ -135,6 +139,7 @@ export async function applyBattleWinProgress(
            current_floor = GREATEST(current_floor, $9),
            hp = $4,
            mp = $5,
+           skill_points = skill_points + $10,
            updated_at = NOW()
        WHERE user_id = $1
        RETURNING ${STATS_COLUMNS}`,
@@ -148,6 +153,7 @@ export async function applyBattleWinProgress(
         levelStats.def.toString(),
         levelStats.speed.toString(),
         nextFloor,
+        spGrant,
       ]
     );
 

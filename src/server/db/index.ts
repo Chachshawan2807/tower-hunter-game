@@ -46,6 +46,11 @@ export {
 } from "./skillLoadout";
 
 export {
+  getPlayerUpgrades,
+  upgradeSkillBranch,
+} from "./skillUpgrades";
+
+export {
   addItemToInventory,
   listInventoryItems,
   countInventoryQuantity,
