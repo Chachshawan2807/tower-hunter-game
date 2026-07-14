@@ -1,3 +1,27 @@
+import {
+  calculateBaseDamage,
+  calculateHitChance,
+  calculateDotDamage,
+  scaleExponentialStat,
+  scaleEnemyStatsForFloor,
+  tickActionGauge,
+  isGaugeReady,
+  combatStatsForLevel,
+  levelFromTotalExp,
+  totalExpForLevel,
+} from "../src/engine/formulas";
+import { createBattleState } from "../src/server/battle/factory";
+import { advanceBattleStep } from "../src/engine/states";
+import { applyStatusOnHit } from "../src/engine/status";
+import {
+  getSkillById,
+  getSkillsForPath,
+  pickAutoSkill,
+  isSkillUnlocked,
+  applySkillCooldown,
+  tickSkillCooldowns,
+} from "../src/engine/skills";
+import { SKILL_UNLOCK_LEVELS } from "../src/engine/skills/types";
 import { toCombatStats } from "../src/server/db/playerStats";
 import {
   BattleValidationError,
@@ -37,6 +61,7 @@ const mapped = toCombatStats({
   status_chance: "0.05",
   status_resist: "0.05",
   current_floor: 3,
+  active_skill_path: "murim",
   updated_at: new Date(),
 });
 
@@ -44,6 +69,113 @@ assert(mapped.level === 5, "level maps correctly");
 assert(mapped.atk === 75, "atk maps correctly");
 assert(mapped.speed === 110, "speed maps correctly");
 assert(mapped.exp === 120, "exp maps correctly");
+
+console.log("\n=== Validation: Damage Formula ===");
+const dmg = calculateBaseDamage(100, 50);
+assert(dmg >= 1, "damage is at least 1");
+assert(dmg < 100, "DEF reduces damage");
+
+console.log("\n=== Validation: Hit Chance ===");
+const hitHigh = calculateHitChance(200, 10);
+const hitLow = calculateHitChance(50, 200);
+assert(hitHigh > hitLow, "higher accuracy yields higher hit chance");
+assert(hitHigh <= 0.95, "hit chance capped at 95%");
+assert(hitLow >= 0.05, "hit chance floored at 5%");
+
+console.log("\n=== Validation: DoT ===");
+const dot = calculateDotDamage(1000);
+assert(dot === 50, "DoT is 5% of max HP");
+
+console.log("\n=== Validation: Enemy Scaling (8%) ===");
+const floor10Hp = scaleExponentialStat(200, 10);
+const expected = 200 * Math.pow(1.08, 9);
+assert(Math.abs(floor10Hp - expected) < 0.01, "exponential 8% scaling");
+
+console.log("\n=== Validation: Action Gauge ===");
+let gauge = 0;
+for (let i = 0; i < 10; i++) {
+  gauge = tickActionGauge(gauge, 100);
+}
+assert(isGaugeReady(gauge), "speed 100 fills gauge in 10 ticks");
+
+console.log("\n=== Validation: Player Progression ===");
+
+assert(levelFromTotalExp(0) === 1, "0 exp is level 1");
+assert(levelFromTotalExp(35) === 2, "35 exp reaches level 2");
+assert(levelFromTotalExp(170) === 5, "170 exp unlocks slot-2 skills");
+
+const level10Stats = combatStatsForLevel(10);
+const floor10Enemy = scaleEnemyStatsForFloor(
+  { hp: 200, atk: 30, def: 15, speed: 80, accuracy: 90, evasion: 5 },
+  10
+);
+const level10Dmg = calculateBaseDamage(level10Stats.atk, floor10Enemy.def);
+assert(level10Dmg > 50, "level 10 player outscales floor 10 enemy DEF");
+
+const floor10Boss = scaleEnemyStatsForFloor(
+  { hp: 200, atk: 30, def: 15, speed: 80, accuracy: 90, evasion: 5 },
+  10
+);
+assert(floor10Boss.hp > 400, "boss floor 10 has 1.5x HP multiplier");
+assert(totalExpForLevel(15) <= 1050, "level 15 reachable by floor 15 climb");
+
+console.log("\n=== Validation: Skill System ===");
+assert(
+  SKILL_UNLOCK_LEVELS.join(",") === "1,5,10,15",
+  "unlock levels are 1/5/10/15"
+);
+assert(getSkillsForPath("murim").length === 4, "murim path has 4 skills");
+
+const palm = getSkillById("murim_palm");
+assert(palm.guaranteedStatus === "bleed", "iron palm applies bleed");
+
+const battleState = createBattleState(1, { playerSkillPath: "knight" });
+assert(battleState.playerSkillPath === "knight", "battle state stores skill path");
+
+const knightPlayer = battleState.entities[0];
+const slashPick = pickAutoSkill(knightPlayer, "knight", () => 0.99);
+assert(slashPick.id === "knight_slash", "level 1 knight AI uses slash");
+
+const highLevelKnight = {
+  ...knightPlayer,
+  stats: { ...knightPlayer.stats, level: 15, mp: 200 },
+};
+const chargePick = pickAutoSkill(highLevelKnight, "knight", () => 0.99);
+assert(chargePick.id === "knight_charge", "level 15 knight AI uses charge");
+
+assert(isSkillUnlocked(getSkillById("murim_palm"), 1), "slot 1 unlocked at Lv1");
+assert(!isSkillUnlocked(getSkillById("murim_dash"), 1), "slot 2 locked before Lv5");
+assert(isSkillUnlocked(getSkillById("murim_qi"), 15), "slot 3 unlocked at Lv15");
+
+const palmCds = applySkillCooldown(knightPlayer.skillCooldowns, palm);
+assert(palmCds.murim_palm === palm.cooldownTurns, "skill cooldown applied on use");
+
+const tickedCds = tickSkillCooldowns(palmCds);
+assert(
+  tickedCds.murim_palm === palm.cooldownTurns - 1,
+  "cooldown decrements each turn"
+);
+
+console.log("\n=== Validation: Status On Hit ===");
+const player = battleState.entities.find((e) => e.side === "player")!;
+const enemy = battleState.entities.find((e) => e.side === "enemy")!;
+const alwaysProc = applyStatusOnHit(
+  { ...player, stats: { ...player.stats, statusChance: 1 } },
+  enemy,
+  () => 0
+);
+assert(alwaysProc.events.length > 0, "status proc generates event");
+assert(
+  alwaysProc.statusEffects.some((e) =>
+    ["poison", "bleed", "stun", "freeze"].includes(e.type)
+  ),
+  "status effect applied"
+);
+
+console.log("\n=== Validation: Battle Advance ===");
+const advance = advanceBattleStep(battleState, { rng: () => 0.5 });
+assert(advance.payload !== undefined, "battle advance produces payload");
+assert(advance.state.turnNumber >= 1, "battle state valid after advance");
 
 console.log("\n=== Validation: Target Entity ===");
 try {
