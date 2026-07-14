@@ -27,6 +27,11 @@ import {
   validateLoadout,
 } from "../src/engine/skills/loadout";
 import { resolveEffectiveSkill } from "../src/engine/skills/effectiveSkill";
+import {
+  spCostForNextRank,
+  calculateSpGrant,
+  canUpgradeBranch,
+} from "../src/engine/skills/skillPoints";
 import { SKILL_UNLOCK_LEVELS } from "../src/engine/skills/types";
 import { toCombatStats } from "../src/server/db/playerStats";
 import {
@@ -230,6 +235,19 @@ const qiDamage3 = resolveEffectiveSkill(qi, {
 assert(
   qiDamage3.damageMultiplier === undefined,
   "buff skill ignores damage branch"
+);
+
+console.log("\n=== Validation: Skill Points ===");
+assert(spCostForNextRank(0) === 1, "rank 0→1 costs 1 SP");
+assert(spCostForNextRank(2) === 3, "rank 2→3 costs 3 SP");
+
+assert(calculateSpGrant(1, 3, false) === 2, "2 level ups = 2 SP");
+assert(calculateSpGrant(5, 5, true) === 2, "boss grants 2 SP");
+
+assert(
+  canUpgradeBranch(palm, "damage", { damage: 3, cooldown: 0, mpCost: 0 })
+    .allowed === false,
+  "cannot upgrade beyond rank 3"
 );
 
 console.log("\n=== Validation: Status On Hit ===");

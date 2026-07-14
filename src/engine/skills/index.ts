@@ -41,4 +41,11 @@ export type { SkillLoadout } from "./loadout";
 
 export { resolveEffectiveSkill } from "./effectiveSkill";
 
+export {
+  spCostForNextRank,
+  calculateSpGrant,
+  canUpgradeBranch,
+} from "./skillPoints";
+export type { UpgradeBranch } from "./skillPoints";
+
 export { SKILL_UNLOCK_LEVELS } from "./types";
