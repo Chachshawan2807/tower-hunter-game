@@ -145,6 +145,14 @@ assert(meteor.defPierce === 0.5 && meteor.unlockLevel === 15, "fantasy meteor");
 
 const battleState = createBattleState(1, { playerSkillPath: "knight" });
 assert(battleState.playerSkillPath === "knight", "battle state stores skill path");
+assert(
+  battleState.playerLoadout.activeSlots[0] === "knight_slash",
+  "battle state has default knight loadout"
+);
+assert(
+  Object.keys(battleState.playerSkillUpgrades).length === 0,
+  "battle state defaults empty skill upgrades"
+);
 
 const knightPlayer = battleState.entities[0];
 const slashPick = pickAutoSkill(knightPlayer, "knight", () => 0.99);

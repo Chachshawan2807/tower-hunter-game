@@ -1,6 +1,8 @@
 import { scaleEnemyStatsForFloor } from "../../engine/formulas";
+import { getDefaultLoadout, type SkillLoadout } from "../../engine/skills/loadout";
+import type { SkillUpgradeRanks } from "../../engine/skills/types";
 import type { BattleState } from "../../engine/states";
-import type { BattleEntity, CombatStats } from "../../engine/types";
+import type { BattleEntity, CombatStats, SkillPath } from "../../engine/types";
 
 export const DEFAULT_PLAYER_STATS: CombatStats = {
   level: 1,
@@ -38,16 +40,18 @@ function buildPlayerEntity(stats: CombatStats, name: string): BattleEntity {
     stats: { ...stats, hp: Math.min(stats.hp, stats.maxHp) },
     actionGauge: 0,
     statusEffects: [],
+    skillCooldowns: {},
   };
 }
 
 function buildEnemyEntity(floor: number): BattleEntity {
   const scaled = scaleEnemyStatsForFloor(ENEMY_BASE, floor);
+  const boss = floor > 0 && floor % 10 === 0;
 
   return {
     id: `enemy_floor_${floor}`,
     side: "enemy",
-    name: `Floor ${floor} Guardian`,
+    name: boss ? `Floor ${floor} Boss` : `Floor ${floor} Guardian`,
     stats: {
       level: floor,
       exp: 0,
@@ -68,6 +72,7 @@ function buildEnemyEntity(floor: number): BattleEntity {
     },
     actionGauge: 0,
     statusEffects: [],
+    skillCooldowns: {},
   };
 }
 
@@ -77,10 +82,16 @@ export function createBattleState(
     autoBattle?: boolean;
     playerStats?: CombatStats;
     playerName?: string;
+    playerSkillPath?: SkillPath;
+    playerLoadout?: SkillLoadout;
+    playerSkillUpgrades?: Record<string, SkillUpgradeRanks>;
   }
 ): BattleState {
   const playerStats = options?.playerStats ?? DEFAULT_PLAYER_STATS;
   const playerName = options?.playerName ?? "Hero";
+  const path = options?.playerSkillPath ?? "murim";
+  const loadout =
+    options?.playerLoadout ?? getDefaultLoadout(path, playerStats.level);
 
   return {
     entities: [
@@ -90,6 +101,9 @@ export function createBattleState(
     floor,
     turnNumber: 1,
     autoBattle: options?.autoBattle ?? true,
+    playerSkillPath: path,
+    playerLoadout: loadout,
+    playerSkillUpgrades: options?.playerSkillUpgrades ?? {},
     isComplete: false,
   };
 }
