@@ -60,7 +60,7 @@ export function TopHud({
 
         <div className="hud-chrome__wallet">
           <span className="hud-gold tabular-nums" aria-label={`Gold: ${gold}`}>
-            <GameIcon name="gold" size={16} />
+            <GameIcon name="gold" size={26} />
             {gold}
           </span>
           <button
@@ -71,7 +71,7 @@ export function TopHud({
             }}
             aria-label={t("settings.title", locale)}
           >
-            <GameIcon name="settings" size={18} />
+            <GameIcon name="settings" size={28} />
           </button>
         </div>
       </div>

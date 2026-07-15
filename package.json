@@ -13,6 +13,7 @@
     "build": "vite build",
     "generate:audio": "node scripts/generateAudioAssets.mjs",
     "generate:sprites": "node scripts/generateCharacterSheets.mjs",
+    "assemble:murim": "node scripts/assembleMurimAiSheet.mjs",
     "fetch:audio": "node scripts/fetchStudioAudio.mjs",
     "preview": "vite preview",
     "start": "tsx src/server/index.ts"

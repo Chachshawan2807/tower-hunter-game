@@ -2,7 +2,9 @@
   "mcpServers": {
     "mcp-game-helper": {
       "command": "node",
-      "args": ["node_modules/mcp-game-helper/dist/index.js"]
+      "args": [
+        "C:/Projects/tower-hunter-game/node_modules/mcp-game-helper/dist/index.js"
+      ]
     }
   }
 }

@@ -4,17 +4,15 @@
   color: var(--ink-black);
 }
 
-/* HUD — single frosted chrome bar */
+/* HUD — floating ink (no chrome plate) */
 .view-readable .top-hud {
   padding-bottom: 6px;
 }
 
 .view-readable .hud-chrome {
-  background: rgba(255, 252, 245, 0.88);
-  border-color: rgba(0, 0, 0, 0.1);
-  box-shadow:
-    0 4px 18px rgba(0, 0, 0, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  background: transparent;
+  border: none;
+  box-shadow: none;
 }
 
 .view-readable .hud-name,
@@ -32,41 +30,40 @@
 }
 
 .view-readable .hud-level-badge {
-  background: var(--surface-readable-muted);
-  border-color: rgba(0, 0, 0, 0.12);
+  background: transparent;
+  border: none;
   color: var(--ink-black);
   font-family: var(--font-stat);
   font-weight: 700;
-  font-size: var(--text-xs);
+  font-size: var(--text-lg);
   letter-spacing: 0.04em;
 }
 
 .view-readable .hud-exp {
-  background: var(--surface-exp-tint);
-  padding: 2px 8px;
-  border-radius: var(--radius-sm);
+  background: transparent;
+  padding: 0;
   color: var(--dark-yellow-deep);
   font-weight: 700;
 }
 
 .view-readable .hud-gold {
-  background: var(--surface-gold-tint);
-  border-color: rgba(0, 0, 0, 0.14);
-  color: var(--antique-gold-deep);
+  background: transparent;
+  border: none;
+  color: var(--ink-black);
 }
 
 .view-readable .icon-btn {
   color: var(--ink-black);
-  background: var(--surface-readable-muted);
-  border-color: rgba(0, 0, 0, 0.14);
+  background: transparent;
+  border: none;
 }
 
 .view-readable .icon-btn--settings {
-  color: var(--antique-gold-deep);
-  border-color: rgba(153, 101, 21, 0.35);
+  color: var(--ink-black);
+  border: none;
 }
 
-/* Bottom nav — stone dock (no full-bleed fade overlaying stage) */
+/* Bottom nav — floating tabs (no dock bar) */
 .view-readable .bottom-nav {
   background: transparent;
   border-top: none;
@@ -75,9 +72,9 @@
 
 .view-readable .bottom-nav__dock,
 .view-readable .bottom-nav__tabs {
-  background: linear-gradient(180deg, #f7f2e8 0%, #e8e0d2 100%);
-  border-color: rgba(0, 0, 0, 0.12);
-  box-shadow: 0 -6px 22px rgba(0, 0, 0, 0.1);
+  background: transparent;
+  border: none;
+  box-shadow: none;
 }
 
 .view-readable .nav-btn {
@@ -86,33 +83,89 @@
 
 .view-readable .nav-btn:hover {
   color: var(--ink-black);
-  background: rgba(0, 0, 0, 0.05);
+  background: transparent;
 }
 
 .view-readable .nav-btn--active {
-  color: var(--dark-yellow-deep);
+  color: var(--ink-black);
 }
 
 .view-readable .nav-btn--tower .nav-btn__icon-wrap {
-  background: linear-gradient(145deg, #f3eee4, #ddd4c4);
-  border-color: rgba(0, 0, 0, 0.14);
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+  background: transparent;
+  border: none;
+  box-shadow: none;
 }
 
 .view-readable .nav-btn--tower .game-icon {
-  color: rgba(0, 0, 0, 0.45);
+  color: rgba(0, 0, 0, 0.42);
 }
 
 .view-readable .nav-btn--tower.nav-btn--active .nav-btn__icon-wrap {
-  background: linear-gradient(145deg, #fffaf0, #e8dfcf);
-  border-color: var(--dark-yellow-deep);
-  box-shadow:
-    0 4px 14px rgba(0, 0, 0, 0.12),
-    0 0 12px var(--dark-yellow-glow);
+  background: transparent;
+  border: none;
+  box-shadow: none;
 }
 
 .view-readable .nav-btn--tower.nav-btn--active .game-icon {
-  color: var(--dark-yellow-deep);
+  color: var(--ink-black);
+}
+
+/*
+ * Dark stage (Tower) + overlay dim strip: light stroke chrome.
+ * Spec: ink on readable home; light tokens on non-readable dark stage.
+ */
+.view-readable.is-dark-stage {
+  color: var(--text-primary);
+}
+
+.view-readable.is-dark-stage .hud-name,
+.view-readable.is-dark-stage .hud-level-badge,
+.view-readable.is-dark-stage .hud-gold {
+  color: var(--text-primary);
+}
+
+.view-readable.is-dark-stage .hud-exp,
+.view-readable.is-dark-stage .hud-exp-gauge__label {
+  color: var(--accent-exp);
+}
+
+.view-readable.is-dark-stage .hud-exp-gauge__track {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.view-readable.is-dark-stage .icon-btn,
+.view-readable.is-dark-stage .icon-btn--settings {
+  color: var(--text-secondary);
+}
+
+.view-readable.is-dark-stage .icon-btn--settings .game-icon,
+.view-readable.is-dark-stage .hud-gold .game-icon {
+  color: inherit;
+}
+
+.view-readable.is-menu-open .nav-btn,
+.view-readable.is-dark-stage .nav-btn {
+  color: var(--text-secondary);
+}
+
+.view-readable.is-menu-open .nav-btn:hover,
+.view-readable.is-dark-stage .nav-btn:hover {
+  color: var(--text-primary);
+}
+
+.view-readable.is-menu-open .nav-btn--active,
+.view-readable.is-dark-stage .nav-btn--active {
+  color: var(--ember-400);
+}
+
+.view-readable.is-menu-open .nav-btn--tower .game-icon,
+.view-readable.is-dark-stage .nav-btn--tower .game-icon {
+  color: var(--text-secondary);
+}
+
+.view-readable.is-menu-open .nav-btn--tower.nav-btn--active .game-icon,
+.view-readable.is-dark-stage .nav-btn--tower.nav-btn--active .game-icon {
+  color: var(--ember-400);
 }
 
 .view-readable .overlay__panel {
@@ -176,14 +229,6 @@
 }
 
 .view-readable .bag-item__expiry {
-  color: var(--crimson-deep);
-}
-
-.view-readable .tower-floor-label {
-  color: var(--ink-black);
-}
-
-.view-readable .tower-floor-sublabel--boss {
   color: var(--crimson-deep);
 }
 

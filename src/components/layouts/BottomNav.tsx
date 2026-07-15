@@ -47,11 +47,11 @@ export const BottomNav = forwardRef<HTMLElement, BottomNavProps>(function Bottom
             >
               {isTower ? (
                 <span className="nav-btn__icon-wrap" aria-hidden="true">
-                  <GameIcon name={item.icon} size={26} />
+                  <GameIcon name={item.icon} size={36} />
                 </span>
               ) : (
                 <span className="nav-btn__icon" aria-hidden="true">
-                  <GameIcon name={item.icon} size={22} />
+                  <GameIcon name={item.icon} size={32} />
                 </span>
               )}
               <span className="nav-btn__label">{t(item.labelKey, locale)}</span>

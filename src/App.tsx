@@ -107,7 +107,16 @@ export function App() {
 
   return (
     <GameShell locale={locale} battleLog={battleLogEntries} homeMode={isMainView} towerFloor={isTowerView ? currentFloor : undefined}>
-      <div className="game-viewport view-readable">
+      <div
+        className={[
+          "game-viewport",
+          "view-readable",
+          overlayOpen || settingsOpen ? "is-menu-open" : "",
+          isTowerView ? "is-dark-stage" : "",
+        ]
+          .filter(Boolean)
+          .join(" ")}
+      >
         <TopHud
           locale={locale}
           displayName={player.displayName}

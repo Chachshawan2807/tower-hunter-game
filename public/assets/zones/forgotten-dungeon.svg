@@ -16,9 +16,6 @@
   <!-- chains -->
   <path d="M120 0v120M140 0v140M220 0v130M240 0v110" stroke="#3a3a42" stroke-width="3" opacity="0.4"/>
   <path d="M160 0v100M200 0v120" stroke="#525252" stroke-width="4" opacity="0.35"/>
-  <!-- floor altar -->
-  <ellipse cx="180" cy="580" rx="100" ry="20" fill="#1a1a1a" opacity="0.6"/>
-  <rect x="130" y="520" width="100" height="24" rx="2" fill="#242424" stroke="#3d3d3d"/>
   <!-- fog -->
   <ellipse cx="180" cy="500" rx="160" ry="80" fill="url(#fog)"/>
   <defs>

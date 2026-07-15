@@ -18,8 +18,8 @@ const SPRITE_SCALE = 2;
 const SHEET_W = 480 * SPRITE_SCALE;
 const SHEET_H = 800 * SPRITE_SCALE;
 
+/** Murim PNG is AI-hybrid (see npm run assemble:murim) — do not overwrite. */
 const SHEETS = [
-  ["murim-sheet", "murim"],
   ["knight-sheet", "knight"],
   ["fantasy-sheet", "fantasy"],
   ["beast-sheet", "beast"],

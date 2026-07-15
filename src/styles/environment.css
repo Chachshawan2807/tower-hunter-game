@@ -183,11 +183,6 @@
   color: var(--text-muted);
 }
 
-.view-readable .tower-zone-label {
-  color: var(--ink-black);
-  opacity: 0.65;
-}
-
 /* Home stage — vignette atmosphere, no grid-like wall bands §04 */
 .env-backdrop--home .env-wall {
   display: none;

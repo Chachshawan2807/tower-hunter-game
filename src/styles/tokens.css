@@ -84,13 +84,14 @@
   --font-mono: "Barlow", "Noto Sans Thai", system-ui, sans-serif;
   --font-stat: "Barlow Condensed", "Noto Sans Thai", system-ui, sans-serif;
 
-  /* Type scale */
-  --text-xs: 0.68rem;
-  --text-sm: 0.78rem;
-  --text-md: 0.88rem;
-  --text-lg: 1.05rem;
-  --text-xl: 1.35rem;
-  --text-2xl: 1.75rem;
+  /* Type scale — mobile-first readable */
+  --text-xs: 0.88rem;
+  --text-sm: 1rem;
+  --text-md: 1.15rem;
+  --text-lg: 1.35rem;
+  --text-xl: 1.75rem;
+  --text-2xl: 2.35rem;
+  --text-3xl: 2.9rem;
 
   /* Spacing & radii — geometric, sharp §04 */
   --space-1: 4px;
@@ -100,13 +101,13 @@
   --space-5: 20px;
   --space-6: 24px;
   --section-gap: var(--space-4);
-  --row-icon-size: 40px;
+  --row-icon-size: 48px;
   --row-gap: var(--space-3);
   --radius-sm: 4px;
   --radius-md: 8px;
   --radius-lg: 10px;
   --radius-xl: 14px;
-  --touch-min: 44px;
+  --touch-min: 52px;
 
   /* Layout — center-locked 9:16 §08 */
   --frame-width: min(100vw, calc(100vh * 9 / 16));
@@ -117,7 +118,7 @@
   --safe-right: env(safe-area-inset-right, 0px);
   --safe-inline: max(var(--safe-left), var(--safe-right));
   --content-inline: calc(var(--space-4) + var(--safe-inline));
-  --bottom-nav-height: calc(88px + var(--safe-bottom));
+  --bottom-nav-height: calc(112px + var(--safe-bottom));
   /* Tower centerpiece rises above the nav bar baseline */
   --tower-nav-protrusion: 12px;
   --overlay-bottom-inset: calc(var(--bottom-nav-height) + var(--tower-nav-protrusion));
