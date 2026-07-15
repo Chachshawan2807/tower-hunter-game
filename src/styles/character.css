@@ -21,30 +21,53 @@
 
 
 .character-figure--stage {
-  width: 168px;
-  height: 252px;
-  /* Soft shadow only — hard drop-shadow ghosted overlapping limbs */
-  filter: drop-shadow(0 10px 14px rgba(0, 0, 0, 0.14));
+  width: 220px;
+  height: 352px;
 }
-
-
 
 .character-figure--battle {
-
   width: 110px;
-
   height: 168px;
-
 }
 
-
-
 .character-figure--menu {
-
   width: 140px;
-
   height: 210px;
+}
 
+/*
+ * Ground contact shadow (stage + Character menu).
+ * Ellipse under the feet — not filter:drop-shadow (that ghosts limbs/hair).
+ * bottom slightly negative so the ellipse sits under soles (sheet pad ~8px).
+ */
+.character-figure--stage::after,
+.character-figure--menu::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  z-index: 0;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 52% 48% at 50% 42%,
+    rgba(0, 0, 0, 0.45) 0%,
+    rgba(0, 0, 0, 0.22) 30%,
+    rgba(0, 0, 0, 0.08) 55%,
+    transparent 74%
+  );
+}
+
+.character-figure--stage::after {
+  bottom: -2px;
+  width: 48%;
+  height: 14px;
+}
+
+.character-figure--menu::after {
+  bottom: -1px;
+  width: 54%;
+  height: 10px;
 }
 
 
@@ -61,6 +84,7 @@
 
 .character-figure__sprite-wrap {
   position: relative;
+  z-index: 1;
   display: flex;
   align-items: flex-end;
   justify-content: center;
@@ -74,8 +98,8 @@
   display: block;
   flex-shrink: 0;
   background-repeat: no-repeat;
-  image-rendering: pixelated;
-  image-rendering: crisp-edges;
+  /* Painted anime sheets — avoid pixelated scaling */
+  image-rendering: auto;
 }
 
 .character-sprite-sheet--enemy {
@@ -336,13 +360,22 @@
 
 
 
-/* Equipment paper doll (Character menu) */
+/* Equipment paper doll (Character menu) — side rails */
 .char-equip-doll {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  justify-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  margin-bottom: var(--section-gap);
+}
+
+.char-equip-rail {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-3);
-  margin-bottom: var(--section-gap);
+  gap: var(--space-2);
 }
 
 .char-equip-stage {
@@ -350,46 +383,43 @@
   display: grid;
   place-items: center;
   width: 100%;
-  max-width: 220px;
+  max-width: 200px;
   min-height: 210px;
-  padding: var(--space-3) var(--space-2) var(--space-1);
-  border-radius: var(--radius-lg);
-  background:
-    radial-gradient(ellipse 70% 55% at 50% 42%, rgba(218, 165, 32, 0.14), transparent 70%),
-    var(--surface-readable-muted);
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65);
+  padding: var(--space-3) var(--space-1) var(--space-1);
+  background: transparent;
+  border: none;
+  box-shadow: none;
 }
 
+/* Soft ambient pool under figure (contact core lives on .character-figure::after) */
 .char-equip-stage__ring {
   position: absolute;
-  bottom: 18px;
+  bottom: 2px;
   left: 50%;
-  width: 58%;
-  height: 14px;
+  width: 66%;
+  height: 18px;
   transform: translateX(-50%);
   border-radius: 50%;
-  background: radial-gradient(ellipse, rgba(0, 0, 0, 0.22), transparent 70%);
+  background: radial-gradient(
+    ellipse 50% 50% at 50% 50%,
+    rgba(0, 0, 0, 0.1) 0%,
+    rgba(0, 0, 0, 0.03) 50%,
+    transparent 74%
+  );
   pointer-events: none;
-}
-
-.char-equip-slots {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-2);
-  width: 100%;
+  z-index: 0;
 }
 
 .char-equip-slot {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-3);
-  border-radius: var(--radius-md);
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius-sm);
   background: rgba(255, 255, 255, 0.9);
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.14);
   color: var(--ink-black);
-  text-align: left;
+  flex-shrink: 0;
 }
 
 .char-equip-slot__rarity--rare {
@@ -404,42 +434,6 @@
 .char-equip-slot__rarity--legendary {
   border-color: var(--antique-gold-deep);
   box-shadow: 0 0 10px rgba(153, 101, 21, 0.18);
-}
-
-.char-equip-slot__badge {
-  display: grid;
-  place-items: center;
-  width: 32px;
-  height: 32px;
-  border-radius: var(--radius-sm);
-  background: #1a1a1a;
-  color: #f0ebe0;
-  flex-shrink: 0;
-}
-
-.char-equip-slot__copy {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  min-width: 0;
-}
-
-.char-equip-slot__type {
-  font-family: var(--font-display);
-  font-size: 0.62rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  opacity: 0.55;
-}
-
-.char-equip-slot__name {
-  font-size: 0.78rem;
-  font-weight: 600;
-  line-height: 1.2;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .view-readable .char-equip-slot {

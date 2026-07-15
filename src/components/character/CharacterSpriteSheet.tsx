@@ -18,7 +18,7 @@ interface CharacterSpriteSheetProps {
 }
 
 function sheetScale(size: CharacterSpriteSheetProps["size"]): number {
-  if (size === "stage") return 160 / SPRITE_FRAME_WIDTH;
+  if (size === "stage") return 210 / SPRITE_FRAME_WIDTH;
   if (size === "menu") return 140 / SPRITE_FRAME_WIDTH;
   if (size === "npc") return 96 / SPRITE_FRAME_WIDTH;
   return 110 / SPRITE_FRAME_WIDTH;

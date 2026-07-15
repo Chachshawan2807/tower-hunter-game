@@ -74,19 +74,20 @@
   animation: hero-spotlight-pulse 4s ease-in-out infinite;
 }
 
+/* Soft ambient pool — tight contact shadow is on .character-figure--stage::after */
 .hero-showcase__pedestal {
   position: absolute;
-  bottom: 8px;
+  bottom: 2px;
   left: 50%;
   transform: translateX(-50%);
-  width: 64%;
-  height: 16px;
+  width: 66%;
+  height: 22px;
   border-radius: 50%;
   background: radial-gradient(
-    ellipse,
-    rgba(0, 0, 0, 0.22) 0%,
-    rgba(0, 0, 0, 0.06) 55%,
-    transparent 75%
+    ellipse 50% 50% at 50% 50%,
+    rgba(0, 0, 0, 0.1) 0%,
+    rgba(0, 0, 0, 0.03) 48%,
+    transparent 74%
   );
   pointer-events: none;
   z-index: 0;
@@ -98,8 +99,8 @@
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  width: 180px;
-  height: 260px;
+  width: 240px;
+  height: 360px;
   margin-bottom: var(--space-2);
 }
 
@@ -109,21 +110,16 @@
   align-items: center;
   gap: var(--space-2);
   width: 100%;
-  padding: var(--space-3) var(--space-4) var(--space-3);
+  padding: var(--space-2) var(--space-4) 0;
   margin-top: calc(var(--space-1) * -1);
-  border-radius: var(--radius-lg);
-  background: var(--panel-chrome);
-  border: 1px solid var(--panel-chrome-border);
-  box-shadow:
-    0 4px 20px rgba(0, 0, 0, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.65);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  background: transparent;
+  border: none;
+  box-shadow: none;
 }
 
 .hero-showcase__name {
   font-family: var(--font-display);
-  font-size: var(--text-2xl);
+  font-size: clamp(2.4rem, 9vw, var(--text-3xl));
   font-weight: 800;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -135,47 +131,46 @@
 .hero-showcase__meta {
   display: flex;
   align-items: center;
-  gap: var(--space-2);
+  gap: var(--space-3);
 }
 
 .hero-showcase__path {
   font-family: var(--font-display);
-  font-size: var(--text-sm);
+  font-size: var(--text-lg);
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  padding: 3px 10px;
-  border-radius: var(--radius-sm);
-  border: 1px solid rgba(0, 0, 0, 0.12);
+  padding: 0;
+  background: transparent;
+  border: none;
 }
 
 .hero-showcase__path--murim {
-  background: rgba(178, 34, 34, 0.12);
+  background: transparent;
   color: var(--crimson-deep);
-  border-color: rgba(139, 0, 0, 0.25);
+  border: none;
 }
 
 .hero-showcase__path--knight {
-  background: rgba(74, 85, 104, 0.14);
+  background: transparent;
   color: #2d3444;
-  border-color: rgba(45, 52, 68, 0.22);
+  border: none;
 }
 
 .hero-showcase__path--fantasy {
-  background: rgba(107, 64, 136, 0.12);
+  background: transparent;
   color: var(--arcane-600);
-  border-color: rgba(74, 48, 96, 0.22);
+  border: none;
 }
 
 .hero-showcase__level {
   font-family: var(--font-stat);
-  font-size: var(--text-sm);
+  font-size: var(--text-lg);
   font-weight: 700;
   letter-spacing: 0.04em;
-  padding: 3px 10px;
-  border-radius: var(--radius-sm);
-  background: var(--surface-exp-tint);
-  border: 1px solid rgba(184, 134, 11, 0.28);
+  padding: 0;
+  background: transparent;
+  border: none;
   color: var(--dark-yellow-deep);
 }
 

@@ -46,7 +46,7 @@ export const ANIMATION_STATE_ROW: Record<AnimationState, number> = {
 
 
 export const CHARACTER_SHEET_URLS: Record<CharacterSheetId, string> = {
-  murim: "/assets/characters/murim-sheet.png",
+  murim: "/assets/characters/murim-sheet.png?v=ai-hybrid-1",
   knight: "/assets/characters/knight-sheet.png",
   fantasy: "/assets/characters/fantasy-sheet.png",
   beast: "/assets/characters/beast-sheet.png",
