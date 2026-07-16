@@ -1,7 +1,7 @@
 # Unified Layout Design
 
 **Date:** 2026-07-15  
-**Status:** Approved (user waived written-spec review; implement immediately)
+**Status:** Implemented
 
 ## Goal
 

@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none">
+  <!-- Imperial Knight Hero — scroll -->
+  <path d="M6.4 4.8h9.6a1.6 1.6 0 0 1 1.6 1.6v12.8l-3.2-1.6-3.2 1.6-3.2-1.6V6.4a1.6 1.6 0 0 1 1.6-1.6Z" fill="none" stroke="#1a1a1a" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M10.4 9.6h6.4M10.4 12.8h4.8" fill="none" stroke="#1a1a1a" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

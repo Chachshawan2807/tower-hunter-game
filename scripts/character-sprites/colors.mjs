@@ -11,8 +11,6 @@ export const C = {
   crimsonDeep: "#8b0000",
   gold: "#c5a059",
   goldDim: "#b8860b",
-  murimRobe: "#1a1410",
-  murimSash: "#b8860b",
   knightCape: "#4a1010",
   fantasyHood: "#1a1018",
   fantasyAccent: "#5a3070",

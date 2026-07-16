@@ -1,5 +1,7 @@
 # Unified Layout Implementation Plan
 
+> **Status:** Implemented.
+
 > **For agentic workers:** Implement task-by-task. Checkboxes track progress.
 
 **Goal:** Apply a shared spacing scale and row/section primitives so every screen aligns consistently inside the 9:16 frame.

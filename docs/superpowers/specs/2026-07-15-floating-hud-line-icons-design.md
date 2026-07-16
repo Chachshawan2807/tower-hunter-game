@@ -1,7 +1,7 @@
 # Floating HUD + Stroke Line Icons
 
 **Date:** 2026-07-15  
-**Status:** Approved (Approach 1 — implement immediately; refine later)
+**Status:** Implemented — superseded in part by Imperial Knight icon set (`npm run export:icons`)
 
 ## Goal
 

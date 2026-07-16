@@ -8,7 +8,7 @@ import type { SkillDefinition } from "./types";
 
 export const MURIM_IRON_PALM: SkillDefinition = {
   id: "murim_palm",
-  path: "murim",
+  path: "imperial",
   stringId: "skills.murim.palm",
   icon: "👊",
   mpCost: 15,
@@ -25,7 +25,7 @@ export const MURIM_IRON_PALM: SkillDefinition = {
 
 export const MURIM_SHADOW_STEP: SkillDefinition = {
   id: "murim_dash",
-  path: "murim",
+  path: "imperial",
   stringId: "skills.murim.dash",
   icon: "💨",
   mpCost: 10,
@@ -41,7 +41,7 @@ export const MURIM_SHADOW_STEP: SkillDefinition = {
 
 export const MURIM_INNER_QI: SkillDefinition = {
   id: "murim_qi",
-  path: "murim",
+  path: "imperial",
   stringId: "skills.murim.qi",
   icon: "🔥",
   mpCost: 20,
@@ -60,7 +60,7 @@ export const MURIM_INNER_QI: SkillDefinition = {
 
 export const MURIM_DRAGON_FIST: SkillDefinition = {
   id: "murim_dragon",
-  path: "murim",
+  path: "imperial",
   stringId: "skills.murim.dragon",
   icon: "🐉",
   mpCost: 30,

@@ -67,7 +67,7 @@ export interface TurnContext {
   autoBattle: boolean;
 }
 
-export type SkillPath = "murim" | "knight" | "fantasy";
+export type SkillPath = "imperial" | "knight" | "vanguard";
 
 export type ItemRarity = "common" | "rare" | "epic" | "legendary";
 

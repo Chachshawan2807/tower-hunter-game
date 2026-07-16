@@ -1,7 +1,7 @@
 # Character Equipment Side Slots
 
 **Date:** 2026-07-16  
-**Status:** Approved (Approach 1 — left/right slot columns)
+**Status:** Implemented
 
 ## Goal
 

@@ -5,7 +5,7 @@ ALTER TABLE player_stats
 -- Per-path loadout (persisted separately per path)
 CREATE TABLE IF NOT EXISTS player_skill_loadout (
   user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-  path TEXT NOT NULL CHECK (path IN ('murim', 'knight', 'fantasy')),
+  path TEXT NOT NULL CHECK (path IN ('imperial', 'knight', 'vanguard')),
   active_slot_1 TEXT NOT NULL,
   active_slot_2 TEXT NOT NULL,
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),

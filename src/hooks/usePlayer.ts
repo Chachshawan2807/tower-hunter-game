@@ -9,7 +9,7 @@ function buildFallbackStats(
   userId: string,
   level = 1,
   floor = 1,
-  path: SkillPath = "murim"
+  path: SkillPath = "imperial"
 ): PlayerStatsResponse["stats"] {
   const base = combatStatsForLevel(level);
   return {
@@ -37,7 +37,7 @@ export function usePlayer() {
   const [level, setLevel] = useState(1);
   const [exp, setExp] = useState(0);
   const [currentFloor, setCurrentFloor] = useState(1);
-  const [skillPath, setSkillPath] = useState<SkillPath>("murim");
+  const [skillPath, setSkillPath] = useState<SkillPath>("imperial");
   const [stats, setStats] = useState<PlayerStatsResponse["stats"] | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -45,14 +45,14 @@ export function usePlayer() {
     try {
       const [data, pathData] = await Promise.all([
         api.getPlayerStats(id),
-        api.getSkillPath(id).catch(() => ({ path: "murim" as const, equippedSkills: [] })),
+        api.getSkillPath(id).catch(() => ({ path: "imperial" as const, equippedSkills: [] })),
       ]);
       setStats(data.stats);
       setGold(data.goldBalance);
       setLevel(data.stats.level);
       setExp(Number(data.stats.exp));
       setCurrentFloor(data.stats.current_floor);
-      setSkillPath(pathData.path ?? data.stats.active_skill_path ?? "murim");
+      setSkillPath(pathData.path ?? data.stats.active_skill_path ?? "imperial");
     } catch (err) {
       console.error("Failed to load player stats:", err);
       setStats((prev) =>

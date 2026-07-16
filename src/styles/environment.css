@@ -118,13 +118,13 @@
     linear-gradient(180deg, var(--stone-850) 0%, var(--primary-black-deep) 100%);
 }
 
-.env-zone--murim-pagoda {
+.env-zone--imperial-bastion {
   background:
     radial-gradient(ellipse 80% 35% at 50% 0%, rgba(218, 165, 32, 0.1) 0%, transparent 50%),
     linear-gradient(180deg, #1a1410 0%, var(--primary-black-deep) 100%);
 }
 
-.env-zone--murim-pagoda .env-wall {
+.env-zone--imperial-bastion .env-wall {
   background: linear-gradient(90deg, #1a100c 0%, #2a1810 50%, #1a100c 100%);
 }
 
@@ -159,7 +159,7 @@
   border-color: rgba(255, 255, 255, 0.06);
 }
 
-.tower-floor-block--zone-murim-pagoda {
+.tower-floor-block--zone-imperial-bastion {
   background: linear-gradient(90deg, #2a1810, #1f1410);
   border-color: rgba(178, 34, 34, 0.25);
 }

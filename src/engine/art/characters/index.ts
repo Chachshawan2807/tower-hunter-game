@@ -10,4 +10,3 @@ export {
   type NpcArchetype,
   type PlayerArchetype,
 } from "./types";
-export { ISO_COLORS } from "./isoColors";

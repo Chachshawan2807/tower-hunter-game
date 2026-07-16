@@ -23,9 +23,9 @@ for (const skill of [
 }
 
 const PATH_SKILLS: Record<SkillPath, SkillDefinition[]> = {
-  murim: MURIM_SKILLS,
+  imperial: MURIM_SKILLS,
   knight: KNIGHT_SKILLS,
-  fantasy: FANTASY_SKILLS,
+  vanguard: FANTASY_SKILLS,
 };
 
 export function getSkillById(skillId: string): SkillDefinition {

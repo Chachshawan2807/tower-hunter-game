@@ -118,6 +118,7 @@
   --safe-right: env(safe-area-inset-right, 0px);
   --safe-inline: max(var(--safe-left), var(--safe-right));
   --content-inline: calc(var(--space-4) + var(--safe-inline));
+  --chrome-dock-max-width: 420px;
   --bottom-nav-height: calc(112px + var(--safe-bottom));
   /* Tower centerpiece rises above the nav bar baseline */
   --tower-nav-protrusion: 12px;

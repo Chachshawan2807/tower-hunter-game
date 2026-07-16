@@ -23,7 +23,6 @@ export {
 } from "./sprites/characterSheetConfig";
 export {
   CHARACTER_ARCHETYPES,
-  ISO_COLORS,
   archetypeForPlayer,
   enemyArchetypeForFloor,
   type CharacterArchetype,

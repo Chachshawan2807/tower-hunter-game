@@ -5,7 +5,7 @@
 
 export type TowerZoneId =
   | "forgotten-dungeon"
-  | "murim-pagoda"
+  | "imperial-bastion"
   | "knight-citadel"
   | "void-pinnacle";
 
@@ -18,7 +18,7 @@ export interface TowerZone {
   /** CSS class suffix for environment styling */
   cssClass: string;
   /** Primary hybrid theme emphasis */
-  theme: "murim" | "knight" | "fantasy" | "mixed";
+  theme: "imperial" | "knight" | "vanguard" | "mixed";
 }
 
 export const TOWER_ZONES: readonly TowerZone[] = [
@@ -31,12 +31,12 @@ export const TOWER_ZONES: readonly TowerZone[] = [
     theme: "mixed",
   },
   {
-    id: "murim-pagoda",
+    id: "imperial-bastion",
     floorMin: 31,
     floorMax: 60,
-    nameKey: "tower.zone.murim",
-    cssClass: "env-zone--murim-pagoda",
-    theme: "murim",
+    nameKey: "tower.zone.imperial",
+    cssClass: "env-zone--imperial-bastion",
+    theme: "knight",
   },
   {
     id: "knight-citadel",
@@ -52,7 +52,7 @@ export const TOWER_ZONES: readonly TowerZone[] = [
     floorMax: 100,
     nameKey: "tower.zone.void",
     cssClass: "env-zone--void-pinnacle",
-    theme: "fantasy",
+    theme: "vanguard",
   },
 ] as const;
 

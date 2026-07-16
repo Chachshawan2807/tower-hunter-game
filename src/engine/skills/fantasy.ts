@@ -4,7 +4,7 @@ import type { SkillDefinition } from "./types";
 
 export const FANTASY_ARCANE_BOLT: SkillDefinition = {
   id: "fantasy_bolt",
-  path: "fantasy",
+  path: "vanguard",
   stringId: "skills.fantasy.bolt",
   icon: "🔮",
   mpCost: 15,
@@ -20,7 +20,7 @@ export const FANTASY_ARCANE_BOLT: SkillDefinition = {
 
 export const FANTASY_FROST_NOVA: SkillDefinition = {
   id: "fantasy_freeze",
-  path: "fantasy",
+  path: "vanguard",
   stringId: "skills.fantasy.freeze",
   icon: "❄",
   mpCost: 20,
@@ -37,7 +37,7 @@ export const FANTASY_FROST_NOVA: SkillDefinition = {
 
 export const FANTASY_HOLY_LIGHT: SkillDefinition = {
   id: "fantasy_heal",
-  path: "fantasy",
+  path: "vanguard",
   stringId: "skills.fantasy.heal",
   icon: "✨",
   mpCost: 25,
@@ -52,7 +52,7 @@ export const FANTASY_HOLY_LIGHT: SkillDefinition = {
 
 export const FANTASY_METEOR: SkillDefinition = {
   id: "fantasy_meteor",
-  path: "fantasy",
+  path: "vanguard",
   stringId: "skills.fantasy.meteor",
   icon: "☄",
   mpCost: 35,

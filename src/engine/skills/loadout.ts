@@ -8,9 +8,9 @@ export interface SkillLoadout {
 }
 
 const DEFAULT_ACTIVE: Record<SkillPath, [string, string]> = {
-  murim: ["murim_palm", "murim_dragon"],
+  imperial: ["murim_palm", "murim_dragon"],
   knight: ["knight_slash", "knight_charge"],
-  fantasy: ["fantasy_bolt", "fantasy_meteor"],
+  vanguard: ["fantasy_bolt", "fantasy_meteor"],
 };
 
 export function getDefaultLoadout(

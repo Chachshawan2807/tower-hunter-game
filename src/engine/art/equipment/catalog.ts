@@ -12,42 +12,42 @@ export interface GearCatalogEntry {
 
 /** Server-persisted gear_id values */
 export const GEAR_CATALOG: Record<string, GearCatalogEntry> = {
-  "gear.murim.weapon.katana": {
-    id: "gear.murim.weapon.katana",
+  "gear.imperial.weapon.katana": {
+    id: "gear.imperial.weapon.katana",
     slot: "weapon",
-    path: "murim",
+    path: "imperial",
     nameKey: "weapon.katana",
     weaponId: "katana",
   },
-  "gear.murim.helm.headband": {
-    id: "gear.murim.helm.headband",
+  "gear.imperial.helm.headband": {
+    id: "gear.imperial.helm.headband",
     slot: "helm",
-    path: "murim",
-    nameKey: "gear.murim.helm.headband",
+    path: "imperial",
+    nameKey: "gear.imperial.helm.headband",
   },
-  "gear.murim.chest.robe": {
-    id: "gear.murim.chest.robe",
+  "gear.imperial.chest.robe": {
+    id: "gear.imperial.chest.robe",
     slot: "chest",
-    path: "murim",
-    nameKey: "gear.murim.chest.robe",
+    path: "imperial",
+    nameKey: "gear.imperial.chest.robe",
   },
-  "gear.murim.gloves.wraps": {
-    id: "gear.murim.gloves.wraps",
+  "gear.imperial.gloves.wraps": {
+    id: "gear.imperial.gloves.wraps",
     slot: "gloves",
-    path: "murim",
-    nameKey: "gear.murim.gloves.wraps",
+    path: "imperial",
+    nameKey: "gear.imperial.gloves.wraps",
   },
-  "gear.murim.boots.sandals": {
-    id: "gear.murim.boots.sandals",
+  "gear.imperial.boots.sandals": {
+    id: "gear.imperial.boots.sandals",
     slot: "boots",
-    path: "murim",
-    nameKey: "gear.murim.boots.sandals",
+    path: "imperial",
+    nameKey: "gear.imperial.boots.sandals",
   },
-  "gear.murim.cloak.sash": {
-    id: "gear.murim.cloak.sash",
+  "gear.imperial.cloak.sash": {
+    id: "gear.imperial.cloak.sash",
     slot: "cloak",
-    path: "murim",
-    nameKey: "gear.murim.cloak.sash",
+    path: "imperial",
+    nameKey: "gear.imperial.cloak.sash",
   },
   "gear.knight.weapon.greatsword": {
     id: "gear.knight.weapon.greatsword",
@@ -89,38 +89,38 @@ export const GEAR_CATALOG: Record<string, GearCatalogEntry> = {
   "gear.fantasy.weapon.wand": {
     id: "gear.fantasy.weapon.wand",
     slot: "weapon",
-    path: "fantasy",
+    path: "vanguard",
     nameKey: "weapon.wand",
     weaponId: "wand",
   },
   "gear.fantasy.helm.hood": {
     id: "gear.fantasy.helm.hood",
     slot: "helm",
-    path: "fantasy",
+    path: "vanguard",
     nameKey: "gear.fantasy.helm.hood",
   },
   "gear.fantasy.chest.leathers": {
     id: "gear.fantasy.chest.leathers",
     slot: "chest",
-    path: "fantasy",
+    path: "vanguard",
     nameKey: "gear.fantasy.chest.leathers",
   },
   "gear.fantasy.gloves.bracers": {
     id: "gear.fantasy.gloves.bracers",
     slot: "gloves",
-    path: "fantasy",
+    path: "vanguard",
     nameKey: "gear.fantasy.gloves.bracers",
   },
   "gear.fantasy.boots.treads": {
     id: "gear.fantasy.boots.treads",
     slot: "boots",
-    path: "fantasy",
+    path: "vanguard",
     nameKey: "gear.fantasy.boots.treads",
   },
   "gear.fantasy.cloak.bone": {
     id: "gear.fantasy.cloak.bone",
     slot: "cloak",
-    path: "fantasy",
+    path: "vanguard",
     nameKey: "gear.fantasy.cloak.bone",
   },
 };

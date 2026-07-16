@@ -14,13 +14,13 @@
 
 **แก่นเรื่อง (Core Concept):** การท้าทายตนเองเพื่อเอาชีวิตรอดในหอคอยแห่งการทดลอง 100 ชั้น ต่อสู้กับสัตว์ประหลาดและผู้ท้าทายคนอื่นเพื่อข้ามขีดจำกัดมนุษย์
 
-**การผสมผสานธีม (Hybrid Theme):** ผสาน 3 อารมณ์หลักอย่างกลมกลืน:
+**การผสมผสานธีม (Hybrid Theme):** ผสาน 3 อารมณ์หลักอย่างกลมกลืน (โทนภาพหลักปัจจุบันเน้น **Imperial Knight** — ดู [IMPERIAL_KNIGHT_ICON_STYLE.md](./IMPERIAL_KNIGHT_ICON_STYLE.md)):
 
 | ธีม | ลักษณะ |
 |-----|--------|
-| แนวยุทธภพ กำลังภายใน (Murim) | ความดิบ ลึกลับ และศาสตร์การต่อสู้ตะวันออก |
+| แนวจักรวรรดิ อัศวิน (Imperial Knight) | เกราะแผ่น เหล็กกล้า ปราสาทยุคกลาง — **ภาษาภาพหลักของ UI และฮีโร่** |
 | แนวอัศวิน พลังเวท (Knight & Magic) | ความเคร่งขรึม ชุดเกราะเหล็ก และสัญลักษณ์ยุคกลาง |
-| แนวแฟนตาซี สัตว์ร้าย (Fantasy & Beast) | สิ่งมีชีวิตกลายพันธุ์ ความลึกลับของอารยธรรมโบราณ |
+| แนวแวนการ์ด สัตว์ร้าย (Vanguard & Beast) | สิ่งมีชีวิตกลายพันธุ์ ความลึกลับของอารยธรรมโบราณ |
 
 **อารมณ์และความรู้สึก:** ผู้เล่นต้องรู้สึกถึงความกดดัน ท้าทาย และมุ่งมั่นที่จะเอาตัวรอด บรรยากาศจะไม่มีความสดใส แต่เน้นความสมดุลของโทนสีธรรมชาติที่ไม่จางหรือเข้มเกินไป
 
@@ -38,7 +38,7 @@
 | Primary Black | `#0D0D0D` – `#1A1A1A` | ฉากหลัง, พื้นหลังเมนู Overlay | ความมืดมิด, กดดัน |
 | Pure Black (Ink) | `#000000` | ตัวอักษร UI ทั้งหมด | ความชัดเจนสูงสุด |
 | Crimson Red | `#8B0000` – `#B22222` | DoT/เลือดไหล, คริติคอล, HP ศัตรู | อันตราย, การต่อสู้ |
-| Dark Yellow | `#DAA520` – `#B8860B` | เมนูสกิลยุทธภพ, แสงรำไร, EXP | ความหวังที่ริบหรี่ |
+| Dark Yellow | `#DAA520` – `#B8860B` | เมนูสกิล Imperial path, แสงรำไร, EXP | ความหวังที่ริบหรี่ |
 | Antique Gold | `#C5A059` – `#996515` | Gold, ไอเทม Rare+, Settings | รางวัล, ความสูงส่ง |
 
 **โค้ดอ้างอิง:** `src/engine/art/palette.ts`, `src/styles/tokens.css`
@@ -76,7 +76,7 @@
 | ชั้น | โซน | ธีม |
 |------|-----|-----|
 | 1–30 | The Forgotten Dungeon | คุกใต้ดินหินหยาบ คบเพลิง โซ่ตรวน |
-| 31–60 | The Murim Pagoda | ศาลเจ้า/หอเก๋งจีน หลังคาปีกนก ผนังไม้ดำ-แดง |
+| 31–60 | The Imperial Bastion | ปราการจักรวรรดิ กำแพงหิน หอคอยยุคกลาง |
 | 61–90 | The Knight's Citadel | ปราสาทเหล็กโกธิค ซุ้มโค้งแหลม |
 | 91–100 | The Void Pinnacle | แท่นหินลอย ความว่างดำ ออร่าทอง-แดง บอสทุกชั้นลงท้าย 0 |
 
@@ -90,7 +90,8 @@
 
 - **สัดส่วน:** 7.5–8 ส่วน ท่วงท่ามั่นคงดุดัน
 - **สีผิว:** Natural Skin Tones
-- **3 สายสกิล:** Murim (จอมยุทธ์), Knight (เกราะเหล็ก), Fantasy (หนังสัตว์/กระดูก)
+- **3 สายสกิล:** Imperial (จักรวรรดิ), Knight (เกราะเหล็ก), Vanguard (แวนการ์ด/เวท)
+- **ฮีโร่หลัก:** Imperial Knight line art — `public/assets/characters/imperial-knight-hero.svg` (`HeroPortrait`)
 
 **Animation States:** `idle` | `attack` | `hit_cc` | `defeat`
 
@@ -102,9 +103,9 @@
 
 ```
 ไอเทมสวมใส่
- ├── ยุทธภพ/มูริม  → Katana, Dual Swords, Staff
- ├── อัศวิน/ยุคกลาง → Greatsword, Greataxe, Spear
- └── แฟนตาซี/เวท    → Wand, Bow, Dual Daggers
+ ├── จักรวรรดิ (Imperial)  → Longsword, Dual Blades, Staff
+ ├── อัศวิน (Knight)       → Greatsword, Greataxe, Spear
+ └── แวนการ์ด (Vanguard)   → Wand, Bow, Dual Daggers
 ```
 
 อาวุธเริ่มต้น = เหล็กดิบ | Rare+ = อักขระทอง อัญมณีแดง ออร่าดำ
@@ -144,4 +145,4 @@ Performance Optimized (PWA):
 | Ambient | ลมหวีดหวิว, น้ำหยดก้อง |
 | SFX | เหล็กปะทะ, ฝีเท้าหนักบนหิน (ตาม Action Gauge) |
 
-> **สถานะ:** OGG/MP3 assets ใน `public/audio/` (สร้างด้วย `npm run generate:audio`) + Settings volume/mute — procedural เป็น fallback หากไฟล์หาย
+> **สถานะ:** OGG/MP3 assets ใน `public/audio/` (`npm run fetch:audio` จาก Kenney; `npm run generate:audio` สำหรับ procedural placeholder) + Settings volume/mute — procedural เป็น fallback หากไฟล์หาย

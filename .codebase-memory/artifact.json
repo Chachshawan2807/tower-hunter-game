@@ -1,11 +1,11 @@
 {
     "schema_version": 2,
-    "commit": "8470867fe6ad36cddc59cf7e5f1e838156e8ce9b",
-    "indexed_at": "2026-07-15T17:45:06Z",
+    "commit": "4814ee8cfaac3ed736b78d3d3823d2b888fc34fc",
+    "indexed_at": "2026-07-16T18:16:13Z",
     "project": "tower-hunter-game",
-    "nodes": 1828,
-    "edges": 4603,
-    "original_size": 4194304,
-    "compressed_size": 894530,
-    "compression_level": 9
+    "nodes": 1823,
+    "edges": 4413,
+    "original_size": 5963776,
+    "compressed_size": 1078313,
+    "compression_level": 3
 }

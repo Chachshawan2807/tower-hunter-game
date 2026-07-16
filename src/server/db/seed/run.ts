@@ -87,8 +87,8 @@ export async function seedDemoInventory(pool: DbPool, userId: string): Promise<v
   }
 
   const items = [
-    { itemId: "gear.murim.weapon.katana", quantity: 1, rarity: "rare" as const },
-    { itemId: "gear.murim.chest.robe", quantity: 1, rarity: "epic" as const },
+    { itemId: "gear.imperial.weapon.katana", quantity: 1, rarity: "rare" as const },
+    { itemId: "gear.imperial.chest.robe", quantity: 1, rarity: "epic" as const },
     { itemId: "drop_f13_rare", quantity: 1, rarity: "rare" as const },
   ];
 

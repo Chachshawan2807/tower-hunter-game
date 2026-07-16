@@ -10,6 +10,7 @@ import {
 import type { CharacterEquipmentVisual } from "../../engine/art/equipment/catalog";
 import { isBossFloor, type SkillPath } from "../../engine/types";
 import { CharacterSpriteSheet } from "./CharacterSpriteSheet";
+import { HeroPortrait } from "./HeroPortrait";
 
 export interface CharacterFigureProps {
   /** Used for path resolution; gear is baked into PNG sheets (no SVG overlay). */
@@ -59,7 +60,7 @@ export const CharacterFigure = memo(function CharacterFigure({
   size = "battle",
 }: CharacterFigureProps) {
   const fx = statusFxClass(statusEffects);
-  const path = pathProp ?? equipment?.path ?? "murim";
+  const path = pathProp ?? equipment?.path ?? "imperial";
   const archetype = resolveArchetype(side, path, archetypeProp, floor);
   const spec = CHARACTER_ARCHETYPES[archetype];
   const figureSize = size === "npc" ? "npc" : size;
@@ -83,12 +84,16 @@ export const CharacterFigure = memo(function CharacterFigure({
       style={{ ["--char-scale" as string]: String(spec.scale) }}
     >
       <div className="character-figure__sprite-wrap">
-        <CharacterSpriteSheet
-          archetype={archetype}
-          animState={animState}
-          side={side}
-          size={figureSize}
-        />
+        {side === "player" ? (
+          <HeroPortrait size={figureSize} />
+        ) : (
+          <CharacterSpriteSheet
+            archetype={archetype}
+            animState={animState}
+            side={side}
+            size={figureSize}
+          />
+        )}
       </div>
 
       {animState === "defeat" && (
@@ -97,6 +102,3 @@ export const CharacterFigure = memo(function CharacterFigure({
     </figure>
   );
 });
-
-/** @deprecated Use CharacterFigure */
-export const CharacterSprite = CharacterFigure;

@@ -67,7 +67,7 @@ export interface PlayerStatsResponse {
     status_chance?: string;
     status_resist?: string;
     current_floor: number;
-    active_skill_path?: "murim" | "knight" | "fantasy";
+    active_skill_path?: "imperial" | "knight" | "vanguard";
   };
   goldBalance: string;
   equipmentStatBonus?: GearStatBonusDto;
@@ -89,14 +89,14 @@ export interface SkillCatalogEntry {
 }
 
 export interface SkillPathResponse {
-  path: "murim" | "knight" | "fantasy";
+  path: "imperial" | "knight" | "vanguard";
   playerLevel: number;
   equippedSkills: string[];
   skills: SkillCatalogEntry[];
 }
 
 export interface SkillLoadout {
-  path: "murim" | "knight" | "fantasy";
+  path: "imperial" | "knight" | "vanguard";
   activeSlots: [string, string];
 }
 
@@ -109,7 +109,7 @@ export interface SkillUpgradeRanks {
 export interface SkillProgressionResponse {
   skillPoints: number;
   upgrades: Record<string, SkillUpgradeRanks>;
-  path: "murim" | "knight" | "fantasy";
+  path: "imperial" | "knight" | "vanguard";
   loadout: SkillLoadout;
   skills: (SkillCatalogEntry & {
     unlocked: boolean;
@@ -175,7 +175,7 @@ export interface PlayerEquipmentResponse {
     "weapon" | "helm" | "chest" | "gloves" | "boots" | "cloak",
     { gearId: string; rarity: "common" | "rare" | "epic" | "legendary" }
   >>;
-  path: "murim" | "knight" | "fantasy";
+  path: "imperial" | "knight" | "vanguard";
   statBonus?: GearStatBonusDto;
 }
 
@@ -265,7 +265,7 @@ export const api = {
     return request<SkillPathResponse>(`/api/skills/${userId}/path`);
   },
 
-  setSkillPath(userId: string, path: "murim" | "knight" | "fantasy") {
+  setSkillPath(userId: string, path: "imperial" | "knight" | "vanguard") {
     return request<SkillPathResponse>(`/api/skills/${userId}/path`, {
       method: "PATCH",
       body: JSON.stringify({ path }),
@@ -274,7 +274,7 @@ export const api = {
 
   patchSkillLoadout(
     userId: string,
-    payload: { path: "murim" | "knight" | "fantasy"; activeSlots: [string, string] }
+    payload: { path: "imperial" | "knight" | "vanguard"; activeSlots: [string, string] }
   ) {
     return request<{ loadout: SkillLoadout }>(`/api/skills/${userId}/loadout`, {
       method: "PATCH",

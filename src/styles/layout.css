@@ -95,19 +95,21 @@
 
 .top-hud {
   display: flex;
-  justify-content: stretch;
-  align-items: stretch;
+  justify-content: center;
+  align-items: flex-start;
   padding: calc(var(--space-3) + var(--safe-top)) var(--content-inline) var(--space-2);
   z-index: 2;
 }
 
+.top-hud__dock,
 .hud-chrome {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-3);
   width: 100%;
-  min-height: 52px;
+  max-width: var(--chrome-dock-max-width);
+  min-height: var(--touch-min);
   padding: var(--space-2) 0;
   background: transparent;
   border: none;
@@ -120,12 +122,13 @@
   gap: var(--space-1);
   flex: 1;
   min-width: 0;
+  justify-content: center;
 }
 
 .hud-chrome__wallet {
   display: flex;
   align-items: center;
-  gap: var(--space-2);
+  gap: var(--space-1);
   flex-shrink: 0;
 }
 
@@ -159,6 +162,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
+  min-height: var(--touch-min);
 }
 
 .hud-level-badge {
@@ -184,14 +188,58 @@
 .hud-gold {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-2);
-  padding: 0;
+  gap: var(--space-1);
+  padding: var(--space-2) var(--space-1);
   background: transparent;
   border: none;
+  min-height: var(--touch-min);
+}
+
+.hud-gold__icon {
+  display: grid;
+  place-items: center;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.hud-gold__amount {
   font-family: var(--font-stat);
   font-weight: 700;
-  font-size: var(--text-xl);
+  font-size: var(--text-lg);
   color: var(--antique-gold);
+  letter-spacing: 0.04em;
+  line-height: 1;
+}
+
+.hud-action-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: var(--space-2) var(--space-1);
+  border-radius: var(--radius-md);
+  min-width: 48px;
+  min-height: var(--touch-min);
+  color: var(--text-secondary);
+  background: transparent;
+  transition: color var(--duration-fast), opacity var(--duration-fast);
+  flex-shrink: 0;
+}
+
+.hud-action-btn:hover {
+  color: var(--text-primary);
+  opacity: 0.9;
+}
+
+.hud-action-btn:active {
+  transform: scale(0.96);
+}
+
+.hud-action-btn__icon {
+  display: grid;
+  place-items: center;
+  line-height: 1;
 }
 
 .hud-actions {
@@ -258,7 +306,7 @@
   justify-content: space-between;
   align-items: flex-end;
   width: 100%;
-  max-width: 420px;
+  max-width: var(--chrome-dock-max-width);
   gap: var(--space-1);
   padding: var(--space-2) 0 6px;
   background: transparent;

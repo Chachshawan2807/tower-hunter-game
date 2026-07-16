@@ -35,7 +35,7 @@ export const SLOT_STAT_TEMPLATE: Record<EquipmentSlot, GearStatBonus> = {
 
 /** Per-gear overrides (variant identity within slot) */
 const GEAR_STAT_OVERRIDES: Partial<Record<string, GearStatBonus>> = {
-  "gear.murim.weapon.katana": { atk: 10, critChance: 0.01 },
+  "gear.imperial.weapon.katana": { atk: 10, critChance: 0.01 },
   "gear.knight.weapon.greatsword": { atk: 14, def: 2 },
   "gear.fantasy.weapon.wand": { atk: 6, maxMp: 15, statusChance: 0.02 },
   "gear.knight.chest.plate": { maxHp: 55, def: 4 },

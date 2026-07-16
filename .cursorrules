@@ -18,5 +18,6 @@ CRITICAL CODE STANDARDS & ARCHITECTURE RULES:
 5. Art Bible (Visual Standard):
    - All UI colors, typography, tower zones, and visual effects MUST follow `docs/art-bible/MASTER_ART_BIBLE.md`.
    - Use design tokens from `src/styles/tokens.css` and engine constants from `src/engine/art/` — never hardcode colors outside the palette.
-   - Tower floor themes: 1–30 Forgotten Dungeon, 31–60 Murim Pagoda, 61–90 Knight's Citadel, 91–100 Void Pinnacle.
-   - UI text on readable surfaces uses Pure Black (`--ink-black`); semantic accents: Crimson (danger), Dark Yellow (EXP/Murim), Antique Gold (currency/settings).
+   - Tower floor themes: 1–30 Forgotten Dungeon, 31–60 Imperial Bastion, 61–90 Knight's Citadel, 91–100 Void Pinnacle.
+   - UI icons follow `docs/art-bible/IMPERIAL_KNIGHT_ICON_STYLE.md` — Imperial Knight Hero line art (stroke #1a1a1a, transparent bg).
+   - UI text on readable surfaces uses Pure Black (`--ink-black`); semantic accents: Crimson (danger), Dark Yellow (EXP), Antique Gold (currency/settings).

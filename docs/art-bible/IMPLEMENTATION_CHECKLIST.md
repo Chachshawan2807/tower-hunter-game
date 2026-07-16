@@ -1,119 +1,59 @@
 # Art Bible — Implementation Checklist
 
+Status of Master Art Bible wiring in code (updated: 2026-07-17).
 
+## Wired in UI (production-ready)
 
-สถานะการนำ Master Art Bible ไปใช้ในโปรเจ็กต์ (อัปเดต: 2026-07-14)
-
-
-
-## ✅ Wired in UI (production-ready)
-
-
-
-| หมวด | รายการ | ตำแหน่ง |
-
-|------|--------|---------|
-
-| 06 Character | Isometric chibi SVG models (7 archetypes) | `src/components/character/svg/iso/` |
-
-| 06 Character | Character archetype registry (player/enemy/NPC) | `src/engine/art/characters/` |
-
-| 06 Character | Sprite sheet animation (4×4 grid, CSS frame-step) | `CharacterSpriteSheet.tsx`, `character.css` |
-| 06 Character | High-res PNG sprite sheets (2×, 960×1600) | `public/assets/characters/*-sheet.png`, `npm run generate:sprites` |
-| 06 Character | Equipment layers (helm/chest/gloves/boots/cloak/weapon) | `equipmentLayers/` |
-
-| 07 Item | 6 equipment slots + 18 gear pieces (3 paths × 6 slots) | `src/engine/art/equipment/` |
-
-| 07 Item | Weapon SVG on character (9 types + rarity FX) | `src/components/character/svg/WeaponSvg.tsx` |
-
-| 07 Item | Character menu equipment panel | `src/components/character/CharacterEquipmentPanel.tsx` |
-
-| 07 Item | PATCH equip จากกระเป๋า + stat bonus ต่อชิ้น | `equipFromInventory.ts`, `statBonuses.ts`, `BagMenu` |
-
-| Server | Persisted `player_equipment` table + API | `005_player_equipment.sql`, equipment routes |
-
-| UI | Main stage + battle show equipped gear | `MainStage`, `BattleArena` |
-
-| 02–09 | Colors, zones, FX CSS, PWA, textures on panels | `tokens.css`, `textures.css`, `effects.css` |
-
-| 08 UI | SVG icon assets + GameIcon (menus + battle) | `src/components/ui/icons/` |
-
+| Section | Item | Location |
+|---------|------|----------|
+| 06 Character | Player hero portrait (Imperial Knight SVG) | `HeroPortrait.tsx`, `imperial-knight-hero.svg`, `npm run export:hero` |
+| 06 Character | Enemy/NPC PNG sprite sheets (4×4, CSS frame-step) | `CharacterSpriteSheet.tsx`, `character.css`, `npm run generate:sprites` |
+| 06 Character | Archetype registry (player / enemy / NPC) | `src/engine/art/characters/` |
+| 07 Item | 6 equipment slots + path gear catalog | `src/engine/art/equipment/` |
+| 07 Item | Character menu equipment panel (side slots + icons) | `CharacterEquipmentPanel.tsx` |
+| 07 Item | Equip from bag + per-piece stat bonuses | `equipFromInventory.ts`, `statBonuses.ts`, `BagMenu` |
+| Server | Persisted `player_equipment` + API | `005_player_equipment.sql`, equipment routes |
+| 02–05 | Colors, zones, FX CSS, PWA textures | `tokens.css`, `textures.css`, `effects.css`, `towerZones.ts` |
+| 04/05 | Zone background SVGs (4 zones, floors 1–100) | `public/assets/zones/` (`imperial-bastion` replaces Murim Pagoda) |
+| 08 UI | Imperial Knight stroke icons + `GameIcon` | `public/icons/ui/`, `npm run export:icons` |
+| 08 UI | Equipment slot silhouettes | `public/icons/equipment-slots/` |
 | 08 UI | Settings overlay (audio, language) | `SettingsMenu.tsx`, `TopHud.tsx` |
-
-| 08 UI | view-readable HUD on all screens incl. battle | `view-readable.css`, `App.tsx` |
-
+| 08 UI | Readable HUD on all screens incl. battle | `view-readable.css`, `App.tsx` |
+| 08 UI | Path skill tab theming (Imperial / Knight / Vanguard) | `menus.css`, `SkillMenu.tsx` |
 | 08 UX | Safe-area insets, focus trap, arrow-key nav | `tokens.css`, `useFocusTrap`, `BottomNav` |
+| 10 | Kenney CC0 audio + procedural fallback | `public/audio/`, `npm run fetch:audio`, `catalog.ts` |
 
-| 04/05 | Zone background SVG assets (4 zones × floors 1–100) | `public/assets/zones/` |
+## Optional upgrades (later)
 
-| 08 UI | Path-specific skill tab theming (Murim/Knight/Fantasy) | `menus.css`, `SkillMenu.tsx` |
-
-| 08 UI | Bag item localized names | `itemLabel.ts`, `BagMenu.tsx` |
-
-| 10 | Kenney CC0 studio audio (OGG/MP3) + procedural fallback | `public/audio/`, `npm run fetch:audio`, `catalog.ts` |
-
-
-
-## 🔶 Asset exists / partial
-
-
-
-| หมวด | รายการ | หมายเหตุ |
-
-|------|--------|----------|
-
-| 06 | ISO SVG models (legacy / source art) | ยังอยู่ใน `svg/iso/` — runtime ใช้ PNG sprite sheet |
-
-
-
-## 🎨 อัปเกรดภายหลัง (optional bitmap)
-
-
-
-| หมวด | รายการ |
-
-|------|--------|
-
-| 04/05 | Bitmap zone backgrounds (แทน SVG vector) |
-
-
+| Section | Item |
+|---------|------|
+| 04/05 | Bitmap zone backgrounds (replace SVG vectors) |
+| 06 | Animated player hero (portrait is static SVG today) |
 
 ## API
 
-
-
 ```http
-
 GET /api/users/:userId/equipment
-
 → { path, slots, statBonus }
 
-
-
 PATCH /api/users/:userId/equipment
-
 Body: { slot, inventoryId }
-
 → { slot, equipped, loadout, statBonusLines }
-
 ```
-
-
 
 ## Client
 
-
-
 ```ts
-
 import { usePlayerEquipment } from "./hooks/usePlayerEquipment";
 
-
-
 const { visual, statBonus, equipFromBag } = usePlayerEquipment(userId, skillPath);
-
-// BagMenu: ปุ่ม Equip → equipFromBag(slot, inventoryId)
-
+// BagMenu: Equip → equipFromBag(slot, inventoryId)
 ```
 
+## Asset scripts
 
+| Command | Output |
+|---------|--------|
+| `npm run export:hero` | `public/assets/characters/imperial-knight-hero.svg` |
+| `npm run export:icons` | Nav + bag/shop + Imperial UI icons under `public/icons/ui/` |
+| `npm run generate:sprites` | Enemy/NPC PNG sheets under `public/assets/characters/` |

@@ -51,7 +51,7 @@ export async function startBattle(
       throw new BattleServiceError("User not found", "USER_NOT_FOUND", 404);
     }
 
-    const playerSkillPath = statsRow.active_skill_path ?? "murim";
+    const playerSkillPath = statsRow.active_skill_path ?? "imperial";
     const playerStats = await getPlayerCombatStatsWithEquipment(pool, statsRow);
     const dbLoadout = await getPlayerLoadout(
       pool,

@@ -9,7 +9,8 @@
 }
 
 .icon-btn:active .game-icon,
-.nav-btn:active .game-icon {
+.nav-btn:active .game-icon,
+.hud-action-btn:active .game-icon {
   transform: scale(0.88);
 }
 
@@ -17,19 +18,20 @@
   filter: none;
 }
 
-.icon-btn--settings .game-icon {
+.hud-action-btn .game-icon {
   color: inherit;
 }
 
-.view-readable .icon-btn--settings .game-icon {
-  color: var(--ink-black);
+.view-readable .hud-action-btn .game-icon {
+  color: inherit;
 }
 
 .hud-gold .game-icon {
   color: inherit;
 }
 
-.view-readable .hud-gold .game-icon {
+.view-readable .hud-gold .game-icon,
+.view-readable .hud-gold__icon .game-icon {
   color: var(--ink-black);
 }
 
@@ -37,9 +39,10 @@
 .hud-exp-gauge {
   display: flex;
   flex-direction: column;
-  gap: 5px;
-  min-width: 140px;
-  max-width: 200px;
+  justify-content: center;
+  gap: 4px;
+  min-width: 0;
+  max-width: 168px;
   flex: 1;
 }
 

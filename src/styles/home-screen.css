@@ -145,7 +145,7 @@
   border: none;
 }
 
-.hero-showcase__path--murim {
+.hero-showcase__path--imperial {
   background: transparent;
   color: var(--crimson-deep);
   border: none;
@@ -157,7 +157,7 @@
   border: none;
 }
 
-.hero-showcase__path--fantasy {
+.hero-showcase__path--vanguard {
   background: transparent;
   color: var(--arcane-600);
   border: none;

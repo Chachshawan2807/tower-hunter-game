@@ -46,14 +46,17 @@ export const ANIMATION_STATE_ROW: Record<AnimationState, number> = {
 
 
 export const CHARACTER_SHEET_URLS: Record<CharacterSheetId, string> = {
-  murim: "/assets/characters/murim-sheet.png?v=ai-hybrid-1",
+  imperial: "/assets/characters/knight-sheet.png",
   knight: "/assets/characters/knight-sheet.png",
-  fantasy: "/assets/characters/fantasy-sheet.png",
+  vanguard: "/assets/characters/fantasy-sheet.png",
   beast: "/assets/characters/beast-sheet.png",
   demon: "/assets/characters/demon-sheet.png",
   merchant: "/assets/characters/merchant-sheet.png",
   villager: "/assets/characters/villager-sheet.png",
 };
+
+/** Main player hero — Imperial Knight line art (transparent SVG) */
+export const PLAYER_HERO_PORTRAIT_URL = "/assets/characters/imperial-knight-hero.svg";
 
 
 
@@ -67,7 +70,7 @@ export function sheetIdForArchetype(archetype: CharacterArchetype): CharacterShe
 
 export function sheetIdForPath(
 
-  path: "murim" | "knight" | "fantasy",
+  path: "imperial" | "knight" | "vanguard",
 
   side: "player" | "enemy"
 

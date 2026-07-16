@@ -1,4 +1,4 @@
-import { getIconDef } from "./iconRegistry";
+import { getIconDef, hasFileIcon } from "./iconRegistry";
 import type { GameIconName } from "./paths";
 
 interface GameIconProps {
@@ -16,6 +16,23 @@ export function GameIcon({
   color,
   title,
 }: GameIconProps) {
+  if (hasFileIcon(name)) {
+    return (
+      <span
+        className={`game-icon game-icon--file game-icon--${name} ${className}`.trim()}
+        style={{
+          width: size,
+          height: size,
+          color,
+          ["--icon-mask" as string]: `url(/icons/ui/${name}.svg)`,
+        }}
+        role={title ? "img" : undefined}
+        aria-hidden={title ? undefined : true}
+        aria-label={title}
+      />
+    );
+  }
+
   const def = getIconDef(name);
 
   return (

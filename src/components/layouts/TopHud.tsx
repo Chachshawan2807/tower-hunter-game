@@ -31,7 +31,7 @@ export function TopHud({
       className={`top-hud ${compact ? "top-hud--compact" : ""}`}
       aria-label="Player status"
     >
-      <div className="hud-chrome">
+      <div className="top-hud__dock hud-chrome">
         <div className="hud-chrome__identity">
           {!compact && <span className="hud-name">{displayName}</span>}
           <div className="hud-level-row">
@@ -60,18 +60,23 @@ export function TopHud({
 
         <div className="hud-chrome__wallet">
           <span className="hud-gold tabular-nums" aria-label={`Gold: ${gold}`}>
-            <GameIcon name="gold" size={26} />
-            {gold}
+            <span className="hud-gold__icon" aria-hidden="true">
+              <GameIcon name="gold" size={32} />
+            </span>
+            <span className="hud-gold__amount">{gold}</span>
           </span>
           <button
-            className="icon-btn icon-btn--settings"
+            type="button"
+            className="hud-action-btn"
             onClick={() => {
               playUiClick();
               onOpenSettings();
             }}
             aria-label={t("settings.title", locale)}
           >
-            <GameIcon name="settings" size={28} />
+            <span className="hud-action-btn__icon" aria-hidden="true">
+              <GameIcon name="settings" size={32} />
+            </span>
           </button>
         </div>
       </div>

@@ -28,21 +28,21 @@ export interface CharacterArchetypeSpec {
 }
 
 export type CharacterSheetId =
-  | "murim"
+  | "imperial"
   | "knight"
-  | "fantasy"
+  | "vanguard"
   | "beast"
   | "demon"
   | "merchant"
   | "villager";
 
 export const CHARACTER_ARCHETYPES: Record<CharacterArchetype, CharacterArchetypeSpec> = {
-  murim: {
-    id: "murim",
+  imperial: {
+    id: "imperial",
     role: "player",
-    sheetId: "murim",
+    sheetId: "imperial",
     scale: 1,
-    nameKey: "skills.murim",
+    nameKey: "skills.imperial",
   },
   knight: {
     id: "knight",
@@ -51,12 +51,12 @@ export const CHARACTER_ARCHETYPES: Record<CharacterArchetype, CharacterArchetype
     scale: 1,
     nameKey: "skills.knight",
   },
-  fantasy: {
-    id: "fantasy",
+  vanguard: {
+    id: "vanguard",
     role: "player",
-    sheetId: "fantasy",
+    sheetId: "vanguard",
     scale: 1,
-    nameKey: "skills.fantasy",
+    nameKey: "skills.vanguard",
   },
   beast: {
     id: "beast",

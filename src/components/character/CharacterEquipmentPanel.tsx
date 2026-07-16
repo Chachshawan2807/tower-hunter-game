@@ -4,7 +4,6 @@ import {
   type CharacterEquipmentVisual,
 } from "../../engine/art/equipment";
 import type { EquipmentSlot } from "../../engine/art/equipment/slots";
-import type { GameIconName } from "../ui/icons";
 import { GameIcon } from "../ui/icons";
 import { t, type Locale } from "../../utils/i18n";
 import { CharacterFigure } from "./CharacterFigure";
@@ -21,7 +20,7 @@ const SLOT_LABEL: Record<EquipmentSlot, string> = {
   cloak: "char.slot.cloak",
 };
 
-const SLOT_ICON: Record<EquipmentSlot, GameIconName> = {
+const SLOT_ICON: Record<EquipmentSlot, "slot-helm" | "slot-chest" | "slot-gloves" | "slot-boots" | "slot-cloak" | "slot-weapon"> = {
   weapon: "slot-weapon",
   helm: "slot-helm",
   chest: "slot-chest",
@@ -64,7 +63,7 @@ function EquipSlot({ locale, slot, equipment }: SlotButtonProps) {
       aria-label={label}
       title={label}
     >
-      <GameIcon name={SLOT_ICON[slot]} size={22} />
+      <GameIcon name={SLOT_ICON[slot]} size={26} />
     </div>
   );
 }

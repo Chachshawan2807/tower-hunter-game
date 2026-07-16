@@ -83,7 +83,7 @@ skillRoutes.get("/:userId/path", async (c) => {
 
 skillRoutes.patch("/:userId/path", async (c) => {
   const body = await c.req.json<{ path: SkillPath }>();
-  const validPaths: SkillPath[] = ["murim", "knight", "fantasy"];
+  const validPaths: SkillPath[] = ["imperial", "knight", "vanguard"];
 
   if (!validPaths.includes(body.path)) {
     return c.json({ error: "Invalid skill path", code: "INVALID_PATH" }, 400);

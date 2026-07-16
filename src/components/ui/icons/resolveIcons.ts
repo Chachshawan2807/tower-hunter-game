@@ -26,9 +26,9 @@ const SHOP_ICON_MAP: Record<string, GameIconName> = {
 };
 
 const PATH_ICON_MAP: Record<SkillPath, GameIconName> = {
-  murim: "path-murim",
+  imperial: "path-imperial",
   knight: "path-knight",
-  fantasy: "path-fantasy",
+  vanguard: "path-vanguard",
 };
 
 const UPGRADE_ICON_MAP = {

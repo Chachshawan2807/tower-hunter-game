@@ -1,5 +1,7 @@
 # Skill System Implementation Plan
 
+> **Status:** Implemented. Path IDs renamed to `imperial`/`knight`/`vanguard` — see `005_imperial_skill_paths.sql`.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Implement the full redesigned skill system — 4 skills/path, 2-slot loadout, Skill Points upgrades, enemy skills, and updated UI — per `docs/superpowers/specs/2026-07-14-skill-system-design.md`.

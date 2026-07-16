@@ -16,9 +16,9 @@ interface SkillMenuProps {
 }
 
 const PATHS: Array<{ id: SkillPath; nameKey: string }> = [
-  { id: "murim", nameKey: "skills.murim" },
+  { id: "imperial", nameKey: "skills.imperial" },
   { id: "knight", nameKey: "skills.knight" },
-  { id: "fantasy", nameKey: "skills.fantasy" },
+  { id: "vanguard", nameKey: "skills.vanguard" },
 ];
 
 export function SkillMenu({

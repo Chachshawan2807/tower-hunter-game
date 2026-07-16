@@ -52,7 +52,7 @@ export async function createUser(
     );
 
     await createDefaultPlayerStats(client, result.rows[0].id);
-    await seedNewPlayerKit(client, result.rows[0].id, "murim");
+    await seedNewPlayerKit(client, result.rows[0].id, "imperial");
     return mapUserRow(result.rows[0]);
   });
 }

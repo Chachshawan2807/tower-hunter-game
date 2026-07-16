@@ -9,7 +9,8 @@
   padding-bottom: 6px;
 }
 
-.view-readable .hud-chrome {
+.view-readable .hud-chrome,
+.view-readable .top-hud__dock {
   background: transparent;
   border: none;
   box-shadow: none;
@@ -17,8 +18,7 @@
 
 .view-readable .hud-name,
 .view-readable .hud-level-badge,
-.view-readable .hud-exp,
-.view-readable .hud-gold {
+.view-readable .hud-exp {
   color: var(--ink-black);
 }
 
@@ -46,21 +46,21 @@
   font-weight: 700;
 }
 
-.view-readable .hud-gold {
+.view-readable .hud-gold__amount {
   background: transparent;
   border: none;
   color: var(--ink-black);
 }
 
-.view-readable .icon-btn {
-  color: var(--ink-black);
+.view-readable .hud-action-btn {
+  color: rgba(0, 0, 0, 0.52);
   background: transparent;
   border: none;
 }
 
-.view-readable .icon-btn--settings {
+.view-readable .hud-action-btn:hover {
   color: var(--ink-black);
-  border: none;
+  background: transparent;
 }
 
 /* Bottom nav — floating tabs (no dock bar) */
@@ -78,7 +78,7 @@
 }
 
 .view-readable .nav-btn {
-  color: rgba(0, 0, 0, 0.42);
+  color: rgba(0, 0, 0, 0.52);
 }
 
 .view-readable .nav-btn:hover {
@@ -97,7 +97,7 @@
 }
 
 .view-readable .nav-btn--tower .game-icon {
-  color: rgba(0, 0, 0, 0.42);
+  color: rgba(0, 0, 0, 0.52);
 }
 
 .view-readable .nav-btn--tower.nav-btn--active .nav-btn__icon-wrap {
@@ -120,7 +120,7 @@
 
 .view-readable.is-dark-stage .hud-name,
 .view-readable.is-dark-stage .hud-level-badge,
-.view-readable.is-dark-stage .hud-gold {
+.view-readable.is-dark-stage .hud-gold__amount {
   color: var(--text-primary);
 }
 
@@ -133,12 +133,11 @@
   background: rgba(255, 255, 255, 0.22);
 }
 
-.view-readable.is-dark-stage .icon-btn,
-.view-readable.is-dark-stage .icon-btn--settings {
+.view-readable.is-dark-stage .hud-action-btn {
   color: var(--text-secondary);
 }
 
-.view-readable.is-dark-stage .icon-btn--settings .game-icon,
+.view-readable.is-dark-stage .hud-action-btn .game-icon,
 .view-readable.is-dark-stage .hud-gold .game-icon {
   color: inherit;
 }

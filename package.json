@@ -13,7 +13,9 @@
     "build": "vite build",
     "generate:audio": "node scripts/generateAudioAssets.mjs",
     "generate:sprites": "node scripts/generateCharacterSheets.mjs",
-    "assemble:murim": "node scripts/assembleMurimAiSheet.mjs",
+    "export:nav": "node scripts/buildNavButtonSvgs.mjs && node scripts/buildBagIconSvg.mjs && node scripts/buildShopIconSvg.mjs",
+    "export:icons": "node scripts/buildNavButtonSvgs.mjs && node scripts/buildBagIconSvg.mjs && node scripts/buildShopIconSvg.mjs && node scripts/exportImperialIcons.mjs",
+    "export:hero": "node scripts/buildHeroPortraitSvg.mjs",
     "fetch:audio": "node scripts/fetchStudioAudio.mjs",
     "preview": "vite preview",
     "start": "tsx src/server/index.ts"

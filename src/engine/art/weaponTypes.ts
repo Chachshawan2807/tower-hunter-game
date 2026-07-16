@@ -25,20 +25,20 @@ export interface WeaponTypeSpec {
 }
 
 export const WEAPONS_BY_PATH: Record<SkillPath, readonly WeaponTypeSpec[]> = {
-  murim: [
-    { id: "katana", path: "murim", nameKey: "weapon.katana", baseMaterial: "raw_iron" },
-    { id: "dual_swords", path: "murim", nameKey: "weapon.dual_swords", baseMaterial: "raw_iron" },
-    { id: "staff", path: "murim", nameKey: "weapon.staff", baseMaterial: "raw_iron" },
+  imperial: [
+    { id: "katana", path: "imperial", nameKey: "weapon.katana", baseMaterial: "raw_iron" },
+    { id: "dual_swords", path: "imperial", nameKey: "weapon.dual_swords", baseMaterial: "raw_iron" },
+    { id: "staff", path: "imperial", nameKey: "weapon.staff", baseMaterial: "raw_iron" },
   ],
   knight: [
     { id: "greatsword", path: "knight", nameKey: "weapon.greatsword", baseMaterial: "raw_iron" },
     { id: "greataxe", path: "knight", nameKey: "weapon.greataxe", baseMaterial: "raw_iron" },
     { id: "spear", path: "knight", nameKey: "weapon.spear", baseMaterial: "raw_iron" },
   ],
-  fantasy: [
-    { id: "wand", path: "fantasy", nameKey: "weapon.wand", baseMaterial: "raw_iron" },
-    { id: "bow", path: "fantasy", nameKey: "weapon.bow", baseMaterial: "raw_iron" },
-    { id: "dual_daggers", path: "fantasy", nameKey: "weapon.dual_daggers", baseMaterial: "raw_iron" },
+  vanguard: [
+    { id: "wand", path: "vanguard", nameKey: "weapon.wand", baseMaterial: "raw_iron" },
+    { id: "bow", path: "vanguard", nameKey: "weapon.bow", baseMaterial: "raw_iron" },
+    { id: "dual_daggers", path: "vanguard", nameKey: "weapon.dual_daggers", baseMaterial: "raw_iron" },
   ],
 };
 

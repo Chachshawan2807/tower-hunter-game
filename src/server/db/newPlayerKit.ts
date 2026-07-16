@@ -7,9 +7,9 @@ const STARTER_ITEMS: Record<
   SkillPath,
   { itemId: string; quantity: number; rarity: ItemRarity }[]
 > = {
-  murim: [
-    { itemId: "gear.murim.weapon.katana", quantity: 1, rarity: "rare" },
-    { itemId: "gear.murim.chest.robe", quantity: 1, rarity: "epic" },
+  imperial: [
+    { itemId: "gear.imperial.weapon.katana", quantity: 1, rarity: "rare" },
+    { itemId: "gear.imperial.chest.robe", quantity: 1, rarity: "epic" },
     { itemId: "drop_f13_rare", quantity: 1, rarity: "rare" },
   ],
   knight: [
@@ -17,7 +17,7 @@ const STARTER_ITEMS: Record<
     { itemId: "gear.knight.chest.plate", quantity: 1, rarity: "epic" },
     { itemId: "drop_f7_rare", quantity: 1, rarity: "rare" },
   ],
-  fantasy: [
+  vanguard: [
     { itemId: "gear.fantasy.weapon.wand", quantity: 1, rarity: "rare" },
     { itemId: "gear.fantasy.chest.leathers", quantity: 1, rarity: "epic" },
     { itemId: "drop_f19_rare", quantity: 1, rarity: "rare" },
@@ -43,7 +43,7 @@ async function upsertStarterItem(
 export async function seedNewPlayerKit(
   client: DbClient,
   userId: string,
-  path: SkillPath = "murim"
+  path: SkillPath = "imperial"
 ): Promise<void> {
   await seedDefaultEquipment(client, userId, path);
 

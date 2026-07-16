@@ -4,6 +4,8 @@
 **Status:** Approved — implemented  
 **Approach:** Unified Skill Runtime (Approach 1)
 
+> **Path rename (2026-07):** Runtime skill paths are `imperial` · `knight` · `vanguard` (was `murim` · `knight` · `fantasy`). Examples below retain legacy IDs/names where the spec was written; migration: `005_imperial_skill_paths.sql`.
+
 ---
 
 ## 1. Overview
@@ -13,7 +15,7 @@
 Redesign the skill system from scratch while reusing existing engine foundations (`SkillDefinition`, `skillExecution`). The system supports:
 
 - **Hybrid combat:** Auto-battle baseline with 2 manual Active Skill slots
-- **Path identity:** 3 skill paths (Murim / Knight / Fantasy), switchable at no cost
+- **Path identity:** 3 skill paths (Imperial / Knight / Vanguard — legacy names Murim / Knight / Fantasy in skill IDs), switchable at no cost
 - **Progression:** Level-gated unlocks (Lv 1/5/10/15) + Skill Points for per-skill upgrades
 - **Enemy depth:** All enemies use skills (normal: 1, boss: 2–3 by floor tier)
 
@@ -23,7 +25,7 @@ Redesign the skill system from scratch while reusing existing engine foundations
 |-------|----------|
 | Scope | Full redesign |
 | Combat | Auto primary + 2 Active manual slots |
-| Paths | Murim / Knight / Fantasy — free switching |
+| Paths | Imperial / Knight / Vanguard — free switching |
 | Skills per path | 4, unlock at Lv 1 / 5 / 10 / 15 |
 | Loadout | Player picks 2 Active; remainder Auto |
 | Skill Points | +1 per level up, +2 per boss floor |

@@ -1,11 +1,11 @@
 # Heroic Character Sprites — Design
 
 **Date:** 2026-07-15  
-**Status:** Approved (Approach 1 + Option A proportions)
+**Status:** Implemented for enemies/NPCs — player hero superseded by `HeroPortrait` + `imperial-knight-hero.svg` (2026-07-17)
 
 ## Goal
 
-Replace Rayman-style floating-limb chibi sheets with **connected 7.5–8 head** figures for all 7 archetypes, so Character/Home/Battle no longer look like stacked blobs.
+Replace Rayman-style floating-limb chibi sheets with **connected 7.5–8 head** figures for enemy/NPC archetypes. The player hero uses a static Imperial Knight portrait SVG instead of a sprite sheet.
 
 ## Decisions
 
@@ -13,7 +13,7 @@ Replace Rayman-style floating-limb chibi sheets with **connected 7.5–8 head** 
 |-------|--------|
 | Scope | Sprites + UI redesign; **sprites first** |
 | Production | Hybrid: polished SVG → PNG now; AI polish later |
-| Archetypes | All 7 (murim, knight, fantasy, beast, demon, merchant, villager) |
+| Archetypes | 6 sheet bodies (knight, fantasy/vanguard, beast, demon, merchant, villager); player uses static portrait |
 | Proportions | Art Bible §06 — 7.5–8 heads, limbs attached |
 | Architecture | Modular SVG templates + sheet generator (Approach 1) |
 | Runtime | Keep PNG sprite-sheet + CSS frame animation |

@@ -141,7 +141,7 @@
   color: var(--ember-400);
 }
 
-.skill-path-tab--murim.skill-path-tab--active {
+.skill-path-tab--imperial.skill-path-tab--active {
   background: var(--surface-exp-tint);
   border-color: var(--dark-yellow-deep);
   color: var(--dark-yellow-deep);
@@ -153,13 +153,13 @@
   color: #374151;
 }
 
-.skill-path-tab--fantasy.skill-path-tab--active {
+.skill-path-tab--vanguard.skill-path-tab--active {
   background: rgba(107, 64, 136, 0.15);
   border-color: var(--arcane-500);
   color: var(--arcane-600);
 }
 
-.view-readable .skill-path-tab--murim.skill-path-tab--active {
+.view-readable .skill-path-tab--imperial.skill-path-tab--active {
   color: var(--dark-yellow-deep);
 }
 
@@ -167,7 +167,7 @@
   color: var(--ink-black);
 }
 
-.view-readable .skill-path-tab--fantasy.skill-path-tab--active {
+.view-readable .skill-path-tab--vanguard.skill-path-tab--active {
   color: var(--arcane-600);
 }
 

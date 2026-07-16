@@ -92,7 +92,7 @@ const mapped = toCombatStats({
   status_chance: "0.05",
   status_resist: "0.05",
   current_floor: 3,
-  active_skill_path: "murim",
+  active_skill_path: "imperial",
   updated_at: new Date(),
 });
 
@@ -154,7 +154,7 @@ assert(
   SKILL_UNLOCK_LEVELS.join(",") === "1,5,10,15",
   "unlock levels are 1/5/10/15"
 );
-assert(getSkillsForPath("murim").length === 4, "murim path has 4 skills");
+assert(getSkillsForPath("imperial").length === 4, "murim path has 4 skills");
 
 const palm = getSkillById("murim_palm");
 assert(palm.slotTier === 1 && palm.autoPriority === 75, "palm tier 1");
@@ -191,7 +191,7 @@ assert(
 
 console.log("\n=== Validation: Skill Loadout ===");
 assert(
-  getDefaultLoadout("murim", 1).activeSlots[0] === "murim_palm",
+  getDefaultLoadout("imperial", 1).activeSlots[0] === "murim_palm",
   "murim default active slot 1 at Lv1"
 );
 assert(
@@ -199,11 +199,11 @@ assert(
   "knight default active slot 1 at Lv1"
 );
 assert(
-  getDefaultLoadout("fantasy", 1).activeSlots[0] === "fantasy_bolt",
+  getDefaultLoadout("vanguard", 1).activeSlots[0] === "fantasy_bolt",
   "fantasy default active slot 1 at Lv1"
 );
 assert(
-  getDefaultLoadout("murim", 15).activeSlots[1] === "murim_dragon",
+  getDefaultLoadout("imperial", 15).activeSlots[1] === "murim_dragon",
   "murim default slot 2 uses dragon at Lv15"
 );
 
@@ -238,19 +238,19 @@ assert(
 );
 
 assert(
-  !validateLoadout("murim", ["murim_palm", "murim_palm"], 5).valid,
+  !validateLoadout("imperial", ["murim_palm", "murim_palm"], 5).valid,
   "duplicate active slots rejected"
 );
 assert(
-  !validateLoadout("murim", ["murim_dash", "murim_palm"], 1).valid,
+  !validateLoadout("imperial", ["murim_dash", "murim_palm"], 1).valid,
   "locked skill cannot be active"
 );
 
 console.log("\n=== Validation: Loadout Integration ===");
 const loadoutState = createBattleState(1, {
-  playerSkillPath: "murim",
+  playerSkillPath: "imperial",
   autoBattle: false,
-  playerLoadout: { path: "murim", activeSlots: ["murim_palm", "murim_dash"] },
+  playerLoadout: { path: "imperial", activeSlots: ["murim_palm", "murim_dash"] },
 });
 assert(
   validateManualAction(loadoutState, "player", {
@@ -494,7 +494,7 @@ assert(
 );
 
 const bossBattle = withReadyActor(
-  createBattleState(50, { playerSkillPath: "murim" }),
+  createBattleState(50, { playerSkillPath: "imperial" }),
   "enemy_floor_50"
 );
 const enemyAction = resolveActionChoice(bossBattle, "enemy_floor_50");

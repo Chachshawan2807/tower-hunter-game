@@ -2,7 +2,7 @@ import type { IconPathDef } from "./paths";
 
 /** Skill paths, shop items, upgrade branches — Art Bible §07–08 */
 export const EXTENDED_ICON_PATHS: Record<string, IconPathDef> = {
-  "path-murim": {
+  "path-imperial": {
     viewBox: "0 0 24 24",
     paths: ["M12 3l-6 4v14h12V7l-6-4Z", "M9 21V11h6v10"],
     fills: ["currentColor", "none"],
@@ -19,7 +19,7 @@ export const EXTENDED_ICON_PATHS: Record<string, IconPathDef> = {
     strokes: [undefined, "currentColor"],
     strokeWidths: [0, 1.6],
   },
-  "path-fantasy": {
+  "path-vanguard": {
     viewBox: "0 0 24 24",
     paths: [
       "M12 2l3 6h6l-5 4 2 6-6-4-6 4 2-6-5-4h6l3-6Z",

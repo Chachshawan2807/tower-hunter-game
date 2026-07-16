@@ -47,7 +47,7 @@ interface BattleArenaProps {
   busy: boolean;
   isPlaying: boolean;
   speed: AnimationSpeed;
-  skillPath?: "murim" | "knight" | "fantasy";
+  skillPath?: "imperial" | "knight" | "vanguard";
   playerEquipment: CharacterEquipmentVisual;
   onSpeedChange: (speed: AnimationSpeed) => void;
   onSkip: () => void;
@@ -72,7 +72,7 @@ export const BattleArena = memo(function BattleArena({
   busy,
   isPlaying,
   speed,
-  skillPath = "murim",
+  skillPath = "imperial",
   playerEquipment,
   onSpeedChange,
   onSkip,
