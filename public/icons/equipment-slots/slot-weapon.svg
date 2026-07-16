@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none">
+  <!-- Longsword - medieval fantasy line art -->
+  <path d="M12 2.4v12.2" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round"/>
+  <path d="M9.6 14.6h4.8" stroke="#1a1a1a" stroke-width="1.85" stroke-linecap="round"/>
+  <path d="M12 14.6v7" stroke="#1a1a1a" stroke-width="1.85" stroke-linecap="round"/>
+  <path d="M10.2 4.8L12 2.4l1.8 2.4" stroke="#1a1a1a" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
