@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <title>Equipment Slot Icons Preview</title>
+  <style>
+    body { font-family: system-ui, sans-serif; background: #f0eeea; padding: 2rem; color: #1a1a1a; }
+    h1 { font-size: 1.1rem; margin-bottom: 1.5rem; }
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; max-width: 480px; }
+    .card { background: #faf8f4; border: 1px solid #d8d4cc; border-radius: 8px; padding: 1.25rem; text-align: center; }
+    .card img { width: 64px; height: 64px; display: block; margin: 0 auto 0.75rem; }
+    .card span { font-size: 0.85rem; font-weight: 600; }
+    .card.new span::after { content: " (ใหม่)"; color: #8b4513; font-weight: 400; }
+  </style>
+</head>
+<body>
+  <h1>Equipment Slot Icons — Medieval Fantasy Line Art</h1>
+  <div class="grid">
+    <div class="card"><img src="slot-helm.svg" alt="Helm" onerror="this.style.display='none'" /><span>Helm</span></div>
+    <div class="card"><img src="slot-chest.svg" alt="Chest" onerror="this.style.display='none'" /><span>Chest</span></div>
+    <div class="card"><img src="slot-weapon.svg" alt="Weapon" onerror="this.style.display='none'" /><span>Weapon</span></div>
+    <div class="card new"><img src="slot-gloves.svg" alt="Gloves" /><span>Gloves</span></div>
+    <div class="card new"><img src="slot-boots.svg" alt="Boots" /><span>Boots</span></div>
+    <div class="card new"><img src="slot-cloak.svg" alt="Cloak" /><span>Cloak</span></div>
+  </div>
+</body>
+</html>
