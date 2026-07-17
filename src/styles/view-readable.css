@@ -22,6 +22,14 @@
   color: var(--ink-black);
 }
 
+.view-readable .top-hud--compact .hud-level-badge {
+  color: var(--dark-yellow-deep);
+}
+
+.view-readable .top-hud--compact .hud-name--inline {
+  color: var(--ink-black);
+}
+
 .view-readable .hud-name {
   font-family: var(--font-display);
   font-weight: 800;

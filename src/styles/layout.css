@@ -134,6 +134,33 @@
 
 .top-hud--compact .hud-level-row {
   flex-wrap: nowrap;
+  align-items: baseline;
+  gap: var(--space-3);
+  min-height: 0;
+}
+
+.top-hud--compact .hud-level-badge,
+.top-hud--compact .hud-name--inline {
+  font-family: var(--font-stat);
+  font-size: var(--text-lg);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  padding: 0;
+}
+
+.top-hud--compact .hud-level-badge {
+  color: var(--dark-yellow-deep);
+  flex-shrink: 0;
+}
+
+.top-hud--compact .hud-name--inline {
+  color: var(--ink-black);
+  text-transform: none;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .hud-block {

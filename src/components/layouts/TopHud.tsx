@@ -38,23 +38,27 @@ export function TopHud({
             <span className="hud-level-badge tabular-nums">
               {t("hud.level", locale)} {level}
             </span>
-            <div className="hud-exp-gauge" aria-label={`EXP ${expPct}%`}>
-              <span className="hud-exp-gauge__label tabular-nums">
-                {t("hud.exp", locale)} {exp.toLocaleString()}
-              </span>
-              <div
-                className="hud-exp-gauge__track"
-                role="progressbar"
-                aria-valuenow={expPct}
-                aria-valuemin={0}
-                aria-valuemax={100}
-              >
+            {compact ? (
+              <span className="hud-name--inline">{displayName}</span>
+            ) : (
+              <div className="hud-exp-gauge" aria-label={`EXP ${expPct}%`}>
+                <span className="hud-exp-gauge__label tabular-nums">
+                  {t("hud.exp", locale)} {exp.toLocaleString()}
+                </span>
                 <div
-                  className="hud-exp-gauge__fill"
-                  style={{ width: `${expPct}%` }}
-                />
+                  className="hud-exp-gauge__track"
+                  role="progressbar"
+                  aria-valuenow={expPct}
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                >
+                  <div
+                    className="hud-exp-gauge__fill"
+                    style={{ width: `${expPct}%` }}
+                  />
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
 
