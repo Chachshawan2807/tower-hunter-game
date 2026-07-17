@@ -81,7 +81,7 @@ export const ICON_PATHS: Partial<Record<GameIconName, IconPathDef>> = {
     strokeWidths: [1.95, 1.55, 1.7],
   },
   settings: {
-    // Lucide settings cog — padded so stroke knobs stay complete
+    // Imperial cog — padded viewBox so teeth stay complete; stroke weights match gold icon
     viewBox: "-1.5 -1.5 27 27",
     paths: [
       "M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z",
@@ -89,7 +89,7 @@ export const ICON_PATHS: Partial<Record<GameIconName, IconPathDef>> = {
     ],
     fills: ["none", "none"],
     strokes: ["currentColor", "currentColor"],
-    strokeWidths: [1.9, 1.75],
+    strokeWidths: [1.55, 1.85],
   },
   close: {
     viewBox: "0 0 24 24",

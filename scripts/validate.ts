@@ -175,7 +175,7 @@ assert(!isSkillUnlocked(getSkillById("murim_qi"), 9), "slot 3 locked before Lv10
 const cooldownEntity: BattleEntity = {
   id: "player",
   side: "player",
-  name: "Hero",
+  name: "Player",
   stats: DEFAULT_PLAYER_STATS,
   actionGauge: 0,
   statusEffects: [],
@@ -446,7 +446,7 @@ const knightUnlocked = [
 const highLevelKnight: BattleEntity = {
   id: "player",
   side: "player",
-  name: "Hero",
+  name: "Player",
   stats: knightL15Stats,
   actionGauge: 100,
   statusEffects: [],

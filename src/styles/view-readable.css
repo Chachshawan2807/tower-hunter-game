@@ -60,8 +60,13 @@
   color: var(--ink-black);
 }
 
+.view-readable .top-hud--compact .hud-gold,
+.view-readable .top-hud--compact .hud-gold__amount {
+  color: var(--dark-yellow-deep);
+}
+
 .view-readable .hud-action-btn {
-  color: rgba(0, 0, 0, 0.52);
+  color: var(--ink-black);
   background: transparent;
   border: none;
 }

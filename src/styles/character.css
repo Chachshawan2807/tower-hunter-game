@@ -21,8 +21,8 @@
 
 
 .character-figure--stage {
-  width: 220px;
-  height: 352px;
+  width: 100%;
+  height: 100%;
 }
 
 .character-figure--battle {
@@ -117,19 +117,23 @@
 }
 
 .hero-portrait--stage {
-  max-height: 320px;
+  width: 100%;
+  height: 100%;
 }
 
 .hero-portrait--menu {
-  max-height: 200px;
+  height: 200px;
+  width: auto;
 }
 
 .hero-portrait--battle {
-  max-height: 160px;
+  height: 160px;
+  width: auto;
 }
 
 .hero-portrait--npc {
-  max-height: 120px;
+  height: 120px;
+  width: auto;
 }
 
 .character-figure--idle .character-sprite-sheet {

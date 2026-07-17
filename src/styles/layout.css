@@ -134,9 +134,29 @@
 
 .top-hud--compact .hud-level-row {
   flex-wrap: nowrap;
-  align-items: baseline;
+  align-items: center;
   gap: var(--space-3);
   min-height: 0;
+}
+
+.top-hud--compact .hud-chrome {
+  align-items: center;
+}
+
+.top-hud--compact .hud-chrome__identity {
+  justify-content: center;
+}
+
+.top-hud--compact .hud-chrome__wallet {
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.top-hud--compact .hud-gold,
+.top-hud--compact .hud-action-btn {
+  min-height: 0;
+  min-width: 0;
+  padding: 0;
 }
 
 .top-hud--compact .hud-level-badge,
@@ -161,6 +181,10 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.top-hud--compact .hud-gold__amount {
+  line-height: 1;
 }
 
 .hud-block {

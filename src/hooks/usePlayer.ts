@@ -32,7 +32,7 @@ export function usePlayer() {
   const [userId, setUserId] = useState<string | null>(
     () => localStorage.getItem(USER_KEY)
   );
-  const [displayName, setDisplayName] = useState("Hero");
+  const [displayName, setDisplayName] = useState("Player");
   const [gold, setGold] = useState("0");
   const [level, setLevel] = useState(1);
   const [exp, setExp] = useState(0);
@@ -84,7 +84,7 @@ export function usePlayer() {
       try {
         if (!id) {
           const externalId = `guest_${crypto.randomUUID().slice(0, 8)}`;
-          const user = await api.createUser(externalId, "Hero");
+          const user = await api.createUser(externalId, "Player");
           id = user.id;
           localStorage.setItem(USER_KEY, id);
           if (!cancelled) {

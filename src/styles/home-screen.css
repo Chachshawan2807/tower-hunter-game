@@ -46,6 +46,11 @@
 }
 
 .hero-showcase {
+  --hero-stage-height: clamp(
+    380px,
+    calc(var(--frame-height) - var(--bottom-nav-height) - 120px),
+    520px
+  );
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -54,7 +59,6 @@
   z-index: 1;
   position: relative;
   width: 100%;
-  max-width: 300px;
   min-height: 0;
 }
 
@@ -63,8 +67,8 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -52%);
-  width: 260px;
-  height: 260px;
+  width: min(calc(var(--hero-stage-height) * 0.72), calc(var(--frame-width) * 0.88));
+  height: min(calc(var(--hero-stage-height) * 0.72), calc(var(--frame-width) * 0.88));
   border-radius: 50%;
   background: radial-gradient(
     circle,
@@ -101,8 +105,10 @@
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  width: 260px;
-  height: 380px;
+  height: var(--hero-stage-height);
+  width: auto;
+  aspect-ratio: 413 / 985;
+  max-width: calc(var(--frame-width) - 2 * var(--content-inline));
 }
 
 @keyframes hero-spotlight-pulse {

@@ -23,7 +23,7 @@
 }
 
 .view-readable .hud-action-btn .game-icon {
-  color: inherit;
+  color: var(--ink-black);
 }
 
 .hud-gold .game-icon {
@@ -33,6 +33,11 @@
 .view-readable .hud-gold .game-icon,
 .view-readable .hud-gold__icon .game-icon {
   color: var(--ink-black);
+}
+
+.view-readable .top-hud--compact .hud-gold .game-icon,
+.view-readable .top-hud--compact .hud-gold__icon .game-icon {
+  color: var(--dark-yellow-deep);
 }
 
 /* ── HUD EXP gauge §08 (thin track, no plate) ── */

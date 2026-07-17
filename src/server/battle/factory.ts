@@ -81,7 +81,7 @@ export function createBattleState(
   }
 ): BattleState {
   const playerStats = options?.playerStats ?? DEFAULT_PLAYER_STATS;
-  const playerName = options?.playerName ?? "Hero";
+  const playerName = options?.playerName ?? "Player";
   const path = options?.playerSkillPath ?? "imperial";
   const loadout =
     options?.playerLoadout ?? getDefaultLoadout(path, playerStats.level);
