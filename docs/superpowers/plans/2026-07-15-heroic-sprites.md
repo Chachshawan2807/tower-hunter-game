@@ -42,7 +42,7 @@
 
 - [x] **Step 1:** Import modular bodies; remove inline Rayman bodies
 - [x] **Step 2:** Run `npm run generate:sprites`
-- [x] **Step 3:** Confirm 7 PNG files at 960×1600
+- [x] **Step 3:** Confirm 6 PNG files at 960×1600
 
 ### Task 4: Visual verify
 

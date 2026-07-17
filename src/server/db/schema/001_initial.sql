@@ -1,4 +1,4 @@
--- Tower Hunter Game — Phase 3 Database Schema
+-- Tower Hunter Game — core database schema
 -- PostgreSQL 14+
 
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";

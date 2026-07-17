@@ -1,4 +1,4 @@
--- Player active skill path (murim / knight / fantasy)
+-- Player active skill path (imperial / knight / vanguard)
 ALTER TABLE player_stats
   ADD COLUMN IF NOT EXISTS active_skill_path TEXT NOT NULL DEFAULT 'imperial'
     CHECK (active_skill_path IN ('imperial', 'knight', 'vanguard'));

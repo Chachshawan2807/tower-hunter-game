@@ -41,3 +41,19 @@ Historical design notes and implementation plans. Check the **Status** line in e
 | 91–100 | `void-pinnacle` | Void / boss floors |
 
 **Skill paths:** `imperial` · `knight` · `vanguard` (legacy DB values `murim`/`fantasy` migrated in `005_imperial_skill_paths.sql`).
+
+## Database
+
+Migrations in `src/server/db/schema/` — applied by `npm run seed` or `npm run db:check`:
+
+| File | Purpose |
+|------|---------|
+| `001_initial.sql` | users, wallet, inventory, mailbox, localization |
+| `002_player_stats.sql` | `player_stats` combat progression |
+| `003_player_skills.sql` | `active_skill_path` column |
+| `004_skill_system.sql` | `skill_points`, loadout, upgrade ranks |
+| `005_imperial_skill_paths.sql` | path rename `murim`→`imperial`, `fantasy`→`vanguard` |
+| `006_player_equipment.sql` | `player_equipment` paper-doll slots |
+| `007_skill_unlocks.sql` | `player_skill_unlocks` (SP-gated skill unlock) |
+
+No `supabase/` folder — schema is managed via raw SQL + `pg`. Env: `.env.example` (`DATABASE_URL`, `PORT`).

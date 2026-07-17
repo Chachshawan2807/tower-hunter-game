@@ -7,6 +7,10 @@ allowed-tools: Read, Glob, Grep, Write, Edit, Task, AskUserQuestion
 model: sonnet
 ---
 
+## Tower Hunter project note
+
+This repo’s canonical art bible is **`docs/art-bible/MASTER_ART_BIBLE.md`** (already authored). Use this skill for greenfield projects that use `design/art/art-bible.md`. For Tower Hunter asset work, follow `docs/art-bible/` and `.cursorrules`.
+
 ## Phase 0: Parse Arguments and Context Check
 
 Resolve the review mode (once, store for all gate spawns this run):

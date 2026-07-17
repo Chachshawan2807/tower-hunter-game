@@ -6,7 +6,7 @@ import {
 import { SKILL_UNLOCK_LEVELS } from "./types";
 import type { SkillDefinition } from "./types";
 
-export const MURIM_IRON_PALM: SkillDefinition = {
+export const IMPERIAL_IRON_PALM: SkillDefinition = {
   id: "murim_palm",
   path: "imperial",
   stringId: "skills.murim.palm",
@@ -23,7 +23,7 @@ export const MURIM_IRON_PALM: SkillDefinition = {
   statusProcBonus: 0.15,
 };
 
-export const MURIM_SHADOW_STEP: SkillDefinition = {
+export const IMPERIAL_SHADOW_STEP: SkillDefinition = {
   id: "murim_dash",
   path: "imperial",
   stringId: "skills.murim.dash",
@@ -39,7 +39,7 @@ export const MURIM_SHADOW_STEP: SkillDefinition = {
   accuracyBonus: 30,
 };
 
-export const MURIM_INNER_QI: SkillDefinition = {
+export const IMPERIAL_INNER_QI: SkillDefinition = {
   id: "murim_qi",
   path: "imperial",
   stringId: "skills.murim.qi",
@@ -58,7 +58,7 @@ export const MURIM_INNER_QI: SkillDefinition = {
   },
 };
 
-export const MURIM_DRAGON_FIST: SkillDefinition = {
+export const IMPERIAL_DRAGON_FIST: SkillDefinition = {
   id: "murim_dragon",
   path: "imperial",
   stringId: "skills.murim.dragon",
@@ -75,11 +75,11 @@ export const MURIM_DRAGON_FIST: SkillDefinition = {
   statusProcBonus: 0.25,
 };
 
-export const MURIM_SKILLS: SkillDefinition[] = [
-  MURIM_IRON_PALM,
-  MURIM_SHADOW_STEP,
-  MURIM_INNER_QI,
-  MURIM_DRAGON_FIST,
+export const IMPERIAL_SKILLS: SkillDefinition[] = [
+  IMPERIAL_IRON_PALM,
+  IMPERIAL_SHADOW_STEP,
+  IMPERIAL_INNER_QI,
+  IMPERIAL_DRAGON_FIST,
 ];
 
-export const MURIM_BLEED_TURNS = DOT_DEFAULT_TURNS;
+export const IMPERIAL_BLEED_TURNS = DOT_DEFAULT_TURNS;

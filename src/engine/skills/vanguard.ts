@@ -2,7 +2,7 @@ import { CC_DEFAULT_TURNS } from "../types";
 import { SKILL_UNLOCK_LEVELS } from "./types";
 import type { SkillDefinition } from "./types";
 
-export const FANTASY_ARCANE_BOLT: SkillDefinition = {
+export const VANGUARD_ARCANE_BOLT: SkillDefinition = {
   id: "fantasy_bolt",
   path: "vanguard",
   stringId: "skills.fantasy.bolt",
@@ -18,7 +18,7 @@ export const FANTASY_ARCANE_BOLT: SkillDefinition = {
   defPierce: 0.3,
 };
 
-export const FANTASY_FROST_NOVA: SkillDefinition = {
+export const VANGUARD_FROST_NOVA: SkillDefinition = {
   id: "fantasy_freeze",
   path: "vanguard",
   stringId: "skills.fantasy.freeze",
@@ -35,7 +35,7 @@ export const FANTASY_FROST_NOVA: SkillDefinition = {
   statusProcBonus: 0.25,
 };
 
-export const FANTASY_HOLY_LIGHT: SkillDefinition = {
+export const VANGUARD_HOLY_LIGHT: SkillDefinition = {
   id: "fantasy_heal",
   path: "vanguard",
   stringId: "skills.fantasy.heal",
@@ -50,7 +50,7 @@ export const FANTASY_HOLY_LIGHT: SkillDefinition = {
   healPercent: 0.25,
 };
 
-export const FANTASY_METEOR: SkillDefinition = {
+export const VANGUARD_METEOR: SkillDefinition = {
   id: "fantasy_meteor",
   path: "vanguard",
   stringId: "skills.fantasy.meteor",
@@ -66,11 +66,11 @@ export const FANTASY_METEOR: SkillDefinition = {
   defPierce: 0.5,
 };
 
-export const FANTASY_SKILLS: SkillDefinition[] = [
-  FANTASY_ARCANE_BOLT,
-  FANTASY_FROST_NOVA,
-  FANTASY_HOLY_LIGHT,
-  FANTASY_METEOR,
+export const VANGUARD_SKILLS: SkillDefinition[] = [
+  VANGUARD_ARCANE_BOLT,
+  VANGUARD_FROST_NOVA,
+  VANGUARD_HOLY_LIGHT,
+  VANGUARD_METEOR,
 ];
 
-export const FANTASY_FREEZE_TURNS = CC_DEFAULT_TURNS;
+export const VANGUARD_FREEZE_TURNS = CC_DEFAULT_TURNS;

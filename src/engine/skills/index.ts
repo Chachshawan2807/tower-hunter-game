@@ -7,9 +7,9 @@ export type {
 } from "./types";
 
 export { BASIC_ATTACK } from "./basicAttack";
-export { MURIM_SKILLS } from "./murim";
+export { IMPERIAL_SKILLS } from "./imperial";
 export { KNIGHT_SKILLS } from "./knight";
-export { FANTASY_SKILLS } from "./fantasy";
+export { VANGUARD_SKILLS } from "./vanguard";
 export { ENEMY_SKILLS } from "./enemy";
 
 export {

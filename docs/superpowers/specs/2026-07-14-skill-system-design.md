@@ -6,6 +6,8 @@
 
 > **Path rename (2026-07):** Runtime skill paths are `imperial` · `knight` · `vanguard` (was `murim` · `knight` · `fantasy`). Examples below retain legacy IDs/names where the spec was written; migration: `005_imperial_skill_paths.sql`.
 
+> **Skill unlocks (2026-07):** Progression uses SP-gated per-skill unlocks (`player_skill_unlocks`, `007_skill_unlocks.sql`, `POST /api/skills/:userId/unlock`). `unlockLevel` on skills is legacy metadata for DB backfill; runtime unlock state is persisted per user.
+
 ---
 
 ## 1. Overview

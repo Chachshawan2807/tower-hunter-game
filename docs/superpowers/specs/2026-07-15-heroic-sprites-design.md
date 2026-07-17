@@ -57,5 +57,5 @@ scripts/generateCharacterSheets.mjs  # compose → sharp PNG
 
 1. Limbs are continuous (no floating hands/feet)
 2. Silhouettes read as path-distinct (warrior / knight / mystic / beast / demon / merchant / villager)
-3. `npm run generate:sprites` refreshes all 7 PNG sheets
+3. `npm run generate:sprites` refreshes all 6 PNG sheets
 4. Character menu shows single clean figure (no equip overlay)

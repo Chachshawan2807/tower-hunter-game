@@ -1,9 +1,9 @@
 import type { SkillPath } from "../types";
 import { BASIC_ATTACK } from "./basicAttack";
 import { ENEMY_SKILLS } from "./enemy";
-import { FANTASY_SKILLS } from "./fantasy";
+import { IMPERIAL_SKILLS } from "./imperial";
 import { KNIGHT_SKILLS } from "./knight";
-import { MURIM_SKILLS } from "./murim";
+import { VANGUARD_SKILLS } from "./vanguard";
 import type { SkillDefinition } from "./types";
 
 const SKILL_REGISTRY = new Map<string, SkillDefinition>();
@@ -14,18 +14,18 @@ function register(skill: SkillDefinition): void {
 
 register(BASIC_ATTACK);
 for (const skill of [
-  ...MURIM_SKILLS,
+  ...IMPERIAL_SKILLS,
   ...KNIGHT_SKILLS,
-  ...FANTASY_SKILLS,
+  ...VANGUARD_SKILLS,
   ...ENEMY_SKILLS,
 ]) {
   register(skill);
 }
 
 const PATH_SKILLS: Record<SkillPath, SkillDefinition[]> = {
-  imperial: MURIM_SKILLS,
+  imperial: IMPERIAL_SKILLS,
   knight: KNIGHT_SKILLS,
-  vanguard: FANTASY_SKILLS,
+  vanguard: VANGUARD_SKILLS,
 };
 
 export function getSkillById(skillId: string): SkillDefinition {
