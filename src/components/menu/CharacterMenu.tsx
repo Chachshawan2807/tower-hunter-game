@@ -53,10 +53,6 @@ export function CharacterMenu({
       />
 
       <div className="char-menu__section ui-section">
-        <p className="menu-subtitle">
-          {t("char.stats", locale)} — {t("tower.floor", locale)} {stats.current_floor}
-        </p>
-
         {bonusLines.length > 0 && (
           <p className="char-equip-bonus" aria-label={t("char.equipment_bonus", locale)}>
             {t("char.equipment_bonus", locale)}: {bonusLines.join(" · ")}
