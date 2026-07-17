@@ -78,3 +78,36 @@ export function processSilhouetteBuffer(data, width, height, dilateRadius = NAV_
   toMaskSilhouette(data);
   dilateSilhouette(data, width, height, dilateRadius);
 }
+
+/**
+ * Imperial ink hatch — maps reference gray tones to opaque black ink (hero armor style).
+ * Uses grayscale RGB so shading reads clearly on light slot backgrounds.
+ */
+export function toInkShadedSilhouette(data, alphaThreshold = 48) {
+  for (let i = 0; i < data.length; i += 4) {
+    const r = data[i];
+    const g = data[i + 1];
+    const b = data[i + 2];
+    const a = data[i + 3];
+    if (a < alphaThreshold || isBackground(r, g, b)) {
+      data[i + 3] = 0;
+      continue;
+    }
+    const lum = 0.299 * r + 0.587 * g + 0.114 * b;
+    const ink = Math.round(Math.min(255, Math.max(0, (255 - lum) * 1.35 + 24)));
+    data[i] = ink;
+    data[i + 1] = ink;
+    data[i + 2] = ink;
+    data[i + 3] = 255;
+  }
+}
+
+/** Extra pixels for equipment slot strokes — bolder ink to match hero armor weight. */
+export const EQUIP_STROKE_DILATE = 3;
+
+export function processInkShadedBuffer(data, width, height, dilateRadius = EQUIP_STROKE_DILATE) {
+  toInkShadedSilhouette(data);
+  if (dilateRadius > 0) {
+    dilateSilhouette(data, width, height, dilateRadius);
+  }
+}

@@ -4,7 +4,6 @@ import {
   type CharacterEquipmentVisual,
 } from "../../engine/art/equipment";
 import type { EquipmentSlot } from "../../engine/art/equipment/slots";
-import { GameIcon } from "../ui/icons";
 import { t, type Locale } from "../../utils/i18n";
 import { CharacterFigure } from "./CharacterFigure";
 
@@ -63,7 +62,24 @@ function EquipSlot({ locale, slot, equipment }: SlotButtonProps) {
       aria-label={label}
       title={label}
     >
-      <GameIcon name={SLOT_ICON[slot]} size={26} />
+      <span className="char-equip-slot__icon-stack" aria-hidden>
+        <img
+          className="char-equip-slot__icon char-equip-slot__icon--shade"
+          src={`/icons/ui/${SLOT_ICON[slot]}.svg`}
+          width={26}
+          height={26}
+          alt=""
+          draggable={false}
+        />
+        <img
+          className="char-equip-slot__icon"
+          src={`/icons/ui/${SLOT_ICON[slot]}.svg`}
+          width={26}
+          height={26}
+          alt=""
+          draggable={false}
+        />
+      </span>
     </div>
   );
 }

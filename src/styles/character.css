@@ -441,9 +441,16 @@
   width: 42px;
   height: 42px;
   border-radius: var(--radius-sm);
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid rgba(0, 0, 0, 0.14);
-  color: var(--ink-black);
+  background: linear-gradient(
+    165deg,
+    rgba(255, 252, 245, 0.96) 0%,
+    rgba(232, 225, 212, 0.94) 100%
+  );
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  color: var(--primary-black);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.1);
   flex-shrink: 0;
 }
 
@@ -462,7 +469,37 @@
 }
 
 .char-equip-slot .game-icon--file {
-  opacity: 0.92;
+  opacity: 1;
+  filter: drop-shadow(0 0.5px 0 rgba(0, 0, 0, 0.12));
+}
+
+.char-equip-slot__icon-stack {
+  position: relative;
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+}
+
+.char-equip-slot__icon {
+  display: block;
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+}
+
+.char-equip-slot__icon--shade {
+  position: absolute;
+  inset: 0;
+  opacity: 0.42;
+  filter: blur(1.2px) brightness(0);
+  transform: translate(0.6px, 1px);
+  pointer-events: none;
+}
+
+.char-equip-slot__icon-stack > .char-equip-slot__icon:not(.char-equip-slot__icon--shade) {
+  position: relative;
+  z-index: 1;
+  filter: contrast(1.12) drop-shadow(0 0.5px 0 rgba(0, 0, 0, 0.2));
 }
 
 .char-equip-slot__rarity--rare {
@@ -480,8 +517,12 @@
 }
 
 .view-readable .char-equip-slot {
-  background: var(--surface-readable-muted);
-  color: var(--ink-black);
+  background: linear-gradient(
+    165deg,
+    var(--surface-readable-muted) 0%,
+    rgba(220, 212, 198, 0.95) 100%
+  );
+  color: var(--primary-black);
 }
 
 

@@ -8,7 +8,7 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import sharp from "sharp";
-import { processSilhouetteBuffer } from "./iconSilhouette.mjs";
+import { processSilhouetteBuffer, EQUIP_STROKE_DILATE } from "./iconSilhouette.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, "..");
@@ -25,7 +25,7 @@ async function processSlot(name) {
   }
 
   const { data, info } = await sharp(source).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
-  processSilhouetteBuffer(data, info.width, info.height);
+  processSilhouetteBuffer(data, info.width, info.height, EQUIP_STROKE_DILATE);
 
   const png = await sharp(Buffer.from(data), {
     raw: { width: info.width, height: info.height, channels: 4 },
@@ -35,7 +35,7 @@ async function processSlot(name) {
       fit: "contain",
       background: { r: 0, g: 0, b: 0, alpha: 0 },
     })
-    .png({ compressionLevel: 9, palette: true })
+    .png({ compressionLevel: 9, palette: false })
     .toBuffer();
 
   const base64 = png.toString("base64");
@@ -59,7 +59,7 @@ async function main() {
   for (const slot of SLOTS) {
     await processSlot(slot);
   }
-  console.log(`\nBuilt ${SLOTS.length} equipment slot SVGs (nav-matched stroke pipeline).`);
+  console.log(`\nBuilt ${SLOTS.length} equipment slot SVGs (ink-shaded hero armor pipeline).`);
 }
 
 main().catch((err) => {
