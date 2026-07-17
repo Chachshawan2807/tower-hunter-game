@@ -14,6 +14,10 @@
   transform: scale(0.88);
 }
 
+.nav-btn .game-icon {
+  color: inherit;
+}
+
 .nav-btn--active .game-icon {
   filter: none;
 }

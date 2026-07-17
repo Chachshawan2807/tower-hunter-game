@@ -96,6 +96,6 @@ export const ICON_PATHS: Partial<Record<GameIconName, IconPathDef>> = {
     paths: ["M5.5 5.5l13 13M18.5 5.5l-13 13"],
     fills: ["none"],
     strokes: ["currentColor"],
-    strokeWidths: [2.3],
+    strokeWidths: [2.75],
   },
 };

@@ -67,11 +67,11 @@ export function OverlayModal({
           </h2>
           <button
             ref={closeRef}
-            className="icon-btn"
+            className="icon-btn icon-btn--close"
             onClick={requestClose}
             aria-label={t("menu.close", locale)}
           >
-            <GameIcon name="close" size={20} />
+            <GameIcon name="close" size={22} />
           </button>
         </header>
         <div className="overlay__body">{children}</div>

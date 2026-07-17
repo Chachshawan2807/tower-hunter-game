@@ -326,6 +326,14 @@
   color: var(--text-primary);
 }
 
+.icon-btn--close {
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  min-height: 40px;
+  flex-shrink: 0;
+}
+
 .stage {
   flex: 1;
   display: flex;
