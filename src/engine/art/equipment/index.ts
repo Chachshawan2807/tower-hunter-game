@@ -21,6 +21,12 @@ export {
   getGearPieceStatBonus,
   mergeStatBonuses,
   formatStatBonus,
+  formatStatNumber,
+  formatFlatBonusSuffix,
+  formatFlatPercentBonusSuffix,
+  formatPercentBonusSuffix,
+  formatPercentPoints,
+  formatStoredPercent,
   SLOT_STAT_TEMPLATE,
   type GearStatBonus,
 } from "./statBonuses";

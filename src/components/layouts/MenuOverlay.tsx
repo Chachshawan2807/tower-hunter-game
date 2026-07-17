@@ -1,6 +1,10 @@
 import { OverlayModal } from "./OverlayModal";
 import { BagMenu } from "../menu/BagMenu";
 import { CharacterMenu } from "../menu/CharacterMenu";
+import {
+  CharacterOverlayTitle,
+  characterOverlayTitleLabel,
+} from "../menu/CharacterOverlayTitle";
 import { ShopMenu } from "../menu/ShopMenu";
 import { SkillMenu } from "../menu/SkillMenu";
 import type { NavTab } from "./BottomNav";
@@ -25,6 +29,7 @@ interface MenuOverlayProps {
   locale: Locale;
   userId: string | null;
   playerLevel: number;
+  playerExp: number;
   skillPath: SkillPath;
   gold: string;
   stats: PlayerStatsResponse["stats"] | null;
@@ -44,6 +49,7 @@ export function MenuOverlay({
   locale,
   userId,
   playerLevel,
+  playerExp,
   skillPath,
   gold,
   stats,
@@ -57,9 +63,26 @@ export function MenuOverlay({
   onPathChange,
   onPurchase,
 }: MenuOverlayProps) {
+  const title =
+    menu === "character" ? (
+      <CharacterOverlayTitle
+        locale={locale}
+        level={playerLevel}
+        exp={playerExp}
+      />
+    ) : (
+      t(OVERLAY_TITLES[menu], locale)
+    );
+
+  const titleLabel =
+    menu === "character"
+      ? characterOverlayTitleLabel(locale, playerLevel, playerExp)
+      : t(OVERLAY_TITLES[menu], locale);
+
   return (
     <OverlayModal
-      title={t(OVERLAY_TITLES[menu], locale)}
+      title={title}
+      titleLabel={titleLabel}
       locale={locale}
       onClose={onClose}
     >

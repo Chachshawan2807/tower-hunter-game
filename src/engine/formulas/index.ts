@@ -54,6 +54,7 @@ export {
   totalExpForLevel,
   levelFromTotalExp,
   expProgressRatio,
+  expTowardNextLevel,
   combatStatsForLevel,
 } from "./playerProgression";
 export {

@@ -100,3 +100,39 @@ export function formatStatBonus(bonus: GearStatBonus): string[] {
   }
   return lines;
 }
+
+export function formatStatNumber(value: number | string): string {
+  const num = typeof value === "string" ? Number(value) : value;
+  if (Number.isNaN(num)) return String(value);
+  return num.toLocaleString();
+}
+
+export function formatFlatBonusSuffix(value?: number): string | undefined {
+  if (!value) return undefined;
+  return `+${value.toLocaleString()}`;
+}
+
+export function formatPercentBonusSuffix(value?: number): string | undefined {
+  if (!value) return undefined;
+  return `+${(value * 100).toFixed(1)}%`;
+}
+
+export function formatStoredPercent(value?: string): string {
+  if (value === undefined || value === null || value === "") return "—";
+  const num = Number(value);
+  if (Number.isNaN(num)) return value;
+  return `${(num * 100).toFixed(1)}%`;
+}
+
+/** Whole-number stats shown with a % suffix (e.g. accuracy 100 → 100%) */
+export function formatPercentPoints(value?: string): string {
+  if (value === undefined || value === null || value === "") return "—";
+  const num = Number(value);
+  if (Number.isNaN(num)) return value;
+  return `${num.toLocaleString()}%`;
+}
+
+export function formatFlatPercentBonusSuffix(value?: number): string | undefined {
+  if (!value) return undefined;
+  return `+${value.toLocaleString()}%`;
+}

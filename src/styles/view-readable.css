@@ -197,7 +197,7 @@
 .view-readable .menu-subtitle,
 .view-readable .menu-empty,
 .view-readable .stat-item,
-.view-readable .stat-item span,
+.view-readable .stat-item > span,
 .view-readable .skill-path,
 .view-readable .bag-menu,
 .view-readable .shop-menu,
@@ -214,6 +214,10 @@
 .view-readable .bag-item__main,
 .view-readable .shop-balance {
   color: var(--ink-black);
+}
+
+.view-readable .stat-item__bonus {
+  color: var(--dark-yellow-deep);
 }
 
 .view-readable .stat-item,

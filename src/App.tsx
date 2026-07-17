@@ -156,6 +156,7 @@ export function App() {
             locale={locale}
             userId={player.userId}
             playerLevel={player.level}
+            playerExp={player.exp}
             skillPath={player.skillPath}
             gold={player.gold}
             stats={player.stats}

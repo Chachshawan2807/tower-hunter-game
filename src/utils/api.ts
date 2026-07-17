@@ -68,6 +68,7 @@ export interface PlayerStatsResponse {
     status_resist?: string;
     current_floor: number;
     active_skill_path?: "imperial" | "knight" | "vanguard";
+    skill_points?: number;
   };
   goldBalance: string;
   equipmentStatBonus?: GearStatBonusDto;

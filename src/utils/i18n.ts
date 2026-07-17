@@ -128,6 +128,8 @@ const STRINGS: Record<string, Record<Locale, string>> = {
   "weapon.bow": { en: "Bow", th: "ธนู" },
   "weapon.dual_daggers": { en: "Dual Daggers", th: "ดาบสั้นคู่" },
   "char.equipment": { en: "Equipment", th: "อุปกรณ์สวมใส่" },
+  "char.player_label": { en: "PLAYER", th: "PLAYER" },
+  "char.status_point": { en: "STATUS POINT", th: "STATUS POINT" },
   "char.slot.weapon": { en: "Weapon", th: "อาวุธ" },
   "char.slot.helm": { en: "Helm", th: "หมวก" },
   "char.slot.chest": { en: "Armor", th: "เกราะ" },

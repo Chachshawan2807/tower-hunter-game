@@ -5,7 +5,8 @@ import { useFocusTrap } from "../../hooks/useFocusTrap";
 import { t, type Locale } from "../../utils/i18n";
 
 interface OverlayModalProps {
-  title: string;
+  title: ReactNode;
+  titleLabel?: string;
   locale: Locale;
   onClose: () => void;
   children: ReactNode;
@@ -15,6 +16,7 @@ const CLOSE_ANIM_MS = 220;
 
 export function OverlayModal({
   title,
+  titleLabel,
   locale,
   onClose,
   children,
@@ -56,7 +58,11 @@ export function OverlayModal({
         aria-labelledby="overlay-title"
       >
         <header className="overlay__header">
-          <h2 className="overlay__title" id="overlay-title">
+          <h2
+            className="overlay__title"
+            id="overlay-title"
+            aria-label={titleLabel}
+          >
             {title}
           </h2>
           <button

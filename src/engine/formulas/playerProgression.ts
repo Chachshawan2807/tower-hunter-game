@@ -37,13 +37,20 @@ export function levelFromTotalExp(totalExp: number): number {
 
 /** 0–1 progress toward next level for HUD EXP gauge §08 */
 export function expProgressRatio(level: number, totalExp: number): number {
+  const { current, needed } = expTowardNextLevel(level, totalExp);
+  if (needed <= 0) return 1;
+  return Math.min(1, current / needed);
+}
+
+export function expTowardNextLevel(
+  level: number,
+  totalExp: number
+): { current: number; needed: number } {
   const safeLevel = Math.max(1, Math.floor(level));
   const base = totalExpForLevel(safeLevel);
   const needed = expToNextLevel(safeLevel);
-  if (needed <= 0) return 1;
-
   const current = Math.max(0, totalExp - base);
-  return Math.min(1, current / needed);
+  return { current, needed };
 }
 
 function scalePlayerStat(baseStat: number, level: number): number {

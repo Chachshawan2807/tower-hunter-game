@@ -1,104 +1,41 @@
-import {
-  GEAR_CATALOG,
-  getGearEntry,
-  type CharacterEquipmentVisual,
-} from "../../engine/art/equipment";
+import { useEffect, useRef, useState } from "react";
+import type { CharacterEquipmentVisual } from "../../engine/art/equipment";
 import type { EquipmentSlot } from "../../engine/art/equipment/slots";
 import { t, type Locale } from "../../utils/i18n";
 import { CharacterFigure } from "./CharacterFigure";
+import { EquipSlot } from "./EquipSlot";
 
 const LEFT_SLOTS: EquipmentSlot[] = ["helm", "chest", "boots"];
 const RIGHT_SLOTS: EquipmentSlot[] = ["weapon", "gloves", "cloak"];
-
-const SLOT_LABEL: Record<EquipmentSlot, string> = {
-  weapon: "char.slot.weapon",
-  helm: "char.slot.helm",
-  chest: "char.slot.chest",
-  gloves: "char.slot.gloves",
-  boots: "char.slot.boots",
-  cloak: "char.slot.cloak",
-};
-
-const SLOT_ICON: Record<EquipmentSlot, "slot-helm" | "slot-chest" | "slot-gloves" | "slot-boots" | "slot-cloak" | "slot-weapon"> = {
-  weapon: "slot-weapon",
-  helm: "slot-helm",
-  chest: "slot-chest",
-  gloves: "slot-gloves",
-  boots: "slot-boots",
-  cloak: "slot-cloak",
-};
-
-function resolveSlotGearId(visual: CharacterEquipmentVisual, slot: EquipmentSlot): string {
-  if (slot === "weapon") {
-    const match = Object.values(GEAR_CATALOG).find(
-      (e) => e.slot === "weapon" && e.path === visual.path && e.weaponId === visual.weapon
-    );
-    return match?.id ?? `gear.${visual.path}.weapon.${visual.weapon}`;
-  }
-  return visual[slot];
-}
-
-interface SlotButtonProps {
-  locale: Locale;
-  slot: EquipmentSlot;
-  equipment: CharacterEquipmentVisual;
-}
-
-function EquipSlot({ locale, slot, equipment }: SlotButtonProps) {
-  const gearId = resolveSlotGearId(equipment, slot);
-  const entry = getGearEntry(gearId);
-  const rarity = equipment.pieceRarity[slot] ?? "common";
-  const slotName = t(SLOT_LABEL[slot], locale);
-  const gearName = t(entry?.nameKey ?? gearId, locale);
-  const label = `${slotName}: ${gearName}`;
-
-  return (
-    <div
-      className={[
-        "char-equip-slot",
-        `char-equip-slot__rarity--${rarity}`,
-      ].join(" ")}
-      role="img"
-      aria-label={label}
-      title={label}
-    >
-      <span className="char-equip-slot__icon-stack" aria-hidden>
-        <img
-          className="char-equip-slot__icon char-equip-slot__icon--shade"
-          src={`/icons/ui/${SLOT_ICON[slot]}.svg`}
-          width={26}
-          height={26}
-          alt=""
-          draggable={false}
-        />
-        <img
-          className="char-equip-slot__icon"
-          src={`/icons/ui/${SLOT_ICON[slot]}.svg`}
-          width={26}
-          height={26}
-          alt=""
-          draggable={false}
-        />
-      </span>
-    </div>
-  );
-}
 
 function SlotRail({
   locale,
   slots,
   equipment,
   side,
+  activeSlot,
+  onSlotActivate,
 }: {
   locale: Locale;
   slots: EquipmentSlot[];
   equipment: CharacterEquipmentVisual;
   side: "left" | "right";
+  activeSlot: EquipmentSlot | null;
+  onSlotActivate: (slot: EquipmentSlot) => void;
 }) {
   return (
     <div className={`char-equip-rail char-equip-rail--${side}`}>
       {slots.map((slot) => (
-        <EquipSlot key={slot} locale={locale} slot={slot} equipment={equipment} />
+        <EquipSlot
+          key={slot}
+          locale={locale}
+          slot={slot}
+          equipment={equipment}
+          side={side}
+          isActive={activeSlot === slot}
+          hasPinnedTooltip={activeSlot !== null}
+          onActivate={() => onSlotActivate(slot)}
+        />
       ))}
     </div>
   );
@@ -115,13 +52,39 @@ export function CharacterEquipmentPanel({
   equipment,
   displayName,
 }: CharacterEquipmentPanelProps) {
+  const [activeSlot, setActiveSlot] = useState<EquipmentSlot | null>(null);
+  const dollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!activeSlot) return;
+
+    const closeOnOutside = (event: MouseEvent) => {
+      if (!dollRef.current?.contains(event.target as Node)) {
+        setActiveSlot(null);
+      }
+    };
+
+    document.addEventListener("click", closeOnOutside);
+    return () => document.removeEventListener("click", closeOnOutside);
+  }, [activeSlot]);
+
+  const handleSlotActivate = (slot: EquipmentSlot) => {
+    setActiveSlot((current) => (current === slot ? null : slot));
+  };
+
   return (
-    <div className="char-equip-doll" aria-label={t("char.equipment", locale)}>
+    <div
+      ref={dollRef}
+      className="char-equip-doll"
+      aria-label={t("char.equipment", locale)}
+    >
       <SlotRail
         locale={locale}
         slots={LEFT_SLOTS}
         equipment={equipment}
         side="left"
+        activeSlot={activeSlot}
+        onSlotActivate={handleSlotActivate}
       />
 
       <div className="char-equip-stage">
@@ -141,6 +104,8 @@ export function CharacterEquipmentPanel({
         slots={RIGHT_SLOTS}
         equipment={equipment}
         side="right"
+        activeSlot={activeSlot}
+        onSlotActivate={handleSlotActivate}
       />
     </div>
   );

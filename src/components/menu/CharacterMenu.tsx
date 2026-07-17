@@ -1,5 +1,12 @@
-import { formatStatBonus } from "../../engine/art/equipment";
-import type { GearStatBonus } from "../../engine/art/equipment/statBonuses";
+import {
+  formatFlatBonusSuffix,
+  formatFlatPercentBonusSuffix,
+  formatPercentBonusSuffix,
+  formatPercentPoints,
+  formatStatNumber,
+  formatStoredPercent,
+  type GearStatBonus,
+} from "../../engine/art/equipment";
 import { t, type Locale } from "../../utils/i18n";
 import type { CharacterEquipmentVisual } from "../../engine/art/equipment/catalog";
 import type { PlayerStatsResponse } from "../../utils/api";
@@ -13,6 +20,22 @@ interface CharacterMenuProps {
   equipmentStatBonus?: GearStatBonus;
 }
 
+interface StatRow {
+  key: string;
+  value: string;
+  bonus?: string;
+  vital?: boolean;
+}
+
+function StatValue({ value, bonus }: { value: string; bonus?: string }) {
+  return (
+    <span className="stat-item__value">
+      {value}
+      {bonus && <span className="stat-item__bonus">{bonus}</span>}
+    </span>
+  );
+}
+
 export function CharacterMenu({
   locale,
   stats,
@@ -24,25 +47,63 @@ export function CharacterMenu({
     return <p className="menu-empty">{t("char.stats", locale)}...</p>;
   }
 
-  const vitals = [
-    { key: "HP", value: `${stats.hp}/${stats.max_hp}` },
-    { key: "MP", value: `${stats.mp}/${stats.max_mp}` },
-  ];
+  const bonus = equipmentStatBonus;
+  const statusPoints = stats.skill_points ?? 0;
 
-  const combat = [
-    { key: "ATK", value: stats.atk },
-    { key: "DEF", value: stats.def },
-    { key: "SPD", value: stats.speed },
-    { key: "LV", value: stats.level },
-    { key: "ACC", value: stats.accuracy ?? "—" },
-    { key: "EVA", value: stats.evasion ?? "—" },
-    { key: "CRIT", value: stats.crit_chance ?? "—" },
-    { key: "CRIT DMG", value: stats.crit_damage ?? "—" },
-    { key: "STATUS", value: stats.status_chance ?? "—" },
-    { key: "RESIST", value: stats.status_resist ?? "—" },
+  const statRows: StatRow[] = [
+    {
+      key: "HP",
+      vital: true,
+      value: `${formatStatNumber(stats.hp)}/${formatStatNumber(stats.max_hp)}`,
+      bonus: formatFlatBonusSuffix(bonus.maxHp),
+    },
+    {
+      key: "MP",
+      vital: true,
+      value: `${formatStatNumber(stats.mp)}/${formatStatNumber(stats.max_mp)}`,
+      bonus: formatFlatBonusSuffix(bonus.maxMp),
+    },
+    {
+      key: "ATK",
+      value: formatStatNumber(stats.atk),
+      bonus: formatFlatBonusSuffix(bonus.atk),
+    },
+    {
+      key: "DEF",
+      value: formatStatNumber(stats.def),
+      bonus: formatFlatBonusSuffix(bonus.def),
+    },
+    {
+      key: "SPD",
+      value: formatStatNumber(stats.speed),
+      bonus: formatFlatBonusSuffix(bonus.speed),
+    },
+    {
+      key: "CRIT",
+      value: formatStoredPercent(stats.crit_chance),
+      bonus: formatPercentBonusSuffix(bonus.critChance),
+    },
+    {
+      key: "CRIT DMG",
+      value: formatStoredPercent(stats.crit_damage),
+      bonus: formatPercentBonusSuffix(bonus.critDamage),
+    },
+    {
+      key: "RESIST",
+      value: formatStoredPercent(stats.status_resist),
+      bonus: formatPercentBonusSuffix(bonus.statusResist),
+    },
+    {
+      key: "EVA",
+      value: formatPercentPoints(stats.evasion),
+      bonus: formatFlatPercentBonusSuffix(bonus.evasion),
+    },
+    {
+      key: "ACC",
+      value: formatPercentPoints(stats.accuracy),
+      bonus: formatFlatPercentBonusSuffix(bonus.accuracy),
+    },
   ];
-
-  const bonusLines = formatStatBonus(equipmentStatBonus);
 
   return (
     <div className="char-menu">
@@ -53,26 +114,42 @@ export function CharacterMenu({
       />
 
       <div className="char-menu__section ui-section">
-        {bonusLines.length > 0 && (
-          <p className="char-equip-bonus" aria-label={t("char.equipment_bonus", locale)}>
-            {t("char.equipment_bonus", locale)}: {bonusLines.join(" · ")}
-          </p>
-        )}
+        <div className="stat-grid stat-grid--character">
+          {Array.from({ length: 3 }, (_, index) => (
+            <div
+              key={`status-spacer-${index}`}
+              className="stat-grid__spacer"
+              aria-hidden="true"
+            />
+          ))}
+          <div
+            className="stat-item stat-item--status-point"
+            aria-label={`${t("char.status_point", locale)} ${statusPoints}`}
+          >
+            <span className="stat-item__status-row">
+              <span className="stat-item__status-label">
+                {t("char.status_point", locale)}
+              </span>
+              <span className="stat-item__status-value tabular-nums">
+                {statusPoints}
+              </span>
+            </span>
+          </div>
 
-        <div className="stat-grid stat-grid--vitals">
-          {vitals.map((stat) => (
-            <div key={stat.key} className="stat-item stat-item--vital">
+          {statRows.slice(0, 5).map((stat) => (
+            <div
+              key={stat.key}
+              className={`stat-item${stat.vital ? " stat-item--vital" : ""}`}
+            >
               <span>{stat.key}</span>
-              {stat.value}
+              <StatValue value={stat.value} bonus={stat.bonus} />
             </div>
           ))}
-        </div>
 
-        <div className="stat-grid">
-          {combat.map((stat) => (
+          {statRows.slice(5).map((stat) => (
             <div key={stat.key} className="stat-item">
               <span>{stat.key}</span>
-              {stat.value}
+              <StatValue value={stat.value} bonus={stat.bonus} />
             </div>
           ))}
         </div>
