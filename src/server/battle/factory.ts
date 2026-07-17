@@ -78,13 +78,15 @@ export function createBattleState(
     playerSkillPath?: SkillPath;
     playerLoadout?: SkillLoadout;
     playerSkillUpgrades?: Record<string, SkillUpgradeRanks>;
+    playerUnlockedSkillIds?: string[];
   }
 ): BattleState {
   const playerStats = options?.playerStats ?? DEFAULT_PLAYER_STATS;
   const playerName = options?.playerName ?? "Player";
   const path = options?.playerSkillPath ?? "imperial";
+  const unlockedSkillIds = options?.playerUnlockedSkillIds ?? [];
   const loadout =
-    options?.playerLoadout ?? getDefaultLoadout(path, playerStats.level);
+    options?.playerLoadout ?? getDefaultLoadout(path, unlockedSkillIds);
 
   return {
     entities: [
@@ -97,6 +99,7 @@ export function createBattleState(
     playerSkillPath: path,
     playerLoadout: loadout,
     playerSkillUpgrades: options?.playerSkillUpgrades ?? {},
+    playerUnlockedSkillIds: [...unlockedSkillIds],
     isComplete: false,
   };
 }

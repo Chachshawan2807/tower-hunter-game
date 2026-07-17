@@ -39,6 +39,18 @@ async function verifySchema(pool: ReturnType<typeof createDbPool>): Promise<void
     throw new Error("Missing table: player_skill_upgrades");
   }
   console.log("✓ Table player_skill_upgrades exists");
+
+  const unlocksTable = await pool.query<{ table_name: string }>(
+    `SELECT table_name
+     FROM information_schema.tables
+     WHERE table_schema = 'public'
+       AND table_name = 'player_skill_unlocks'`
+  );
+
+  if (!unlocksTable.rowCount) {
+    throw new Error("Missing table: player_skill_unlocks");
+  }
+  console.log("✓ Table player_skill_unlocks exists");
 }
 
 async function main(): Promise<void> {

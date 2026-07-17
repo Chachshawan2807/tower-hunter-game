@@ -202,7 +202,6 @@ export function processExecution(
   }
 
   let skill = getSkillById(action.skillId ?? "basic_attack");
-  const playerLevel = actor.stats.level;
 
   if (skill.id !== "basic_attack") {
     const upgrades = state.playerSkillUpgrades[skill.id] ?? {
@@ -215,7 +214,7 @@ export function processExecution(
 
   if (
     skill.id !== "basic_attack" &&
-    !canUseSkill(actor, skill, playerLevel)
+    !canUseSkill(actor, skill, state.playerUnlockedSkillIds)
   ) {
     skill = getSkillById("basic_attack");
   }

@@ -1,6 +1,9 @@
-import type { SkillPath } from "../types";
-import { isSkillUnlocked } from "./availability";
 import { getSkillsForPath } from "./catalog";
+import {
+  getUnlockedSkills,
+  isSkillUnlocked,
+} from "./skillUnlock";
+import type { SkillPath } from "../types";
 
 export interface SkillLoadout {
   path: SkillPath;
@@ -15,10 +18,10 @@ const DEFAULT_ACTIVE: Record<SkillPath, [string, string]> = {
 
 export function getDefaultLoadout(
   path: SkillPath,
-  playerLevel: number
+  unlockedSkillIds: readonly string[]
 ): SkillLoadout {
   const skills = getSkillsForPath(path);
-  const unlocked = skills.filter((s) => isSkillUnlocked(s, playerLevel));
+  const unlocked = getUnlockedSkills(path, unlockedSkillIds);
   const preferred = DEFAULT_ACTIVE[path];
   const slot1 =
     unlocked.find((s) => s.id === preferred[0])?.id ??
@@ -42,7 +45,7 @@ export function deriveAutoSkills(
 export function validateLoadout(
   path: SkillPath,
   activeSlots: [string, string],
-  playerLevel: number
+  unlockedSkillIds: readonly string[]
 ): { valid: boolean; error?: string } {
   if (activeSlots[0] === activeSlots[1]) {
     return { valid: false, error: "DUPLICATE_SLOT" };
@@ -51,7 +54,7 @@ export function validateLoadout(
   for (const id of activeSlots) {
     if (!pathSkillIds.has(id)) return { valid: false, error: "INVALID_SKILL" };
     const skill = getSkillsForPath(path).find((s) => s.id === id)!;
-    if (!isSkillUnlocked(skill, playerLevel)) {
+    if (!isSkillUnlocked(skill, unlockedSkillIds)) {
       return { valid: false, error: "SKILL_LOCKED" };
     }
   }

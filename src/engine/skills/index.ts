@@ -64,4 +64,9 @@ export {
 } from "./skillPoints";
 export type { UpgradeBranch } from "./skillPoints";
 
+export {
+  getSkillUnlockSpCost,
+  isSkillUnlockedByLevel,
+} from "./skillUnlock";
+
 export { SKILL_UNLOCK_LEVELS } from "./types";

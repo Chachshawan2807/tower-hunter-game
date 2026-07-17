@@ -1,4 +1,5 @@
 import { calculateSpGrant } from "../../engine/skills/skillPoints";
+import { normalizeSkillPath } from "../../engine/skills/catalog";
 import type { CombatStats, SkillPath } from "../../engine/types";
 import { isBossFloor } from "../../engine/types";
 import { combatStatsForLevel, levelFromTotalExp } from "../../engine/formulas/playerProgression";
@@ -177,7 +178,7 @@ export async function getPlayerSkillPath(
   poolOrClient: DbPool | DbClient,
   userId: string
 ): Promise<SkillPath> {
-  const result = await poolOrClient.query<{ active_skill_path: SkillPath }>(
+  const result = await poolOrClient.query<{ active_skill_path: string }>(
     `SELECT active_skill_path FROM player_stats WHERE user_id = $1`,
     [userId]
   );
@@ -186,7 +187,7 @@ export async function getPlayerSkillPath(
     throw new Error(`Player stats not found for user ${userId}`);
   }
 
-  return result.rows[0].active_skill_path;
+  return normalizeSkillPath(result.rows[0].active_skill_path);
 }
 
 export async function setPlayerSkillPath(

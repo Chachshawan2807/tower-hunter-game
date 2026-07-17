@@ -51,6 +51,13 @@ export {
 } from "./skillUpgrades";
 
 export {
+  getPlayerSkillUnlocks,
+  unlockPlayerSkill,
+  isSkillUnlockError,
+  SkillUnlockError,
+} from "./skillUnlocks";
+
+export {
   listPlayerEquipment,
   upsertEquipmentSlot,
   seedDefaultEquipment,

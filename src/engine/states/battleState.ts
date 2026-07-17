@@ -22,6 +22,7 @@ export interface BattleState {
   playerSkillPath: SkillPath;
   playerLoadout: SkillLoadout;
   playerSkillUpgrades: Record<string, SkillUpgradeRanks>;
+  playerUnlockedSkillIds: string[];
   isComplete: boolean;
   result?: "win" | "lose";
 }
@@ -38,6 +39,7 @@ export function cloneBattleState(state: BattleState): BattleState {
   return {
     ...state,
     playerSkillUpgrades: { ...state.playerSkillUpgrades },
+    playerUnlockedSkillIds: [...state.playerUnlockedSkillIds],
     entities: state.entities.map((e) => ({
       ...e,
       stats: { ...e.stats },

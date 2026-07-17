@@ -1,14 +1,18 @@
-import type { BattleEntity, StatValue } from "../types";
+import type { BattleEntity } from "../types";
 import type { SkillPath } from "../types";
 import { getSkillById, getSkillsForPath } from "./catalog";
+import {
+  getUnlockedSkills,
+  isSkillUnlocked,
+} from "./skillUnlock";
 import type { SkillDefinition } from "./types";
 
-export function isSkillUnlocked(
-  skill: SkillDefinition,
-  playerLevel: StatValue
-): boolean {
-  return playerLevel >= skill.unlockLevel;
-}
+export {
+  getSkillUnlockSpCost,
+  isSkillUnlocked,
+  getUnlockedSkills,
+  isSkillUnlockedByLevel,
+} from "./skillUnlock";
 
 export function getSkillCooldownRemaining(
   entity: BattleEntity,
@@ -34,13 +38,13 @@ export function canAffordSkill(
 export function canUseSkill(
   entity: BattleEntity,
   skill: SkillDefinition,
-  playerLevel: StatValue
+  unlockedSkillIds: ReadonlySet<string> | readonly string[]
 ): boolean {
   if (skill.id === "basic_attack") return true;
   if (entity.side === "enemy") {
     return !isSkillOnCooldown(entity, skill.id);
   }
-  if (!isSkillUnlocked(skill, playerLevel)) return false;
+  if (!isSkillUnlocked(skill, unlockedSkillIds)) return false;
   if (isSkillOnCooldown(entity, skill.id)) return false;
   return canAffordSkill(entity, skill);
 }
@@ -48,19 +52,10 @@ export function canUseSkill(
 export function getAvailableSkills(
   path: SkillPath,
   entity: BattleEntity,
-  playerLevel: StatValue
+  unlockedSkillIds: ReadonlySet<string> | readonly string[]
 ): SkillDefinition[] {
   return getSkillsForPath(path).filter((skill) =>
-    canUseSkill(entity, skill, playerLevel)
-  );
-}
-
-export function getUnlockedSkills(
-  path: SkillPath,
-  playerLevel: StatValue
-): SkillDefinition[] {
-  return getSkillsForPath(path).filter((skill) =>
-    isSkillUnlocked(skill, playerLevel)
+    canUseSkill(entity, skill, unlockedSkillIds)
   );
 }
 

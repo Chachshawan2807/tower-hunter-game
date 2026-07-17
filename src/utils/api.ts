@@ -112,10 +112,16 @@ export interface SkillProgressionResponse {
   upgrades: Record<string, SkillUpgradeRanks>;
   path: "imperial" | "knight" | "vanguard";
   loadout: SkillLoadout;
+  unlockedSkillIds: string[];
   skills: (SkillCatalogEntry & {
     unlocked: boolean;
     upgrades: SkillUpgradeRanks;
   })[];
+}
+
+export interface SkillUnlockResponse {
+  skillPoints: number;
+  unlockedSkillIds: string[];
 }
 
 export interface SkillUpgradeResponse {
@@ -294,6 +300,13 @@ export const api = {
     return request<SkillUpgradeResponse>(`/api/skills/${userId}/upgrade`, {
       method: "POST",
       body: JSON.stringify(payload),
+    });
+  },
+
+  unlockSkill(userId: string, skillId: string) {
+    return request<SkillUnlockResponse>(`/api/skills/${userId}/unlock`, {
+      method: "POST",
+      body: JSON.stringify({ skillId }),
     });
   },
 

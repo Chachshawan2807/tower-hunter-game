@@ -29,6 +29,8 @@ const STRINGS: Record<string, Record<Locale, string>> = {
   "skills.basic_attack": { en: "Basic Attack", th: "โจมตีปกติ" },
   "skills.paths": { en: "Skill Paths", th: "แนวสกิล" },
   "skills.unlock_at": { en: "Unlock Lv", th: "ปลด Lv" },
+  "skills.unlock_sp": { en: "SP", th: "SP" },
+  "skills.overlay_title": { en: "SKILL POINT", th: "แต้มสกิล" },
   "skills.cooldown": { en: "CD", th: "คูลดาวน์" },
   "skills.skill_points": { en: "Skill Points", th: "แต้มสกิล" },
   "skills.loadout": { en: "Loadout", th: "ชุดสกิล" },

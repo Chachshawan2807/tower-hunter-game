@@ -16,6 +16,7 @@ export interface BattleLoadoutContext {
   playerLoadout: SkillLoadout;
   playerSkillUpgrades: Record<string, SkillUpgradeRanks>;
   playerSkillPath: SkillPath;
+  playerUnlockedSkillIds: string[];
 }
 
 function extractLoadoutContext(
@@ -25,6 +26,7 @@ function extractLoadoutContext(
     playerLoadout?: SkillLoadout;
     playerSkillUpgrades?: Record<string, SkillUpgradeRanks>;
     playerSkillPath?: SkillPath;
+    playerUnlockedSkillIds?: string[];
   };
   if (!full.playerLoadout) return null;
   return {
@@ -32,6 +34,7 @@ function extractLoadoutContext(
     playerLoadout: full.playerLoadout,
     playerSkillUpgrades: full.playerSkillUpgrades ?? {},
     playerSkillPath: full.playerSkillPath ?? full.playerLoadout.path,
+    playerUnlockedSkillIds: full.playerUnlockedSkillIds ?? [],
   };
 }
 
@@ -158,7 +161,9 @@ export function useBattle(userId: string | null, onComplete?: () => void | Promi
     if (!playerEntity) return;
 
     const unlocked = getSkillsForPath(loadoutContext.playerSkillPath)
-      .filter((s) => isSkillUnlocked(s, playerEntity.stats.level))
+      .filter((s) =>
+        isSkillUnlocked(s, loadoutContext.playerUnlockedSkillIds)
+      )
       .map((s) => s.id);
     const autoIds = deriveAutoSkills(
       unlocked,
@@ -169,7 +174,8 @@ export function useBattle(userId: string | null, onComplete?: () => void | Promi
       playerEntity,
       loadoutContext.playerSkillPath,
       autoIds,
-      loadoutContext.playerSkillUpgrades
+      loadoutContext.playerSkillUpgrades,
+      loadoutContext.playerUnlockedSkillIds
     );
 
     const enemyEntity = battleSnapshot.entities.find((e) => e.side === "enemy");

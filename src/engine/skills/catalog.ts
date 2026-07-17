@@ -32,8 +32,20 @@ export function getSkillById(skillId: string): SkillDefinition {
   return SKILL_REGISTRY.get(skillId) ?? BASIC_ATTACK;
 }
 
-export function getSkillsForPath(path: SkillPath): SkillDefinition[] {
-  return PATH_SKILLS[path];
+const LEGACY_PATH_ALIASES: Record<string, SkillPath> = {
+  murim: "imperial",
+  fantasy: "vanguard",
+};
+
+export function normalizeSkillPath(path: string): SkillPath {
+  if (path === "imperial" || path === "knight" || path === "vanguard") {
+    return path;
+  }
+  return LEGACY_PATH_ALIASES[path] ?? "imperial";
+}
+
+export function getSkillsForPath(path: SkillPath | string): SkillDefinition[] {
+  return PATH_SKILLS[normalizeSkillPath(path)] ?? [];
 }
 
 export function getAllSkills(): SkillDefinition[] {

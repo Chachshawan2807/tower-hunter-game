@@ -33,9 +33,9 @@ export function pickAutoSkill(
   _path: SkillPath,
   skillPool: string[],
   upgrades: Record<string, SkillUpgradeRanks>,
+  unlockedSkillIds: readonly string[],
   rng: () => number = Math.random
 ): SkillDefinition {
-  const playerLevel = actor.stats.level;
   const usable = skillPool
     .map((id) => getSkillById(id))
     .filter((skill) => {
@@ -43,7 +43,7 @@ export function pickAutoSkill(
         skill,
         upgrades[skill.id] ?? EMPTY_UPGRADES
       );
-      return canUseSkill(actor, effective, playerLevel);
+      return canUseSkill(actor, effective, unlockedSkillIds);
     });
 
   if (usable.length === 0) {

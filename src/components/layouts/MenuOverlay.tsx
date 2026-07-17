@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { OverlayModal } from "./OverlayModal";
 import { BagMenu } from "../menu/BagMenu";
 import { CharacterMenu } from "../menu/CharacterMenu";
@@ -5,6 +6,10 @@ import {
   CharacterOverlayTitle,
   characterOverlayTitleLabel,
 } from "../menu/CharacterOverlayTitle";
+import {
+  SkillOverlayTitle,
+  skillOverlayTitleLabel,
+} from "../menu/SkillOverlayTitle";
 import { ShopMenu } from "../menu/ShopMenu";
 import { SkillMenu } from "../menu/SkillMenu";
 import type { NavTab } from "./BottomNav";
@@ -63,6 +68,14 @@ export function MenuOverlay({
   onPathChange,
   onPurchase,
 }: MenuOverlayProps) {
+  const [displaySkillPoints, setDisplaySkillPoints] = useState(
+    stats?.skill_points ?? 0
+  );
+
+  useEffect(() => {
+    setDisplaySkillPoints(stats?.skill_points ?? 0);
+  }, [stats?.skill_points, menu]);
+
   const title =
     menu === "character" ? (
       <CharacterOverlayTitle
@@ -70,6 +83,8 @@ export function MenuOverlay({
         level={playerLevel}
         exp={playerExp}
       />
+    ) : menu === "skills" ? (
+      <SkillOverlayTitle locale={locale} skillPoints={displaySkillPoints} />
     ) : (
       t(OVERLAY_TITLES[menu], locale)
     );
@@ -77,7 +92,9 @@ export function MenuOverlay({
   const titleLabel =
     menu === "character"
       ? characterOverlayTitleLabel(locale, playerLevel, playerExp)
-      : t(OVERLAY_TITLES[menu], locale);
+      : menu === "skills"
+        ? skillOverlayTitleLabel(locale, displaySkillPoints)
+        : t(OVERLAY_TITLES[menu], locale);
 
   return (
     <OverlayModal
@@ -99,9 +116,9 @@ export function MenuOverlay({
         <SkillMenu
           locale={locale}
           userId={userId}
-          playerLevel={playerLevel}
           activePath={skillPath}
-          onPathChange={onPathChange}
+          skillPoints={displaySkillPoints}
+          onSkillPointsChange={setDisplaySkillPoints}
         />
       )}
       {menu === "bag" && (

@@ -20,6 +20,8 @@ import {
   getSkillsForPath,
   pickAutoSkill,
   isSkillUnlocked,
+  isSkillUnlockedByLevel,
+  getSkillUnlockSpCost,
   applySkillCooldown,
   tickSkillCooldowns,
 } from "../src/engine/skills";
@@ -167,10 +169,17 @@ assert(bash.guaranteedStatus === "stun" && bash.unlockLevel === 10, "knight bash
 const meteor = getSkillById("fantasy_meteor");
 assert(meteor.defPierce === 0.5 && meteor.unlockLevel === 15, "fantasy meteor");
 
-assert(isSkillUnlocked(palm, 1), "slot 1 unlocked at Lv1");
-assert(!isSkillUnlocked(getSkillById("murim_dash"), 1), "slot 2 locked before Lv5");
-assert(isSkillUnlocked(getSkillById("murim_qi"), 10), "slot 3 unlocked at Lv10");
-assert(!isSkillUnlocked(getSkillById("murim_qi"), 9), "slot 3 locked before Lv10");
+assert(isSkillUnlocked(palm, ["murim_palm"]), "palm unlocked when in unlock set");
+assert(
+  !isSkillUnlocked(getSkillById("murim_dash"), ["murim_palm"]),
+  "dash locked without unlock"
+);
+assert(
+  isSkillUnlockedByLevel(getSkillById("murim_qi"), 10),
+  "legacy Lv10 gate for backfill"
+);
+assert(getSkillUnlockSpCost(palm) === 1, "tier-1 skill costs 1 SP");
+assert(getSkillUnlockSpCost(dragon) === 4, "tier-4 skill costs 4 SP");
 
 const cooldownEntity: BattleEntity = {
   id: "player",
@@ -191,20 +200,25 @@ assert(
 
 console.log("\n=== Validation: Skill Loadout ===");
 assert(
-  getDefaultLoadout("imperial", 1).activeSlots[0] === "murim_palm",
-  "murim default active slot 1 at Lv1"
+  getDefaultLoadout("imperial", ["murim_palm"]).activeSlots[0] === "murim_palm",
+  "murim default active slot 1 when palm unlocked"
 );
 assert(
-  getDefaultLoadout("knight", 1).activeSlots[0] === "knight_slash",
-  "knight default active slot 1 at Lv1"
+  getDefaultLoadout("knight", ["knight_slash"]).activeSlots[0] === "knight_slash",
+  "knight default active slot 1 when slash unlocked"
 );
 assert(
-  getDefaultLoadout("vanguard", 1).activeSlots[0] === "fantasy_bolt",
-  "fantasy default active slot 1 at Lv1"
+  getDefaultLoadout("vanguard", ["fantasy_bolt"]).activeSlots[0] === "fantasy_bolt",
+  "fantasy default active slot 1 when bolt unlocked"
 );
 assert(
-  getDefaultLoadout("imperial", 15).activeSlots[1] === "murim_dragon",
-  "murim default slot 2 uses dragon at Lv15"
+  getDefaultLoadout("imperial", [
+    "murim_palm",
+    "murim_dash",
+    "murim_qi",
+    "murim_dragon",
+  ]).activeSlots[1] === "murim_dragon",
+  "murim default slot 2 uses dragon when unlocked"
 );
 
 assert(
@@ -238,11 +252,15 @@ assert(
 );
 
 assert(
-  !validateLoadout("imperial", ["murim_palm", "murim_palm"], 5).valid,
+  !validateLoadout(
+    "imperial",
+    ["murim_palm", "murim_palm"],
+    ["murim_palm", "murim_dash"]
+  ).valid,
   "duplicate active slots rejected"
 );
 assert(
-  !validateLoadout("imperial", ["murim_dash", "murim_palm"], 1).valid,
+  !validateLoadout("imperial", ["murim_dash", "murim_palm"], ["murim_palm"]).valid,
   "locked skill cannot be active"
 );
 
@@ -251,6 +269,7 @@ const loadoutState = createBattleState(1, {
   playerSkillPath: "imperial",
   autoBattle: false,
   playerLoadout: { path: "imperial", activeSlots: ["murim_palm", "murim_dash"] },
+  playerUnlockedSkillIds: ["murim_palm", "murim_dash"],
 });
 assert(
   validateManualAction(loadoutState, "player", {
@@ -372,7 +391,7 @@ const bossEnemyBase: BattleEntity = {
 };
 
 assert(
-  canUseSkill(bossEnemyBase, palm, 1),
+  canUseSkill(bossEnemyBase, palm, ["murim_palm"]),
   "canUseSkill skips MP check for enemies"
 );
 const playerNoMp: BattleEntity = {
@@ -381,7 +400,7 @@ const playerNoMp: BattleEntity = {
   stats: { ...bossEnemyBase.stats, mp: 0, maxMp: 100 },
 };
 assert(
-  !canUseSkill(playerNoMp, palm, 10),
+  !canUseSkill(playerNoMp, palm, ["murim_palm"]),
   "player cannot use skill without MP"
 );
 
@@ -459,6 +478,7 @@ const autoOnlyPick = pickAutoSkill(
   "knight",
   autoOnlyPool,
   {},
+  knightUnlocked,
   () => 0.99
 );
 assert(
@@ -472,6 +492,7 @@ const autoBattlePick = pickAutoSkill(
   "knight",
   autoBattlePool,
   {},
+  knightUnlocked,
   () => 0.99
 );
 assert(

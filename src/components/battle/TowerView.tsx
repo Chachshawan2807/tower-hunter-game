@@ -62,21 +62,20 @@ export function TowerView({
     return visible;
   }, [currentFloor]);
 
-  const battlePlayerLevel =
-    battle.battleSnapshot?.entities.find((e) => e.side === "player")?.stats
-      .level ?? playerLevel;
+  const unlockedSkillIds =
+    battle.loadoutContext?.playerUnlockedSkillIds ?? [];
 
   const activeSlots =
     battle.loadoutContext?.playerLoadout.activeSlots ??
-    getDefaultLoadout(skillPath, battlePlayerLevel).activeSlots;
+    getDefaultLoadout(skillPath, unlockedSkillIds).activeSlots;
 
   const autoSkillIds = useMemo(() => {
     const path = battle.loadoutContext?.playerSkillPath ?? skillPath;
     const unlocked = getSkillsForPath(path)
-      .filter((s) => isSkillUnlocked(s, battlePlayerLevel))
+      .filter((s) => isSkillUnlocked(s, unlockedSkillIds))
       .map((s) => s.id);
     return deriveAutoSkills(unlocked, activeSlots);
-  }, [battle.loadoutContext, skillPath, battlePlayerLevel, activeSlots]);
+  }, [battle.loadoutContext, skillPath, unlockedSkillIds, activeSlots]);
 
   const playerSkillUpgrades =
     battle.loadoutContext?.playerSkillUpgrades ?? {};
@@ -129,6 +128,7 @@ export function TowerView({
           activeSlots={activeSlots}
           autoSkillIds={autoSkillIds}
           playerSkillUpgrades={playerSkillUpgrades}
+          unlockedSkillIds={unlockedSkillIds}
           enemyTargetId={`enemy_floor_${currentFloor}`}
           onContinue={battle.continueBattle}
           onReset={battle.resetBattle}

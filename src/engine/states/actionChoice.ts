@@ -55,7 +55,7 @@ export function resolveActionChoice(
   if (actor.side === "player") {
     const { activeSlots } = state.playerLoadout;
     const unlocked = getSkillsForPath(state.playerSkillPath)
-      .filter((s) => isSkillUnlocked(s, actor.stats.level))
+      .filter((s) => isSkillUnlocked(s, state.playerUnlockedSkillIds))
       .map((s) => s.id);
 
     const autoIds = deriveAutoSkills(unlocked, activeSlots);
@@ -67,7 +67,8 @@ export function resolveActionChoice(
       actor,
       state.playerSkillPath,
       skillPool,
-      state.playerSkillUpgrades
+      state.playerSkillUpgrades,
+      state.playerUnlockedSkillIds
     );
     skillId = skill.id;
     if (skill.targetType === "self") {
@@ -99,7 +100,6 @@ export function validateManualAction(
 
   const skillId = resolveSkillId(action.skillId, state.playerSkillPath);
   const resolved = getSkillById(skillId);
-  const playerLevel = actor.stats.level;
 
   if (
     skillId !== "basic_attack" &&
@@ -110,7 +110,7 @@ export function validateManualAction(
 
   if (
     skillId !== "basic_attack" &&
-    !canUseSkill(actor, resolved, playerLevel)
+    !canUseSkill(actor, resolved, state.playerUnlockedSkillIds)
   ) {
     return false;
   }

@@ -149,6 +149,58 @@
   margin-top: var(--space-1);
 }
 
+.skill-menu__section {
+  margin-top: var(--space-1);
+}
+
+.stat-grid--skills {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.skill-menu .stat-item {
+  padding: var(--space-2);
+  font-size: 0.76rem;
+  min-width: 0;
+}
+
+.skill-menu .stat-item > .skill-stat-label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  color: var(--text-muted);
+  font-size: 0.62rem;
+  margin-bottom: 1px;
+  font-family: var(--font-body);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.skill-stat-label__icon {
+  flex-shrink: 0;
+  color: var(--dark-yellow-deep);
+}
+
+.stat-item--locked {
+  opacity: 0.55;
+}
+
+.stat-item--placeholder .stat-item__value {
+  color: var(--text-muted);
+}
+
+.view-readable .skill-menu .stat-item > .skill-stat-label {
+  color: var(--ink-black);
+}
+
+.view-readable .skill-stat-label__icon {
+  color: var(--dark-yellow-deep);
+}
+
 .char-overlay-title {
   display: inline-flex;
   align-items: baseline;
@@ -195,6 +247,53 @@
   flex-shrink: 0;
   color: rgba(0, 0, 0, 0.22);
   user-select: none;
+}
+
+.skill-overlay-title {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.45rem;
+  min-width: 0;
+  font-family: var(--font-stat);
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.04em;
+}
+
+.skill-overlay-title__label {
+  color: var(--ink-black);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.skill-overlay-title__value {
+  color: var(--dark-yellow-deep);
+}
+
+.view-readable .overlay__title .skill-overlay-title__label {
+  color: var(--ink-black);
+}
+
+.view-readable .overlay__title .skill-overlay-title__value {
+  color: var(--dark-yellow-deep);
+}
+
+.stat-item--unlockable {
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+  width: 100%;
+  transition:
+    border-color var(--duration-fast),
+    transform var(--duration-fast);
+}
+
+.stat-item--unlockable:hover,
+.stat-item--unlockable:focus-visible {
+  border-color: var(--dark-yellow-deep);
+  outline: none;
+  transform: translateY(-1px);
 }
 
 .view-readable .overlay__title .char-overlay-title {

@@ -56,6 +56,7 @@ interface BattleArenaProps {
   activeSlots: [string, string];
   autoSkillIds: string[];
   playerSkillUpgrades?: Record<string, SkillUpgradeRanks>;
+  unlockedSkillIds?: string[];
   enemyTargetId?: string;
   onContinue: () => void;
   onReset: () => void;
@@ -81,6 +82,7 @@ export const BattleArena = memo(function BattleArena({
   activeSlots,
   autoSkillIds,
   playerSkillUpgrades = {},
+  unlockedSkillIds = [],
   enemyTargetId,
   onContinue,
   onReset,
@@ -90,7 +92,6 @@ export const BattleArena = memo(function BattleArena({
   const recent = useMemo(() => displayedEvents.slice(-6), [displayedEvents]);
   const playerEntity = snapshot?.entities.find((e) => e.side === "player");
   const enemyEntity = snapshot?.entities.find((e) => e.side === "enemy");
-  const playerLevel = playerEntity?.stats.level ?? 1;
 
   const playerAnim = useEntityAnimation({
     entityId: playerEntity?.id ?? "player",
@@ -124,13 +125,13 @@ export const BattleArena = memo(function BattleArena({
 
       const skillId = activeSlots[slotIndex];
       const base = getSkillById(skillId);
-      if (!isSkillUnlocked(base, playerLevel)) return;
+      if (!isSkillUnlocked(base, unlockedSkillIds)) return;
 
       const effective = resolveEffectiveSkill(
         base,
         playerSkillUpgrades[skillId] ?? EMPTY_UPGRADES
       );
-      if (!canUseSkill(playerEntity, effective, playerLevel)) return;
+      if (!canUseSkill(playerEntity, effective, unlockedSkillIds)) return;
 
       const targetId =
         effective.targetType === "self" ? playerEntity.id : enemyTargetId;
@@ -142,7 +143,7 @@ export const BattleArena = memo(function BattleArena({
       playerEntity,
       busy,
       activeSlots,
-      playerLevel,
+      unlockedSkillIds,
       playerSkillUpgrades,
     ]
   );
@@ -320,7 +321,7 @@ export const BattleArena = memo(function BattleArena({
                 <div className="battle-active-skills" aria-label="Active skills">
                   {activeSlots.map((skillId, index) => {
                     const base = getSkillById(skillId);
-                    if (!isSkillUnlocked(base, playerLevel)) {
+                    if (!isSkillUnlocked(base, unlockedSkillIds)) {
                       return null;
                     }
 
@@ -336,7 +337,7 @@ export const BattleArena = memo(function BattleArena({
                       playerEntity.stats.mp >= effective.mpCost;
                     const usable =
                       playerEntity &&
-                      canUseSkill(playerEntity, effective, playerLevel);
+                      canUseSkill(playerEntity, effective, unlockedSkillIds);
                     const targetId =
                       effective.targetType === "self"
                         ? playerEntity!.id

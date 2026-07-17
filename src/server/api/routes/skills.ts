@@ -18,6 +18,11 @@ import {
 } from "../../db/playerStats";
 import { getPlayerLoadout, upsertPlayerLoadout } from "../../db/skillLoadout";
 import { getPlayerUpgrades, upgradeSkillBranch } from "../../db/skillUpgrades";
+import {
+  getPlayerSkillUnlocks,
+  isSkillUnlockError,
+  unlockPlayerSkill,
+} from "../../db/skillUnlocks";
 import type { SkillPath } from "../../../engine/types";
 import type { ServerBindings, ServerVariables } from "../types";
 
@@ -47,6 +52,12 @@ const UPGRADE_ERROR_CODES = new Set([
   "UPGRADE_NOT_ALLOWED",
 ]);
 
+const UNLOCK_ERROR_CODES = new Set([
+  "INVALID_SKILL",
+  "ALREADY_UNLOCKED",
+  "INSUFFICIENT_SP",
+]);
+
 export const skillRoutes = new Hono<{
   Bindings: ServerBindings;
   Variables: ServerVariables;
@@ -62,21 +73,22 @@ skillRoutes.get("/catalog", (c) => {
 
 skillRoutes.get("/:userId/path", async (c) => {
   const userId = c.req.param("userId");
-  const [path, stats] = await Promise.all([
+  const [path, stats, unlockedSkillIds] = await Promise.all([
     getPlayerSkillPath(c.get("db"), userId),
     getPlayerStats(c.get("db"), userId),
+    getPlayerSkillUnlocks(c.get("db"), userId),
   ]);
 
   const playerLevel = stats?.level ?? 1;
   const pathSkills = getSkillsForPath(path).map((skill) => ({
     ...mapSkill(skill),
-    unlocked: isSkillUnlocked(skill, playerLevel),
+    unlocked: isSkillUnlocked(skill, unlockedSkillIds),
   }));
 
   return c.json({
     path,
     playerLevel,
-    equippedSkills: getUnlockedSkills(path, playerLevel).map((s) => s.id),
+    equippedSkills: getUnlockedSkills(path, unlockedSkillIds).map((s) => s.id),
     skills: pathSkills,
   });
 });
@@ -91,16 +103,19 @@ skillRoutes.patch("/:userId/path", async (c) => {
 
   const userId = c.req.param("userId");
   const path = await setPlayerSkillPath(c.get("db"), userId, body.path);
-  const stats = await getPlayerStats(c.get("db"), userId);
+  const [stats, unlockedSkillIds] = await Promise.all([
+    getPlayerStats(c.get("db"), userId),
+    getPlayerSkillUnlocks(c.get("db"), userId),
+  ]);
   const playerLevel = stats?.level ?? 1;
 
   return c.json({
     path,
     playerLevel,
-    equippedSkills: getUnlockedSkills(path, playerLevel).map((s) => s.id),
+    equippedSkills: getUnlockedSkills(path, unlockedSkillIds).map((s) => s.id),
     skills: getSkillsForPath(path).map((skill) => ({
       ...mapSkill(skill),
-      unlocked: isSkillUnlocked(skill, playerLevel),
+      unlocked: isSkillUnlocked(skill, unlockedSkillIds),
     })),
   });
 });
@@ -108,15 +123,17 @@ skillRoutes.patch("/:userId/path", async (c) => {
 skillRoutes.get("/:userId/progression", async (c) => {
   const userId = c.req.param("userId");
   const path = await getPlayerSkillPath(c.get("db"), userId);
-  const [stats, upgrades, dbLoadout] = await Promise.all([
+  const [stats, upgrades, dbLoadout, unlockedSkillIds] = await Promise.all([
     getPlayerStats(c.get("db"), userId),
     getPlayerUpgrades(c.get("db"), userId),
     getPlayerLoadout(c.get("db"), userId, path),
+    getPlayerSkillUnlocks(c.get("db"), userId),
   ]);
 
   const playerLevel = stats?.level ?? 1;
   const skillPoints = stats?.skill_points ?? 0;
-  const loadout = dbLoadout ?? getDefaultLoadout(path, playerLevel);
+  const loadout =
+    dbLoadout ?? getDefaultLoadout(path, unlockedSkillIds);
 
   const skills = getSkillsForPath(path).map((skill) => {
     const skillUpgrades = upgrades[skill.id] ?? EMPTY_RANKS;
@@ -124,12 +141,40 @@ skillRoutes.get("/:userId/progression", async (c) => {
 
     return {
       ...mapSkill(effective),
-      unlocked: isSkillUnlocked(skill, playerLevel),
+      unlocked: isSkillUnlocked(skill, unlockedSkillIds),
       upgrades: skillUpgrades,
     };
   });
 
-  return c.json({ skillPoints, upgrades, path, skills, loadout });
+  return c.json({
+    skillPoints,
+    upgrades,
+    path,
+    skills,
+    loadout,
+    unlockedSkillIds,
+  });
+});
+
+skillRoutes.post("/:userId/unlock", async (c) => {
+  const body = await c.req.json<{ skillId: string }>();
+  if (!body.skillId) {
+    return c.json({ error: "Invalid request", code: "INVALID_REQUEST" }, 400);
+  }
+
+  try {
+    const result = await unlockPlayerSkill(
+      c.get("db"),
+      c.req.param("userId"),
+      body.skillId
+    );
+    return c.json(result);
+  } catch (err) {
+    if (isSkillUnlockError(err)) {
+      return c.json({ error: err.message, code: err.message }, 400);
+    }
+    throw err;
+  }
 });
 
 skillRoutes.post("/:userId/upgrade", async (c) => {
@@ -167,9 +212,8 @@ skillRoutes.patch("/:userId/loadout", async (c) => {
     activeSlots: [string, string];
   }>();
   const userId = c.req.param("userId");
-  const stats = await getPlayerStats(c.get("db"), userId);
-  const playerLevel = stats?.level ?? 1;
-  const result = validateLoadout(body.path, body.activeSlots, playerLevel);
+  const unlockedSkillIds = await getPlayerSkillUnlocks(c.get("db"), userId);
+  const result = validateLoadout(body.path, body.activeSlots, unlockedSkillIds);
 
   if (!result.valid) {
     return c.json({ error: result.error, code: result.error }, 400);
