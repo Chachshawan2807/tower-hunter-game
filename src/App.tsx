@@ -132,7 +132,6 @@ export function App() {
             locale={locale}
             displayName={player.displayName}
             skillPath={player.skillPath}
-            level={player.level}
             equipment={playerEquipment}
           />
         )}

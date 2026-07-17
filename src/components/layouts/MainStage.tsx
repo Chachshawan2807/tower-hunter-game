@@ -7,7 +7,6 @@ interface MainStageProps {
   locale: Locale;
   displayName: string;
   skillPath: SkillPath;
-  level: number;
   equipment: CharacterEquipmentVisual;
 }
 
@@ -15,7 +14,6 @@ export function MainStage({
   locale,
   displayName,
   skillPath,
-  level,
   equipment,
 }: MainStageProps) {
   return (
@@ -32,17 +30,6 @@ export function MainStage({
             size="stage"
             label={displayName}
           />
-        </div>
-        <div className="hero-showcase__nameplate">
-          <h1 className="hero-showcase__name">{displayName}</h1>
-          <div className="hero-showcase__meta">
-            <span className={`hero-showcase__path hero-showcase__path--${skillPath}`}>
-              {t(`skills.${skillPath}`, locale)}
-            </span>
-            <span className="hero-showcase__level">
-              {t("hud.level", locale)} {level}
-            </span>
-          </div>
         </div>
       </div>
     </div>
