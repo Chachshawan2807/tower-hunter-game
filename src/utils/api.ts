@@ -240,6 +240,15 @@ export const api = {
     return request<{ items: MailboxItem[] }>(`/api/users/${userId}/mailbox`);
   },
 
+  claimMailboxItem(userId: string, mailboxItemId: string) {
+    return request<{
+      item: MailboxItem;
+      inventoryResult: { outcome: string; itemId: string; quantity: number };
+    }>(`/api/users/${userId}/mailbox/${mailboxItemId}/claim`, {
+      method: "POST",
+    });
+  },
+
   updateSettings(userId: string, settings: { autoDismantleCommon: boolean }) {
     return request<UserProfile>(`/api/users/${userId}/settings`, {
       method: "PATCH",

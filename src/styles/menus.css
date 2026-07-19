@@ -456,6 +456,222 @@
   list-style: none;
 }
 
+.bag-slot-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-2);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.bag-slot-grid__cell {
+  min-width: 0;
+}
+
+.bag-item-slot {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  width: 100%;
+  min-height: 88px;
+  padding: var(--space-2) var(--space-1);
+  border-radius: var(--radius-md);
+  background: linear-gradient(
+    165deg,
+    rgba(255, 252, 245, 0.96) 0%,
+    rgba(232, 225, 212, 0.94) 100%
+  );
+  border: 1px solid rgba(0, 0, 0, 0.18);
+  border-bottom-width: 3px;
+  border-bottom-color: var(--rarity-common);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.08);
+  cursor: pointer;
+  font: inherit;
+  color: var(--ink-black);
+  transition:
+    border-color var(--duration-fast),
+    box-shadow var(--duration-fast),
+    transform var(--duration-fast);
+}
+
+.bag-item-slot:hover,
+.bag-item-slot:focus-visible {
+  border-color: rgba(0, 0, 0, 0.28);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.08),
+    0 0 0 2px rgba(184, 134, 11, 0.18);
+  outline: none;
+}
+
+.bag-item-slot--selected {
+  border-color: var(--dark-yellow-deep);
+  transform: translateY(-1px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.08),
+    0 0 0 2px rgba(184, 134, 11, 0.28);
+}
+
+.bag-item-slot--common { border-bottom-color: var(--rarity-common); }
+.bag-item-slot--rare { border-bottom-color: var(--rarity-rare); }
+.bag-item-slot--epic { border-bottom-color: var(--rarity-epic); }
+.bag-item-slot--legendary { border-bottom-color: var(--rarity-legendary); }
+
+.bag-item-slot__icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+}
+
+.bag-item-slot__weapon-icon {
+  flex-shrink: 0;
+}
+
+.bag-item-slot--rare .weapon-icon {
+  color: #8a8070;
+}
+
+.bag-item-slot--epic .weapon-icon {
+  color: #7a7088;
+}
+
+.bag-item-slot--legendary .weapon-icon {
+  color: #5a5a5a;
+}
+
+.bag-item-slot__qty {
+  position: absolute;
+  top: 4px;
+  right: 5px;
+  min-width: 18px;
+  padding: 1px 4px;
+  border-radius: var(--radius-sm);
+  background: rgba(0, 0, 0, 0.72);
+  color: #fff;
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.bag-item-slot__equip-dot,
+.bag-item-slot__expiry-dot {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.85);
+}
+
+.bag-item-slot__equip-dot {
+  background: var(--antique-gold-deep);
+}
+
+.bag-item-slot__expiry-dot {
+  background: var(--crimson-deep);
+}
+
+.bag-item-slot__meta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  width: 100%;
+  min-width: 0;
+}
+
+.bag-item-slot__name {
+  width: 100%;
+  font-size: 0.62rem;
+  font-weight: 700;
+  line-height: 1.15;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bag-item-slot__rarity {
+  font-size: 0.54rem;
+  font-weight: 600;
+  line-height: 1.1;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+}
+
+.bag-item-slot--rare .bag-item-slot__rarity {
+  color: var(--rarity-rare);
+}
+
+.bag-item-slot--epic .bag-item-slot__rarity {
+  color: var(--rarity-epic);
+}
+
+.bag-item-slot--legendary .bag-item-slot__rarity {
+  color: var(--rarity-legendary);
+}
+
+.bag-slot-detail {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--stone-800);
+  border: 1px solid var(--border);
+}
+
+.bag-slot-detail__main {
+  min-width: 0;
+  flex: 1;
+}
+
+.bag-slot-detail__name {
+  margin: 0 0 4px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bag-slot-detail__stats {
+  margin: 0;
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  line-height: 1.3;
+}
+
+.bag-slot-detail__sep {
+  margin: 0 0.2rem;
+  opacity: 0.5;
+}
+
+.bag-slot-detail__expiry {
+  color: var(--blood-400);
+}
+
+@media (min-width: 480px) {
+  .bag-slot-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}
+
 .bag-item__equip-btn {
   margin-left: 0;
   padding: var(--space-2) var(--space-3);
@@ -470,6 +686,24 @@
 }
 
 .bag-item__equip-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.bag-item__claim-btn {
+  margin-left: 0;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  background: linear-gradient(180deg, var(--ember-500), var(--ember-600));
+  border: 1px solid var(--ember-400);
+  color: var(--stone-950);
+  font-size: 0.68rem;
+  font-weight: 700;
+  flex-shrink: 0;
+  min-height: var(--touch-min);
+}
+
+.bag-item__claim-btn:disabled {
   opacity: 0.45;
   cursor: not-allowed;
 }

@@ -32,3 +32,9 @@ export function resolveItemLabel(
 
   return itemId;
 }
+
+export function abbreviateItemLabel(name: string, maxLen = 7): string {
+  const trimmed = name.trim();
+  if (trimmed.length <= maxLen) return trimmed;
+  return `${trimmed.slice(0, maxLen)}…`;
+}

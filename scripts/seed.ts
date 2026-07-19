@@ -3,6 +3,7 @@ import { closeDbPool, createDbPool } from "../src/server/db";
 import {
   runMigrations,
   seedDemoUser,
+  seedAllUsersMailbox,
   seedLocalization,
 } from "../src/server/db/seed/run";
 
@@ -27,6 +28,9 @@ async function main(): Promise<void> {
 
   console.log("\nSeeding demo user...");
   await seedDemoUser(pool);
+
+  console.log("\nBackfilling starter mailbox for all users...");
+  await seedAllUsersMailbox(pool);
 
   console.log("\n✓ Seed complete");
   await closeDbPool();

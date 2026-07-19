@@ -1,5 +1,6 @@
 import type { SkillPath } from "../../engine/types";
 import { seedDefaultEquipment } from "./equipment";
+import { seedStarterMailboxClient } from "./starterMailbox";
 import type { DbClient } from "./client";
 import type { ItemRarity } from "./types";
 
@@ -56,4 +57,6 @@ export async function seedNewPlayerKit(
       item.rarity
     );
   }
+
+  await seedStarterMailboxClient(client, userId);
 }

@@ -6,6 +6,10 @@ import { createUser, getUserByExternalId } from "../users";
 import { upsertLocalizedString } from "../localization";
 import { processWalletTransaction } from "../wallet";
 import { addItemToInventory } from "../inventory";
+import {
+  seedStarterMailbox,
+  seedStarterMailboxForAllUsers,
+} from "../starterMailbox";
 import { SEED_LOCALIZATION, DEMO_USER } from "./data";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -53,6 +57,7 @@ export async function seedDemoUser(pool: DbPool): Promise<string | null> {
   if (existing) {
     console.log(`  → Demo user already exists (${existing.id})`);
     await seedDemoInventory(pool, existing.id);
+    await seedStarterMailbox(pool, existing.id);
     return existing.id;
   }
 
@@ -72,6 +77,7 @@ export async function seedDemoUser(pool: DbPool): Promise<string | null> {
 
   console.log(`  → Created demo user ${user.id} with ${DEMO_USER.starterGold} gold`);
   await seedDemoInventory(pool, user.id);
+  await seedStarterMailbox(pool, user.id);
   return user.id;
 }
 
@@ -101,4 +107,9 @@ export async function seedDemoInventory(pool: DbPool, userId: string): Promise<v
   }
 
   console.log(`  → Seeded ${items.length} demo inventory items`);
+}
+
+export async function seedAllUsersMailbox(pool: DbPool): Promise<void> {
+  const seeded = await seedStarterMailboxForAllUsers(pool);
+  console.log(`  → Backfilled starter mailbox for ${seeded} user(s)`);
 }

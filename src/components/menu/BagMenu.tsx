@@ -1,15 +1,10 @@
 import { useEffect, useState } from "react";
-import {
-  resolveEquippableItem,
-} from "../../engine/art/equipment";
-import { WeaponIcon } from "../items/WeaponIcon";
-import { resolveItemWeaponVisual } from "../../engine/art";
 import type { SkillPath } from "../../engine/types";
 import type { EquipmentSlot } from "../../engine/art/equipment/slots";
 import { t, type Locale } from "../../utils/i18n";
-import { resolveItemLabel } from "../../utils/itemLabel";
 import { api, type InventoryItem, type MailboxItem } from "../../utils/api";
 import { GameIcon } from "../ui/icons";
+import { BagItemDetail, BagItemSlot } from "./BagItemSlot";
 
 interface BagMenuProps {
   locale: Locale;
@@ -22,77 +17,10 @@ interface BagMenuProps {
 
 type BagTab = "inventory" | "mailbox";
 
-const RARITY_CLASS: Record<string, string> = {
-  common: "bag-item--common",
-  rare: "bag-item--rare",
-  epic: "bag-item--epic",
-  legendary: "bag-item--legendary",
-};
+type BagListItem = InventoryItem | MailboxItem;
 
-function ItemRow({
-  id,
-  itemId,
-  quantity,
-  rarity,
-  expiresAt,
-  locale,
-  skillPath,
-  onEquip,
-  equipBusy,
-}: {
-  id: string;
-  itemId: string;
-  quantity: number;
-  rarity: string;
-  expiresAt?: string;
-  locale: Locale;
-  skillPath: SkillPath;
-  onEquip: (slot: EquipmentSlot, inventoryId: string) => Promise<boolean>;
-  equipBusy?: boolean;
-}) {
-  const rarityClass = RARITY_CLASS[rarity] ?? RARITY_CLASS.common;
-  const weaponVisual = resolveItemWeaponVisual(itemId);
-  const equippable = resolveEquippableItem(itemId, skillPath);
-  const displayName = resolveItemLabel(itemId, locale, skillPath);
-
-  return (
-    <li className={`bag-item ui-row ${rarityClass}`}>
-      <div className="ui-row__icon">
-        <WeaponIcon
-          weaponId={weaponVisual.weaponId}
-          rarity={weaponVisual.rarity}
-          size={40}
-          className="bag-item__weapon-icon"
-        />
-      </div>
-      <div className="ui-row__main">
-        <div className="bag-item__main">
-          <span className="bag-item__name">{displayName}</span>
-          <span className="bag-item__qty">×{quantity}</span>
-        </div>
-        <span className="bag-item__rarity">{rarity}</span>
-        {expiresAt && (
-          <span className="bag-item__expiry">
-            {t("bag.expires", locale)}: {new Date(expiresAt).toLocaleDateString()}
-          </span>
-        )}
-      </div>
-      {equippable && !expiresAt ? (
-        <div className="ui-row__action">
-          <button
-            type="button"
-            className="bag-item__equip-btn"
-            disabled={equipBusy}
-            onClick={() => onEquip(equippable.slot, id)}
-          >
-            {t("bag.equip", locale)}
-          </button>
-        </div>
-      ) : (
-        <div className="ui-row__action" aria-hidden="true" />
-      )}
-    </li>
-  );
+function isMailboxItem(item: BagListItem): item is MailboxItem {
+  return "expires_at" in item;
 }
 
 export function BagMenu({
@@ -108,6 +36,9 @@ export function BagMenu({
   const [mailbox, setMailbox] = useState<MailboxItem[]>([]);
   const [autoDismantle, setAutoDismantle] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [claimBusy, setClaimBusy] = useState(false);
+  const [actionMessage, setActionMessage] = useState<string | null>(null);
 
   const reload = async () => {
     if (!userId) return;
@@ -141,8 +72,35 @@ export function BagMenu({
 
   const handleEquip = async (slot: EquipmentSlot, inventoryId: string): Promise<boolean> => {
     const ok = await onEquip(slot, inventoryId);
-    if (ok) await reload();
+    if (ok) {
+      setSelectedId(null);
+      await reload();
+    }
     return ok;
+  };
+
+  const handleClaim = async (mailboxId: string): Promise<boolean> => {
+    if (!userId || claimBusy) return false;
+
+    setClaimBusy(true);
+    setActionMessage(null);
+    try {
+      await api.claimMailboxItem(userId, mailboxId);
+      setActionMessage(t("bag.claimed", locale));
+      setSelectedId(null);
+      await reload();
+      return true;
+    } catch {
+      return false;
+    } finally {
+      setClaimBusy(false);
+    }
+  };
+
+  const handleTabChange = (next: BagTab) => {
+    setTab(next);
+    setSelectedId(null);
+    setActionMessage(null);
   };
 
   if (!userId) {
@@ -153,75 +111,89 @@ export function BagMenu({
     return <p className="menu-empty">...</p>;
   }
 
-  const activeItems = tab === "inventory" ? inventory : mailbox;
+  const activeItems: BagListItem[] = tab === "inventory" ? inventory : mailbox;
+  const selectedItem = activeItems.find((item) => item.id === selectedId) ?? null;
+  const statusMessage = actionMessage ?? equipMessage;
+  const actionBusy = tab === "mailbox" ? claimBusy : equipBusy;
 
   return (
     <div className="bag-menu">
       <div className="bag-tabs">
         <button
           className={`bag-tab ${tab === "inventory" ? "bag-tab--active" : ""}`}
-          onClick={() => setTab("inventory")}
+          onClick={() => handleTabChange("inventory")}
         >
           <GameIcon name="bag" size={20} />
           {t("bag.inventory", locale)} ({inventory.length})
         </button>
         <button
           className={`bag-tab ${tab === "mailbox" ? "bag-tab--active" : ""}`}
-          onClick={() => setTab("mailbox")}
+          onClick={() => handleTabChange("mailbox")}
         >
           <GameIcon name="mailbox" size={20} />
           {t("bag.mailbox", locale)} ({mailbox.length})
         </button>
       </div>
 
-      <label className="bag-toggle">
-        <input
-          type="checkbox"
-          checked={autoDismantle}
-          onChange={toggleAutoDismantle}
-        />
-        <span>{t("bag.auto_dismantle", locale)}</span>
-      </label>
+      {tab === "inventory" && (
+        <label className="bag-toggle">
+          <input
+            type="checkbox"
+            checked={autoDismantle}
+            onChange={toggleAutoDismantle}
+          />
+          <span>{t("bag.auto_dismantle", locale)}</span>
+        </label>
+      )}
 
-      {equipMessage && (
+      {statusMessage && (
         <p className="bag-equip-message" role="status">
-          {equipMessage}
+          {statusMessage}
         </p>
       )}
 
       {activeItems.length === 0 ? (
-        <p className="menu-empty">{t("bag.empty", locale)}</p>
+        <p className="menu-empty">
+          {t(tab === "mailbox" ? "bag.mailbox_empty" : "bag.empty", locale)}
+        </p>
       ) : (
-        <ul className="bag-list">
-          {tab === "inventory"
-            ? inventory.map((item) => (
-                <ItemRow
-                  key={item.id}
+        <>
+          <ul className="bag-slot-grid" role="list">
+            {activeItems.map((item) => (
+              <li key={item.id} className="bag-slot-grid__cell">
+                <BagItemSlot
                   id={item.id}
                   itemId={item.item_id}
                   quantity={item.quantity}
                   rarity={item.rarity}
+                  expiresAt={isMailboxItem(item) ? item.expires_at : undefined}
                   locale={locale}
                   skillPath={skillPath}
-                  onEquip={handleEquip}
-                  equipBusy={equipBusy}
+                  selected={selectedId === item.id}
+                  onSelect={setSelectedId}
                 />
-              ))
-            : mailbox.map((item) => (
-                <ItemRow
-                  key={item.id}
-                  id={item.id}
-                  itemId={item.item_id}
-                  quantity={item.quantity}
-                  rarity={item.rarity}
-                  expiresAt={item.expires_at}
-                  locale={locale}
-                  skillPath={skillPath}
-                  onEquip={handleEquip}
-                  equipBusy={equipBusy}
-                />
-              ))}
-        </ul>
+              </li>
+            ))}
+          </ul>
+
+          {selectedItem && (
+            <BagItemDetail
+              id={selectedItem.id}
+              itemId={selectedItem.item_id}
+              quantity={selectedItem.quantity}
+              rarity={selectedItem.rarity}
+              expiresAt={
+                isMailboxItem(selectedItem) ? selectedItem.expires_at : undefined
+              }
+              locale={locale}
+              skillPath={skillPath}
+              mode={tab}
+              onEquip={handleEquip}
+              onClaim={tab === "mailbox" ? handleClaim : undefined}
+              actionBusy={actionBusy}
+            />
+          )}
+        </>
       )}
     </div>
   );
