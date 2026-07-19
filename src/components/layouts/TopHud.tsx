@@ -79,7 +79,7 @@ export function TopHud({
             aria-label={t("settings.title", locale)}
           >
             <span className="hud-action-btn__icon" aria-hidden="true">
-              <GameIcon name="settings" size={32} />
+              <GameIcon name="settings" size={28} />
             </span>
           </button>
         </div>
