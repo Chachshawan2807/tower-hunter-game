@@ -1,16 +1,29 @@
 import { spawn } from "node:child_process";
+import { createRequire } from "node:module";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
-const npmCmd = process.platform === "win32" ? "npm.cmd" : "npm";
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const require = createRequire(path.join(root, "package.json"));
 
-function run(script) {
-  return spawn(npmCmd, ["run", script], {
+function resolveBin(packageName) {
+  const pkgDir = path.dirname(require.resolve(`${packageName}/package.json`));
+  const { bin } = require(`${packageName}/package.json`);
+  const entry = typeof bin === "string" ? bin : bin[packageName];
+  return path.join(pkgDir, entry);
+}
+
+function runNodeScript(scriptPath, args = []) {
+  return spawn(process.execPath, [scriptPath, ...args], {
+    cwd: root,
     stdio: "inherit",
-    shell: process.platform === "win32",
+    env: process.env,
+    windowsHide: true,
   });
 }
 
-const api = run("dev:api");
-const web = run("dev:web");
+const api = runNodeScript(resolveBin("tsx"), ["watch", "src/server/index.ts"]);
+const web = runNodeScript(resolveBin("vite"));
 
 let exiting = false;
 

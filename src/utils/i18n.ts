@@ -10,6 +10,7 @@ const STRINGS: Record<string, Record<Locale, string>> = {
   "nav.bag": { en: "Bag", th: "กระเป๋า" },
   "nav.shop": { en: "Shop", th: "ร้าน" },
   "tower.floor": { en: "Floor", th: "ชั้น" },
+  "tower.floors": { en: "Tower floors", th: "ชั้นหอคอย" },
   "tower.climb": { en: "Climb", th: "ไต่" },
   "tower.auto": { en: "Auto", th: "ออโต้" },
   "battle.attack": { en: "Attack", th: "โจมตี" },

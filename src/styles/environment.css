@@ -153,35 +153,7 @@
   opacity: 0.15;
 }
 
-/* Tower floor blocks per zone */
-.tower-floor-block--zone-forgotten-dungeon {
-  background: var(--stone-800);
-  border-color: rgba(255, 255, 255, 0.06);
-}
-
-.tower-floor-block--zone-imperial-bastion {
-  background: linear-gradient(90deg, #2a1810, #1f1410);
-  border-color: rgba(178, 34, 34, 0.25);
-}
-
-.tower-floor-block--zone-knight-citadel {
-  background: linear-gradient(90deg, #2a2a32, #1e1e24);
-  border-color: rgba(255, 255, 255, 0.1);
-}
-
-.tower-floor-block--zone-void-pinnacle {
-  background: linear-gradient(90deg, #1a1a1a, #0d0d0d);
-  border-color: rgba(197, 160, 89, 0.3);
-}
-
-.tower-zone-label {
-  font-family: var(--font-display);
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-}
+/* Tower floor tiers per zone — see tower-scroll.css */
 
 /* Home stage — vignette atmosphere, no grid-like wall bands §04 */
 .env-backdrop--home .env-wall {

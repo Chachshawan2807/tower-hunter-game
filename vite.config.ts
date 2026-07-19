@@ -84,8 +84,20 @@ export default defineConfig({
       },
     }),
   ],
+  optimizeDeps: {
+    include: [
+      "react",
+      "react-dom",
+      "react-dom/client",
+      "react/jsx-dev-runtime",
+      "react/jsx-runtime",
+    ],
+  },
   server: {
     port: 5173,
+    warmup: {
+      clientFiles: ["./src/main.tsx", "./src/App.tsx", "./src/styles/global.css"],
+    },
     proxy: {
       "/api": "http://localhost:3000",
       "/health": "http://localhost:3000",

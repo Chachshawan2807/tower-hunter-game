@@ -6,6 +6,7 @@ import { ICON_PATHS, type GameIconName, type IconPathDef } from "./paths";
 export const FILE_ICON_NAMES = new Set<GameIconName>([
   "character",
   "skills",
+  "book",
   "tower",
   "bag",
   "mailbox",

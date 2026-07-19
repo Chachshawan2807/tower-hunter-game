@@ -6,6 +6,7 @@
 export type GameIconName =
   | "character"
   | "skills"
+  | "book"
   | "tower"
   | "bag"
   | "mailbox"

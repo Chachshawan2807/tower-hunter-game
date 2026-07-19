@@ -125,28 +125,42 @@
   color: var(--text-primary);
 }
 
-.view-readable.is-dark-stage .hud-name,
-.view-readable.is-dark-stage .hud-level-badge,
-.view-readable.is-dark-stage .hud-gold__amount {
+/* Tower stage — transparent HUD chrome, readable strokes on dark backdrop */
+.view-readable.is-dark-stage .top-hud {
+  background: transparent;
+  border: none;
+}
+
+.view-readable.is-dark-stage .top-hud .hud-level-badge {
+  color: var(--dark-yellow-deep);
+  text-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.92),
+    0 0 10px rgba(0, 0, 0, 0.72);
+}
+
+.view-readable.is-dark-stage .top-hud .hud-name--inline {
   color: var(--text-primary);
+  text-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.92),
+    0 0 10px rgba(0, 0, 0, 0.72);
 }
 
-.view-readable.is-dark-stage .hud-exp,
-.view-readable.is-dark-stage .hud-exp-gauge__label {
-  color: var(--accent-exp);
+.view-readable.is-dark-stage .top-hud .hud-gold,
+.view-readable.is-dark-stage .top-hud .hud-gold__amount {
+  color: var(--dark-yellow-deep);
+  text-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.92),
+    0 0 10px rgba(0, 0, 0, 0.72);
 }
 
-.view-readable.is-dark-stage .hud-exp-gauge__track {
-  background: rgba(255, 255, 255, 0.22);
+.view-readable.is-dark-stage .top-hud .hud-gold__icon,
+.view-readable.is-dark-stage .top-hud .hud-action-btn__icon {
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.9));
 }
 
-.view-readable.is-dark-stage .hud-action-btn {
-  color: var(--text-secondary);
-}
-
-.view-readable.is-dark-stage .hud-action-btn .game-icon,
-.view-readable.is-dark-stage .hud-gold .game-icon {
-  color: inherit;
+.view-readable.is-dark-stage .top-hud .hud-action-btn {
+  color: var(--text-primary);
+  background: transparent;
 }
 
 .view-readable.is-menu-open .nav-btn,
@@ -281,6 +295,17 @@
   color: var(--ink-black);
 }
 
-.view-readable .hp-bar__label {
-  color: var(--ink-black);
+.view-readable .tower-view__footer .action-btn--climb {
+  border: 2px solid var(--ember-500);
+  background: var(--ember-500);
+  color: var(--stone-950);
+  box-shadow: none;
+}
+
+.view-readable .tower-view__footer .action-btn--climb:hover:not(:disabled) {
+  border-color: var(--ember-400);
+  background: var(--ember-400);
+  transform: none;
+  opacity: 1;
+  box-shadow: none;
 }

@@ -13,7 +13,7 @@ interface BottomNavProps {
 
 const NAV_ITEMS: Array<{ id: NavTab; icon: GameIconName; labelKey: string }> = [
   { id: "character", icon: "character", labelKey: "nav.character" },
-  { id: "skills", icon: "skills", labelKey: "nav.skills" },
+  { id: "skills", icon: "book", labelKey: "nav.skills" },
   { id: "tower", icon: "tower", labelKey: "nav.tower" },
   { id: "bag", icon: "bag", labelKey: "nav.bag" },
   { id: "shop", icon: "shop", labelKey: "nav.shop" },

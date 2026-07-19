@@ -1,6 +1,6 @@
 # Audio Assets
 
-Shipped **OGG + MP3** studio files from [Kenney](https://kenney.nl) (CC0), installed by `npm run fetch:audio`.
+No audio files are shipped in the repo. Add your own assets under the folders below and register paths in `src/audio/catalog.ts`.
 
 | Path | Purpose |
 |------|---------|
@@ -18,11 +18,6 @@ Shipped **OGG + MP3** studio files from [Kenney](https://kenney.nl) (CC0), insta
 | `music/battle.ogg` | Battle BGM (loops) |
 | `music/tower.ogg` | Tower ambient music (loops) |
 
-Each asset also has an `.mp3` sibling for broader codec support.
+OGG is the primary format. Optional `.mp3` siblings improve codec support in some browsers.
 
-Paths are registered in `src/audio/catalog.ts`. Missing files fall back to procedural synth in `src/audio/procedural/`.
-
-To refresh from Kenney mirror: `npm run fetch:audio`  
-To regenerate placeholder synth audio: `npm run generate:audio`
-
-See `CREDITS.md` for attribution.
+If a file is missing, the game falls back to procedural synth in `src/audio/procedural/`.

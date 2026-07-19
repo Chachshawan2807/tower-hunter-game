@@ -8,15 +8,93 @@
 
   flex-direction: column;
 
-  align-items: center;
-
-  gap: var(--section-gap);
+  align-items: stretch;
 
   contain: layout style;
 
+  flex: 1;
+
+  min-height: 0;
+
+  max-height: 100%;
+
+  overflow: hidden;
+
 }
 
+.tower-view__center {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-height: 0;
+  width: 100%;
+  padding-bottom: 0;
+}
 
+.tower-view__footer .action-btn--climb {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  margin-top: 0;
+  margin-bottom: var(--space-1);
+  min-width: 168px;
+  min-height: var(--touch-min);
+  padding: 12px 28px;
+  border: 2px solid var(--ember-500);
+  border-radius: var(--radius-lg);
+  background: var(--ember-500);
+  color: var(--stone-950);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.05rem;
+  letter-spacing: 0.06em;
+  box-shadow: none;
+  transition:
+    background var(--duration-fast),
+    border-color var(--duration-fast);
+}
+
+.tower-view__footer .action-btn--climb__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  color: inherit;
+}
+
+.tower-view__footer .action-btn--climb__icon .game-icon {
+  display: block;
+}
+
+.tower-view__footer .action-btn--climb__label {
+  line-height: 1;
+}
+
+.tower-view__footer .action-btn--climb:hover:not(:disabled) {
+  background: var(--ember-400);
+  border-color: var(--ember-400);
+}
+
+.tower-view__footer .action-btn--climb:active:not(:disabled) {
+  background: var(--ember-600);
+  border-color: var(--ember-600);
+}
+
+.tower-view__footer {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  width: 100%;
+  margin-top: -44px;
+  padding-top: 0;
+  padding-bottom: 0;
+  position: relative;
+  z-index: 2;
+}
 
 .tower-start-error {
 
@@ -44,165 +122,7 @@
 
 
 
-.tower-graphic {
-
-  position: relative;
-
-  width: 110px;
-
-  display: flex;
-
-  flex-direction: column;
-
-  gap: 4px;
-
-  padding: 8px 0;
-
-  contain: layout style paint;
-
-}
-
-
-
-.tower-graphic::before {
-
-  content: "";
-
-  position: absolute;
-
-  inset: -4px -12px;
-
-  background: linear-gradient(180deg, transparent, rgba(201, 162, 39, 0.08));
-
-  border-radius: var(--radius-sm);
-
-  pointer-events: none;
-
-}
-
-
-
-.tower-floor-block {
-
-  height: 16px;
-
-  background: var(--stone-800);
-
-  border: 1px solid var(--border);
-
-  border-radius: 4px;
-
-  transform: translateZ(0);
-
-  transition:
-
-    background var(--duration-fast),
-
-    border-color var(--duration-fast),
-
-    box-shadow var(--duration-fast);
-
-}
-
-
-
-.tower-floor-block--passed {
-
-  opacity: 0.55;
-
-  background: var(--stone-850);
-
-}
-
-
-
-.tower-floor-block--active {
-
-  background: linear-gradient(90deg, var(--ember-600), var(--ember-500));
-
-  border-color: var(--ember-400);
-
-  box-shadow: 0 0 12px var(--ember-glow);
-
-  animation: tower-floor-pulse 2.4s ease-in-out infinite;
-
-  will-change: box-shadow;
-
-}
-
-
-
-.tower-floor-block--boss {
-
-  border-color: var(--blood-500);
-
-  position: relative;
-
-}
-
-
-
-.tower-floor-block--boss::after {
-
-  content: "☠";
-
-  position: absolute;
-
-  right: -18px;
-
-  top: 50%;
-
-  transform: translateY(-50%);
-
-  font-size: 0.65rem;
-
-  opacity: 0.7;
-
-}
-
-
-
-.tower-floor-label {
-
-  font-family: var(--font-display);
-
-  font-size: 1.25rem;
-
-  font-weight: 600;
-
-  color: var(--text-primary);
-
-  letter-spacing: 0.08em;
-
-}
-
-
-
-.tower-floor-sublabel {
-
-  font-size: 0.72rem;
-
-  color: var(--text-muted);
-
-  margin-top: -8px;
-
-}
-
-
-
-.tower-floor-sublabel--boss {
-
-  color: var(--blood-400);
-
-  font-weight: 600;
-
-  letter-spacing: 0.06em;
-
-  text-transform: uppercase;
-
-}
-
-
+/* Tower spire styles — see tower-scroll.css */
 
 .battle-arena {
 
@@ -1190,26 +1110,6 @@
 
 
 
-@keyframes tower-floor-pulse {
-
-  0%,
-
-  100% {
-
-    box-shadow: 0 0 8px var(--ember-glow);
-
-  }
-
-  50% {
-
-    box-shadow: 0 0 16px var(--ember-glow);
-
-  }
-
-}
-
-
-
 @keyframes hp-critical-pulse {
 
   0%,
@@ -1254,8 +1154,6 @@
 
 @media (prefers-reduced-motion: reduce) {
 
-  .tower-floor-block--active,
-
   .hp-bar--critical,
 
   .battle-log__entry,
@@ -1263,14 +1161,6 @@
   .battle-turn-hint {
 
     animation: none;
-
-  }
-
-
-
-  .tower-floor-block--active {
-
-    box-shadow: 0 0 12px var(--ember-glow);
 
   }
 

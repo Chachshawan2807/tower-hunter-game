@@ -1,0 +1,168 @@
+/* Tower spire — scrollable floor column */
+
+/* Tower tab — blurred interior backdrop (full frame, HUD sees through) */
+.game-frame:has(.tower-view) {
+  background: var(--primary-black-deep);
+  box-shadow: 0 0 0 1px var(--border-strong);
+  isolation: isolate;
+}
+
+.game-frame:has(.tower-view)::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: url("/backgrounds/tower-interior.svg") center top / cover no-repeat;
+  filter: blur(0.5px);
+  pointer-events: none;
+}
+
+.game-frame:has(.tower-view)::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(5, 5, 5, 0.48) 0%,
+    rgba(5, 5, 5, 0.18) 42%,
+    rgba(5, 5, 5, 0.62) 100%
+  );
+  pointer-events: none;
+}
+
+.game-frame.env-zone--forgotten-dungeon:has(.tower-view),
+.game-frame.env-zone--imperial-bastion:has(.tower-view),
+.game-frame.env-zone--knight-citadel:has(.tower-view),
+.game-frame.env-zone--void-pinnacle:has(.tower-view) {
+  background: var(--primary-black-deep);
+}
+
+.game-frame:has(.tower-view) .env-zone-bg,
+.game-frame:has(.tower-view) .env-illustration,
+.game-frame:has(.tower-view) .env-wall,
+.game-frame:has(.tower-view) .env-chains,
+.game-frame:has(.tower-view) .env-fog,
+.game-frame:has(.tower-view) .env-rain {
+  display: none;
+}
+
+.stage:has(.tower-view) {
+  overflow: hidden;
+  justify-content: flex-start;
+  padding-top: 0;
+  background: transparent;
+}
+
+.stage:has(.tower-view) > .tower-view {
+  flex: 1;
+  width: 100%;
+  align-self: center;
+  position: relative;
+  z-index: 1;
+}
+
+.tower-scroll {
+  width: min(100%, 200px);
+  max-width: 200px;
+  margin-inline: auto;
+  max-height: clamp(320px, 56vh, 460px);
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+  touch-action: pan-y;
+  contain: layout style paint;
+}
+
+.tower-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.tower-spire {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  width: 100%;
+  margin-inline: auto;
+  padding: var(--space-2) var(--space-2) 0;
+}
+
+.tower-floor-tier {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  flex-shrink: 0;
+}
+
+.tower-floor-tier__face {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: var(--tier-scale);
+  min-width: 64px;
+  max-width: 188px;
+  margin-inline: auto;
+  height: 38px;
+  background: var(--stone-800);
+  border: 2px solid rgba(232, 228, 220, 0.2);
+  clip-path: polygon(5% 0%, 95% 0%, 100% 100%, 0% 100%);
+  transition:
+    background var(--duration-fast),
+    border-color var(--duration-fast);
+}
+
+.tower-floor-tier__lock {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #ffffff;
+  pointer-events: none;
+}
+
+.tower-floor-tier__lock-icon {
+  display: block;
+}
+
+.tower-floor-tier__num {
+  font-family: var(--font-stat);
+  font-size: 0.96rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--text-primary);
+  line-height: 1;
+  pointer-events: none;
+}
+
+.tower-floor-tier--passed .tower-floor-tier__face {
+  opacity: 0.5;
+}
+
+/* Every 5th floor — imperial bastion red (e.g. floor 31) */
+.tower-floor-tier--milestone .tower-floor-tier__face {
+  background: #241810;
+  border-color: rgba(178, 34, 34, 0.28);
+}
+
+.tower-floor-tier--active .tower-floor-tier__face,
+.tower-floor-tier--active.tower-floor-tier--milestone .tower-floor-tier__face {
+  background: var(--dark-yellow);
+  border-color: var(--dark-yellow-deep);
+}
+
+.tower-floor-tier--active .tower-floor-tier__num {
+  color: var(--ink-black);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tower-scroll {
+    scroll-behavior: auto;
+  }
+}

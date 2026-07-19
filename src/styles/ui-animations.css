@@ -44,6 +44,15 @@
   color: var(--dark-yellow-deep);
 }
 
+.view-readable.is-dark-stage .top-hud .hud-action-btn .game-icon {
+  color: var(--text-primary);
+}
+
+.view-readable.is-dark-stage .top-hud .hud-gold .game-icon,
+.view-readable.is-dark-stage .top-hud .hud-gold__icon .game-icon {
+  color: var(--dark-yellow-deep);
+}
+
 /* ── HUD EXP gauge §08 (thin track, no plate) ── */
 .hud-exp-gauge {
   display: flex;

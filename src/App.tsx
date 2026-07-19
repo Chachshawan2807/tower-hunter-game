@@ -123,7 +123,7 @@ export function App() {
           level={player.level}
           exp={player.exp}
           gold={player.gold}
-          compact={isMainView}
+          compact
           onOpenSettings={() => setSettingsOpen(true)}
         />
 

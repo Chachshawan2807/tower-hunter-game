@@ -28,8 +28,7 @@ Historical design notes and implementation plans. Check the **Status** line in e
 
 | Doc | Purpose |
 |-----|---------|
-| [../public/audio/README.md](../public/audio/README.md) | Asset paths and regeneration commands |
-| [../public/audio/CREDITS.md](../public/audio/CREDITS.md) | Kenney CC0 attribution |
+| [../public/audio/README.md](../public/audio/README.md) | Expected asset paths and catalog wiring |
 
 ## Tower Zones (floors 1–100)
 
