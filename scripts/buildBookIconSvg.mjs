@@ -1,8 +1,10 @@
 /**
- * Build BOOK nav icon — bold imperial line art rasterized to mask silhouette.
+ * Build BOOK nav icon from standalone reference art (transparent bg, raster-in-SVG).
+ * Strips light pixels and normalizes to black silhouette for CSS mask rendering.
  * Run: node scripts/buildBookIconSvg.mjs
  */
 import fs from "fs";
+import { homedir } from "node:os";
 import path from "path";
 import { fileURLToPath } from "url";
 import sharp from "sharp";
@@ -13,106 +15,90 @@ const ROOT = path.resolve(__dirname, "..");
 const REF_DIR = path.join(ROOT, "docs", "art", "ui-icons", "reference");
 const OUT = path.join(ROOT, "public", "icons", "ui", "book.svg");
 
-const BOOK_ART = `<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
-  <rect width="256" height="256" fill="white"/>
-  <path
-    d="M52 46v168"
-    fill="none"
-    stroke="#1a1a1a"
-    stroke-width="6"
-    stroke-linecap="round"
-  />
-  <path
-    d="M68 42 198 34 212 210 68 218Z"
-    fill="none"
-    stroke="#1a1a1a"
-    stroke-width="6"
-    stroke-linecap="round"
-    stroke-linejoin="round"
-  />
-  <path
-    d="M86 64v152"
-    fill="none"
-    stroke="#1a1a1a"
-    stroke-width="5"
-    stroke-linecap="round"
-  />
-  <path
-    d="M96 66 176 58 184 186 102 192Z"
-    fill="none"
-    stroke="#1a1a1a"
-    stroke-width="4.5"
-    stroke-linecap="round"
-    stroke-linejoin="round"
-  />
-  <path
-    d="M52 86h18M52 128h18M52 170h18"
-    fill="none"
-    stroke="#1a1a1a"
-    stroke-width="4.5"
-    stroke-linecap="round"
-  />
-  <path
-    d="M204 70 222 67M206 108 224 105M208 146 226 143M210 184 228 181"
-    fill="none"
-    stroke="#1a1a1a"
-    stroke-width="4"
-    stroke-linecap="round"
-  />
-  <path
-    d="M100 70v20h18M158 64v20h18"
-    fill="none"
-    stroke="#1a1a1a"
-    stroke-width="4"
-    stroke-linecap="round"
-    stroke-linejoin="round"
-  />
-  <path
-    d="M128 88v72M112 122h32"
-    fill="none"
-    stroke="#1a1a1a"
-    stroke-width="4.5"
-    stroke-linecap="round"
-  />
-  <path
-    d="M128 88 128 76"
-    fill="none"
-    stroke="#1a1a1a"
-    stroke-width="4"
-    stroke-linecap="round"
-  />
-  <path
-    d="M170 48 178 53M98 206 105 211"
-    fill="none"
-    stroke="#1a1a1a"
-    stroke-width="3.5"
-    stroke-linecap="round"
-  />
-</svg>`;
+/** Match character / bag / shop nav weight (see docs/art/ui-icons/reference/*.png). */
+const CANVAS = 256;
+const SOURCE_UPSCALE = 8;
+const BOOK_DILATE = 1;
+const NAV_TARGET_WIDTH = 212;
 
-async function main() {
-  fs.mkdirSync(REF_DIR, { recursive: true });
-  fs.mkdirSync(path.dirname(OUT), { recursive: true });
+async function toNavCanvas(pngBuffer) {
+  const meta = await sharp(pngBuffer).metadata();
+  const width = meta.width ?? CANVAS;
+  const height = meta.height ?? CANVAS;
 
-  const { data, info } = await sharp(Buffer.from(BOOK_ART))
-    .png()
-    .ensureAlpha()
-    .raw()
-    .toBuffer({ resolveWithObject: true });
+  // Scale to nav width without cropping — tall art must shrink to fit canvas height.
+  const scale = Math.min(NAV_TARGET_WIDTH / width, CANVAS / height);
+  const fittedW = Math.round(width * scale);
+  const fittedH = Math.round(height * scale);
+  const padTop = Math.floor((CANVAS - fittedH) / 2);
+  const padLeft = Math.floor((CANVAS - fittedW) / 2);
 
-  processSilhouetteBuffer(data, info.width, info.height, 2);
-
-  const png = await sharp(Buffer.from(data), {
-    raw: { width: info.width, height: info.height, channels: 4 },
-  })
-    .trim({ threshold: 1 })
-    .resize(256, 256, {
-      fit: "contain",
+  return sharp(pngBuffer)
+    .resize(fittedW, fittedH, {
+      fit: "fill",
+      background: { r: 0, g: 0, b: 0, alpha: 0 },
+    })
+    .extend({
+      top: padTop,
+      bottom: CANVAS - fittedH - padTop,
+      left: padLeft,
+      right: CANVAS - fittedW - padLeft,
       background: { r: 0, g: 0, b: 0, alpha: 0 },
     })
     .png({ compressionLevel: 9, palette: true })
     .toBuffer();
+}
+
+const SOURCE_CANDIDATES = [
+  path.join(REF_DIR, "book-raw.png"),
+  path.join(
+    homedir(),
+    ".cursor",
+    "projects",
+    "c-Projects-tower-hunter-game",
+    "assets",
+    "c__Users_chach_AppData_Roaming_Cursor_User_workspaceStorage_5dfea47b5f797cb8406d25a5ec294443_images_ChatGPT_Image_20__._._2569_01_35_29_-_Copy-37abf8b6-99bb-4f55-ae0a-05e0b39e1f43.png"
+  ),
+  path.join(
+    homedir(),
+    ".cursor",
+    "projects",
+    "c-Projects-tower-hunter-game",
+    "assets",
+    "c__Users_chach_AppData_Roaming_Cursor_User_workspaceStorage_5dfea47b5f797cb8406d25a5ec294443_images_ChatGPT_Image_20__._._2569_01_35_29_-_Copy-b5b0427c-82d8-4496-8548-b0be87151114.png"
+  ),
+];
+
+async function main() {
+  const source = SOURCE_CANDIDATES.find((p) => fs.existsSync(p));
+  if (!source) {
+    throw new Error(`Missing book reference. Place PNG at ${SOURCE_CANDIDATES[0]}`);
+  }
+
+  fs.mkdirSync(REF_DIR, { recursive: true });
+  fs.mkdirSync(path.dirname(OUT), { recursive: true });
+
+  const srcMeta = await sharp(source).metadata();
+  const srcW = srcMeta.width ?? 103;
+  const srcH = srcMeta.height ?? 96;
+
+  const { data, info } = await sharp(source)
+    .resize(Math.round(srcW * SOURCE_UPSCALE), Math.round(srcH * SOURCE_UPSCALE), {
+      kernel: sharp.kernel.lanczos3,
+    })
+    .ensureAlpha()
+    .raw()
+    .toBuffer({ resolveWithObject: true });
+  processSilhouetteBuffer(data, info.width, info.height, BOOK_DILATE);
+
+  const trimmed = await sharp(Buffer.from(data), {
+    raw: { width: info.width, height: info.height, channels: 4 },
+  })
+    .trim({ threshold: 1 })
+    .png()
+    .toBuffer();
+
+  const png = await toNavCanvas(trimmed);
 
   const refOut = path.join(REF_DIR, "book-source.png");
   fs.writeFileSync(refOut, png);
