@@ -10,13 +10,19 @@ export {
   type GearCatalogEntry,
   type CharacterEquipmentVisual,
 } from "./catalog";
-export { DEFAULT_EQUIPMENT_BY_PATH } from "./defaults";
+export { DEFAULT_EQUIPMENT_BY_PATH, DEFAULT_WEAPON_BY_PATH } from "./defaults";
+export { resolveEquipmentIconAsset, equipmentIconUrl } from "./iconAssets";
 export {
   mergeEquipmentLoadout,
   loadoutToCharacterVisual,
   resolveCharacterEquipment,
+  isEquipmentSlotEquipped,
 } from "./resolve";
 export { resolveEquippableItem, isEquippableItem } from "./itemMapping";
+export {
+  filterInventoryForEquipmentSlot,
+  type InventoryBagEntry,
+} from "./slotInventory";
 export {
   getGearPieceStatBonus,
   resolveLoadoutPieceStatBonus,

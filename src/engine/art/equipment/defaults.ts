@@ -1,8 +1,16 @@
 import type { SkillPath } from "../../types";
+import type { WeaponCategoryId } from "../weaponTypes";
 import type { PlayerEquipmentLoadout } from "./slots";
 
-/** Starter gear per skill path — raw iron / worn cloth (Art Bible §07) */
-export const DEFAULT_EQUIPMENT_BY_PATH: Record<SkillPath, PlayerEquipmentLoadout> = {
+/** Fallback weapon silhouette when no weapon is equipped (paper doll only). */
+export const DEFAULT_WEAPON_BY_PATH: Record<SkillPath, WeaponCategoryId> = {
+  imperial: "katana",
+  knight: "greatsword",
+  vanguard: "wand",
+};
+
+/** Legacy starter gear per skill path — reference only; new players start unequipped. */
+export const DEFAULT_EQUIPMENT_BY_PATH: Record<SkillPath, Required<PlayerEquipmentLoadout>> = {
   imperial: {
     weapon: { gearId: "gear.imperial.weapon.katana", rarity: "common" },
     helm: { gearId: "gear.imperial.helm.headband", rarity: "common" },

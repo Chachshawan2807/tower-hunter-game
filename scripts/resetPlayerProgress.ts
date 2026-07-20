@@ -67,6 +67,17 @@ async function resetUser(userId: string): Promise<void> {
            current_floor = 1,
            active_skill_path = 'imperial',
            skill_points = 0,
+           status_points = 0,
+           alloc_hp = 0,
+           alloc_mp = 0,
+           alloc_atk = 0,
+           alloc_def = 0,
+           alloc_spd = 0,
+           alloc_crit = 0,
+           alloc_crit_dmg = 0,
+           alloc_resist = 0,
+           alloc_eva = 0,
+           alloc_acc = 0,
            updated_at = NOW()
        WHERE user_id = $1`,
       [

@@ -195,7 +195,7 @@
 .view-readable .overlay__panel {
   background: var(--surface-readable);
   color: var(--ink-black);
-  border-top-color: var(--antique-gold);
+  border-color: var(--antique-gold);
 }
 
 .view-readable .overlay__title {

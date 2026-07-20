@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import type { SkillPath } from "../../engine/types";
+import { useDismissOnOutside } from "../../hooks/useDismissOnOutside";
 import { t, type Locale } from "../../utils/i18n";
 import { api, type MailboxItem } from "../../utils/api";
 import { BagItemDetail, BagItemSlot } from "./BagItemSlot";
@@ -22,6 +23,12 @@ export function MailboxMenu({
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [claimBusy, setClaimBusy] = useState(false);
   const [actionMessage, setActionMessage] = useState<string | null>(null);
+
+  useDismissOnOutside(
+    selectedId !== null,
+    () => setSelectedId(null),
+    [".bag-item-slot", ".bag-slot-detail"]
+  );
 
   const reload = async () => {
     if (!userId) return;

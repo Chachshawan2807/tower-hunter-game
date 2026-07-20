@@ -55,8 +55,8 @@ export function App() {
   }, [player.userId, player.refreshStats]);
 
   const battle = useBattle(player.userId, onBattleComplete);
-  const { visual: playerEquipment, statBonus, equipFromBag, equipBusy, equipMessage } =
-    usePlayerEquipment(player.userId, player.skillPath);
+  const { visual: playerEquipment, statBonus, equipFromBag, unequipSlot, equipBusy, equipMessage, clearEquipMessage } =
+    usePlayerEquipment(player.userId, player.skillPath, locale);
 
   const isMainView = activeMenu === null;
   const isTowerView = activeMenu === "tower";
@@ -197,13 +197,23 @@ export function App() {
             equipment={playerEquipment}
             equipmentStatBonus={statBonus}
             equipFromBag={equipFromBag}
+            unequipSlot={unequipSlot}
             equipBusy={equipBusy}
             equipMessage={equipMessage}
+            clearEquipMessage={clearEquipMessage}
             onClose={closeMenu}
             onPathChange={player.changeSkillPath}
+            onGoldChange={player.applyGoldBalance}
             onPurchase={() => {
-              if (player.userId) player.refreshStats(player.userId);
+              /* gold already applied optimistically */
             }}
+            onPurchaseError={() => {
+              if (player.userId) void player.refreshWallet(player.userId);
+            }}
+            onSellComplete={(balanceAfter) => {
+              player.applyGoldBalance(balanceAfter);
+            }}
+            onStatsChange={player.applyPlayerStats}
           />
         )}
 

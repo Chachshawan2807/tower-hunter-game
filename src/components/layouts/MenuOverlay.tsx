@@ -10,7 +10,7 @@ import {
   SkillOverlayTitle,
   skillOverlayTitleLabel,
 } from "../menu/SkillOverlayTitle";
-import { ShopMenu } from "../menu/ShopMenu";
+import { ShopMenu, type ShopPurchaseResult } from "../menu/ShopMenu";
 import {
   ShopOverlayTitle,
   shopOverlayTitleLabel,
@@ -46,11 +46,17 @@ interface MenuOverlayProps {
   equipment: CharacterEquipmentVisual;
   equipmentStatBonus?: GearStatBonus;
   equipFromBag: (slot: EquipmentSlot, inventoryId: string) => Promise<boolean>;
+  unequipSlot?: (slot: EquipmentSlot) => Promise<boolean>;
   equipBusy?: boolean;
   equipMessage?: string | null;
+  clearEquipMessage?: () => void;
   onClose: () => void;
   onPathChange: (path: SkillPath) => void;
-  onPurchase: () => void;
+  onGoldChange: (balance: string) => void;
+  onPurchase: (result: ShopPurchaseResult) => void;
+  onPurchaseError?: () => void;
+  onSellComplete?: (balanceAfter: string) => void;
+  onStatsChange?: (stats: PlayerStatsResponse["stats"]) => void;
 }
 
 export function MenuOverlay({
@@ -66,11 +72,17 @@ export function MenuOverlay({
   equipment,
   equipmentStatBonus,
   equipFromBag,
+  unequipSlot,
   equipBusy,
   equipMessage,
+  clearEquipMessage,
   onClose,
   onPathChange,
+  onGoldChange,
   onPurchase,
+  onPurchaseError,
+  onSellComplete,
+  onStatsChange,
 }: MenuOverlayProps) {
   const [displaySkillPoints, setDisplaySkillPoints] = useState(
     stats?.skill_points ?? 0
@@ -80,12 +92,17 @@ export function MenuOverlay({
     setDisplaySkillPoints(stats?.skill_points ?? 0);
   }, [stats?.skill_points, menu]);
 
+  useEffect(() => {
+    clearEquipMessage?.();
+  }, [menu, clearEquipMessage]);
+
   const title =
     menu === "character" ? (
       <CharacterOverlayTitle
         locale={locale}
         level={playerLevel}
         exp={playerExp}
+        displayName={displayName}
       />
     ) : menu === "skills" ? (
       <SkillOverlayTitle locale={locale} skillPoints={displaySkillPoints} />
@@ -97,7 +114,7 @@ export function MenuOverlay({
 
   const titleLabel =
     menu === "character"
-      ? characterOverlayTitleLabel(locale, playerLevel, playerExp)
+      ? characterOverlayTitleLabel(locale, playerLevel, playerExp, displayName)
       : menu === "skills"
         ? skillOverlayTitleLabel(locale, displaySkillPoints)
         : menu === "shop"
@@ -114,10 +131,17 @@ export function MenuOverlay({
       {menu === "character" && (
         <CharacterMenu
           locale={locale}
+          userId={userId}
+          skillPath={skillPath}
           stats={stats}
           displayName={displayName}
           equipment={equipment}
           equipmentStatBonus={equipmentStatBonus}
+          equipBusy={equipBusy}
+          unequipBusy={equipBusy}
+          onEquipFromBag={equipFromBag}
+          onUnequip={unequipSlot}
+          onStatsChange={onStatsChange}
         />
       )}
       {menu === "skills" && (
@@ -134,14 +158,22 @@ export function MenuOverlay({
           locale={locale}
           userId={userId}
           skillPath={skillPath}
+          equipment={equipment}
           onEquip={equipFromBag}
-          onSellComplete={onPurchase}
+          onSellComplete={onSellComplete}
           equipBusy={equipBusy}
           equipMessage={equipMessage}
         />
       )}
       {menu === "shop" && (
-        <ShopMenu locale={locale} userId={userId} gold={gold} onPurchase={onPurchase} />
+        <ShopMenu
+          locale={locale}
+          userId={userId}
+          gold={gold}
+          onGoldChange={onGoldChange}
+          onPurchase={onPurchase}
+          onPurchaseError={onPurchaseError}
+        />
       )}
     </OverlayModal>
   );

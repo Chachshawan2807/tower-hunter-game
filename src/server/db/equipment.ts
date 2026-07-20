@@ -1,6 +1,4 @@
 import type { EquipmentSlot } from "../../engine/art/equipment/slots";
-import { DEFAULT_EQUIPMENT_BY_PATH } from "../../engine/art/equipment/defaults";
-import type { SkillPath } from "../../engine/types";
 import type { DbClient, DbPool } from "./client";
 
 interface EquipmentRow {
@@ -14,7 +12,7 @@ export interface EquipmentSlotDto {
   rarity: "common" | "rare" | "epic" | "legendary";
 }
 
-export type PlayerEquipmentDto = Record<EquipmentSlot, EquipmentSlotDto>;
+export type PlayerEquipmentDto = Partial<Record<EquipmentSlot, EquipmentSlotDto>>;
 
 const SLOT_COLUMNS = `user_id, slot, gear_id, rarity, updated_at`;
 
@@ -50,25 +48,20 @@ export async function upsertEquipmentSlot(
   return { gearId: row.gear_id, rarity: row.rarity };
 }
 
-export async function seedDefaultEquipment(
+export async function deleteEquipmentSlot(
   poolOrClient: DbPool | DbClient,
   userId: string,
-  path: SkillPath
-): Promise<void> {
-  const defaults = DEFAULT_EQUIPMENT_BY_PATH[path];
-  for (const [slot, piece] of Object.entries(defaults)) {
-    await upsertEquipmentSlot(
-      poolOrClient,
-      userId,
-      slot as EquipmentSlot,
-      piece.gearId,
-      piece.rarity
-    );
-  }
+  slot: EquipmentSlot
+): Promise<boolean> {
+  const result = await poolOrClient.query(
+    `DELETE FROM player_equipment WHERE user_id = $1 AND slot = $2`,
+    [userId, slot]
+  );
+  return (result.rowCount ?? 0) > 0;
 }
 
-export function rowsToEquipmentDto(rows: EquipmentRow[]): Partial<PlayerEquipmentDto> {
-  const out: Partial<PlayerEquipmentDto> = {};
+export function rowsToEquipmentDto(rows: EquipmentRow[]): PlayerEquipmentDto {
+  const out: PlayerEquipmentDto = {};
   for (const row of rows) {
     out[row.slot] = { gearId: row.gear_id, rarity: row.rarity };
   }

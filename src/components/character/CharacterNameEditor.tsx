@@ -4,6 +4,7 @@ import {
   validateDisplayName,
 } from "../../engine/player/displayName";
 import { playUiClick } from "../../hooks/useGameAudio";
+import { useDismissOnOutside } from "../../hooks/useDismissOnOutside";
 import { GameIcon } from "../ui/icons";
 import { t, type Locale } from "../../utils/i18n";
 
@@ -49,18 +50,7 @@ export function CharacterNameEditor({
     setEditing(false);
   }, [displayName]);
 
-  useEffect(() => {
-    if (!editing) return;
-
-    const closeOnOutside = (event: PointerEvent) => {
-      if (!formRef.current?.contains(event.target as Node)) {
-        cancelEditing();
-      }
-    };
-
-    document.addEventListener("pointerdown", closeOnOutside);
-    return () => document.removeEventListener("pointerdown", closeOnOutside);
-  }, [editing, cancelEditing]);
+  useDismissOnOutside(editing, cancelEditing, [".name-editor--editing"]);
 
   const startEditing = useCallback(() => {
     if (busy) return;

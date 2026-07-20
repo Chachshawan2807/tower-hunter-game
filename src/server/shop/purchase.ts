@@ -1,4 +1,10 @@
-import { addItemToInventory, processWalletTransaction, type DbPool } from "../db";
+import {
+  addItemToInventoryClient,
+  withTransaction,
+  type DbPool,
+} from "../db";
+import { InsufficientGoldError } from "../db/types";
+import { processWalletTransactionClient } from "../db/wallet";
 import { findShopItem } from "./catalog";
 
 export interface ShopPurchaseInput {
@@ -28,29 +34,41 @@ export async function purchaseShopItem(
   const quantity = Math.max(1, Math.min(input.quantity ?? 1, 99));
   const totalCost = catalogItem.cost * BigInt(quantity);
 
-  const walletResult = await processWalletTransaction(pool, {
-    idempotencyKey: input.idempotencyKey,
-    userId: input.userId,
-    amount: totalCost,
-    type: "purchase",
-    metadata: {
-      shopItemId: catalogItem.id,
-      quantity,
-      unitCost: catalogItem.cost.toString(),
-    },
-  });
+  try {
+    return await withTransaction(pool, async (client) => {
+      const walletResult = await processWalletTransactionClient(client, {
+        idempotencyKey: input.idempotencyKey,
+        userId: input.userId,
+        amount: totalCost,
+        type: "purchase",
+        metadata: {
+          shopItemId: catalogItem.id,
+          quantity,
+          unitCost: catalogItem.cost.toString(),
+        },
+      });
 
-  const addResult = await addItemToInventory(pool, input.userId, {
-    itemId: catalogItem.id,
-    quantity,
-    rarity: "common",
-  });
+      const addResult = await addItemToInventoryClient(client, input.userId, {
+        itemId: catalogItem.id,
+        quantity,
+        rarity: "common",
+      });
 
-  return {
-    itemId: catalogItem.id,
-    quantity,
-    goldSpent: totalCost,
-    balanceAfter: walletResult.balanceAfter,
-    inventoryOutcome: addResult.outcome,
-  };
+      return {
+        itemId: catalogItem.id,
+        quantity,
+        goldSpent: totalCost,
+        balanceAfter: walletResult.balanceAfter,
+        inventoryOutcome: addResult.outcome,
+      };
+    });
+  } catch (error) {
+    if (
+      error instanceof Error &&
+      error.message.includes("Insufficient gold balance")
+    ) {
+      throw new InsufficientGoldError(input.userId);
+    }
+    throw error;
+  }
 }

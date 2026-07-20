@@ -12,16 +12,22 @@ import {
   claimMailboxItem,
   addItemToInventory,
   getPlayerSkillPath,
+  allocateStatusPoint,
+  resetStatusAllocations,
+  StatusAllocationError,
 } from "../../db";
 import {
   listPlayerEquipment,
   rowsToEquipmentDto,
-  seedDefaultEquipment,
 } from "../../db/equipment";
 import {
   EquipValidationError,
   equipFromInventory,
 } from "../../equipment/equipFromInventory";
+import {
+  unequipSlot,
+  UnequipValidationError,
+} from "../../equipment/unequipSlot";
 import {
   getPlayerEquipmentBonuses,
 } from "../../equipment/playerCombatStats";
@@ -110,6 +116,43 @@ userRoutes.get("/:userId/stats", async (c) => {
   return jsonBigInt(c, { stats, goldBalance: wallet, equipmentStatBonus: statBonus });
 });
 
+userRoutes.post("/:userId/stats/allocate", async (c) => {
+  const userId = c.req.param("userId");
+  const body = await c.req.json<{ stat?: string }>();
+
+  if (!body.stat || typeof body.stat !== "string") {
+    return c.json({ error: "stat required", code: "INVALID_BODY" }, 400);
+  }
+
+  try {
+    const stats = await allocateStatusPoint(c.get("db"), userId, body.stat);
+    const wallet = await getWalletBalance(c.get("db"), userId);
+    const statBonus = await getPlayerEquipmentBonuses(c.get("db"), userId);
+    return jsonBigInt(c, { stats, goldBalance: wallet, equipmentStatBonus: statBonus });
+  } catch (err) {
+    if (err instanceof StatusAllocationError) {
+      return c.json({ error: err.message, code: err.code }, 400);
+    }
+    throw err;
+  }
+});
+
+userRoutes.post("/:userId/stats/reset-status", async (c) => {
+  const userId = c.req.param("userId");
+
+  try {
+    const stats = await resetStatusAllocations(c.get("db"), userId);
+    const wallet = await getWalletBalance(c.get("db"), userId);
+    const statBonus = await getPlayerEquipmentBonuses(c.get("db"), userId);
+    return jsonBigInt(c, { stats, goldBalance: wallet, equipmentStatBonus: statBonus });
+  } catch (err) {
+    if (err instanceof StatusAllocationError) {
+      return c.json({ error: err.message, code: err.code }, 400);
+    }
+    throw err;
+  }
+});
+
 userRoutes.get("/:userId/wallet", async (c) => {
   const balance = await getWalletBalance(c.get("db"), c.req.param("userId"));
   return jsonBigInt(c, { userId: c.req.param("userId"), goldBalance: balance });
@@ -150,11 +193,7 @@ userRoutes.get("/:userId/equipment", async (c) => {
   const userId = c.req.param("userId");
   const path = await getPlayerSkillPath(pool, userId);
 
-  let rows = await listPlayerEquipment(pool, userId);
-  if (rows.length === 0) {
-    await seedDefaultEquipment(pool, userId, path);
-    rows = await listPlayerEquipment(pool, userId);
-  }
+  const rows = await listPlayerEquipment(pool, userId);
 
   return c.json({
     path,
@@ -183,6 +222,40 @@ userRoutes.patch("/:userId/equipment", async (c) => {
     return c.json(result);
   } catch (err) {
     if (err instanceof EquipValidationError) {
+      return c.json({ error: err.message, code: err.code }, 400);
+    }
+    throw err;
+  }
+});
+
+const EQUIPMENT_SLOT_IDS = [
+  "weapon",
+  "helm",
+  "chest",
+  "gloves",
+  "boots",
+  "cloak",
+] as const;
+
+userRoutes.delete("/:userId/equipment/:slot", async (c) => {
+  const userId = c.req.param("userId");
+  const slot = c.req.param("slot");
+
+  if (!EQUIPMENT_SLOT_IDS.includes(slot as (typeof EQUIPMENT_SLOT_IDS)[number])) {
+    return c.json({ error: "Invalid equipment slot", code: "INVALID_SLOT" }, 400);
+  }
+
+  try {
+    const result = await unequipSlot(c.get("db"), {
+      userId,
+      slot: slot as (typeof EQUIPMENT_SLOT_IDS)[number],
+    });
+    return c.json({
+      ...result,
+      statBonus: await getPlayerEquipmentBonuses(c.get("db"), userId),
+    });
+  } catch (err) {
+    if (err instanceof UnequipValidationError) {
       return c.json({ error: err.message, code: err.code }, 400);
     }
     throw err;

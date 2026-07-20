@@ -176,6 +176,7 @@
   letter-spacing: 0.04em;
   line-height: 1;
   padding: 0;
+  border-radius: 0;
 }
 
 .top-hud--compact .hud-level-badge {
@@ -198,6 +199,7 @@
   border: none;
   background: transparent;
   box-shadow: none;
+  border-radius: 0;
   font-family: var(--font-stat);
   font-size: var(--text-lg);
   font-weight: 700;
@@ -206,6 +208,10 @@
   text-transform: none;
   color: var(--ink-black);
   cursor: pointer;
+}
+
+.name-editor--hud:focus-visible {
+  outline: none;
 }
 
 .name-editor--hud:hover:not(:disabled) {
@@ -509,7 +515,7 @@
   min-width: 16px;
   height: 16px;
   padding: 0 4px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   background: var(--crimson);
   color: #fff;
   font-family: var(--font-stat);
@@ -665,26 +671,33 @@
 }
 
 .overlay__panel {
-  width: 100%;
+  width: calc(100% - var(--space-4));
   max-height: 88%;
+  margin: 0 var(--space-2) var(--space-2);
   background: var(--stone-850);
-  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
-  border-top: 2px solid var(--ember-600);
+  border-radius: var(--radius-xl);
+  border: 2px solid var(--ember-600);
   box-shadow: 0 -8px 40px var(--shadow);
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .overlay__header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: var(--space-2);
   padding: var(--space-4) var(--content-inline);
   border-bottom: 1px solid var(--border);
   flex-shrink: 0;
+  min-width: 0;
 }
 
 .overlay__title {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
   font-family: var(--font-display);
   font-size: 1.05rem;
   font-weight: 600;

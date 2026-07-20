@@ -11,9 +11,10 @@ import { EQUIPMENT_SLOTS } from "../art/equipment/slots";
 export function bonusesFromEquipmentLoadout(
   loadout: PlayerEquipmentLoadout
 ): GearStatBonus {
-  const pieces = EQUIPMENT_SLOTS.map((slot) => {
+  const pieces = EQUIPMENT_SLOTS.flatMap((slot) => {
     const piece = loadout[slot];
-    return resolveLoadoutPieceStatBonus(piece.gearId, slot, piece.rarity);
+    if (!piece) return [];
+    return [resolveLoadoutPieceStatBonus(piece.gearId, slot, piece.rarity)];
   });
   return mergeStatBonuses(pieces);
 }

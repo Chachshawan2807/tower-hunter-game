@@ -36,8 +36,15 @@ export {
   applyBattleWinProgress,
   getPlayerSkillPath,
   setPlayerSkillPath,
+  statusAllocationsFromRow,
   type PlayerStatsRow,
 } from "./playerStats";
+
+export {
+  allocateStatusPoint,
+  resetStatusAllocations,
+  StatusAllocationError,
+} from "./statusAllocations";
 
 export {
   getPlayerLoadout,
@@ -59,7 +66,7 @@ export {
 export {
   listPlayerEquipment,
   upsertEquipmentSlot,
-  seedDefaultEquipment,
+  deleteEquipmentSlot,
   rowsToEquipmentDto,
   type PlayerEquipmentDto,
   type EquipmentSlotDto,
@@ -69,6 +76,7 @@ export {
   listInventoryItems,
   countInventoryQuantity,
   addItemToInventory,
+  addItemToInventoryClient,
   getInventoryItemById,
   removeInventoryQuantity,
   isGearEquipped,

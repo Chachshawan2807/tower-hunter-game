@@ -5,6 +5,7 @@ interface CharacterOverlayTitleProps {
   locale: Locale;
   level: number;
   exp: number;
+  displayName: string;
 }
 
 function formatExpProgress(level: number, exp: number): string {
@@ -16,6 +17,7 @@ export function CharacterOverlayTitle({
   locale,
   level,
   exp,
+  displayName,
 }: CharacterOverlayTitleProps) {
   return (
     <span className="char-overlay-title">
@@ -25,8 +27,8 @@ export function CharacterOverlayTitle({
       <span className="char-overlay-title__sep" aria-hidden="true">
         ·
       </span>
-      <span className="char-overlay-title__name">
-        {t("char.player_label", locale)}
+      <span className="char-overlay-title__name" title={displayName}>
+        {displayName}
       </span>
       <span className="char-overlay-title__sep" aria-hidden="true">
         ·
@@ -41,7 +43,8 @@ export function CharacterOverlayTitle({
 export function characterOverlayTitleLabel(
   locale: Locale,
   level: number,
-  exp: number
+  exp: number,
+  displayName: string
 ): string {
-  return `LV ${level} ${t("char.player_label", locale)} ${t("hud.exp", locale)} ${formatExpProgress(level, exp)}`;
+  return `LV ${level} ${displayName} ${t("hud.exp", locale)} ${formatExpProgress(level, exp)}`;
 }

@@ -135,6 +135,26 @@ export function usePlayer() {
     };
   }, [userId, refreshStats]);
 
+  const applyGoldBalance = useCallback((balance: string) => {
+    setGold(balance);
+  }, []);
+
+  const applyPlayerStats = useCallback((next: PlayerStatsResponse["stats"]) => {
+    setStats(next);
+    setLevel(next.level);
+    setExp(Number(next.exp));
+    setCurrentFloor(next.current_floor);
+  }, []);
+
+  const refreshWallet = useCallback(async (id: string) => {
+    try {
+      const { goldBalance } = await api.getWallet(id);
+      setGold(goldBalance);
+    } catch (err) {
+      console.error("Failed to load wallet:", err);
+    }
+  }, []);
+
   return {
     userId,
     displayName,
@@ -147,6 +167,9 @@ export function usePlayer() {
     loading,
     nameBusy,
     refreshStats,
+    applyGoldBalance,
+    applyPlayerStats,
+    refreshWallet,
     changeSkillPath,
     changeDisplayName,
   };

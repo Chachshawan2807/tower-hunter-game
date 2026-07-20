@@ -57,9 +57,9 @@ async function upsertInventoryItem(
   return result.rows[0];
 }
 
-/** Adds an item to inventory. When full, routes to temporary mailbox (14-day TTL). */
-export async function addItemToInventory(
-  pool: DbPool,
+/** Adds an item within an existing transaction. */
+export async function addItemToInventoryClient(
+  client: DbClient,
   userId: string,
   item: InventoryItemInput
 ): Promise<AddItemResult> {
@@ -67,33 +67,42 @@ export async function addItemToInventory(
     throw new Error("Item quantity must be positive");
   }
 
-  return withTransaction(pool, async (client) => {
-    const currentTotal = await countInventoryQuantityClient(client, userId);
-    const hasCapacity = currentTotal + item.quantity <= INVENTORY_MAX_CAPACITY;
+  const currentTotal = await countInventoryQuantityClient(client, userId);
+  const hasCapacity = currentTotal + item.quantity <= INVENTORY_MAX_CAPACITY;
 
-    if (hasCapacity) {
-      const row = await upsertInventoryItem(client, userId, item);
-      return {
-        outcome: "inventory",
-        itemId: row.item_id,
-        quantity: item.quantity,
-      };
-    }
-
-    const mailboxRow = await addToMailboxClient(client, userId, {
-      itemId: item.itemId,
-      quantity: item.quantity,
-      rarity: item.rarity,
-      sourceFloor: item.sourceFloor,
-    });
-
+  if (hasCapacity) {
+    const row = await upsertInventoryItem(client, userId, item);
     return {
-      outcome: "mailbox",
-      itemId: item.itemId,
+      outcome: "inventory",
+      itemId: row.item_id,
       quantity: item.quantity,
-      mailboxId: mailboxRow.id,
     };
+  }
+
+  const mailboxRow = await addToMailboxClient(client, userId, {
+    itemId: item.itemId,
+    quantity: item.quantity,
+    rarity: item.rarity,
+    sourceFloor: item.sourceFloor,
   });
+
+  return {
+    outcome: "mailbox",
+    itemId: item.itemId,
+    quantity: item.quantity,
+    mailboxId: mailboxRow.id,
+  };
+}
+
+/** Adds an item to inventory. When full, routes to temporary mailbox (14-day TTL). */
+export async function addItemToInventory(
+  pool: DbPool,
+  userId: string,
+  item: InventoryItemInput
+): Promise<AddItemResult> {
+  return withTransaction(pool, (client) =>
+    addItemToInventoryClient(client, userId, item)
+  );
 }
 
 export async function listInventoryItems(

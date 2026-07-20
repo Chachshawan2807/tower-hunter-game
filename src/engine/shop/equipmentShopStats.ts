@@ -74,13 +74,13 @@ export const SHOP_EQUIPMENT_STATS: Record<string, GearStatBonus[]> = {
     { def: 16, maxHp: 35 },
     { def: 22, maxHp: 55 },
   ],
-  /** Gloves → CRIT */
+  /** Gloves → CRIT; v04–v05 secondary → ACC */
   gloves: [
     { critChance: 0.02 },
     { critChance: 0.025 },
     { critChance: 0.035 },
-    { critChance: 0.045, critDamage: 0.1 },
-    { critChance: 0.06, critDamage: 0.2 },
+    { critChance: 0.045, accuracy: 4 },
+    { critChance: 0.06, accuracy: 8 },
   ],
   /** Cloak → Status resist */
   cloak: [

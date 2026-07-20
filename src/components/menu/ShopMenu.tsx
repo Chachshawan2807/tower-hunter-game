@@ -4,17 +4,27 @@ import {
   type ShopItemCategory,
 } from "../../engine/shop/shopCatalogLayout";
 import { getEquipmentShopLabel } from "../../engine/shop/equipmentShopItems";
+import { useDismissOnOutside } from "../../hooks/useDismissOnOutside";
+import { ConfirmDialog } from "../ui/ConfirmDialog";
 import { api, type ShopCatalogItem } from "../../utils/api";
+import { formatDialogMessage } from "../../utils/formatDialogMessage";
 import { t, type Locale } from "../../utils/i18n";
 import { GameIcon } from "../ui/icons";
 import { ShopCategorySection } from "./ShopCategorySection";
 import { ShopItemIcon } from "./ShopItemIcon";
 
+export interface ShopPurchaseResult {
+  balanceAfter: string;
+  inventoryOutcome: string;
+}
+
 interface ShopMenuProps {
   locale: Locale;
   userId: string | null;
   gold: string;
-  onPurchase: () => void;
+  onGoldChange: (balance: string) => void;
+  onPurchase: (result: ShopPurchaseResult) => void;
+  onPurchaseError?: () => void;
 }
 
 function resolveShopItemName(item: ShopCatalogItem, locale: Locale): string {
@@ -23,13 +33,27 @@ function resolveShopItemName(item: ShopCatalogItem, locale: Locale): string {
   return t(item.stringId, locale);
 }
 
-export function ShopMenu({ locale, userId, gold, onPurchase }: ShopMenuProps) {
+export function ShopMenu({
+  locale,
+  userId,
+  gold,
+  onGoldChange,
+  onPurchase,
+  onPurchaseError,
+}: ShopMenuProps) {
   const [catalog, setCatalog] = useState<ShopCatalogItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [busyId, setBusyId] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [expandedCategories, setExpandedCategories] = useState<Set<ShopItemCategory>>(
     () => new Set()
+  );
+  const [pendingBuy, setPendingBuy] = useState<ShopCatalogItem | null>(null);
+
+  useDismissOnOutside(
+    expandedCategories.size > 0 && !pendingBuy,
+    () => setExpandedCategories(new Set()),
+    [".shop-section"]
   );
 
   const goldBalance = BigInt(gold || "0");
@@ -61,22 +85,39 @@ export function ShopMenu({ locale, userId, gold, onPurchase }: ShopMenuProps) {
     });
   };
 
-  const handleBuy = async (item: ShopCatalogItem) => {
+  const executeBuy = async (item: ShopCatalogItem) => {
     if (!userId || busyId) return;
     const cost = BigInt(item.cost);
     if (goldBalance < cost) return;
 
+    const previousGold = gold;
+    onGoldChange((goldBalance - cost).toString());
+
     setBusyId(item.id);
     setMessage(null);
     try {
-      await api.purchaseShopItem(userId, item.id, crypto.randomUUID());
-      setMessage(t("shop.purchased", locale));
-      onPurchase();
+      const result = await api.purchaseShopItem(userId, item.id, crypto.randomUUID());
+      onGoldChange(result.balanceAfter);
+      setMessage(
+        result.inventoryOutcome === "mailbox"
+          ? t("shop.purchased_mailbox", locale)
+          : t("shop.purchased", locale)
+      );
+      onPurchase(result);
     } catch {
+      onGoldChange(previousGold);
+      onPurchaseError?.();
       setMessage(t("shop.error", locale));
     } finally {
       setBusyId(null);
     }
+  };
+
+  const confirmBuy = async () => {
+    if (!pendingBuy) return;
+    const item = pendingBuy;
+    setPendingBuy(null);
+    await executeBuy(item);
   };
 
   if (loading) {
@@ -125,9 +166,9 @@ export function ShopMenu({ locale, userId, gold, onPurchase }: ShopMenuProps) {
                     <button
                       type="button"
                       className="shop-item__buy tabular-nums"
-                      disabled={!userId || busyId !== null || !canAfford}
+                      disabled={!userId || busyId === item.id || !canAfford}
                       aria-label={`${t("shop.buy", locale)} ${name} ${item.cost}`}
-                      onClick={() => void handleBuy(item)}
+                      onClick={() => setPendingBuy(item)}
                     >
                       <GameIcon name="gold" size={18} className="shop-item__buy-icon" />
                       {item.cost}
@@ -139,6 +180,21 @@ export function ShopMenu({ locale, userId, gold, onPurchase }: ShopMenuProps) {
           </ShopCategorySection>
         ))}
       </div>
+
+      {pendingBuy && (
+        <ConfirmDialog
+          locale={locale}
+          title={t("shop.confirm_buy_title", locale)}
+          message={formatDialogMessage("shop.confirm_buy_message", locale, {
+            item: resolveShopItemName(pendingBuy, locale),
+            cost: pendingBuy.cost,
+          })}
+          confirmLabel={t("shop.buy", locale)}
+          busy={busyId === pendingBuy.id}
+          onConfirm={() => void confirmBuy()}
+          onCancel={() => setPendingBuy(null)}
+        />
+      )}
     </div>
   );
 }

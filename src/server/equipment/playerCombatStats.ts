@@ -7,7 +7,6 @@ import { combatStatsWithEquipment } from "../../engine/formulas/equipmentStats";
 import {
   listPlayerEquipment,
   rowsToEquipmentDto,
-  seedDefaultEquipment,
 } from "../db/equipment";
 import { getPlayerSkillPath } from "../db/playerStats";
 import { toCombatStats, type PlayerStatsRow } from "../db/playerStats";
@@ -19,11 +18,7 @@ export async function loadPlayerEquipmentLoadout(
   path?: SkillPath
 ): Promise<PlayerEquipmentLoadout> {
   const skillPath: SkillPath = path ?? (await getPlayerSkillPath(pool, userId));
-  let rows = await listPlayerEquipment(pool, userId);
-  if (rows.length === 0) {
-    await seedDefaultEquipment(pool, userId, skillPath);
-    rows = await listPlayerEquipment(pool, userId);
-  }
+  const rows = await listPlayerEquipment(pool, userId);
   return mergeEquipmentLoadout(skillPath, rowsToEquipmentDto(rows));
 }
 

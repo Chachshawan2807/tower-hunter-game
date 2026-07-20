@@ -1,0 +1,2 @@
+-- Status point grant rate is enforced in engine (calculateStatusPointGrant).
+-- Do NOT reconcile wallets here — re-running migrations would wipe dev/test grants.

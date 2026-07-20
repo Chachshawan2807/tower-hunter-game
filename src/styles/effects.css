@@ -37,7 +37,7 @@
   content: "";
   position: absolute;
   inset: -6px;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   background: linear-gradient(
     135deg,
     rgba(200, 230, 255, 0.35) 0%,

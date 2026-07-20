@@ -1,5 +1,4 @@
 import type { SkillPath } from "../../engine/types";
-import { seedDefaultEquipment } from "./equipment";
 import { seedStarterMailboxClient } from "./starterMailbox";
 import type { DbClient } from "./client";
 import type { ItemRarity } from "./types";
@@ -40,14 +39,12 @@ async function upsertStarterItem(
   );
 }
 
-/** Default equipment + bag items for a newly created player. */
+/** Starter bag items for a newly created player (equipment slots start empty). */
 export async function seedNewPlayerKit(
   client: DbClient,
   userId: string,
   path: SkillPath = "imperial"
 ): Promise<void> {
-  await seedDefaultEquipment(client, userId, path);
-
   for (const item of STARTER_ITEMS[path]) {
     await upsertStarterItem(
       client,

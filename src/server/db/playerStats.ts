@@ -1,8 +1,13 @@
+import {
+  calculateStatusPointGrant,
+  mergedPlayerStatsFromAllocations,
+  type StatusAllocations,
+} from "../../engine/formulas/statusPoints";
 import { calculateSpGrant } from "../../engine/skills/skillPoints";
 import { normalizeSkillPath } from "../../engine/skills/catalog";
 import type { CombatStats, SkillPath } from "../../engine/types";
 import { isBossFloor } from "../../engine/types";
-import { combatStatsForLevel, levelFromTotalExp } from "../../engine/formulas/playerProgression";
+import { levelFromTotalExp } from "../../engine/formulas/playerProgression";
 import { parseBigInt, withTransaction, type DbClient, type DbPool } from "./client";
 
 export interface PlayerStatsRow {
@@ -26,12 +31,42 @@ export interface PlayerStatsRow {
   current_floor: number;
   active_skill_path: SkillPath;
   skill_points: number;
+  status_points: number;
+  alloc_hp: number;
+  alloc_mp: number;
+  alloc_atk: number;
+  alloc_def: number;
+  alloc_spd: number;
+  alloc_crit: number;
+  alloc_crit_dmg: number;
+  alloc_resist: number;
+  alloc_eva: number;
+  alloc_acc: number;
   updated_at: Date;
 }
 
 const STATS_COLUMNS = `user_id, level, exp, hp, max_hp, mp, max_mp, atk, def, speed,
   crit_chance, crit_damage, crit_resist, accuracy, evasion, status_chance, status_resist,
-  current_floor, active_skill_path, skill_points, updated_at`;
+  current_floor, active_skill_path, skill_points, status_points,
+  alloc_hp, alloc_mp, alloc_atk, alloc_def, alloc_spd,
+  alloc_crit, alloc_crit_dmg, alloc_resist, alloc_eva, alloc_acc, updated_at`;
+
+export { STATS_COLUMNS };
+
+export function statusAllocationsFromRow(row: PlayerStatsRow): StatusAllocations {
+  return {
+    hp: row.alloc_hp,
+    mp: row.alloc_mp,
+    atk: row.alloc_atk,
+    def: row.alloc_def,
+    spd: row.alloc_spd,
+    crit: row.alloc_crit,
+    critDmg: row.alloc_crit_dmg,
+    resist: row.alloc_resist,
+    eva: row.alloc_eva,
+    acc: row.alloc_acc,
+  };
+}
 
 function toNumber(value: string | number): number {
   return typeof value === "number" ? value : Number(value);
@@ -125,8 +160,12 @@ export async function applyBattleWinProgress(
     const newExp = parseBigInt(stats.exp) + BigInt(expGained);
     const nextFloor = Math.min(floor + 1, 100);
     const newLevel = levelFromTotalExp(Number(newExp));
-    const levelStats = combatStatsForLevel(newLevel);
+    const levelStats = mergedPlayerStatsFromAllocations(
+      newLevel,
+      statusAllocationsFromRow(stats)
+    );
     const spGrant = calculateSpGrant(oldLevel, newLevel, isBossFloor(floor));
+    const statusGrant = calculateStatusPointGrant(oldLevel, newLevel);
 
     const result = await client.query<PlayerStatsRow>(
       `UPDATE player_stats
@@ -141,6 +180,7 @@ export async function applyBattleWinProgress(
            hp = $4,
            mp = $5,
            skill_points = skill_points + $10,
+           status_points = status_points + $11,
            updated_at = NOW()
        WHERE user_id = $1
        RETURNING ${STATS_COLUMNS}`,
@@ -155,6 +195,7 @@ export async function applyBattleWinProgress(
         levelStats.speed.toString(),
         nextFloor,
         spGrant,
+        statusGrant,
       ]
     );
 

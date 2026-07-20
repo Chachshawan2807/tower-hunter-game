@@ -68,6 +68,17 @@ export interface PlayerStatsResponse {
     current_floor: number;
     active_skill_path?: "imperial" | "knight" | "vanguard";
     skill_points?: number;
+    status_points?: number;
+    alloc_hp?: number;
+    alloc_mp?: number;
+    alloc_atk?: number;
+    alloc_def?: number;
+    alloc_spd?: number;
+    alloc_crit?: number;
+    alloc_crit_dmg?: number;
+    alloc_resist?: number;
+    alloc_eva?: number;
+    alloc_acc?: number;
   };
   goldBalance: string;
   equipmentStatBonus?: GearStatBonusDto;
@@ -127,6 +138,8 @@ export interface SkillUpgradeResponse {
   ranks: SkillUpgradeRanks;
   skillPoints: number;
 }
+
+export interface StatusAllocateResponse extends PlayerStatsResponse {}
 
 export interface InventoryItem {
   id: string;
@@ -195,6 +208,12 @@ export interface EquipFromBagResponse {
   statBonusLines: string[];
 }
 
+export interface UnequipSlotResponse {
+  slot: string;
+  loadout: PlayerEquipmentResponse["slots"];
+  statBonus?: GearStatBonusDto;
+}
+
 export const api = {
   createUser(externalId: string, displayName: string) {
     return request<UserProfile>("/api/users", {
@@ -222,6 +241,32 @@ export const api = {
     return request<PlayerStatsResponse>(`/api/users/${userId}/stats`);
   },
 
+  allocateStatusPoint(
+    userId: string,
+    stat:
+      | "hp"
+      | "mp"
+      | "atk"
+      | "def"
+      | "spd"
+      | "crit"
+      | "crit_dmg"
+      | "resist"
+      | "eva"
+      | "acc"
+  ) {
+    return request<StatusAllocateResponse>(`/api/users/${userId}/stats/allocate`, {
+      method: "POST",
+      body: JSON.stringify({ stat }),
+    });
+  },
+
+  resetStatusAllocations(userId: string) {
+    return request<StatusAllocateResponse>(`/api/users/${userId}/stats/reset-status`, {
+      method: "POST",
+    });
+  },
+
   getWallet(userId: string) {
     return request<{ goldBalance: string }>(`/api/users/${userId}/wallet`);
   },
@@ -242,6 +287,15 @@ export const api = {
     return request<EquipFromBagResponse>(`/api/users/${userId}/equipment`, {
       method: "PATCH",
       body: JSON.stringify({ slot, inventoryId }),
+    });
+  },
+
+  unequipSlot(
+    userId: string,
+    slot: "weapon" | "helm" | "chest" | "gloves" | "boots" | "cloak"
+  ) {
+    return request<UnequipSlotResponse>(`/api/users/${userId}/equipment/${slot}`, {
+      method: "DELETE",
     });
   },
 

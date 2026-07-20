@@ -54,6 +54,24 @@ export {
   combatStatsForLevel,
 } from "./playerProgression";
 export {
+  calculateStatusPointGrant,
+  mergedPlayerStatsFromAllocations,
+  playerStatsWithStatusAllocations,
+  secondaryBonusesFromAllocations,
+  statusBonusesFromAllocations,
+  BASE_SECONDARY_PLAYER_STATS,
+  STATUS_POINT_COST,
+  STATUS_POINTS_PER_LEVEL_UP,
+  STATUS_POINT_DELTAS,
+  STATUS_STAT_KEYS,
+  isStatusStatKey,
+  emptyStatusAllocations,
+  totalAllocatedStatusPoints,
+  type StatusAllocations,
+  type StatusStatKey,
+  type MergedPlayerBaseStats,
+} from "./statusPoints";
+export {
   resolveAttack,
   resolveAttackWithModifiers,
   type AttackResolutionInput,

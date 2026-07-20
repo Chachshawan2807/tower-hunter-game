@@ -27,6 +27,13 @@ button {
   border: none;
   background: none;
   color: inherit;
+  border-radius: var(--radius-md);
+}
+
+input,
+select,
+textarea {
+  border-radius: var(--radius-sm);
 }
 
 button:focus-visible,
@@ -94,7 +101,7 @@ input:focus-visible {
   width: 120px;
   height: 3px;
   background: var(--stone-700);
-  border-radius: 2px;
+  border-radius: var(--radius-full);
   overflow: hidden;
 }
 
@@ -126,4 +133,6 @@ input:focus-visible {
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
 }

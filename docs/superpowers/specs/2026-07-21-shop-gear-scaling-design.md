@@ -359,15 +359,15 @@ Body: { inventoryId: string, idempotencyKey: string }
 | Royal Sabaton | 175 | SPD +11, EVA +3 |
 | Ether Pass | 300 | SPD +15, EVA +6 |
 
-### Gloves → CRIT
+### Gloves → CRIT (v04–v05 secondary → ACC)
 
 | ชิ้น | ราคา | Stats |
 |------|------|-------|
 | Iron Grip | 45 | CRIT +2.0% |
 | Solar Claw | 54 | CRIT +2.5% |
 | Rune Fist | 90 | CRIT +3.5% |
-| Royal Gauntlet | 158 | CRIT +4.5%, CRIT DMG +10% |
-| Ether Spark | 270 | CRIT +6.0%, CRIT DMG +20% |
+| Royal Gauntlet | 158 | CRIT +4.5%, ACC +4 |
+| Ether Spark | 270 | CRIT +6.0%, ACC +8 |
 
 ### Cloak → Status Resist
 

@@ -36,6 +36,12 @@ import {
   calculateSpGrant,
   canUpgradeBranch,
 } from "../src/engine/skills/skillPoints";
+import {
+  calculateStatusPointGrant,
+  mergedPlayerStatsFromAllocations,
+  playerStatsWithStatusAllocations,
+  statusBonusesFromAllocations,
+} from "../src/engine/formulas/statusPoints";
 import { SKILL_UNLOCK_LEVELS } from "../src/engine/skills/types";
 import {
   BOSS_LATE,
@@ -333,9 +339,72 @@ assert(
   "escalating SP cost totals 6 for full branch"
 );
 
-assert(calculateSpGrant(4, 5, false) === 1, "single level up grants +1 SP");
-assert(calculateSpGrant(1, 3, false) === 2, "two level ups grant +2 SP");
-assert(calculateSpGrant(5, 5, true) === 2, "boss floor grants +2 SP");
+assert(calculateSpGrant(4, 5) === 1, "single level up grants +1 skill point");
+assert(calculateSpGrant(1, 3) === 2, "two level ups grant +2 skill points");
+assert(calculateSpGrant(5, 5, false) === 0, "no level gain grants 0 skill points");
+assert(calculateSpGrant(5, 5, true) === 1, "boss floor grants +1 skill point");
+
+assert(calculateStatusPointGrant(4, 5) === 5, "single level up grants +5 status points");
+assert(calculateStatusPointGrant(1, 3) === 10, "two level ups grant +10 status points");
+assert(
+  statusBonusesFromAllocations({
+    hp: 2,
+    mp: 0,
+    atk: 1,
+    def: 0,
+    spd: 0,
+    crit: 0,
+    critDmg: 0,
+    resist: 0,
+    eva: 0,
+    acc: 0,
+  }).maxHp === 2,
+  "HP allocation bonus is +1 per rank"
+);
+assert(
+  Math.abs(
+    mergedPlayerStatsFromAllocations(5, {
+      hp: 0,
+      mp: 0,
+      atk: 0,
+      def: 0,
+      spd: 0,
+      crit: 2,
+      critDmg: 0,
+      resist: 0,
+      eva: 0,
+      acc: 0,
+    }).critChance - 0.12
+  ) < 0.0001,
+  "CRIT allocation adds +1% per rank"
+);
+assert(
+  playerStatsWithStatusAllocations(5, {
+    hp: 1,
+    mp: 0,
+    atk: 0,
+    def: 0,
+    spd: 0,
+    crit: 0,
+    critDmg: 0,
+    resist: 0,
+    eva: 0,
+    acc: 0,
+  }).maxHp
+    > playerStatsWithStatusAllocations(5, {
+      hp: 0,
+      mp: 0,
+      atk: 0,
+      def: 0,
+      spd: 0,
+      crit: 0,
+      critDmg: 0,
+      resist: 0,
+      eva: 0,
+      acc: 0,
+    }).maxHp,
+  "merged player stats include allocation bonuses"
+);
 
 assert(
   canUpgradeBranch(palm, "damage", { damage: 3, cooldown: 0, mpCost: 0 })

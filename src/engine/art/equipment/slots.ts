@@ -17,4 +17,5 @@ export interface EquippedPiece {
   rarity: "common" | "rare" | "epic" | "legendary";
 }
 
-export type PlayerEquipmentLoadout = Record<EquipmentSlot, EquippedPiece>;
+/** Equipped pieces only — omitted slots are unequipped. */
+export type PlayerEquipmentLoadout = Partial<Record<EquipmentSlot, EquippedPiece>>;

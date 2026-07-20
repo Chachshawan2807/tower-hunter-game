@@ -30,8 +30,6 @@ export function OverlayModal({
   const previousFocusRef = useRef<HTMLElement | null>(null);
   const [closing, setClosing] = useState(false);
 
-  useFocusTrap(panelRef, !closing);
-
   const finishClose = useCallback(() => {
     onClose();
     requestAnimationFrame(() => {
@@ -44,6 +42,8 @@ export function OverlayModal({
     if (closing) return;
     setClosing(true);
   }, [closing]);
+
+  useFocusTrap(panelRef, !closing);
 
   useEffect(() => {
     previousFocusRef.current = document.activeElement as HTMLElement | null;
@@ -88,8 +88,11 @@ export function OverlayModal({
     <div
       className={`overlay overlay--${variant} view-readable${closing ? " overlay--closing" : ""}`}
       data-state={closing ? "closing" : "open"}
-      onClick={requestClose}
       role="presentation"
+      onPointerDown={(e) => {
+        if (closing || e.target !== e.currentTarget) return;
+        requestClose();
+      }}
     >
       <div
         ref={panelRef}

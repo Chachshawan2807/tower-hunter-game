@@ -1,16 +1,24 @@
 import { useEffect, useState } from "react";
 import type { SkillPath } from "../../engine/types";
+import type { ItemRarityVisual } from "../../engine/art/weaponTypes";
 import type { EquipmentSlot } from "../../engine/art/equipment/slots";
+import type { CharacterEquipmentVisual } from "../../engine/art/equipment/catalog";
+import { useDismissOnOutside } from "../../hooks/useDismissOnOutside";
+import { resolveShopItemSellPrice } from "../../engine/shop/sellPrice";
+import { ConfirmDialog } from "../ui/ConfirmDialog";
 import { t, type Locale } from "../../utils/i18n";
 import { api, type InventoryItem } from "../../utils/api";
+import { formatDialogMessage } from "../../utils/formatDialogMessage";
+import { resolveItemLabel } from "../../utils/itemLabel";
 import { BagItemDetail, BagItemSlot } from "./BagItemSlot";
 
 interface BagMenuProps {
   locale: Locale;
   userId: string | null;
   skillPath: SkillPath;
+  equipment: CharacterEquipmentVisual;
   onEquip: (slot: EquipmentSlot, inventoryId: string) => Promise<boolean>;
-  onSellComplete?: () => void;
+  onSellComplete?: (balanceAfter: string) => void;
   equipBusy?: boolean;
   equipMessage?: string | null;
 }
@@ -19,6 +27,7 @@ export function BagMenu({
   locale,
   userId,
   skillPath,
+  equipment,
   onEquip,
   onSellComplete,
   equipBusy,
@@ -29,6 +38,13 @@ export function BagMenu({
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [sellBusy, setSellBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+  const [pendingSellId, setPendingSellId] = useState<string | null>(null);
+
+  useDismissOnOutside(
+    selectedId !== null && !pendingSellId,
+    () => setSelectedId(null),
+    [".bag-item-slot", ".bag-slot-detail"]
+  );
 
   const reload = async () => {
     if (!userId) return;
@@ -59,11 +75,12 @@ export function BagMenu({
     setSellBusy(true);
     setMessage(null);
     try {
-      await api.sellShopItem(userId, inventoryId, crypto.randomUUID());
+      const result = await api.sellShopItem(userId, inventoryId, crypto.randomUUID());
       setMessage(t("bag.sold", locale));
       setSelectedId(null);
+      setPendingSellId(null);
       await reload();
-      onSellComplete?.();
+      onSellComplete?.(result.balanceAfter);
       return true;
     } catch {
       setMessage(t("bag.sell_error", locale));
@@ -71,6 +88,12 @@ export function BagMenu({
     } finally {
       setSellBusy(false);
     }
+  };
+
+  const confirmSell = () => {
+    if (!pendingSellId) return;
+    const inventoryId = pendingSellId;
+    void handleSell(inventoryId);
   };
 
   const actionBusy = equipBusy || sellBusy;
@@ -85,6 +108,11 @@ export function BagMenu({
   }
 
   const selectedItem = inventory.find((item) => item.id === selectedId) ?? null;
+  const pendingSellItem =
+    inventory.find((item) => item.id === pendingSellId) ?? null;
+  const equippedGearIds = new Set(
+    Object.values(equipment.gearIds).filter((gearId): gearId is string => Boolean(gearId))
+  );
 
   return (
     <div className="bag-menu">
@@ -108,6 +136,7 @@ export function BagMenu({
                   locale={locale}
                   skillPath={skillPath}
                   selected={selectedId === item.id}
+                  isEquipped={equippedGearIds.has(item.item_id)}
                   onSelect={setSelectedId}
                 />
               </li>
@@ -120,16 +149,33 @@ export function BagMenu({
                 id={selectedItem.id}
                 itemId={selectedItem.item_id}
                 quantity={selectedItem.quantity}
+                rarity={selectedItem.rarity as ItemRarityVisual}
                 locale={locale}
                 skillPath={skillPath}
                 mode="inventory"
+                isEquipped={equippedGearIds.has(selectedItem.item_id)}
                 onEquip={handleEquip}
-                onSell={handleSell}
+                onSellRequest={setPendingSellId}
                 actionBusy={actionBusy}
               />
             </div>
           )}
         </>
+      )}
+
+      {pendingSellItem && (
+        <ConfirmDialog
+          locale={locale}
+          title={t("bag.confirm_sell_title", locale)}
+          message={formatDialogMessage("bag.confirm_sell_message", locale, {
+            item: resolveItemLabel(pendingSellItem.item_id, locale, skillPath),
+            price: (resolveShopItemSellPrice(pendingSellItem.item_id) ?? 0n).toString(),
+          })}
+          confirmLabel={t("bag.sell", locale)}
+          busy={sellBusy}
+          onConfirm={confirmSell}
+          onCancel={() => setPendingSellId(null)}
+        />
       )}
     </div>
   );

@@ -6,8 +6,13 @@ import type { GearStatBonus } from "../engine/art/equipment/statBonuses";
 import type { EquipmentSlot, PlayerEquipmentLoadout } from "../engine/art/equipment/slots";
 import type { SkillPath } from "../engine/types";
 import { api } from "../utils/api";
+import { t, type Locale } from "../utils/i18n";
 
-export function usePlayerEquipment(userId: string | null, skillPath: SkillPath) {
+export function usePlayerEquipment(
+  userId: string | null,
+  skillPath: SkillPath,
+  locale: Locale = "en"
+) {
   const [serverSlots, setServerSlots] = useState<Partial<PlayerEquipmentLoadout>>();
   const [statBonus, setStatBonus] = useState<GearStatBonus>({});
   const [loading, setLoading] = useState(false);
@@ -53,7 +58,12 @@ export function usePlayerEquipment(userId: string | null, skillPath: SkillPath) 
         const result = await api.equipFromBag(userId, slot, inventoryId);
         setServerSlots(result.loadout);
         await refresh();
-        setEquipMessage(result.statBonusLines.join(" · "));
+        const bonusText = result.statBonusLines.join(" · ");
+        setEquipMessage(
+          bonusText
+            ? `${t("bag.equipped", locale)} — ${bonusText}`
+            : t("bag.equipped", locale)
+        );
         return true;
       } catch (err) {
         const msg = err instanceof Error ? err.message : "Equip failed";
@@ -63,13 +73,40 @@ export function usePlayerEquipment(userId: string | null, skillPath: SkillPath) 
         setEquipBusy(false);
       }
     },
-    [userId, equipBusy, refresh]
+    [userId, equipBusy, refresh, locale]
+  );
+
+  const unequipSlot = useCallback(
+    async (slot: EquipmentSlot) => {
+      if (!userId || equipBusy) return false;
+      setEquipBusy(true);
+      setEquipMessage(null);
+      try {
+        const result = await api.unequipSlot(userId, slot);
+        setServerSlots(result.loadout);
+        setStatBonus(result.statBonus ?? {});
+        await refresh();
+        setEquipMessage(t("bag.unequipped", locale));
+        return true;
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : "Unequip failed";
+        setEquipMessage(msg);
+        return false;
+      } finally {
+        setEquipBusy(false);
+      }
+    },
+    [userId, equipBusy, refresh, locale]
   );
 
   const computedBonus = useMemo(
     () => bonusesFromEquipmentLoadout(loadout),
     [loadout]
   );
+
+  const clearEquipMessage = useCallback(() => {
+    setEquipMessage(null);
+  }, []);
 
   return {
     visual,
@@ -80,5 +117,7 @@ export function usePlayerEquipment(userId: string | null, skillPath: SkillPath) 
     equipMessage,
     refresh,
     equipFromBag,
+    unequipSlot,
+    clearEquipMessage,
   };
 }

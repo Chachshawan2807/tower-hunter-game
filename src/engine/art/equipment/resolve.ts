@@ -5,7 +5,7 @@ import {
   type CharacterEquipmentVisual,
   getGearEntry,
 } from "./catalog";
-import { DEFAULT_EQUIPMENT_BY_PATH } from "./defaults";
+import { DEFAULT_WEAPON_BY_PATH } from "./defaults";
 import {
   EQUIPMENT_SLOTS,
   type EquipmentSlot,
@@ -27,8 +27,7 @@ export function mergeEquipmentLoadout(
   path: SkillPath,
   serverSlots?: Partial<PlayerEquipmentLoadout>
 ): PlayerEquipmentLoadout {
-  const base = DEFAULT_EQUIPMENT_BY_PATH[path];
-  const merged = { ...base };
+  const merged: PlayerEquipmentLoadout = {};
 
   if (!serverSlots) return merged;
 
@@ -43,29 +42,40 @@ export function mergeEquipmentLoadout(
   return merged;
 }
 
+export function isEquipmentSlotEquipped(
+  visual: CharacterEquipmentVisual,
+  slot: EquipmentSlot
+): boolean {
+  return Boolean(visual.gearIds[slot]);
+}
+
 export function loadoutToCharacterVisual(
   path: SkillPath,
   loadout: PlayerEquipmentLoadout
 ): CharacterEquipmentVisual {
-  const weaponEntry = getGearEntry(loadout.weapon.gearId);
-  const weapon: WeaponCategoryId = weaponEntry?.weaponId ?? "katana";
+  const weaponPiece = loadout.weapon;
+  const weaponEntry = weaponPiece ? getGearEntry(weaponPiece.gearId) : null;
+  const weapon: WeaponCategoryId =
+    weaponEntry?.weaponId ?? DEFAULT_WEAPON_BY_PATH[path];
 
   const pieceRarity: Partial<Record<EquipmentSlot, EquippedPiece["rarity"]>> = {};
   const gearIds: Partial<Record<EquipmentSlot, string>> = {};
   for (const slot of EQUIPMENT_SLOTS) {
-    pieceRarity[slot] = loadout[slot].rarity;
-    gearIds[slot] = loadout[slot].gearId;
+    const piece = loadout[slot];
+    if (!piece) continue;
+    pieceRarity[slot] = piece.rarity;
+    gearIds[slot] = piece.gearId;
   }
 
   return {
     path,
     weapon,
-    helm: loadout.helm.gearId,
-    chest: loadout.chest.gearId,
-    gloves: loadout.gloves.gearId,
-    boots: loadout.boots.gearId,
-    cloak: loadout.cloak.gearId,
-    weaponRarity: loadout.weapon.rarity,
+    helm: loadout.helm?.gearId ?? "",
+    chest: loadout.chest?.gearId ?? "",
+    gloves: loadout.gloves?.gearId ?? "",
+    boots: loadout.boots?.gearId ?? "",
+    cloak: loadout.cloak?.gearId ?? "",
+    weaponRarity: loadout.weapon?.rarity ?? "common",
     pieceRarity,
     gearIds,
   };

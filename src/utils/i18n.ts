@@ -26,11 +26,28 @@ const STRINGS: Record<string, Record<Locale, string>> = {
   "settings.music_volume": { en: "Music", th: "เพลง" },
   "settings.sfx_volume": { en: "Sound effects", th: "เอฟเฟกต์เสียง" },
   "menu.close": { en: "Close", th: "ปิด" },
+  "dialog.confirm": { en: "Confirm", th: "ยืนยัน" },
+  "dialog.cancel": { en: "Cancel", th: "ยกเลิก" },
   "char.stats": { en: "Stats", th: "ค่าสถานะ" },
   "skills.basic_attack": { en: "Basic Attack", th: "โจมตีปกติ" },
   "skills.paths": { en: "Skill Paths", th: "แนวสกิล" },
   "skills.unlock_at": { en: "Unlock Lv", th: "ปลด Lv" },
   "skills.unlock_sp": { en: "SP", th: "SP" },
+  "skills.unlock_confirm_title": {
+    en: "Unlock skill?",
+    th: "ปลดล็อคสกิล?",
+  },
+  "skills.unlock_confirm_message": {
+    en: "Spend {cost} SKILL POINT to unlock {skill}?",
+    th: "ใช้ {cost} แต้มสกิลปลดล็อค {skill}?",
+  },
+  "skills.unlock_confirm_action": { en: "Unlock", th: "ปลดล็อค" },
+  "skills.category.owned": { en: "Owned Skills", th: "สกิลที่มี" },
+  "skills.category.all": { en: "All Skills", th: "สกิลทั้งหมด" },
+  "skills.owned_empty": {
+    en: "No skills unlocked yet",
+    th: "ยังไม่มีสกิลที่ปลดล็อค",
+  },
   "skills.overlay_title": { en: "SKILL POINT", th: "แต้มสกิล" },
   "skills.cooldown": { en: "CD", th: "คูลดาวน์" },
   "skills.skill_points": { en: "Skill Points", th: "แต้มสกิล" },
@@ -55,7 +72,14 @@ const STRINGS: Record<string, Record<Locale, string>> = {
   "bag.claim": { en: "Claim", th: "รับไอเทม" },
   "bag.claimed": { en: "Item claimed", th: "รับไอเทมแล้ว" },
   "bag.equipped": { en: "Equipped", th: "สวมใส่แล้ว" },
+  "bag.unequip": { en: "Unequip", th: "ถอด" },
+  "bag.unequipped": { en: "Unequipped", th: "ถอดแล้ว" },
   "bag.sell": { en: "Sell", th: "ขาย" },
+  "bag.confirm_sell_title": { en: "Confirm sale?", th: "ยืนยันการขาย?" },
+  "bag.confirm_sell_message": {
+    en: "Sell {item} for {price} gold?",
+    th: "ขาย {item} ได้ {price} ทอง?",
+  },
   "bag.sold": { en: "Item sold", th: "ขายสำเร็จ" },
   "bag.sell_error": { en: "Could not sell item", th: "ขายไม่สำเร็จ" },
   "bag.expires": { en: "Expires", th: "หมดอายุ" },
@@ -75,7 +99,16 @@ const STRINGS: Record<string, Record<Locale, string>> = {
   "enemies.boss_late": { en: "Void Demon", th: "ปีศาจสุญญะ" },
   "shop.balance": { en: "Balance", th: "ยอดคงเหลือ" },
   "shop.buy": { en: "Buy", th: "ซื้อ" },
+  "shop.confirm_buy_title": { en: "Confirm purchase?", th: "ยืนยันการซื้อ?" },
+  "shop.confirm_buy_message": {
+    en: "Buy {item} for {cost} gold?",
+    th: "ซื้อ {item} ราคา {cost} ทอง?",
+  },
   "shop.purchased": { en: "Purchased", th: "ซื้อสำเร็จ" },
+  "shop.purchased_mailbox": {
+    en: "Purchased — bag full, sent to mailbox",
+    th: "ซื้อสำเร็จ — กระเป๋าเต็ม ส่งไปกล่องจดหมายแล้ว",
+  },
   "shop.error": { en: "Purchase failed", th: "ซื้อไม่สำเร็จ" },
   "shop.sell_price": { en: "Sell", th: "ขาย" },
   "shop.category.gloves": { en: "Gloves", th: "ถุงมือ" },
@@ -153,13 +186,54 @@ const STRINGS: Record<string, Record<Locale, string>> = {
   "char.name_error.TOO_LONG": { en: "Name is too long (max 20)", th: "ชื่อยาวเกินไป (สูงสุด 20)" },
   "char.name_error.INVALID_CHARACTERS": { en: "Name contains invalid characters", th: "ชื่อมีอักขระที่ไม่ถูกต้อง" },
   "char.name_error.save": { en: "Could not save name", th: "บันทึกชื่อไม่สำเร็จ" },
-  "char.status_point": { en: "STATUS POINT", th: "STATUS POINT" },
+  "char.status_point": { en: "STATUS POINT", th: "แต้มสถานะ" },
+  "char.status_reset": { en: "Reset", th: "รีเซ็ต" },
+  "char.status_reset.aria": {
+    en: "Reset all status point allocations",
+    th: "รีเซ็ตการใช้แต้มสถานะทั้งหมด",
+  },
+  "char.status_reset.confirm_title": {
+    en: "Reset status points?",
+    th: "รีเซ็ตแต้มสถานะ?",
+  },
+  "char.status_reset.confirm_message": {
+    en: "All allocated status points will be refunded and base stats restored.",
+    th: "คืนแต้มสถานะที่ใช้ไปทั้งหมด และรีเซ็ตค่าสถานะหลัก",
+  },
+  "char.status_reset.success": {
+    en: "Status allocations reset",
+    th: "รีเซ็ตแต้มสถานะแล้ว",
+  },
+  "char.status_reset.error": {
+    en: "Could not reset status points",
+    th: "รีเซ็ตแต้มสถานะไม่สำเร็จ",
+  },
+  "char.stat_gear_bonus": { en: "Equipment bonus", th: "โบนัสจากไอเทม" },
+  "char.allocate.success": {
+    en: "{stat} +1",
+    th: "{stat} +1",
+  },
+  "char.allocate.error": {
+    en: "Could not allocate point",
+    th: "ใช้แต้มไม่สำเร็จ",
+  },
+  "char.allocate.aria": {
+    en: "Add 1 to {stat}",
+    th: "เพิ่ม {stat} +1",
+  },
+  "char.allocate.hint": {
+    en: "Spend {cost} status point (+1 stat)",
+    th: "ใช้ {cost} แต้มสถานะ (+1 ค่าสถานะ)",
+  },
   "char.slot.weapon": { en: "Weapon", th: "อาวุธ" },
   "char.slot.helm": { en: "Helm", th: "หมวก" },
   "char.slot.chest": { en: "Armor", th: "เกราะ" },
   "char.slot.gloves": { en: "Gloves", th: "ถุงมือ" },
   "char.slot.boots": { en: "Boots", th: "รองเท้า" },
   "char.slot.cloak": { en: "Cloak", th: "ผ้าคลุม" },
+  "char.slot.empty": { en: "Empty", th: "ว่าง" },
+  "char.slot.no_items": { en: "No items for this slot", th: "ไม่มีไอเทมในช่องนี้" },
+  "char.slot.pick_item": { en: "Equip from bag", th: "เลือกสวมใส่จากกระเป๋า" },
   "gear.imperial.helm.headband": { en: "Great Helm", th: "หมวกเกราะใหญ่" },
   "gear.imperial.chest.robe": { en: "Plate Cuirass", th: "เกราะอก" },
   "gear.imperial.gloves.wraps": { en: "Plate Gauntlets", th: "ถุงมือเกราะ" },
@@ -177,6 +251,16 @@ const STRINGS: Record<string, Record<Locale, string>> = {
   "gear.fantasy.cloak.bone": { en: "Bone Talisman Cloak", th: "ผ้าคลุมเครื่องรางกระดูก" },
 };
 
-export function t(stringId: string, locale: Locale): string {
-  return STRINGS[stringId]?.[locale] ?? stringId;
+export function t(
+  stringId: string,
+  locale: Locale,
+  params?: Record<string, string | number>
+): string {
+  let text = STRINGS[stringId]?.[locale] ?? stringId;
+  if (!params) return text;
+
+  for (const [key, value] of Object.entries(params)) {
+    text = text.replaceAll(`{${key}}`, String(value));
+  }
+  return text;
 }

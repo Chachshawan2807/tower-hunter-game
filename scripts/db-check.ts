@@ -16,6 +16,19 @@ async function verifySchema(pool: ReturnType<typeof createDbPool>): Promise<void
   }
   console.log("✓ Column player_stats.skill_points exists");
 
+  const statusPoints = await pool.query<{ column_name: string }>(
+    `SELECT column_name
+     FROM information_schema.columns
+     WHERE table_schema = 'public'
+       AND table_name = 'player_stats'
+       AND column_name = 'status_points'`
+  );
+
+  if (!statusPoints.rowCount) {
+    throw new Error("Missing column: player_stats.status_points");
+  }
+  console.log("✓ Column player_stats.status_points exists");
+
   const loadoutTable = await pool.query<{ table_name: string }>(
     `SELECT table_name
      FROM information_schema.tables
