@@ -79,6 +79,51 @@ export function processSilhouetteBuffer(data, width, height, dilateRadius = NAV_
   dilateSilhouette(data, width, height, dilateRadius);
 }
 
+/** Remove isolated blobs below minArea (e.g. decorative dots inside a coin rim). */
+export function removeSmallSilhouetteBlobs(data, width, height, minArea) {
+  const labels = new Int32Array(width * height);
+  let nextLabel = 1;
+
+  function flood(x, y, label) {
+    const stack = [[x, y]];
+    let area = 0;
+    const pixels = [];
+
+    while (stack.length > 0) {
+      const [cx, cy] = stack.pop();
+      if (cx < 0 || cy < 0 || cx >= width || cy >= height) continue;
+
+      const idx = cy * width + cx;
+      if (labels[idx] !== 0) continue;
+      if (data[idx * 4 + 3] === 0) continue;
+
+      labels[idx] = label;
+      area++;
+      pixels.push(idx);
+      stack.push([cx + 1, cy], [cx - 1, cy], [cx, cy + 1], [cx, cy - 1]);
+    }
+
+    return { area, pixels };
+  }
+
+  const components = [];
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      const idx = y * width + x;
+      if (labels[idx] === 0 && data[idx * 4 + 3] > 0) {
+        components.push(flood(x, y, nextLabel++));
+      }
+    }
+  }
+
+  for (const { area, pixels } of components) {
+    if (area >= minArea) continue;
+    for (const idx of pixels) {
+      data[idx * 4 + 3] = 0;
+    }
+  }
+}
+
 /**
  * Imperial ink hatch — maps reference gray tones to opaque black ink (hero armor style).
  * Uses grayscale RGB so shading reads clearly on light slot backgrounds.
@@ -104,6 +149,9 @@ export function toInkShadedSilhouette(data, alphaThreshold = 48) {
 
 /** Extra pixels for equipment slot strokes — bolder ink to match hero armor weight. */
 export const EQUIP_STROKE_DILATE = 3;
+
+/** Shop item icons — source art is already ink-weighted; dilation blobs out detail. */
+export const SHOP_ITEM_STROKE_DILATE = 0;
 
 export function processInkShadedBuffer(data, width, height, dilateRadius = EQUIP_STROKE_DILATE) {
   toInkShadedSilhouette(data);

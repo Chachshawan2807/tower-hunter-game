@@ -14,7 +14,7 @@ export type MusicId = "battle_tension" | "tower_ambient";
 
 export interface AudioCatalogEntry {
   volume: number;
-  /** Path under /audio/ — OGG primary, procedural fallback if missing */
+  /** Path under /audio/ — silent when the file is missing */
   src?: string;
   loop?: boolean;
 }

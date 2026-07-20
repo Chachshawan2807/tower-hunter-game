@@ -11,7 +11,6 @@ export interface StarterMailboxItem {
 
 /** Sample mailbox rewards shown in the bag mailbox tab during development. */
 export const STARTER_MAILBOX_ITEMS: StarterMailboxItem[] = [
-  { itemId: "shop_hp_potion", quantity: 5, rarity: "common", sourceFloor: 12 },
   { itemId: "drop_f25_rare", quantity: 1, rarity: "rare", sourceFloor: 25 },
   {
     itemId: "gear.imperial.cloak.sash",

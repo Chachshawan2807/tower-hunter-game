@@ -6,9 +6,6 @@ import {
   type MusicId,
   type SfxId,
 } from "./catalog";
-import { startDripAmbient, startWindAmbient } from "./procedural/ambient";
-import { startBattleMusic, startTowerAmbientMusic } from "./procedural/music";
-import { playProceduralSfx } from "./procedural/sfx";
 
 class AudioManager {
   private ctx: AudioContext | null = null;
@@ -85,14 +82,8 @@ class AudioManager {
   async playSfx(id: SfxId): Promise<void> {
     if (!this.ensureReady() || this.muted) return;
     const entry = SFX_CATALOG[id];
-    const ctx = this.ctx!;
-    const bus = this.sfxBus!;
-
-    if (entry.src) {
-      const played = await this.playBuffer(entry.src, entry.volume, bus);
-      if (played) return;
-    }
-    playProceduralSfx(ctx, bus, id, entry.volume);
+    if (!entry.src) return;
+    await this.playBuffer(entry.src, entry.volume, this.sfxBus!);
   }
 
   private async loadBuffer(src: string): Promise<AudioBuffer | null> {
@@ -147,36 +138,10 @@ class AudioManager {
     if (this.ambientHandles[id]) return;
 
     const entry = AMBIENT_CATALOG[id];
-    const ctx = this.ctx!;
-    const bus = this.ambientBus!;
-
-    if (entry.src) {
-      void this.playBuffer(entry.src, entry.volume, bus, entry.loop ?? false).then((handle) => {
-        if (handle) {
-          this.ambientHandles[id] = handle;
-          return;
-        }
-        this.startProceduralAmbient(id, ctx, bus, entry.volume);
-      });
-      return;
-    }
-
-    this.startProceduralAmbient(id, ctx, bus, entry.volume);
-  }
-
-  private startProceduralAmbient(
-    id: AmbientId,
-    ctx: AudioContext,
-    bus: GainNode,
-    volume: number
-  ): void {
-    if (id === "wind") {
-      this.ambientHandles.wind = startWindAmbient(ctx, bus, volume);
-    } else if (id === "drip") {
-      this.ambientHandles.drip = startDripAmbient(ctx, bus, volume);
-    } else {
-      this.ambientHandles.tower_hum = startWindAmbient(ctx, bus, volume * 0.6);
-    }
+    if (!entry.src) return;
+    void this.playBuffer(entry.src, entry.volume, this.ambientBus!, entry.loop ?? false).then((handle) => {
+      if (handle) this.ambientHandles[id] = handle;
+    });
   }
 
   stopAmbient(id?: AmbientId): void {
@@ -194,27 +159,10 @@ class AudioManager {
     this.stopMusic();
 
     const entry = MUSIC_CATALOG[id];
-    const ctx = this.ctx!;
-    const bus = this.musicBus!;
-
-    if (entry.src) {
-      void this.playBuffer(entry.src, entry.volume, bus, entry.loop ?? false).then((handle) => {
-        if (handle) {
-          this.musicHandle = handle;
-          return;
-        }
-        this.musicHandle =
-          id === "battle_tension"
-            ? startBattleMusic(ctx, bus, entry.volume)
-            : startTowerAmbientMusic(ctx, bus, entry.volume);
-      });
-      return;
-    }
-
-    this.musicHandle =
-      id === "battle_tension"
-        ? startBattleMusic(ctx, bus, entry.volume)
-        : startTowerAmbientMusic(ctx, bus, entry.volume);
+    if (!entry.src) return;
+    void this.playBuffer(entry.src, entry.volume, this.musicBus!, entry.loop ?? false).then((handle) => {
+      if (handle) this.musicHandle = handle;
+    });
   }
 
   stopMusic(): void {

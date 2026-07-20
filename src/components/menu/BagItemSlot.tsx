@@ -1,4 +1,5 @@
 import { WeaponIcon } from "../items/WeaponIcon";
+import { getEquipmentShopAssetKey } from "../../engine/shop/equipmentShopItems";
 import { resolveItemWeaponVisual } from "../../engine/art";
 import { resolveEquippableItem } from "../../engine/art/equipment";
 import type { SkillPath } from "../../engine/types";
@@ -49,6 +50,7 @@ export function BagItemSlot({
   const shortName = abbreviateItemLabel(displayName, locale === "th" ? 5 : 7);
   const rarityKey = RARITY_SHORT[rarity] ?? RARITY_SHORT.common;
   const equippable = resolveEquippableItem(itemId, skillPath);
+  const equipAsset = getEquipmentShopAssetKey(itemId);
 
   return (
     <button
@@ -63,12 +65,23 @@ export function BagItemSlot({
       onClick={() => onSelect(id)}
     >
       <span className="bag-item-slot__icon" aria-hidden>
-        <WeaponIcon
-          weaponId={weaponVisual.weaponId}
-          rarity={weaponVisual.rarity}
-          size={32}
-          className="bag-item-slot__weapon-icon"
-        />
+        {equipAsset ? (
+          <span
+            className="game-icon game-icon--file bag-item-slot__weapon-icon"
+            style={{
+              width: 32,
+              height: 32,
+              ["--icon-mask" as string]: `url(/icons/equipment-items/${equipAsset}.svg)`,
+            }}
+          />
+        ) : (
+          <WeaponIcon
+            weaponId={weaponVisual.weaponId}
+            rarity={weaponVisual.rarity}
+            size={32}
+            className="bag-item-slot__weapon-icon"
+          />
+        )}
       </span>
       {quantity > 1 && (
         <span className="bag-item-slot__qty" aria-hidden>

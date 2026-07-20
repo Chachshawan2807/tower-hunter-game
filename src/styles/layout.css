@@ -128,7 +128,7 @@
 .hud-chrome__wallet {
   display: flex;
   align-items: center;
-  gap: var(--space-2);
+  gap: var(--space-3);
   flex-shrink: 0;
 }
 
@@ -152,11 +152,20 @@
   gap: var(--space-4);
 }
 
-.top-hud--compact .hud-gold,
-.top-hud--compact .hud-action-btn {
+.top-hud--compact .hud-actions {
+  gap: 10px;
+}
+
+.top-hud--compact .hud-gold {
   min-height: 0;
   min-width: 0;
   padding: 0;
+}
+
+.top-hud--compact .hud-action-btn {
+  min-width: 44px;
+  min-height: 44px;
+  padding: var(--space-2);
 }
 
 .top-hud--compact .hud-level-badge,
@@ -291,11 +300,37 @@
   display: grid;
   place-items: center;
   line-height: 1;
+  position: relative;
 }
 
 .hud-actions {
   display: flex;
+  align-items: center;
   gap: var(--space-2);
+}
+
+/* Slight extra clearance when mailbox badge overflows */
+.hud-actions:has(.hud-action-btn__badge) {
+  gap: var(--space-3);
+}
+
+.hud-action-btn__badge {
+  position: absolute;
+  top: -5px;
+  right: -7px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: var(--crimson);
+  color: #fff;
+  font-family: var(--font-stat);
+  font-size: 0.62rem;
+  font-weight: 700;
+  line-height: 16px;
+  text-align: center;
+  pointer-events: none;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2);
 }
 
 .icon-btn {
@@ -355,6 +390,10 @@
   justify-content: center;
   padding: 0 var(--content-inline) calc(var(--space-2) + var(--safe-bottom));
   z-index: 20;
+  pointer-events: none;
+}
+
+.bottom-nav--blocked .bottom-nav__dock {
   pointer-events: none;
 }
 
@@ -471,4 +510,24 @@
   flex: 1;
   scrollbar-width: thin;
   scrollbar-color: var(--stone-600) transparent;
+}
+
+/* Centered dialog — mailbox, settings */
+.overlay--dialog {
+  align-items: center;
+  justify-content: center;
+  bottom: 0;
+  padding: var(--space-4);
+}
+
+.overlay--dialog .overlay__panel {
+  width: min(92vw, 400px);
+  max-height: min(80vh, 520px);
+  border-radius: var(--radius-xl);
+  border: 2px solid var(--ember-600);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.45);
+}
+
+.view-readable .overlay--dialog .overlay__panel {
+  border-color: var(--antique-gold);
 }

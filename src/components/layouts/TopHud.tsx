@@ -9,6 +9,8 @@ interface TopHudProps {
   level: number;
   exp: number;
   gold: string;
+  mailboxCount?: number;
+  onOpenMailbox: () => void;
   onOpenSettings: () => void;
   /** Home view: stats-only bar (name shown on hero showcase) */
   compact?: boolean;
@@ -20,6 +22,8 @@ export function TopHud({
   level,
   exp,
   gold,
+  mailboxCount = 0,
+  onOpenMailbox,
   onOpenSettings,
   compact = false,
 }: TopHudProps) {
@@ -69,19 +73,43 @@ export function TopHud({
             </span>
             <span className="hud-gold__amount">{gold}</span>
           </span>
-          <button
-            type="button"
-            className="hud-action-btn"
-            onClick={() => {
-              playUiClick();
-              onOpenSettings();
-            }}
-            aria-label={t("settings.title", locale)}
-          >
-            <span className="hud-action-btn__icon" aria-hidden="true">
-              <GameIcon name="settings" size={28} />
-            </span>
-          </button>
+          <div className="hud-actions">
+            <button
+              type="button"
+              className="hud-action-btn hud-action-btn--mailbox"
+              onClick={() => {
+                playUiClick();
+                onOpenMailbox();
+              }}
+              aria-label={
+                mailboxCount > 0
+                  ? `${t("bag.mailbox", locale)} (${mailboxCount})`
+                  : t("bag.mailbox", locale)
+              }
+            >
+              <span className="hud-action-btn__icon" aria-hidden="true">
+                <GameIcon name="mailbox" size={28} />
+                {mailboxCount > 0 ? (
+                  <span className="hud-action-btn__badge tabular-nums">
+                    {mailboxCount > 99 ? "99+" : mailboxCount}
+                  </span>
+                ) : null}
+              </span>
+            </button>
+            <button
+              type="button"
+              className="hud-action-btn hud-action-btn--settings"
+              onClick={() => {
+                playUiClick();
+                onOpenSettings();
+              }}
+              aria-label={t("settings.title", locale)}
+            >
+              <span className="hud-action-btn__icon" aria-hidden="true">
+                <GameIcon name="settings" size={28} />
+              </span>
+            </button>
+          </div>
         </div>
       </div>
     </header>

@@ -13,12 +13,6 @@ const OUT = path.join(ROOT, "public", "icons", "ui");
 /** @type {Record<string, { viewBox: string, paths: string[], fills?: string[], strokes?: string[], strokeWidths?: number[] }>} */
 /** Nav buttons (character/skills/tower/bag/shop/sword-cross) come from buildNavButtonSvgs.mjs */
 const ICONS = {
-  mailbox: {
-    viewBox: "0 0 24 24",
-    paths: ["M4 8h16v12H4V8Z", "M4 12h16", "M12 12v8", "M12 8V5.2", "M9.6 5.2h4.8"],
-    strokes: ["#1a1a1a", "#1a1a1a", "#1a1a1a", "#1a1a1a", "#1a1a1a"],
-    strokeWidths: [1.85, 1.55, 1.55, 1.55, 1.55],
-  },
   gold: {
     viewBox: "0 0 24 24",
     paths: [
@@ -169,37 +163,6 @@ const ICONS = {
     paths: ["M4.8 4.8l4.8 1.6 1.6 4.8-4.8-1.6-1.6-4.8Z", "M14.4 10.4l4.8 4.8", "M16 8.8l3.2 3.2"],
     strokes: ["#1a1a1a", "#1a1a1a", "#1a1a1a"],
     strokeWidths: [1.85, 1.85, 1.85],
-  },
-  "potion-hp": {
-    viewBox: "0 0 24 24",
-    paths: ["M9.6 3.2h4.8v3.2H9.6V3.2Z", "M8.8 6.4h6.4l-.8 13.6H9.6L8.8 6.4Z", "M12 10.4v6.4", "M9.6 13.6h4.8"],
-    strokes: ["#1a1a1a", "#1a1a1a", "#1a1a1a", "#1a1a1a"],
-    strokeWidths: [1.85, 1.85, 1.55, 1.55],
-  },
-  "potion-mp": {
-    viewBox: "0 0 24 24",
-    paths: [
-      "M9.6 3.2h4.8v3.2H9.6V3.2Z",
-      "M8.8 6.4h6.4l-.8 13.6H9.6L8.8 6.4Z",
-      "M10.4 12.8c1.6-1.6 3.2-1.6 4.8 0",
-    ],
-    strokes: ["#1a1a1a", "#1a1a1a", "#1a1a1a"],
-    strokeWidths: [1.85, 1.85, 1.55],
-  },
-  scroll: {
-    viewBox: "0 0 24 24",
-    paths: [
-      "M6.4 4.8h9.6a1.6 1.6 0 0 1 1.6 1.6v12.8l-3.2-1.6-3.2 1.6-3.2-1.6V6.4a1.6 1.6 0 0 1 1.6-1.6Z",
-      "M10.4 9.6h6.4M10.4 12.8h4.8",
-    ],
-    strokes: ["#1a1a1a", "#1a1a1a"],
-    strokeWidths: [1.85, 1.55],
-  },
-  charm: {
-    viewBox: "0 0 24 24",
-    paths: ["M12 2.4l2 6.4H20l-5.2 4 2 6.4L12 17.6 7.2 19.2l2-6.4L4 8.8h6L12 2.4Z"],
-    strokes: ["#1a1a1a"],
-    strokeWidths: [1.85],
   },
   "upgrade-damage": {
     viewBox: "0 0 24 24",

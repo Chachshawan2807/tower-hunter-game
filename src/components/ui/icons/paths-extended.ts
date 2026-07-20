@@ -125,40 +125,6 @@ export const EXTENDED_ICON_PATHS: Record<string, IconPathDef> = {
     paths: ["M6 18l8-8M14 10l2-8 2 8-2 2-2-2Z"],
     fills: ["currentColor"],
   },
-  "potion-hp": {
-    viewBox: "0 0 24 24",
-    paths: [
-      "M9 3h6v3H9V3Z",
-      "M8 6h8l-1 14H9L8 6Z",
-      "M12 10v6M9 13h6",
-    ],
-    fills: ["currentColor", "currentColor", "none"],
-    strokes: [undefined, undefined, "#fff"],
-    strokeWidths: [0, 0, 1.6],
-  },
-  "potion-mp": {
-    viewBox: "0 0 24 24",
-    paths: [
-      "M9 3h6v3H9V3Z",
-      "M8 6h8l-1 14H9L8 6Z",
-      "M10 12c2-2 4-2 4 0s-2 2-4 0",
-    ],
-    fills: ["currentColor", "currentColor", "none"],
-    strokes: [undefined, undefined, "#fff"],
-    strokeWidths: [0, 0, 1.4],
-  },
-  scroll: {
-    viewBox: "0 0 24 24",
-    paths: ["M6 4h10a2 2 0 0 1 2 2v14l-4-2-4 2-4-2V6a2 2 0 0 1 2-2Z", "M10 8h6M10 12h4"],
-    fills: ["currentColor", "none"],
-    strokes: [undefined, "#fff"],
-    strokeWidths: [0, 1.2],
-  },
-  charm: {
-    viewBox: "0 0 24 24",
-    paths: ["M12 2l2 6h6l-5 4 2 6-5-4-5 4 2-6-5-4h6l2-6Z"],
-    fills: ["currentColor"],
-  },
   "upgrade-damage": {
     viewBox: "0 0 24 24",
     paths: ["M6 18l8-8M14 10l2-8 2 8-2 2-2-2Z"],

@@ -155,23 +155,63 @@
 
 /* ── Overlay slide sheet §08 ── */
 .overlay {
-  animation: ui-overlay-fade-in var(--duration-normal) var(--ease-out);
+  animation: ui-overlay-fade-in var(--overlay-backdrop-enter) var(--ease-out);
 }
 
 .overlay--closing {
-  animation: ui-overlay-fade-out var(--duration-fast) var(--ease-out) forwards;
+  animation: ui-overlay-fade-out var(--overlay-backdrop-exit) var(--ease-out) forwards;
 }
 
 .overlay__panel {
-  animation: ui-panel-slide-up 0.32s var(--ease-out);
+  animation: ui-panel-slide-up var(--overlay-sheet-enter) var(--ease-out);
 }
 
 .overlay--closing .overlay__panel {
-  animation: ui-panel-slide-down 0.22s var(--ease-out) forwards;
+  animation: ui-panel-slide-down var(--overlay-sheet-exit) var(--ease-out) forwards;
+}
+
+.overlay--dialog .overlay__panel {
+  animation: ui-dialog-scale-in var(--overlay-dialog-enter) var(--ease-out);
+}
+
+.overlay--dialog.overlay--closing .overlay__panel {
+  animation: ui-dialog-scale-out var(--overlay-dialog-exit) var(--ease-out) forwards;
 }
 
 .overlay__body > * {
-  animation: ui-menu-content-in 0.35s var(--ease-out) backwards;
+  animation: ui-menu-content-in var(--overlay-content-enter) var(--ease-out) backwards;
+}
+
+/* ── Disclosure accordion (shop categories, collapsible sections) ── */
+.ui-disclosure {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--duration-accordion) var(--ease-out);
+}
+
+.ui-disclosure--open {
+  grid-template-rows: 1fr;
+}
+
+.ui-disclosure__inner {
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* ── Item detail reveal (bag / mailbox) ── */
+.bag-slot-detail-wrap {
+  animation: ui-detail-reveal var(--duration-normal) var(--ease-out);
+}
+
+@keyframes ui-detail-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* ── Loading screen §08 ── */
@@ -217,6 +257,28 @@
   to { transform: translateY(100%); }
 }
 
+@keyframes ui-dialog-scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.94) translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes ui-dialog-scale-out {
+  from {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.96) translateY(8px);
+  }
+}
+
 @keyframes ui-menu-content-in {
   from {
     opacity: 0;
@@ -244,8 +306,18 @@
   .overlay,
   .overlay__panel,
   .overlay__body > *,
+  .ui-disclosure,
+  .bag-slot-detail-wrap,
   .loading-screen__icon-wrap {
     animation: none;
+  }
+
+  .ui-disclosure {
+    transition: none;
+  }
+
+  .ui-disclosure:not(.ui-disclosure--open) {
+    display: none;
   }
 
   .hud-exp-gauge__fill {

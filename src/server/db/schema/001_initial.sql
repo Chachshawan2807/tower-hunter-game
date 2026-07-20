@@ -11,7 +11,6 @@ CREATE TABLE users (
   external_id TEXT NOT NULL UNIQUE,
   display_name TEXT NOT NULL,
   gold_balance BIGINT NOT NULL DEFAULT 0 CHECK (gold_balance >= 0),
-  auto_dismantle_common BOOLEAN NOT NULL DEFAULT FALSE,
   preferred_locale TEXT NOT NULL DEFAULT 'en' CHECK (preferred_locale IN ('th', 'en')),
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()

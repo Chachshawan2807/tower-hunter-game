@@ -7,14 +7,16 @@ import { MenuOverlay } from "./components/layouts/MenuOverlay";
 import { OverlayModal } from "./components/layouts/OverlayModal";
 import { TopHud } from "./components/layouts/TopHud";
 import { SettingsMenu } from "./components/menu/SettingsMenu";
+import { MailboxMenu } from "./components/menu/MailboxMenu";
 import { GameIcon } from "./components/ui/icons";
 import { useBattle } from "./hooks/useBattle";
 import { useLocale } from "./hooks/useLocale";
-import { isOverlayMenu, useMenuNavigation } from "./hooks/useMenuNavigation";
+import { isOverlayMenu, useUIScreen } from "./hooks/useUIScreen";
 import { usePlayer } from "./hooks/usePlayer";
 import { useBattleAudio, useTowerAmbient } from "./hooks/useGameAudio";
 import { usePlayerEquipment } from "./hooks/usePlayerEquipment";
 import { useAudioSettings } from "./hooks/useAudioSettings";
+import { useMailboxCount } from "./hooks/useMailboxCount";
 import { formatBattleEvent } from "./components/battle/battleLog";
 import { t } from "./utils/i18n";
 
@@ -22,10 +24,23 @@ export function App() {
   const { locale, toggleLocale } = useLocale();
   useAudioSettings();
   const player = usePlayer();
-  const { activeMenu, overlayOpen, selectTab, closeMenu } = useMenuNavigation();
+  const {
+    activeMenu,
+    overlayOpen,
+    modal,
+    isDialogOpen,
+    isAnyOverlayOpen,
+    selectTab,
+    closeMenu,
+    openSettings,
+    openMailbox,
+    closeModal,
+  } = useUIScreen();
   const [currentFloor, setCurrentFloor] = useState(1);
-  const [settingsOpen, setSettingsOpen] = useState(false);
   const navRef = useRef<HTMLElement>(null);
+  const { count: mailboxCount, refresh: refreshMailboxCount } = useMailboxCount(
+    player.userId
+  );
 
   useEffect(() => {
     if (player.currentFloor > 0) {
@@ -67,8 +82,15 @@ export function App() {
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
-      if (settingsOpen || overlayOpen) return;
-      if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+      if (isAnyOverlayOpen) return;
+      if (
+        event.key !== "ArrowLeft" &&
+        event.key !== "ArrowRight" &&
+        event.key !== "Home" &&
+        event.key !== "End"
+      ) {
+        return;
+      }
 
       const tabs = navRef.current?.querySelectorAll<HTMLButtonElement>('[role="tab"]');
       if (!tabs || tabs.length === 0) return;
@@ -78,8 +100,13 @@ export function App() {
         (tab) => tab.getAttribute("aria-selected") === "true"
       );
       const base = currentIndex >= 0 ? currentIndex : 0;
-      const delta = event.key === "ArrowRight" ? 1 : -1;
-      const next = (base + delta + tabsArr.length) % tabsArr.length;
+      let next: number;
+      if (event.key === "Home") next = 0;
+      else if (event.key === "End") next = tabsArr.length - 1;
+      else {
+        const delta = event.key === "ArrowRight" ? 1 : -1;
+        next = (base + delta + tabsArr.length) % tabsArr.length;
+      }
       event.preventDefault();
       tabsArr[next]?.click();
       tabsArr[next]?.focus();
@@ -87,7 +114,7 @@ export function App() {
 
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [settingsOpen, overlayOpen]);
+  }, [isAnyOverlayOpen]);
 
   if (player.loading) {
     return (
@@ -111,7 +138,8 @@ export function App() {
         className={[
           "game-viewport",
           "view-readable",
-          overlayOpen || settingsOpen ? "is-menu-open" : "",
+          isAnyOverlayOpen ? "is-menu-open" : "",
+          isDialogOpen ? "is-dialog-open" : "",
           isTowerView ? "is-dark-stage" : "",
         ]
           .filter(Boolean)
@@ -123,8 +151,10 @@ export function App() {
           level={player.level}
           exp={player.exp}
           gold={player.gold}
+          mailboxCount={mailboxCount}
           compact
-          onOpenSettings={() => setSettingsOpen(true)}
+          onOpenMailbox={openMailbox}
+          onOpenSettings={openSettings}
         />
 
         {isMainView && (
@@ -174,13 +204,33 @@ export function App() {
           />
         )}
 
-        {settingsOpen && (
+        {modal === "settings" && (
           <OverlayModal
+            variant="dialog"
             title={t("settings.title", locale)}
             locale={locale}
-            onClose={() => setSettingsOpen(false)}
+            onClose={closeModal}
           >
             <SettingsMenu locale={locale} onToggleLocale={toggleLocale} />
+          </OverlayModal>
+        )}
+
+        {modal === "mailbox" && (
+          <OverlayModal
+            variant="dialog"
+            title={t("bag.mailbox", locale)}
+            locale={locale}
+            onClose={() => {
+              closeModal();
+              void refreshMailboxCount();
+            }}
+          >
+            <MailboxMenu
+              locale={locale}
+              userId={player.userId}
+              skillPath={player.skillPath}
+              onMailboxChange={refreshMailboxCount}
+            />
           </OverlayModal>
         )}
 
@@ -188,6 +238,7 @@ export function App() {
           ref={navRef}
           locale={locale}
           active={activeMenu}
+          blocked={isDialogOpen}
           onSelect={selectTab}
         />
       </div>

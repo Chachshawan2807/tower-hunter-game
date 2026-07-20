@@ -82,17 +82,12 @@ export async function grantBattleRewards(
   });
 
   for (const item of rewards.items) {
-    await addItemToInventory(
-      pool,
-      userId,
-      {
-        itemId: item.id,
-        quantity: 1,
-        rarity: item.rarity,
-        sourceFloor: floor,
-      },
-      { idempotencyKey: `battle_drop:${sessionId}:${item.id}` }
-    );
+    await addItemToInventory(pool, userId, {
+      itemId: item.id,
+      quantity: 1,
+      rarity: item.rarity,
+      sourceFloor: floor,
+    });
   }
 
   await applyBattleWinProgress(pool, userId, floor, rewards.exp);

@@ -12,7 +12,6 @@ export type IdempotencyStatus = "processing" | "completed" | "failed";
 export type WalletTransactionType =
   | "reward"
   | "purchase"
-  | "dismantle"
   | "admin_adjustment";
 
 export interface UserRow {
@@ -20,7 +19,6 @@ export interface UserRow {
   external_id: string;
   display_name: string;
   gold_balance: bigint;
-  auto_dismantle_common: boolean;
   preferred_locale: SupportedLocale;
   created_at: Date;
   updated_at: Date;
@@ -98,15 +96,13 @@ export interface InventoryItemInput {
   sourceFloor?: number;
 }
 
-export type AddItemOutcome = "inventory" | "mailbox" | "dismantled";
+export type AddItemOutcome = "inventory" | "mailbox";
 
 export interface AddItemResult {
   outcome: AddItemOutcome;
   itemId: string;
   quantity: number;
   mailboxId?: string;
-  goldCredited?: bigint;
-  walletResult?: WalletTransactionResult;
 }
 
 export class DbError extends Error {

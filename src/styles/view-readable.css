@@ -163,6 +163,15 @@
   background: transparent;
 }
 
+.view-readable.is-dialog-open .bottom-nav {
+  pointer-events: none;
+  opacity: 0.45;
+}
+
+.view-readable.is-dialog-open .top-hud {
+  pointer-events: none;
+}
+
 .view-readable.is-menu-open .nav-btn,
 .view-readable.is-dark-stage .nav-btn {
   color: var(--text-secondary);
@@ -218,15 +227,17 @@
 .view-readable .stat-item > span,
 .view-readable .skill-path,
 .view-readable .bag-menu,
+.view-readable .mailbox-menu,
 .view-readable .shop-menu,
 .view-readable .skill-menu,
 .view-readable .bag-tab,
 .view-readable .skill-path-tab,
-.view-readable .bag-toggle,
 .view-readable .bag-item__rarity,
 .view-readable .shop-message,
 .view-readable .shop-item__name,
-.view-readable .shop-item__cost,
+.view-readable .shop-item__buy,
+.view-readable .shop-section__toggle,
+.view-readable .shop-section__toggle-meta,
 .view-readable .skill-card__name,
 .view-readable .skill-card__desc,
 .view-readable .bag-item__main,
@@ -235,8 +246,7 @@
 .view-readable .bag-item-slot__rarity,
 .view-readable .bag-slot-detail,
 .view-readable .bag-slot-detail__name,
-.view-readable .bag-slot-detail__stats,
-.view-readable .shop-balance {
+.view-readable .bag-slot-detail__stats {
   color: var(--ink-black);
 }
 
@@ -250,6 +260,8 @@
 .view-readable .bag-item-slot,
 .view-readable .bag-slot-detail,
 .view-readable .shop-item,
+.view-readable .shop-section,
+.view-readable .shop-section:not(.shop-section--collapsed) .shop-section__toggle,
 .view-readable .skill-card,
 .view-readable .bag-tab,
 .view-readable .skill-path-tab,
@@ -263,11 +275,6 @@
   background: rgba(197, 160, 89, 0.22);
   border-color: var(--antique-gold-deep);
   color: var(--ink-black);
-}
-
-.view-readable .shop-balance {
-  background: var(--surface-gold-tint);
-  border-color: rgba(0, 0, 0, 0.12);
 }
 
 .view-readable .bag-item-slot__rarity {

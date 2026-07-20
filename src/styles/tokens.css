@@ -124,8 +124,18 @@
   --tower-nav-protrusion: 12px;
   --overlay-bottom-inset: calc(var(--bottom-nav-height) + var(--tower-nav-protrusion));
 
-  /* Motion */
+  /* Motion — shared by CSS animations and overlay lifecycle */
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
   --duration-fast: 150ms;
   --duration-normal: 250ms;
+  --duration-slow: 320ms;
+  --duration-accordion: 280ms;
+  --overlay-backdrop-enter: var(--duration-normal);
+  --overlay-backdrop-exit: var(--duration-fast);
+  --overlay-sheet-enter: var(--duration-slow);
+  --overlay-sheet-exit: 220ms;
+  --overlay-dialog-enter: 280ms;
+  --overlay-dialog-exit: 200ms;
+  --overlay-content-enter: 350ms;
 }

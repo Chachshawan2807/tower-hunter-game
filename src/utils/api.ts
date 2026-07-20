@@ -30,7 +30,6 @@ export interface UserProfile {
   display_name: string;
   gold_balance: string;
   preferred_locale: "th" | "en";
-  auto_dismantle_common?: boolean;
 }
 
 export interface GearStatBonusDto {
@@ -246,13 +245,6 @@ export const api = {
       inventoryResult: { outcome: string; itemId: string; quantity: number };
     }>(`/api/users/${userId}/mailbox/${mailboxItemId}/claim`, {
       method: "POST",
-    });
-  },
-
-  updateSettings(userId: string, settings: { autoDismantleCommon: boolean }) {
-    return request<UserProfile>(`/api/users/${userId}/settings`, {
-      method: "PATCH",
-      body: JSON.stringify(settings),
     });
   },
 

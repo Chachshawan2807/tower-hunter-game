@@ -8,7 +8,12 @@ import { homedir } from "node:os";
 import path from "path";
 import { fileURLToPath } from "url";
 import sharp from "sharp";
-import { isBackground, processSilhouetteBuffer } from "./iconSilhouette.mjs";
+import {
+  dilateSilhouette,
+  isBackground,
+  removeSmallSilhouetteBlobs,
+  toMaskSilhouette,
+} from "./iconSilhouette.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, "..");
@@ -18,6 +23,8 @@ const OUT = path.join(ROOT, "public", "icons", "ui", "gold.svg");
 const CANVAS = 256;
 const SOURCE_UPSCALE = 8;
 const GOLD_DILATE = 1;
+/** At 8× upscale, inner star dots are ~370–780 px; crown/rings are much larger. */
+const GOLD_MIN_BLOB_AREA = 800;
 const NAV_TARGET_WIDTH = 212;
 
 const SOURCE_CANDIDATES = [
@@ -133,7 +140,9 @@ async function main() {
     .ensureAlpha()
     .raw()
     .toBuffer({ resolveWithObject: true });
-  processSilhouetteBuffer(data, info.width, info.height, GOLD_DILATE);
+  toMaskSilhouette(data);
+  removeSmallSilhouetteBlobs(data, info.width, info.height, GOLD_MIN_BLOB_AREA);
+  dilateSilhouette(data, info.width, info.height, GOLD_DILATE);
 
   const trimmed = await sharp(Buffer.from(data), {
     raw: { width: info.width, height: info.height, channels: 4 },

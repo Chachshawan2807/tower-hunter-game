@@ -1,115 +1,136 @@
-import { useCallback, useEffect, useState } from "react";
-import { t, type Locale } from "../../utils/i18n";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import {
+  groupShopCatalogByCategory,
+  type ShopItemCategory,
+} from "../../engine/shop/shopCatalogLayout";
+import { getEquipmentShopLabel } from "../../engine/shop/equipmentShopItems";
 import { api, type ShopCatalogItem } from "../../utils/api";
-import { CharacterFigure } from "../character/CharacterFigure";
-import { GameIcon, shopIconName } from "../ui/icons";
+import { t, type Locale } from "../../utils/i18n";
+import { GameIcon } from "../ui/icons";
+import { ShopCategorySection } from "./ShopCategorySection";
+import { ShopItemIcon } from "./ShopItemIcon";
 
 interface ShopMenuProps {
   locale: Locale;
   userId: string | null;
   gold: string;
-  onPurchase?: () => void;
+  onPurchase: () => void;
 }
 
-export function ShopMenu({
-  locale,
-  userId,
-  gold,
-  onPurchase,
-}: ShopMenuProps) {
+function resolveShopItemName(item: ShopCatalogItem, locale: Locale): string {
+  const equipLabel = getEquipmentShopLabel(item.id, locale);
+  if (equipLabel) return equipLabel;
+  return t(item.stringId, locale);
+}
+
+export function ShopMenu({ locale, userId, gold, onPurchase }: ShopMenuProps) {
   const [catalog, setCatalog] = useState<ShopCatalogItem[]>([]);
-  const [busy, setBusy] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [busyId, setBusyId] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
-
-  useEffect(() => {
-    api.getShopCatalog().then((res) => setCatalog(res.items));
-  }, []);
-
-  const handleBuy = useCallback(
-    async (itemId: string) => {
-      if (!userId || busy) return;
-
-      setBusy(itemId);
-      setMessage(null);
-
-      try {
-        const result = await api.purchaseShopItem(
-          userId,
-          itemId,
-          `shop:${userId}:${itemId}:${Date.now()}`
-        );
-        setMessage(
-          `${t("shop.purchased", locale)} — ${result.goldSpent}`
-        );
-        onPurchase?.();
-      } catch (err) {
-        setMessage(err instanceof Error ? err.message : t("shop.error", locale));
-      } finally {
-        setBusy(null);
-      }
-    },
-    [userId, busy, locale, onPurchase]
+  const [expandedCategories, setExpandedCategories] = useState<Set<ShopItemCategory>>(
+    () => new Set()
   );
 
   const goldBalance = BigInt(gold || "0");
+  const catalogGroups = useMemo(() => groupShopCatalogByCategory(catalog), [catalog]);
+
+  const loadCatalog = useCallback(async () => {
+    setLoading(true);
+    try {
+      const { items } = await api.getShopCatalog();
+      setCatalog(items);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    void loadCatalog();
+  }, [loadCatalog]);
+
+  const toggleCategory = (category: ShopItemCategory) => {
+    setExpandedCategories((prev) => {
+      const next = new Set(prev);
+      if (next.has(category)) {
+        next.delete(category);
+      } else {
+        next.add(category);
+      }
+      return next;
+    });
+  };
+
+  const handleBuy = async (item: ShopCatalogItem) => {
+    if (!userId || busyId) return;
+    const cost = BigInt(item.cost);
+    if (goldBalance < cost) return;
+
+    setBusyId(item.id);
+    setMessage(null);
+    try {
+      await api.purchaseShopItem(userId, item.id, crypto.randomUUID());
+      setMessage(t("shop.purchased", locale));
+      onPurchase();
+    } catch {
+      setMessage(t("shop.error", locale));
+    } finally {
+      setBusyId(null);
+    }
+  };
+
+  if (loading) {
+    return <p className="menu-empty">...</p>;
+  }
 
   return (
     <div className="shop-menu">
-      <div className="shop-merchant">
-        <CharacterFigure
-          side="npc"
-          archetype="merchant"
-          animState="idle"
-          size="npc"
-          label={t("shop.title", locale)}
-        />
-        <span className="shop-merchant__label">{t("shop.title", locale)}</span>
-      </div>
-
-      <p className="shop-balance ui-balance">
-        <GameIcon name="gold" size={18} />
-        {t("shop.balance", locale)}: {gold}
-      </p>
-
       {message && (
-        <p className="shop-message">
-          <GameIcon name="gold" size={16} />
+        <p className="shop-message" role="status">
           {message}
         </p>
       )}
 
-      <ul className="shop-list">
-        {catalog.map((item) => {
-          const cost = BigInt(item.cost);
-          const canAfford = goldBalance >= cost;
+      <div className="shop-sections">
+        {catalogGroups.map((group) => (
+          <ShopCategorySection
+            key={group.category}
+            category={group.category}
+            labelKey={group.labelKey}
+            itemCount={group.items.length}
+            locale={locale}
+            expanded={expandedCategories.has(group.category)}
+            onToggle={() => toggleCategory(group.category)}
+          >
+            <ul className="shop-grid" role="list">
+              {group.items.map((item) => {
+                const cost = BigInt(item.cost);
+                const canAfford = goldBalance >= cost;
+                const name = resolveShopItemName(item, locale);
 
-          return (
-            <li key={item.id} className="shop-item ui-row">
-              <span className="shop-item__icon ui-row__icon">
-                <GameIcon name={shopIconName(item.id)} size={28} />
-              </span>
-              <div className="shop-item__info ui-row__main">
-                <span className="shop-item__name">
-                  {t(item.stringId, locale)}
-                </span>
-                <span className="shop-item__cost">
-                  <GameIcon name="gold" size={14} />
-                  {item.cost}
-                </span>
-              </div>
-              <div className="ui-row__action">
-                <button
-                  className="shop-item__buy"
-                  disabled={!userId || !canAfford || busy === item.id}
-                  onClick={() => handleBuy(item.id)}
-                >
-                  {busy === item.id ? "..." : t("shop.buy", locale)}
-                </button>
-              </div>
-            </li>
-          );
-        })}
-      </ul>
+                return (
+                  <li key={item.id} className={`shop-item shop-item--${item.rarity}`}>
+                    <div className="shop-item__art">
+                      <ShopItemIcon itemId={item.id} icon={item.icon} size={34} />
+                    </div>
+                    <p className="shop-item__name">{name}</p>
+                    <button
+                      type="button"
+                      className="shop-item__buy tabular-nums"
+                      disabled={!userId || busyId !== null || !canAfford}
+                      aria-label={`${t("shop.buy", locale)} ${name} ${item.cost}`}
+                      onClick={() => void handleBuy(item)}
+                    >
+                      <GameIcon name="gold" size={18} className="shop-item__buy-icon" />
+                      {item.cost}
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          </ShopCategorySection>
+        ))}
+      </div>
     </div>
   );
 }

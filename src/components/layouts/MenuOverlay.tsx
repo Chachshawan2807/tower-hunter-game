@@ -11,6 +11,10 @@ import {
   skillOverlayTitleLabel,
 } from "../menu/SkillOverlayTitle";
 import { ShopMenu } from "../menu/ShopMenu";
+import {
+  ShopOverlayTitle,
+  shopOverlayTitleLabel,
+} from "../menu/ShopOverlayTitle";
 import { SkillMenu } from "../menu/SkillMenu";
 import type { NavTab } from "./BottomNav";
 import { t, type Locale } from "../../utils/i18n";
@@ -85,6 +89,8 @@ export function MenuOverlay({
       />
     ) : menu === "skills" ? (
       <SkillOverlayTitle locale={locale} skillPoints={displaySkillPoints} />
+    ) : menu === "shop" ? (
+      <ShopOverlayTitle locale={locale} gold={gold} />
     ) : (
       t(OVERLAY_TITLES[menu], locale)
     );
@@ -94,7 +100,9 @@ export function MenuOverlay({
       ? characterOverlayTitleLabel(locale, playerLevel, playerExp)
       : menu === "skills"
         ? skillOverlayTitleLabel(locale, displaySkillPoints)
-        : t(OVERLAY_TITLES[menu], locale);
+        : menu === "shop"
+          ? shopOverlayTitleLabel(locale, gold)
+          : t(OVERLAY_TITLES[menu], locale);
 
   return (
     <OverlayModal
@@ -132,12 +140,7 @@ export function MenuOverlay({
         />
       )}
       {menu === "shop" && (
-        <ShopMenu
-          locale={locale}
-          userId={userId}
-          gold={gold}
-          onPurchase={onPurchase}
-        />
+        <ShopMenu locale={locale} userId={userId} gold={gold} onPurchase={onPurchase} />
       )}
     </OverlayModal>
   );

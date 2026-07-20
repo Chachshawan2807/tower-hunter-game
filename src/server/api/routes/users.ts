@@ -9,7 +9,6 @@ import {
   listMailboxItems,
   claimMailboxItem,
   addItemToInventory,
-  setAutoDismantleCommon,
   getPlayerSkillPath,
 } from "../../db";
 import {
@@ -160,17 +159,3 @@ userRoutes.patch("/:userId/equipment", async (c) => {
   }
 });
 
-userRoutes.patch("/:userId/settings", async (c) => {
-  const body = await c.req.json<{ autoDismantleCommon?: boolean }>();
-  if (body.autoDismantleCommon === undefined) {
-    return c.json({ error: "No settings provided", code: "INVALID_BODY" }, 400);
-  }
-
-  const user = await setAutoDismantleCommon(
-    c.get("db"),
-    c.req.param("userId"),
-    body.autoDismantleCommon
-  );
-
-  return jsonBigInt(c, user);
-});

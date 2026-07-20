@@ -17,14 +17,6 @@ const SKILL_ICON_MAP: Record<string, GameIconName> = {
   fantasy_meteor: "skill-meteor",
 };
 
-const SHOP_ICON_MAP: Record<string, GameIconName> = {
-  shop_hp_potion: "potion-hp",
-  shop_mp_potion: "potion-mp",
-  shop_atk_scroll: "scroll",
-  shop_def_charm: "charm",
-  shop_lucky_coin: "gold",
-};
-
 const PATH_ICON_MAP: Record<SkillPath, GameIconName> = {
   imperial: "path-imperial",
   knight: "path-knight",
@@ -41,8 +33,8 @@ export function skillIconName(skillId: string): GameIconName {
   return SKILL_ICON_MAP[skillId] ?? "skill-sword";
 }
 
-export function shopIconName(itemId: string): GameIconName {
-  return SHOP_ICON_MAP[itemId] ?? "shop";
+export function shopIconName(_itemId: string): GameIconName {
+  return "shop";
 }
 
 export function pathIconName(path: SkillPath): GameIconName {

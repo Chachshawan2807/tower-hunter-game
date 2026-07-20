@@ -28,7 +28,6 @@ export {
   getUserById,
   getUserByExternalId,
   updateDisplayName,
-  setAutoDismantleCommon,
 } from "./users";
 
 export {
@@ -71,7 +70,6 @@ export {
   countInventoryQuantity,
   addItemToInventory,
   getInventoryItemById,
-  COMMON_DISMANTLE_GOLD,
 } from "./inventory";
 
 export {

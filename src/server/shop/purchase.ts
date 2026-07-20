@@ -40,16 +40,11 @@ export async function purchaseShopItem(
     },
   });
 
-  const addResult = await addItemToInventory(
-    pool,
-    input.userId,
-    {
-      itemId: catalogItem.id,
-      quantity,
-      rarity: catalogItem.rarity,
-    },
-    { idempotencyKey: `${input.idempotencyKey}:inventory` }
-  );
+  const addResult = await addItemToInventory(pool, input.userId, {
+    itemId: catalogItem.id,
+    quantity,
+    rarity: catalogItem.rarity,
+  });
 
   return {
     itemId: catalogItem.id,

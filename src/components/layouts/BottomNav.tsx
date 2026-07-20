@@ -8,6 +8,8 @@ export type NavTab = "character" | "skills" | "tower" | "bag" | "shop";
 interface BottomNavProps {
   locale: Locale;
   active: NavTab | null;
+  /** Block interaction while a centered dialog is open */
+  blocked?: boolean;
   onSelect: (tab: NavTab) => void;
 }
 
@@ -20,11 +22,16 @@ const NAV_ITEMS: Array<{ id: NavTab; icon: GameIconName; labelKey: string }> = [
 ];
 
 export const BottomNav = forwardRef<HTMLElement, BottomNavProps>(function BottomNav(
-  { locale, active, onSelect },
+  { locale, active, blocked = false, onSelect },
   ref
 ) {
   return (
-    <nav ref={ref} className="bottom-nav" aria-label="Main navigation">
+    <nav
+      ref={ref}
+      className={`bottom-nav${blocked ? " bottom-nav--blocked" : ""}`}
+      aria-label="Main navigation"
+      aria-hidden={blocked || undefined}
+    >
       <div role="tablist" aria-label="Game sections" className="bottom-nav__dock">
         {NAV_ITEMS.map((item) => {
           const isActive = active === item.id;
@@ -34,8 +41,10 @@ export const BottomNav = forwardRef<HTMLElement, BottomNavProps>(function Bottom
             <button
               key={item.id}
               role="tab"
+              tabIndex={isActive ? 0 : -1}
               aria-selected={isActive}
               aria-current={isActive ? "page" : undefined}
+              disabled={blocked}
               className={`nav-btn ${isTower ? "nav-btn--tower" : ""} ${
                 isActive ? "nav-btn--active" : ""
               }`}
