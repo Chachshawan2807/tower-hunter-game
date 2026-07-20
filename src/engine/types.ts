@@ -148,8 +148,6 @@ export const BUFF_DEBUFF_DEFAULT_TURNS = 2;
 export const ENEMY_EXPONENT_BASE = 1.08;
 export const BOSS_STAT_MULTIPLIER = 1.5;
 export const BOSS_FLOOR_INTERVAL = 10;
-export const NORMAL_DROP_CHANCE = 0.2;
-export const BOSS_DROP_CHANCE = 1.0;
 export const INVENTORY_MAX_CAPACITY = 100;
 export const MAILBOX_TTL_DAYS = 14;
 

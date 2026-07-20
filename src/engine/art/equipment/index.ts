@@ -19,6 +19,7 @@ export {
 export { resolveEquippableItem, isEquippableItem } from "./itemMapping";
 export {
   getGearPieceStatBonus,
+  resolveLoadoutPieceStatBonus,
   mergeStatBonuses,
   formatStatBonus,
   formatStatNumber,

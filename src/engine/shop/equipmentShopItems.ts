@@ -1,15 +1,17 @@
-export type EquipmentShopRarity = "common" | "rare" | "epic" | "legendary";
+import type { EquipmentSlot } from "../art/equipment/slots";
+import type { GearStatBonus } from "../art/equipment/statBonuses";
+import { getShopRowStats, resolveSlotFromAssetPrefix } from "./equipmentShopStats";
 
 export interface EquipmentShopItemDef {
   id: string;
   stringId: string;
   assetKey: string;
+  slot: EquipmentSlot;
   cost: bigint;
-  rarity: EquipmentShopRarity;
+  stats: GearStatBonus;
   label: { en: string; th: string };
 }
 
-const VARIANT_RARITY: EquipmentShopRarity[] = ["common", "common", "rare", "epic", "legendary"];
 const VARIANT_COST_MULT = [1, 1.2, 2, 3.5, 6] as const;
 
 const ROWS: Array<{
@@ -233,8 +235,9 @@ export const EQUIPMENT_SHOP_ITEMS: EquipmentShopItemDef[] = ROWS.flatMap((row) =
       id: shopId(row.prefix, variant),
       stringId: `shop.item.equip.${row.prefix.replace(/-/g, "_")}_${String(variant).padStart(2, "0")}`,
       assetKey,
+      slot: resolveSlotFromAssetPrefix(row.prefix),
       cost,
-      rarity: VARIANT_RARITY[index],
+      stats: getShopRowStats(row.prefix, index),
       label: { en: enName, th: row.names.th[index] },
     };
   })
@@ -249,4 +252,8 @@ export function getEquipmentShopLabel(itemId: string, locale: "en" | "th"): stri
 
 export function getEquipmentShopAssetKey(itemId: string): string | null {
   return EQUIPMENT_SHOP_ITEMS.find((item) => item.id === itemId)?.assetKey ?? null;
+}
+
+export function findEquipmentShopItem(itemId: string): EquipmentShopItemDef | undefined {
+  return EQUIPMENT_SHOP_ITEMS.find((item) => item.id === itemId);
 }

@@ -1,4 +1,5 @@
 import type { SkillPath } from "../../types";
+import { isShopEquipItemId } from "../../shop/shopEquip";
 import type { WeaponCategoryId } from "../weaponTypes";
 import {
   type CharacterEquipmentVisual,
@@ -12,6 +13,16 @@ import {
   type PlayerEquipmentLoadout,
 } from "./slots";
 
+function acceptsEquippedPiece(
+  path: SkillPath,
+  slot: EquipmentSlot,
+  piece: EquippedPiece
+): boolean {
+  if (isShopEquipItemId(piece.gearId)) return true;
+  const entry = getGearEntry(piece.gearId);
+  return Boolean(entry && entry.path === path && entry.slot === slot);
+}
+
 export function mergeEquipmentLoadout(
   path: SkillPath,
   serverSlots?: Partial<PlayerEquipmentLoadout>
@@ -24,8 +35,7 @@ export function mergeEquipmentLoadout(
   for (const slot of EQUIPMENT_SLOTS) {
     const piece = serverSlots[slot];
     if (!piece) continue;
-    const entry = getGearEntry(piece.gearId);
-    if (entry && entry.path === path && entry.slot === slot) {
+    if (acceptsEquippedPiece(path, slot, piece)) {
       merged[slot] = piece;
     }
   }
@@ -41,8 +51,10 @@ export function loadoutToCharacterVisual(
   const weapon: WeaponCategoryId = weaponEntry?.weaponId ?? "katana";
 
   const pieceRarity: Partial<Record<EquipmentSlot, EquippedPiece["rarity"]>> = {};
+  const gearIds: Partial<Record<EquipmentSlot, string>> = {};
   for (const slot of EQUIPMENT_SLOTS) {
     pieceRarity[slot] = loadout[slot].rarity;
+    gearIds[slot] = loadout[slot].gearId;
   }
 
   return {
@@ -55,6 +67,7 @@ export function loadoutToCharacterVisual(
     cloak: loadout.cloak.gearId,
     weaponRarity: loadout.weapon.rarity,
     pieceRarity,
+    gearIds,
   };
 }
 

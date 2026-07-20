@@ -40,6 +40,7 @@ export function usePlayer() {
   const [skillPath, setSkillPath] = useState<SkillPath>("imperial");
   const [stats, setStats] = useState<PlayerStatsResponse["stats"] | null>(null);
   const [loading, setLoading] = useState(true);
+  const [nameBusy, setNameBusy] = useState(false);
 
   const refreshStats = useCallback(async (id: string) => {
     try {
@@ -75,6 +76,20 @@ export function usePlayer() {
     [userId]
   );
 
+  const changeDisplayName = useCallback(
+    async (name: string) => {
+      if (!userId) return;
+      setNameBusy(true);
+      try {
+        const user = await api.updateDisplayName(userId, name);
+        setDisplayName(user.display_name);
+      } finally {
+        setNameBusy(false);
+      }
+    },
+    [userId]
+  );
+
   useEffect(() => {
     let cancelled = false;
 
@@ -94,6 +109,10 @@ export function usePlayer() {
         }
 
         if (id) {
+          const user = await api.getUser(id);
+          if (!cancelled) {
+            setDisplayName(user.display_name);
+          }
           await refreshStats(id);
         }
       } catch (err) {
@@ -126,7 +145,9 @@ export function usePlayer() {
     skillPath,
     stats,
     loading,
+    nameBusy,
     refreshStats,
     changeSkillPath,
+    changeDisplayName,
   };
 }

@@ -126,3 +126,48 @@ export async function getInventoryItemById(
 
   return result.rows[0] ?? null;
 }
+
+export async function removeInventoryQuantity(
+  client: DbClient,
+  userId: string,
+  inventoryId: string,
+  quantity = 1
+): Promise<void> {
+  const row = await getInventoryItemById(client, userId, inventoryId);
+  if (!row) {
+    throw new Error("Inventory item not found");
+  }
+  if (quantity <= 0 || quantity > row.quantity) {
+    throw new Error("Invalid sell quantity");
+  }
+
+  if (row.quantity === quantity) {
+    await client.query(`DELETE FROM inventory_items WHERE id = $1 AND user_id = $2`, [
+      inventoryId,
+      userId,
+    ]);
+    return;
+  }
+
+  await client.query(
+    `UPDATE inventory_items
+     SET quantity = quantity - $3, updated_at = NOW()
+     WHERE id = $1 AND user_id = $2`,
+    [inventoryId, userId, quantity]
+  );
+}
+
+export async function isGearEquipped(
+  client: DbClient,
+  userId: string,
+  gearId: string
+): Promise<boolean> {
+  const result = await client.query<{ exists: boolean }>(
+    `SELECT EXISTS(
+       SELECT 1 FROM player_equipment
+       WHERE user_id = $1 AND gear_id = $2
+     ) AS exists`,
+    [userId, gearId]
+  );
+  return Boolean(result.rows[0]?.exists);
+}

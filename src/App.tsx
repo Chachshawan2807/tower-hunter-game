@@ -153,6 +153,9 @@ export function App() {
           gold={player.gold}
           mailboxCount={mailboxCount}
           compact
+          nameEditable={isMainView}
+          nameBusy={player.nameBusy}
+          onRename={player.changeDisplayName}
           onOpenMailbox={openMailbox}
           onOpenSettings={openSettings}
         />

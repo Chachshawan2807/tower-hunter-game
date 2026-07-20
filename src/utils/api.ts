@@ -153,7 +153,10 @@ export interface ShopCatalogItem {
   id: string;
   stringId: string;
   cost: string;
-  rarity: string;
+  slot: string;
+  stats: Record<string, number>;
+  statPreview: string[];
+  sellPrice: string;
   icon: string;
 }
 
@@ -206,6 +209,13 @@ export const api = {
 
   getUser(userId: string) {
     return request<UserProfile>(`/api/users/${userId}`);
+  },
+
+  updateDisplayName(userId: string, displayName: string) {
+    return request<UserProfile>(`/api/users/${userId}`, {
+      method: "PATCH",
+      body: JSON.stringify({ displayName }),
+    });
   },
 
   getPlayerStats(userId: string) {
@@ -262,6 +272,17 @@ export const api = {
     }>(`/api/shop/${userId}/purchase`, {
       method: "POST",
       body: JSON.stringify({ itemId, idempotencyKey, quantity: 1 }),
+    });
+  },
+
+  sellShopItem(userId: string, inventoryId: string, idempotencyKey: string) {
+    return request<{
+      itemId: string;
+      goldReceived: string;
+      balanceAfter: string;
+    }>(`/api/shop/${userId}/sell`, {
+      method: "POST",
+      body: JSON.stringify({ inventoryId, idempotencyKey }),
     });
   },
 

@@ -192,6 +192,194 @@
   white-space: nowrap;
 }
 
+.name-editor--hud {
+  min-width: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  box-shadow: none;
+  font-family: var(--font-stat);
+  font-size: var(--text-lg);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  text-transform: none;
+  color: var(--ink-black);
+  cursor: pointer;
+}
+
+.name-editor--hud:hover:not(:disabled) {
+  color: var(--antique-gold-deep);
+}
+
+.name-editor--hud .name-editor__label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.name-editor--hud.name-editor--editing {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+
+.name-editor--hud .name-editor__input {
+  width: 100%;
+  min-width: 0;
+  padding: 2px 6px;
+  border: 1px solid rgba(26, 26, 26, 0.2);
+  border-radius: var(--radius-sm);
+  background: #fff;
+  color: var(--ink-black);
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  letter-spacing: inherit;
+}
+
+.name-editor--hud .name-editor__input:focus {
+  outline: none;
+  border-color: var(--antique-gold);
+}
+
+.name-editor--hud .name-editor__error {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  margin: 0;
+  padding: 4px 6px;
+  border-radius: var(--radius-sm);
+  background: rgba(255, 252, 245, 0.96);
+  color: var(--crimson);
+  font-family: var(--font-stat);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  z-index: 2;
+}
+
+.name-editor--stage {
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid rgba(26, 26, 26, 0.12);
+  border-radius: var(--radius-md);
+  background: rgba(255, 252, 245, 0.82);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  color: var(--ink-black);
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.name-editor--stage:hover:not(:disabled) {
+  border-color: rgba(197, 160, 89, 0.55);
+  box-shadow: 0 3px 12px rgba(197, 160, 89, 0.15);
+}
+
+.name-editor:focus-visible {
+  outline: 2px solid var(--antique-gold);
+  outline-offset: 2px;
+}
+
+.name-editor:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.name-editor--stage .name-editor__label {
+  max-width: min(280px, calc(var(--frame-width) - 4 * var(--content-inline)));
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.name-editor__icon {
+  display: inline-flex;
+  opacity: 0.55;
+}
+
+.name-editor--stage.name-editor--editing {
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--space-2);
+  min-width: min(300px, calc(var(--frame-width) - 2 * var(--content-inline)));
+  cursor: default;
+}
+
+.name-editor--stage .name-editor__input {
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid rgba(26, 26, 26, 0.2);
+  border-radius: var(--radius-sm);
+  background: #fff;
+  color: var(--ink-black);
+  font-family: var(--font-stat);
+  font-size: var(--text-lg);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: none;
+}
+
+.name-editor__input:focus {
+  outline: none;
+  border-color: var(--antique-gold);
+  box-shadow: 0 0 0 2px rgba(197, 160, 89, 0.25);
+}
+
+.name-editor__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+}
+
+.name-editor__btn {
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-stat);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+}
+
+.name-editor__btn--ghost {
+  border: 1px solid rgba(26, 26, 26, 0.15);
+  background: transparent;
+  color: var(--ink-black);
+}
+
+.name-editor__btn--save {
+  border: 1px solid var(--antique-gold-deep);
+  background: var(--antique-gold);
+  color: var(--ink-black);
+}
+
+.name-editor__btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.name-editor--stage .name-editor__error {
+  margin: 0;
+  color: var(--crimson);
+  font-family: var(--font-stat);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  text-align: center;
+}
+
 .top-hud--compact .hud-gold__amount {
   line-height: 1;
 }

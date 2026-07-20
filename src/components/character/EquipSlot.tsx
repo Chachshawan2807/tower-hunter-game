@@ -3,10 +3,12 @@ import {
   formatStatBonus,
   GEAR_CATALOG,
   getGearEntry,
-  getGearPieceStatBonus,
-  type CharacterEquipmentVisual,
+  resolveLoadoutPieceStatBonus,
 } from "../../engine/art/equipment";
+import { getEquipmentShopLabel } from "../../engine/shop/equipmentShopItems";
+import { isShopEquipItemId } from "../../engine/shop/shopEquip";
 import type { EquipmentSlot } from "../../engine/art/equipment/slots";
+import type { CharacterEquipmentVisual } from "../../engine/art/equipment/catalog";
 import { t, type Locale } from "../../utils/i18n";
 
 const SLOT_LABEL: Record<EquipmentSlot, string> = {
@@ -30,14 +32,24 @@ const SLOT_ICON: Record<
   cloak: "slot-cloak",
 };
 
-function resolveSlotGearId(visual: CharacterEquipmentVisual, slot: EquipmentSlot): string {
+function resolveSlotGearName(
+  visual: CharacterEquipmentVisual,
+  slot: EquipmentSlot,
+  locale: Locale
+): string {
+  const gearId = visual.gearIds[slot] ?? "";
+  if (isShopEquipItemId(gearId)) {
+    return getEquipmentShopLabel(gearId, locale) ?? gearId;
+  }
   if (slot === "weapon") {
     const match = Object.values(GEAR_CATALOG).find(
       (e) => e.slot === "weapon" && e.path === visual.path && e.weaponId === visual.weapon
     );
-    return match?.id ?? `gear.${visual.path}.weapon.${visual.weapon}`;
+    const key = match?.nameKey ?? `weapon.${visual.weapon}`;
+    return t(key, locale);
   }
-  return visual[slot];
+  const entry = getGearEntry(visual[slot]);
+  return t(entry?.nameKey ?? visual[slot], locale);
 }
 
 export interface EquipSlotProps {
@@ -62,24 +74,21 @@ export function EquipSlot({
   const [hovered, setHovered] = useState(false);
   const tooltipId = useId();
 
-  const gearId = resolveSlotGearId(equipment, slot);
-  const entry = getGearEntry(gearId);
+  const gearId = equipment.gearIds[slot] ?? equipment[slot];
   const rarity = equipment.pieceRarity[slot] ?? "common";
   const slotName = t(SLOT_LABEL[slot], locale);
-  const gearName = t(entry?.nameKey ?? gearId, locale);
+  const gearName = resolveSlotGearName(equipment, slot, locale);
   const label = `${slotName}: ${gearName}`;
-  const bonusLines = formatStatBonus(getGearPieceStatBonus(gearId, slot, rarity));
+  const bonusLines = formatStatBonus(
+    resolveLoadoutPieceStatBonus(gearId, slot, rarity)
+  );
   const visible = isActive || (hovered && !hasPinnedTooltip);
 
   return (
     <div className={`char-equip-slot-wrap char-equip-slot-wrap--${side}`}>
       <button
         type="button"
-        className={[
-          "char-equip-slot",
-          `char-equip-slot__rarity--${rarity}`,
-          isActive ? "char-equip-slot--active" : "",
-        ].join(" ")}
+        className={["char-equip-slot", isActive ? "char-equip-slot--active" : ""].join(" ")}
         aria-label={label}
         aria-describedby={visible ? tooltipId : undefined}
         aria-expanded={isActive}
@@ -113,11 +122,7 @@ export function EquipSlot({
       </button>
 
       {visible && (
-        <div
-          id={tooltipId}
-          className="char-equip-tooltip"
-          role="tooltip"
-        >
+        <div id={tooltipId} className="char-equip-tooltip" role="tooltip">
           <p className="char-equip-tooltip__name">{gearName}</p>
           {bonusLines.length > 0 && (
             <ul className="char-equip-tooltip__stats">

@@ -1,5 +1,6 @@
 import { expProgressRatio } from "../../engine/formulas/playerProgression";
 import { GameIcon } from "../ui/icons";
+import { CharacterNameEditor } from "../character/CharacterNameEditor";
 import { playUiClick } from "../../hooks/useGameAudio";
 import { t, type Locale } from "../../utils/i18n";
 
@@ -12,8 +13,11 @@ interface TopHudProps {
   mailboxCount?: number;
   onOpenMailbox: () => void;
   onOpenSettings: () => void;
-  /** Home view: stats-only bar (name shown on hero showcase) */
+  /** Home view: stats-only bar (name shown inline, editable) */
   compact?: boolean;
+  nameEditable?: boolean;
+  nameBusy?: boolean;
+  onRename?: (name: string) => Promise<void>;
 }
 
 export function TopHud({
@@ -26,6 +30,9 @@ export function TopHud({
   onOpenMailbox,
   onOpenSettings,
   compact = false,
+  nameEditable = false,
+  nameBusy = false,
+  onRename,
 }: TopHudProps) {
   const expRatio = expProgressRatio(level, exp);
   const expPct = Math.round(expRatio * 100);
@@ -42,9 +49,18 @@ export function TopHud({
             <span className="hud-level-badge tabular-nums">
               {t("hud.level", locale)} {level}
             </span>
-            {compact ? (
+            {compact && nameEditable && onRename ? (
+              <CharacterNameEditor
+                locale={locale}
+                displayName={displayName}
+                busy={nameBusy}
+                variant="hud"
+                onSave={onRename}
+              />
+            ) : compact ? (
               <span className="hud-name--inline">{displayName}</span>
-            ) : (
+            ) : null}
+            {!compact ? (
               <div className="hud-exp-gauge" aria-label={`EXP ${expPct}%`}>
                 <span className="hud-exp-gauge__label tabular-nums">
                   {t("hud.exp", locale)} {exp.toLocaleString()}
@@ -62,7 +78,7 @@ export function TopHud({
                   />
                 </div>
               </div>
-            )}
+            ) : null}
           </div>
         </div>
 

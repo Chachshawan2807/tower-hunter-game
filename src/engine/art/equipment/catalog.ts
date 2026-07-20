@@ -135,6 +135,7 @@ export interface CharacterEquipmentVisual {
   cloak: string;
   weaponRarity: ItemRarityVisual;
   pieceRarity: Partial<Record<EquipmentSlot, ItemRarityVisual>>;
+  gearIds: Partial<Record<EquipmentSlot, string>>;
 }
 
 export function getGearEntry(gearId: string): GearCatalogEntry | null {

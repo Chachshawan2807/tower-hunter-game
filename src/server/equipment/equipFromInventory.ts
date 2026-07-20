@@ -1,6 +1,7 @@
-import { getGearEntry } from "../../engine/art/equipment/catalog";
+import { isShopEquipItemId } from "../../engine/shop/shopEquip";
 import { mergeEquipmentLoadout } from "../../engine/art/equipment/resolve";
 import { resolveEquippableItem } from "../../engine/art/equipment/itemMapping";
+import { getGearEntry } from "../../engine/art/equipment/catalog";
 import type { EquipmentSlot } from "../../engine/art/equipment/slots";
 import { bonusesFromEquipmentLoadout } from "../../engine/formulas/equipmentStats";
 import { formatStatBonus } from "../../engine/art/equipment/statBonuses";
@@ -63,9 +64,11 @@ export async function equipFromInventory(
       );
     }
 
-    const entry = getGearEntry(resolved.gearId);
-    if (!entry || entry.path !== path) {
-      throw new EquipValidationError("Gear path mismatch", "PATH_MISMATCH");
+    if (!isShopEquipItemId(resolved.gearId)) {
+      const entry = getGearEntry(resolved.gearId);
+      if (!entry || entry.path !== path) {
+        throw new EquipValidationError("Gear path mismatch", "PATH_MISMATCH");
+      }
     }
 
     const rarity = invRow.rarity as EquipmentSlotDto["rarity"];

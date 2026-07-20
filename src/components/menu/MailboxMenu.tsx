@@ -86,7 +86,6 @@ export function MailboxMenu({
                   id={item.id}
                   itemId={item.item_id}
                   quantity={item.quantity}
-                  rarity={item.rarity}
                   expiresAt={item.expires_at}
                   locale={locale}
                   skillPath={skillPath}
@@ -103,7 +102,6 @@ export function MailboxMenu({
               id={selectedItem.id}
               itemId={selectedItem.item_id}
               quantity={selectedItem.quantity}
-              rarity={selectedItem.rarity}
               expiresAt={selectedItem.expires_at}
               locale={locale}
               skillPath={skillPath}

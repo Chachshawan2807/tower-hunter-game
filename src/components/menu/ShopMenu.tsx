@@ -109,11 +109,19 @@ export function ShopMenu({ locale, userId, gold, onPurchase }: ShopMenuProps) {
                 const name = resolveShopItemName(item, locale);
 
                 return (
-                  <li key={item.id} className={`shop-item shop-item--${item.rarity}`}>
+                  <li key={item.id} className="shop-item">
                     <div className="shop-item__art">
                       <ShopItemIcon itemId={item.id} icon={item.icon} size={34} />
                     </div>
                     <p className="shop-item__name">{name}</p>
+                    <ul
+                      className="shop-item__stats"
+                      aria-label={t("char.stats", locale)}
+                    >
+                      {item.statPreview.map((line) => (
+                        <li key={line}>{line}</li>
+                      ))}
+                    </ul>
                     <button
                       type="button"
                       className="shop-item__buy tabular-nums"

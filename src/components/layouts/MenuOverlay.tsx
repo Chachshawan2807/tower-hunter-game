@@ -135,6 +135,7 @@ export function MenuOverlay({
           userId={userId}
           skillPath={skillPath}
           onEquip={equipFromBag}
+          onSellComplete={onPurchase}
           equipBusy={equipBusy}
           equipMessage={equipMessage}
         />

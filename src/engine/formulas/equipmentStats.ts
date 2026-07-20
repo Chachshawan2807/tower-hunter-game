@@ -3,6 +3,7 @@ import type { GearStatBonus } from "../art/equipment/statBonuses";
 import {
   getGearPieceStatBonus,
   mergeStatBonuses,
+  resolveLoadoutPieceStatBonus,
 } from "../art/equipment/statBonuses";
 import type { PlayerEquipmentLoadout } from "../art/equipment/slots";
 import { EQUIPMENT_SLOTS } from "../art/equipment/slots";
@@ -12,7 +13,7 @@ export function bonusesFromEquipmentLoadout(
 ): GearStatBonus {
   const pieces = EQUIPMENT_SLOTS.map((slot) => {
     const piece = loadout[slot];
-    return getGearPieceStatBonus(piece.gearId, slot, piece.rarity);
+    return resolveLoadoutPieceStatBonus(piece.gearId, slot, piece.rarity);
   });
   return mergeStatBonuses(pieces);
 }

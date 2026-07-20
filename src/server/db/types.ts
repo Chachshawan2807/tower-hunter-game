@@ -12,6 +12,7 @@ export type IdempotencyStatus = "processing" | "completed" | "failed";
 export type WalletTransactionType =
   | "reward"
   | "purchase"
+  | "sell"
   | "admin_adjustment";
 
 export interface UserRow {

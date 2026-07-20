@@ -10,6 +10,7 @@ interface BagMenuProps {
   userId: string | null;
   skillPath: SkillPath;
   onEquip: (slot: EquipmentSlot, inventoryId: string) => Promise<boolean>;
+  onSellComplete?: () => void;
   equipBusy?: boolean;
   equipMessage?: string | null;
 }
@@ -19,12 +20,15 @@ export function BagMenu({
   userId,
   skillPath,
   onEquip,
+  onSellComplete,
   equipBusy,
   equipMessage,
 }: BagMenuProps) {
   const [inventory, setInventory] = useState<InventoryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [sellBusy, setSellBusy] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
 
   const reload = async () => {
     if (!userId) return;
@@ -50,6 +54,28 @@ export function BagMenu({
     return ok;
   };
 
+  const handleSell = async (inventoryId: string): Promise<boolean> => {
+    if (!userId || sellBusy) return false;
+    setSellBusy(true);
+    setMessage(null);
+    try {
+      await api.sellShopItem(userId, inventoryId, crypto.randomUUID());
+      setMessage(t("bag.sold", locale));
+      setSelectedId(null);
+      await reload();
+      onSellComplete?.();
+      return true;
+    } catch {
+      setMessage(t("bag.sell_error", locale));
+      return false;
+    } finally {
+      setSellBusy(false);
+    }
+  };
+
+  const actionBusy = equipBusy || sellBusy;
+  const statusMessage = message ?? equipMessage;
+
   if (!userId) {
     return <p className="menu-empty">{t("bag.empty", locale)}</p>;
   }
@@ -62,9 +88,9 @@ export function BagMenu({
 
   return (
     <div className="bag-menu">
-      {equipMessage && (
+      {statusMessage && (
         <p className="bag-equip-message" role="status">
-          {equipMessage}
+          {statusMessage}
         </p>
       )}
 
@@ -79,7 +105,6 @@ export function BagMenu({
                   id={item.id}
                   itemId={item.item_id}
                   quantity={item.quantity}
-                  rarity={item.rarity}
                   locale={locale}
                   skillPath={skillPath}
                   selected={selectedId === item.id}
@@ -92,16 +117,16 @@ export function BagMenu({
           {selectedItem && (
             <div className="bag-slot-detail-wrap" key={selectedItem.id}>
               <BagItemDetail
-              id={selectedItem.id}
-              itemId={selectedItem.item_id}
-              quantity={selectedItem.quantity}
-              rarity={selectedItem.rarity}
-              locale={locale}
-              skillPath={skillPath}
-              mode="inventory"
-              onEquip={handleEquip}
-              actionBusy={equipBusy}
-            />
+                id={selectedItem.id}
+                itemId={selectedItem.item_id}
+                quantity={selectedItem.quantity}
+                locale={locale}
+                skillPath={skillPath}
+                mode="inventory"
+                onEquip={handleEquip}
+                onSell={handleSell}
+                actionBusy={actionBusy}
+              />
             </div>
           )}
         </>

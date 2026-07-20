@@ -1,4 +1,5 @@
 import type { ItemRarityVisual } from "../weaponTypes";
+import { getShopItemStats } from "../../shop/shopItemStats";
 import type { EquipmentSlot } from "./slots";
 
 /** Flat stat bonuses per equipment piece (Art Bible §07 — primary unit gains) */
@@ -72,6 +73,17 @@ export function getGearPieceStatBonus(
   return scaleBonus(base, RARITY_MULTIPLIER[rarity]);
 }
 
+export function resolveLoadoutPieceStatBonus(
+  gearId: string,
+  slot: EquipmentSlot,
+  rarity: ItemRarityVisual
+): GearStatBonus {
+  if (gearId.startsWith("shop_equip_")) {
+    return getShopItemStats(gearId) ?? {};
+  }
+  return getGearPieceStatBonus(gearId, slot, rarity);
+}
+
 export function mergeStatBonuses(bonuses: GearStatBonus[]): GearStatBonus {
   const total: GearStatBonus = {};
   for (const bonus of bonuses) {
@@ -93,6 +105,7 @@ export function formatStatBonus(bonus: GearStatBonus): string[] {
   if (bonus.maxMp) lines.push(`MP +${bonus.maxMp}`);
   if (bonus.speed) lines.push(`SPD +${bonus.speed}`);
   if (bonus.critChance) lines.push(`CRIT +${(bonus.critChance * 100).toFixed(1)}%`);
+  if (bonus.critDamage) lines.push(`CRIT DMG +${(bonus.critDamage * 100).toFixed(1)}%`);
   if (bonus.accuracy) lines.push(`ACC +${bonus.accuracy}`);
   if (bonus.evasion) lines.push(`EVA +${bonus.evasion}`);
   if (bonus.statusResist) {

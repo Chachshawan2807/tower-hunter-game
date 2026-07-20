@@ -70,6 +70,8 @@ export {
   countInventoryQuantity,
   addItemToInventory,
   getInventoryItemById,
+  removeInventoryQuantity,
+  isGearEquipped,
 } from "./inventory";
 
 export {

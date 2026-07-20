@@ -1,8 +1,10 @@
 import { Hono } from "hono";
+import { validateDisplayName } from "../../../engine/player/displayName";
 import {
   createUser,
   getUserById,
   getUserByExternalId,
+  updateDisplayName,
   getPlayerStats,
   getWalletBalance,
   listInventoryItems,
@@ -66,6 +68,34 @@ userRoutes.get("/:userId", async (c) => {
   }
 
   return jsonBigInt(c, user);
+});
+
+userRoutes.patch("/:userId", async (c) => {
+  const userId = c.req.param("userId");
+  const body = await c.req.json<{ displayName?: string }>();
+
+  if (typeof body.displayName !== "string") {
+    return c.json({ error: "displayName required", code: "INVALID_BODY" }, 400);
+  }
+
+  const validation = validateDisplayName(body.displayName);
+  if (!validation.ok) {
+    return c.json(
+      { error: "Invalid display name", code: `NAME_${validation.code}` },
+      400
+    );
+  }
+
+  try {
+    const user = await updateDisplayName(
+      c.get("db"),
+      userId,
+      validation.normalized
+    );
+    return jsonBigInt(c, user);
+  } catch {
+    return c.json({ error: "User not found", code: "USER_NOT_FOUND" }, 404);
+  }
 });
 
 userRoutes.get("/:userId/stats", async (c) => {
