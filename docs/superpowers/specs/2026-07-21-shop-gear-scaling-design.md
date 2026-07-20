@@ -1,7 +1,7 @@
 # Shop-Only Gear Scaling — Tower Hunter Game
 
 **Date:** 2026-07-21  
-**Status:** Approved  
+**Status:** Implemented (2026-07-21)  
 **Approach:** Per-Item Stat Catalog  
 **Progression model:** Farm Loop (Option B) — ติดชั้น → ฟาร์ม Gold/EXP → ซื้อ Gear → ทะลุ Boss
 

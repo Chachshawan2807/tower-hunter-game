@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "validate": "tsx scripts/validate.ts && npm run typecheck",
+    "validate": "tsx scripts/validate.ts && tsx scripts/validate-architecture.ts && npm run typecheck",
     "seed": "tsx scripts/seed.ts",
     "db:check": "tsx scripts/db-check.ts",
     "dev": "node scripts/dev.mjs",

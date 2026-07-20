@@ -1,6 +1,6 @@
 # Skill System — Completed Summary
 
-> **Status:** Implemented (2026-07). Full step-by-step plan archived at [archive/2026-07-14-skill-system-full.md](archive/2026-07-14-skill-system-full.md).
+> **Status:** Implemented (2026-07). This summary is the canonical plan reference; the step-by-step archive was removed after shipping.
 
 **Spec:** [../specs/2026-07-14-skill-system-design.md](../specs/2026-07-14-skill-system-design.md)
 
@@ -30,7 +30,7 @@
 ## Verification
 
 ```bash
-npm run validate   # engine + loadout + skill unlock tests
+npm run validate   # engine + architecture boundaries + typecheck
 npm run db:check   # schema tables present
 ```
 

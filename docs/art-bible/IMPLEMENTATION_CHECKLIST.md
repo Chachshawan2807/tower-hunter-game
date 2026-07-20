@@ -1,6 +1,6 @@
 # Art Bible — Implementation Checklist
 
-Status of Master Art Bible wiring in code (updated: 2026-07-18).
+Status of Master Art Bible wiring in code (updated: 2026-07-21).
 
 ## Wired in UI (production-ready)
 
@@ -11,7 +11,9 @@ Status of Master Art Bible wiring in code (updated: 2026-07-18).
 | 06 Character | Archetype registry (player / enemy / NPC) | `src/engine/art/characters/` |
 | 07 Item | 6 equipment slots + path gear catalog | `src/engine/art/equipment/` |
 | 07 Item | Character menu equipment panel (side slots + icons) | `src/components/character/CharacterEquipmentPanel.tsx` |
-| 07 Item | Equip from bag + per-piece stat bonuses | `src/server/equipment/equipFromInventory.ts`, `src/engine/art/equipment/statBonuses.ts`, `BagMenu.tsx` |
+| 07 Item | Shop-only gear (per-item stats, buy/sell) | `src/engine/shop/`, `src/server/shop/`, `ShopMenu.tsx`, `BagMenu.tsx` |
+| 07 Item | Equip from bag + per-piece stat bonuses | `src/server/equipment/equipFromInventory.ts`, `src/engine/art/equipment/statBonuses.ts` |
+| Character | Status point allocation (primary + secondary) | `src/engine/formulas/statusPoints.ts`, `009_status_points.sql`, `011_status_alloc_secondary.sql`, `CharacterMenu.tsx` |
 | Server | Persisted `player_equipment` + API | `src/server/db/schema/006_player_equipment.sql`, `src/server/api/routes/users.ts` |
 | Skills | SP-gated skill unlocks | `src/server/db/schema/007_skill_unlocks.sql`, `src/engine/skills/skillUnlock.ts`, `POST /api/skills/:userId/unlock` |
 | 02–05 | Colors, zones, FX CSS, PWA textures | `tokens.css`, `textures.css`, `effects.css`, `towerZones.ts` |

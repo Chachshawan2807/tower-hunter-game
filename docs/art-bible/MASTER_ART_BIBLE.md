@@ -108,9 +108,9 @@
  └── แวนการ์ด (Vanguard)   → Wand, Bow, Dual Daggers
 ```
 
-อาวุธเริ่มต้น = เหล็กดิบ | Rare+ = อักขระทอง อัญมณีแดง ออร่าดำ
+Gear ได้จาก **ร้านค้าเท่านั้น** (ไม่มี drop จากการต่อสู้) — แต่ละชิ้นมี stats กำหนดใน catalog โดยตรง ไม่มีระดับ rarity สำหรับ shop gear
 
-**โค้ดอ้างอิง:** `src/engine/art/weaponTypes.ts`
+**โค้ดอ้างอิง:** `src/engine/art/weaponTypes.ts`, `src/engine/shop/equipmentShopItems.ts`
 
 ---
 
