@@ -1,13 +1,5 @@
 import { useState } from "react";
-import {
-  formatFlatBonusSuffix,
-  formatFlatPercentBonusSuffix,
-  formatPercentBonusSuffix,
-  formatPercentPoints,
-  formatStatNumber,
-  formatStoredPercent,
-  type GearStatBonus,
-} from "../../engine/art/equipment";
+import type { GearStatBonus } from "../../engine/art/equipment";
 import { STATUS_POINT_COST, type StatusStatKey } from "../../engine/formulas/statusPoints";
 import { t, type Locale } from "../../utils/i18n";
 import { api, type PlayerStatsResponse } from "../../utils/api";
@@ -16,6 +8,8 @@ import type { EquipmentSlot } from "../../engine/art/equipment/slots";
 import type { SkillPath } from "../../engine/types";
 import { CharacterEquipmentPanel } from "../character/CharacterEquipmentPanel";
 import { ConfirmDialog } from "../ui/ConfirmDialog";
+import { CharacterStatCard } from "./CharacterStatCard";
+import { buildCharacterStatRows, totalAllocatedFromStats } from "./characterStatRows";
 
 interface CharacterMenuProps {
   locale: Locale;
@@ -30,93 +24,6 @@ interface CharacterMenuProps {
   onEquipFromBag?: (slot: EquipmentSlot, inventoryId: string) => Promise<boolean>;
   onUnequip?: (slot: EquipmentSlot) => Promise<boolean>;
   onStatsChange?: (stats: PlayerStatsResponse["stats"]) => void;
-}
-
-interface StatRow {
-  key: string;
-  baseValue: string;
-  gearBonus?: string;
-  vital?: boolean;
-  allocStat?: StatusStatKey;
-}
-
-function totalAllocatedFromStats(
-  stats: PlayerStatsResponse["stats"]
-): number {
-  return (
-    (stats.alloc_hp ?? 0) +
-    (stats.alloc_mp ?? 0) +
-    (stats.alloc_atk ?? 0) +
-    (stats.alloc_def ?? 0) +
-    (stats.alloc_spd ?? 0) +
-    (stats.alloc_crit ?? 0) +
-    (stats.alloc_crit_dmg ?? 0) +
-    (stats.alloc_resist ?? 0) +
-    (stats.alloc_eva ?? 0) +
-    (stats.alloc_acc ?? 0)
-  );
-}
-
-interface StatCardProps {
-  stat: StatRow;
-  canAllocate: boolean;
-  allocBusy: StatusStatKey | null;
-  userId: string | null;
-  locale: Locale;
-  onAllocate: (stat: StatusStatKey) => void;
-}
-
-function StatCard({
-  stat,
-  canAllocate,
-  allocBusy,
-  userId,
-  locale,
-  onAllocate,
-}: StatCardProps) {
-  const hasGearBonus = Boolean(stat.gearBonus);
-  const allocatable = Boolean(stat.allocStat);
-
-  return (
-    <div
-      className={[
-        "stat-item",
-        "stat-item--stacked",
-        stat.vital ? "stat-item--vital" : "",
-        allocatable ? "stat-item--allocatable" : "",
-        allocatable && canAllocate ? "stat-item--alloc-ready" : "",
-      ]
-        .filter(Boolean)
-        .join(" ")}
-    >
-      <div className="stat-item__head">
-        <span className="stat-item__label">{stat.key}</span>
-        {allocatable && (
-          <button
-            type="button"
-            className="stat-item__alloc-btn"
-            disabled={!canAllocate || !userId}
-            aria-label={t("char.allocate.aria", locale, { stat: stat.key })}
-            title={t("char.allocate.hint", locale, { cost: STATUS_POINT_COST })}
-            onClick={() => onAllocate(stat.allocStat!)}
-          >
-            <span className="stat-item__alloc-btn-icon" aria-hidden="true">
-              {allocBusy === stat.allocStat ? "…" : "+"}
-            </span>
-          </button>
-        )}
-      </div>
-
-      <div className="stat-item__base tabular-nums">{stat.baseValue}</div>
-
-      <div
-        className={`stat-item__gear tabular-nums${hasGearBonus ? "" : " stat-item__gear--empty"}`}
-        aria-label={t("char.stat_gear_bonus", locale)}
-      >
-        {stat.gearBonus ?? "—"}
-      </div>
-    </div>
-  );
 }
 
 export function CharacterMenu({
@@ -142,7 +49,6 @@ export function CharacterMenu({
     return <p className="menu-empty">{t("char.stats", locale)}...</p>;
   }
 
-  const bonus = equipmentStatBonus;
   const statusPoints = stats.status_points ?? 0;
   const allocatedTotal = totalAllocatedFromStats(stats);
   const interactionBusy = resetBusy || allocBusy !== null;
@@ -189,70 +95,7 @@ export function CharacterMenu({
     }
   };
 
-  const statRows: StatRow[] = [
-    {
-      key: "HP",
-      vital: true,
-      allocStat: "hp",
-      baseValue: formatStatNumber(stats.max_hp),
-      gearBonus: formatFlatBonusSuffix(bonus.maxHp),
-    },
-    {
-      key: "MP",
-      vital: true,
-      allocStat: "mp",
-      baseValue: formatStatNumber(stats.max_mp),
-      gearBonus: formatFlatBonusSuffix(bonus.maxMp),
-    },
-    {
-      key: "ATK",
-      allocStat: "atk",
-      baseValue: formatStatNumber(stats.atk),
-      gearBonus: formatFlatBonusSuffix(bonus.atk),
-    },
-    {
-      key: "DEF",
-      allocStat: "def",
-      baseValue: formatStatNumber(stats.def),
-      gearBonus: formatFlatBonusSuffix(bonus.def),
-    },
-    {
-      key: "SPD",
-      allocStat: "spd",
-      baseValue: formatStatNumber(stats.speed),
-      gearBonus: formatFlatBonusSuffix(bonus.speed),
-    },
-    {
-      key: "CRIT",
-      allocStat: "crit",
-      baseValue: formatStoredPercent(stats.crit_chance),
-      gearBonus: formatPercentBonusSuffix(bonus.critChance),
-    },
-    {
-      key: "CRIDMG",
-      allocStat: "crit_dmg",
-      baseValue: formatStoredPercent(stats.crit_damage),
-      gearBonus: formatPercentBonusSuffix(bonus.critDamage),
-    },
-    {
-      key: "RESIST",
-      allocStat: "resist",
-      baseValue: formatStoredPercent(stats.status_resist),
-      gearBonus: formatPercentBonusSuffix(bonus.statusResist),
-    },
-    {
-      key: "EVA",
-      allocStat: "eva",
-      baseValue: formatPercentPoints(stats.evasion),
-      gearBonus: formatFlatPercentBonusSuffix(bonus.evasion),
-    },
-    {
-      key: "ACC",
-      allocStat: "acc",
-      baseValue: formatPercentPoints(stats.accuracy),
-      gearBonus: formatFlatPercentBonusSuffix(bonus.accuracy),
-    },
-  ];
+  const statRows = buildCharacterStatRows(stats, equipmentStatBonus);
 
   return (
     <div className="char-menu">
@@ -302,7 +145,7 @@ export function CharacterMenu({
           </div>
 
           {statRows.map((stat) => (
-            <StatCard
+            <CharacterStatCard
               key={stat.key}
               stat={stat}
               canAllocate={canAllocate}

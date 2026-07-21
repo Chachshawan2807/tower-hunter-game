@@ -14,8 +14,6 @@ export interface EquipmentSlotDto {
 
 export type PlayerEquipmentDto = Partial<Record<EquipmentSlot, EquipmentSlotDto>>;
 
-const SLOT_COLUMNS = `user_id, slot, gear_id, rarity, updated_at`;
-
 export async function listPlayerEquipment(
   poolOrClient: DbPool | DbClient,
   userId: string

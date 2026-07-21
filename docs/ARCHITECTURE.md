@@ -27,7 +27,7 @@ Player input (React UI)
 |-------|------|----------------|----------|
 | **Engine (Model)** | `src/engine/` | Formulas, turn state machine, skills, status, art constants | React, DOM, `fetch`, DB |
 | **Server (Controller)** | `src/server/` | Auth/validation, DB, wallet locks, call engine, grant rewards | React, DOM |
-| **Client API** | `src/utils/api.ts` | Typed HTTP client; sends intents, receives DTOs | Game logic |
+| **Client API** | `src/api/` + `src/utils/api.ts` | Typed HTTP client; sends intents, receives DTOs | Game logic |
 | **Hooks** | `src/hooks/` | Bridge API ↔ React state; animation queue | Damage/gold formulas |
 | **View** | `src/components/` | Layout, HUD, menus, battle presentation | Authoritative calculations |
 
@@ -68,11 +68,11 @@ UI reads `battleSnapshot` and `displayedEvents`; it does **not** re-simulate com
 
 Use this order every time:
 
-1. **Types** — extend `src/engine/types.ts` (or a focused module) with strict interfaces.
+1. **Types** — extend `src/types/` (or `src/engine/types.ts` barrel) with strict interfaces.
 2. **Engine** — add pure functions under the right `src/engine/` subfolder (one concern per file, &lt;200 lines).
 3. **Server** — route + service: validate input, DB read/write with locks where needed, call engine.
-4. **API client** — add typed method in `src/utils/api.ts`.
-5. **Hook** — `useXxx.ts`: fetch/mutate, hold React state, expose actions.
+4. **API client** — add typed method in `src/api/` and export via `src/utils/api.ts`.
+5. **Hook** — `useXxx.ts` or `use-combat-queue.ts`: fetch/mutate, hold React state, expose actions.
 6. **Component** — present data; use `src/styles/tokens.css` and `src/engine/art/` for visuals.
 7. **i18n** — strings in `src/utils/i18n.ts`.
 8. **Validation** — assertions in `scripts/validate.ts` for engine rules; `scripts/validate-architecture.ts` for import boundaries; run `npm run validate`.
@@ -102,7 +102,7 @@ Use this order every time:
 This is a **turn-based, event-driven** game. There is no `requestAnimationFrame` combat loop.
 
 - Server emits ordered `AnimationEvent[]`.
-- `useAnimationQueue` plays events at `BASE_EVENT_MS / speed`.
+- `useAnimationQueue` / `use-combat-queue` plays events at `BASE_EVENT_MS / speed`.
 - Skip/speed only affect presentation; `finalState` is already authoritative.
 
 Do **not** add Phaser or a continuous physics loop unless the game design changes to real-time action.
@@ -133,24 +133,48 @@ npm run validate
 
 - `src/engine/` imports React, DOM APIs, or client/server layers
 - `src/components/` or `src/hooks/` import `src/server/` directly
+- `src/types/` imports engine, server, hooks, or components
+
+`eslint.config.mjs` enforces `max-lines: 200` (warn) on `src/**` with exceptions for `src/types/**` and `src/engine/skills|statuses/impl/**`.
+
+```bash
+npm run lint          # ESLint (warnings allowed)
+npm run lint:strict   # fail on any warning
+```
 
 ## Directory map
 
 ```
 src/
+├── types/           # Data contracts (lowest layer)
+│   ├── combat.interface.ts
+│   ├── state.interface.ts
+│   └── animation.interface.ts
 ├── engine/          # Model — pure TS game logic
+│   ├── combat/      # action-gauge, damage-calculator, turn-resolver
 │   ├── formulas/
 │   ├── states/
 │   ├── skills/
-│   ├── status/
+│   │   ├── base-skill.interface.ts
+│   │   └── impl/
+│   ├── statuses/
+│   │   ├── base-status.interface.ts
+│   │   └── impl/
 │   └── art/
 ├── server/          # Controller — API, DB, validation
+│   ├── controllers/
+│   ├── repository/
 │   ├── api/routes/
 │   ├── battle/
 │   └── db/
-├── hooks/           # React state bridges
+├── api/             # Client network layer (intent in / result out)
+│   └── combat.api.ts
+├── hooks/           # React state bridges (use-combat-queue.ts)
 ├── components/      # View
-├── utils/api.ts     # HTTP client
+│   ├── zones/       # forgotten-dungeon, imperial-bastion, knight-citadel, void-pinnacle
+│   └── ui/
+│       └── action-button.tsx
+├── utils/api.ts     # Facade — re-exports api/* + legacy helpers
 └── styles/          # Design tokens + layout CSS
 ```
 

@@ -1,43 +1,29 @@
-import {
-  advanceBattleStep,
-  getOpponents,
-  handlePlayerIntent,
-  findEntity,
-} from "../../engine/states";
-import type { AnimationEvent, PlayerIntent } from "../../engine/types";
+import { randomUUID } from "node:crypto";
+import { advanceBattleStep, handlePlayerIntent } from "../../engine/states";
+import type { AnimationEvent, PlayerIntent } from "../../types";
 import { getDefaultLoadout } from "../../engine/skills/loadout";
-import { resetPlayerHpAfterDefeat } from "../db/playerStats";
-import { getPlayerCombatStatsWithEquipment } from "../equipment/playerCombatStats";
-import { getPlayerLoadout, getPlayerUpgrades, getPlayerSkillUnlocks, getUserById, type DbPool } from "../db";
-import { createBattleState } from "./factory";
-import { grantBattleRewards } from "./rewards";
 import {
-  createSession,
-  getSession,
-  updateSession,
-} from "./sessionStore";
+  getPlayerLoadout,
+  getPlayerUpgrades,
+  getPlayerSkillUnlocks,
+  getUserById,
+  type DbPool,
+} from "../db";
+import { getPlayerCombatStatsWithEquipment } from "../equipment/playerCombatStats";
+import { createBattleState } from "./factory";
+import { finalizeBattleOutcome } from "./finalization";
+import { BattleServiceError, wrapValidationError } from "./errors";
+import { validateBattleIntent } from "./intent";
+import { getBattleSession } from "./sessionAccess";
+import { createSession, updateSession } from "./sessionStore";
+import { applyAdvanceResult, toStepResponse } from "./stepResponse";
 import type { BattleSession, BattleStepResponse, StartBattleInput } from "./types";
-import { BattleValidationError, validateBattleStart, validateTargetEntity } from "./validation";
+import { BattleValidationError, validateBattleStart } from "./validation";
 
 const DEFAULT_MAX_STEPS = 20;
 
-export class BattleServiceError extends Error {
-  constructor(
-    message: string,
-    public readonly code: string,
-    public readonly status: number = 400
-  ) {
-    super(message);
-    this.name = "BattleServiceError";
-  }
-}
-
-function wrapValidationError(err: unknown): never {
-  if (err instanceof BattleValidationError) {
-    throw new BattleServiceError(err.message, err.code, 400);
-  }
-  throw err;
-}
+export { BattleServiceError } from "./errors";
+export { getBattleSession } from "./sessionAccess";
 
 export async function startBattle(
   pool: DbPool,
@@ -80,113 +66,13 @@ export async function startBattle(
       userId: input.userId,
       floor: input.floor,
       state,
+      turnNonce: randomUUID(),
       rewardsGranted: false,
       outcomeProcessed: false,
     });
   } catch (err) {
-    wrapValidationError(err);
+    wrapValidationError(err, BattleValidationError);
   }
-}
-
-export function getBattleSession(sessionId: string): BattleSession {
-  const session = getSession(sessionId);
-  if (!session) {
-    throw new BattleServiceError("Battle session not found", "SESSION_NOT_FOUND", 404);
-  }
-
-  return session;
-}
-
-function buildAnimationQueue(
-  session: BattleSession,
-  events: AnimationEvent[]
-): BattleStepResponse["animationQueue"] {
-  return {
-    events,
-    finalState: {
-      entities: session.state.entities,
-      floor: session.state.floor,
-      turnNumber: session.state.turnNumber,
-      isComplete: session.state.isComplete,
-      result: session.state.result,
-    },
-  };
-}
-
-function toStepResponse(
-  session: BattleSession,
-  events: AnimationEvent[]
-): BattleStepResponse {
-  return {
-    sessionId: session.id,
-    state: session.state,
-    events,
-    animationQueue: buildAnimationQueue(session, events),
-    actionRequired: Boolean(session.waitingActorId),
-    waitingActorId: session.waitingActorId,
-    rewards: session.rewards,
-  };
-}
-
-async function finalizeWinRewards(
-  pool: DbPool,
-  session: BattleSession
-): Promise<BattleSession> {
-  if (session.rewardsGranted || session.state.result !== "win") {
-    return session;
-  }
-
-  const rewards = await grantBattleRewards(
-    pool,
-    session.userId,
-    session.id,
-    session.floor
-  );
-
-  return (
-    updateSession(session.id, {
-      rewardsGranted: true,
-      rewards,
-      waitingActorId: undefined,
-      priorEvents: undefined,
-    }) ?? session
-  );
-}
-
-async function finalizeBattleOutcome(
-  pool: DbPool,
-  session: BattleSession
-): Promise<BattleSession> {
-  if (session.outcomeProcessed || !session.state.isComplete) {
-    return session;
-  }
-
-  let updated = session;
-
-  if (session.state.result === "win") {
-    updated = await finalizeWinRewards(pool, updated);
-  } else if (session.state.result === "lose") {
-    await resetPlayerHpAfterDefeat(pool, session.userId);
-  }
-
-  return (
-    updateSession(updated.id, { outcomeProcessed: true }) ?? updated
-  );
-}
-
-function applyAdvanceResult(
-  session: BattleSession,
-  result: ReturnType<typeof advanceBattleStep>
-): BattleSession {
-  return (
-    updateSession(session.id, {
-      state: result.state,
-      waitingActorId: result.waitingActorId,
-      priorEvents: result.actionRequired
-        ? result.turnResult?.events
-        : undefined,
-    }) ?? session
-  );
 }
 
 export async function runBattleStep(
@@ -229,26 +115,6 @@ export async function runBattleStep(
   return toStepResponse(session, events);
 }
 
-function validateIntent(
-  session: BattleSession,
-  intent: PlayerIntent
-): void {
-  if (intent.type !== "request_action" || !session.waitingActorId) {
-    return;
-  }
-
-  const actor = findEntity(session.state, session.waitingActorId);
-  if (!actor) {
-    throw new BattleServiceError("Waiting actor not found", "INVALID_ACTOR", 400);
-  }
-
-  const opponents = getOpponents(session.state, actor);
-  validateTargetEntity(
-    opponents.map((e) => e.id),
-    intent.targetId
-  );
-}
-
 export async function submitBattleIntent(
   pool: DbPool,
   sessionId: string,
@@ -261,9 +127,10 @@ export async function submitBattleIntent(
   }
 
   try {
-    validateIntent(session, intent);
+    validateBattleIntent(session, intent);
   } catch (err) {
-    wrapValidationError(err);
+    if (err instanceof BattleServiceError) throw err;
+    wrapValidationError(err, BattleValidationError);
   }
 
   const result = handlePlayerIntent(
@@ -295,13 +162,12 @@ export async function runAutoBattle(
   pool: DbPool,
   sessionId: string
 ): Promise<BattleStepResponse> {
-  let session = getBattleSession(sessionId);
+  const session = getBattleSession(sessionId);
 
   if (!session.state.autoBattle) {
-    session =
-      updateSession(session.id, {
-        state: { ...session.state, autoBattle: true },
-      }) ?? session;
+    updateSession(session.id, {
+      state: { ...session.state, autoBattle: true },
+    });
   }
 
   return runBattleStep(pool, sessionId, DEFAULT_MAX_STEPS);

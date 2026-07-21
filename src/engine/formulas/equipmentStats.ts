@@ -1,7 +1,6 @@
 import type { CombatStats } from "../types";
 import type { GearStatBonus } from "../art/equipment/statBonuses";
 import {
-  getGearPieceStatBonus,
   mergeStatBonuses,
   resolveLoadoutPieceStatBonus,
 } from "../art/equipment/statBonuses";

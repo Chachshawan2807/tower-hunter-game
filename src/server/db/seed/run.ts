@@ -1,7 +1,7 @@
 import { readFileSync, readdirSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { createDbPool, type DbPool } from "../client";
+import { type DbPool } from "../client";
 import { createUser, getUserByExternalId } from "../users";
 import { upsertLocalizedString } from "../localization";
 import { processWalletTransaction } from "../wallet";

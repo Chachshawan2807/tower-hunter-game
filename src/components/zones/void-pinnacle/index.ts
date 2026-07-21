@@ -1,0 +1,1 @@
+export { VoidPinnacleArena } from "./VoidPinnacleArena";

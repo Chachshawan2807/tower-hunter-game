@@ -50,7 +50,7 @@ export function resolveActionChoice(
     current.stats.hp < lowest.stats.hp ? current : lowest
   );
 
-  let skillId = "basic_attack";
+  let skillId: string;
 
   if (actor.side === "player") {
     const { activeSlots } = state.playerLoadout;

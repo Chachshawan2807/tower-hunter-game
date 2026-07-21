@@ -2,16 +2,16 @@ import type { BattleState } from "../../engine/states";
 import type {
   AnimationEvent,
   AnimationQueuePayload,
-  BattleSnapshot,
-  PlayerIntent,
   RewardPayload,
-} from "../../engine/types";
+} from "../../types";
 
 export interface BattleSession {
   id: string;
   userId: string;
   floor: number;
   state: BattleState;
+  /** Rotated after each authoritative step — client must echo on request_action. */
+  turnNonce: string;
   waitingActorId?: string;
   priorEvents?: AnimationEvent[];
   rewardsGranted: boolean;
@@ -28,6 +28,7 @@ export interface BattleStepResponse {
   animationQueue: AnimationQueuePayload;
   actionRequired: boolean;
   waitingActorId?: string;
+  turnNonce: string;
   rewards?: RewardPayload;
 }
 export interface StartBattleInput {

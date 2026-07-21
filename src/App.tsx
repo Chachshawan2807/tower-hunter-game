@@ -4,11 +4,9 @@ import { BottomNav } from "./components/layouts/BottomNav";
 import { GameShell } from "./components/layouts/GameShell";
 import { MainStage } from "./components/layouts/MainStage";
 import { MenuOverlay } from "./components/layouts/MenuOverlay";
-import { OverlayModal } from "./components/layouts/OverlayModal";
 import { TopHud } from "./components/layouts/TopHud";
-import { SettingsMenu } from "./components/menu/SettingsMenu";
-import { MailboxMenu } from "./components/menu/MailboxMenu";
-import { GameIcon } from "./components/ui/icons";
+import { AppModals } from "./components/app/AppModals";
+import { LoadingScreen } from "./components/app/LoadingScreen";
 import { useBattle } from "./hooks/useBattle";
 import { useLocale } from "./hooks/useLocale";
 import { isOverlayMenu, useUIScreen } from "./hooks/useUIScreen";
@@ -17,8 +15,8 @@ import { useBattleAudio, useTowerAmbient } from "./hooks/useGameAudio";
 import { usePlayerEquipment } from "./hooks/usePlayerEquipment";
 import { useAudioSettings } from "./hooks/useAudioSettings";
 import { useMailboxCount } from "./hooks/useMailboxCount";
+import { useBottomNavKeyboard } from "./hooks/useBottomNavKeyboard";
 import { formatBattleEvent } from "./components/battle/battleLog";
-import { t } from "./utils/i18n";
 
 export function App() {
   const { locale, toggleLocale } = useLocale();
@@ -80,56 +78,10 @@ export function App() {
     );
   }, [battle.displayedEvents, battle.battleSnapshot?.entities, locale]);
 
-  useEffect(() => {
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (isAnyOverlayOpen) return;
-      if (
-        event.key !== "ArrowLeft" &&
-        event.key !== "ArrowRight" &&
-        event.key !== "Home" &&
-        event.key !== "End"
-      ) {
-        return;
-      }
-
-      const tabs = navRef.current?.querySelectorAll<HTMLButtonElement>('[role="tab"]');
-      if (!tabs || tabs.length === 0) return;
-
-      const tabsArr = Array.from(tabs);
-      const currentIndex = tabsArr.findIndex(
-        (tab) => tab.getAttribute("aria-selected") === "true"
-      );
-      const base = currentIndex >= 0 ? currentIndex : 0;
-      let next: number;
-      if (event.key === "Home") next = 0;
-      else if (event.key === "End") next = tabsArr.length - 1;
-      else {
-        const delta = event.key === "ArrowRight" ? 1 : -1;
-        next = (base + delta + tabsArr.length) % tabsArr.length;
-      }
-      event.preventDefault();
-      tabsArr[next]?.click();
-      tabsArr[next]?.focus();
-    };
-
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [isAnyOverlayOpen]);
+  useBottomNavKeyboard(navRef, isAnyOverlayOpen);
 
   if (player.loading) {
-    return (
-      <div className="loading-screen" role="status" aria-live="polite">
-        <div className="loading-screen__inner">
-          <span className="loading-screen__icon-wrap" aria-hidden="true">
-            <GameIcon name="sword-cross" size={48} />
-          </span>
-          <span className="loading-screen__title">{t("loading", locale)}</span>
-          <div className="loading-screen__bar" aria-hidden="true">
-            <div className="loading-screen__bar-fill" />
-          </div>
-        </div>
-      </div>
-    );
+    return <LoadingScreen locale={locale} />;
   }
 
   return (
@@ -217,35 +169,15 @@ export function App() {
           />
         )}
 
-        {modal === "settings" && (
-          <OverlayModal
-            variant="dialog"
-            title={t("settings.title", locale)}
-            locale={locale}
-            onClose={closeModal}
-          >
-            <SettingsMenu locale={locale} onToggleLocale={toggleLocale} />
-          </OverlayModal>
-        )}
-
-        {modal === "mailbox" && (
-          <OverlayModal
-            variant="dialog"
-            title={t("bag.mailbox", locale)}
-            locale={locale}
-            onClose={() => {
-              closeModal();
-              void refreshMailboxCount();
-            }}
-          >
-            <MailboxMenu
-              locale={locale}
-              userId={player.userId}
-              skillPath={player.skillPath}
-              onMailboxChange={refreshMailboxCount}
-            />
-          </OverlayModal>
-        )}
+        <AppModals
+          locale={locale}
+          modal={modal}
+          userId={player.userId}
+          skillPath={player.skillPath}
+          onCloseModal={closeModal}
+          onToggleLocale={toggleLocale}
+          onMailboxChange={() => void refreshMailboxCount()}
+        />
 
         <BottomNav
           ref={navRef}

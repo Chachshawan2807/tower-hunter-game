@@ -91,8 +91,24 @@ checkImportPatterns(
 checkImportPatterns(
   "Engine must not import client API layer",
   engineFiles,
-  [/from\s+['"][^'"]*\/utils\/api/],
+  [
+    /from\s+['"][^'"]*\/utils\/api/,
+    /from\s+['"][^'"]*\/api\//,
+  ],
   "engine must stay framework-agnostic"
+);
+
+checkImportPatterns(
+  "Types layer purity",
+  collectTsFiles(join(SRC, "types")),
+  [
+    /from\s+['"]react['"]/,
+    /from\s+['"][^'"]*\/engine\//,
+    /from\s+['"][^'"]*\/server\//,
+    /from\s+['"][^'"]*\/components\//,
+    /from\s+['"][^'"]*\/hooks\//,
+  ],
+  "types must be pure data contracts without framework or layer imports"
 );
 
 console.log(`\n=== Architecture results: ${failed} violation(s) ===`);

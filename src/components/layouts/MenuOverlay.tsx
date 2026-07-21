@@ -77,7 +77,7 @@ export function MenuOverlay({
   equipMessage,
   clearEquipMessage,
   onClose,
-  onPathChange,
+  onPathChange: _onPathChange,
   onGoldChange,
   onPurchase,
   onPurchaseError,

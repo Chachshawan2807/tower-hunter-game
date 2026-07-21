@@ -10,7 +10,8 @@ import { t, type Locale } from "../../utils/i18n";
 import { api, type InventoryItem } from "../../utils/api";
 import { formatDialogMessage } from "../../utils/formatDialogMessage";
 import { resolveItemLabel } from "../../utils/itemLabel";
-import { BagItemDetail, BagItemSlot } from "./BagItemSlot";
+import { BagItemDetail } from "./BagItemDetail";
+import { BagItemSlot } from "./BagItemSlot";
 
 interface BagMenuProps {
   locale: Locale;

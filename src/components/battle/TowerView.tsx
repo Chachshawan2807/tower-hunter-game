@@ -8,7 +8,7 @@ import {
 import { t, type Locale } from "../../utils/i18n";
 import { playUiClick } from "../../hooks/useGameAudio";
 import { GameIcon } from "../ui/icons";
-import { BattleArena } from "./BattleArena";
+import { ZoneBattleArena } from "../zones";
 import { TowerScrollColumn } from "./TowerScrollColumn";
 import type { CharacterEquipmentVisual } from "../../engine/art/equipment/catalog";
 import type { useBattle } from "../../hooks/useBattle";
@@ -28,7 +28,7 @@ export function TowerView({
   currentFloor,
   climbFloor,
   skillPath,
-  playerLevel,
+  playerLevel: _playerLevel,
   playerEquipment,
   battle,
 }: TowerViewProps) {
@@ -69,7 +69,9 @@ export function TowerView({
       </div>
 
       <div className="tower-view__footer">
-        {inBattle ? (          <BattleArena
+        {inBattle ? (
+          <ZoneBattleArena
+            floor={currentFloor}
             locale={locale}
             snapshot={battle.battleSnapshot}
             displayedEvents={battle.displayedEvents}

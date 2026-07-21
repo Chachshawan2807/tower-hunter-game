@@ -13,7 +13,15 @@ export interface DisplayNameValidationResult {
   code?: DisplayNameValidationCode;
 }
 
-const INVALID_CHAR_PATTERN = /[\x00-\x1f\x7f]/;
+function hasInvalidControlChars(value: string): boolean {
+  for (const char of value) {
+    const code = char.charCodeAt(0);
+    if (code <= 31 || code === 127) {
+      return true;
+    }
+  }
+  return false;
+}
 
 export function normalizeDisplayName(raw: string): string {
   return raw.trim().replace(/\s+/g, " ");
@@ -34,7 +42,7 @@ export function validateDisplayName(raw: string): DisplayNameValidationResult {
     return { ok: false, normalized, code: "TOO_LONG" };
   }
 
-  if (INVALID_CHAR_PATTERN.test(normalized)) {
+  if (hasInvalidControlChars(normalized)) {
     return { ok: false, normalized, code: "INVALID_CHARACTERS" };
   }
 

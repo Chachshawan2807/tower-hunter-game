@@ -1,10 +1,7 @@
 import type { BattleEntity } from "../types";
 import type { SkillPath } from "../types";
 import { getSkillById, getSkillsForPath } from "./catalog";
-import {
-  getUnlockedSkills,
-  isSkillUnlocked,
-} from "./skillUnlock";
+import { isSkillUnlocked } from "./skillUnlock";
 import type { SkillDefinition } from "./types";
 
 export {

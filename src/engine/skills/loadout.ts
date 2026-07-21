@@ -20,7 +20,6 @@ export function getDefaultLoadout(
   path: SkillPath,
   unlockedSkillIds: readonly string[]
 ): SkillLoadout {
-  const skills = getSkillsForPath(path);
   const unlocked = getUnlockedSkills(path, unlockedSkillIds);
   const preferred = DEFAULT_ACTIVE[path];
   const slot1 =

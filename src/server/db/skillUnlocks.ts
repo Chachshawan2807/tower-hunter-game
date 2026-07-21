@@ -66,7 +66,11 @@ export async function getPlayerSkillUnlocks(
   pool: DbPool,
   userId: string
 ): Promise<string[]> {
-  const existing = await listUnlockRows(pool, userId);
+  const result = await pool.query<{ skill_id: string }>(
+    `SELECT skill_id FROM player_skill_unlocks WHERE user_id = $1`,
+    [userId]
+  );
+  const existing = result.rows.map((row) => row.skill_id);
   if (existing.length > 0) {
     return existing;
   }

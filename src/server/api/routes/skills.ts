@@ -52,12 +52,6 @@ const UPGRADE_ERROR_CODES = new Set([
   "UPGRADE_NOT_ALLOWED",
 ]);
 
-const UNLOCK_ERROR_CODES = new Set([
-  "INVALID_SKILL",
-  "ALREADY_UNLOCKED",
-  "INSUFFICIENT_SP",
-]);
-
 export const skillRoutes = new Hono<{
   Bindings: ServerBindings;
   Variables: ServerVariables;
@@ -130,7 +124,6 @@ skillRoutes.get("/:userId/progression", async (c) => {
     getPlayerSkillUnlocks(c.get("db"), userId),
   ]);
 
-  const playerLevel = stats?.level ?? 1;
   const skillPoints = stats?.skill_points ?? 0;
   const loadout =
     dbLoadout ?? getDefaultLoadout(path, unlockedSkillIds);

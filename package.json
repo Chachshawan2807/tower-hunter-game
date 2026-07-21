@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "validate": "tsx scripts/validate.ts && tsx scripts/validate-architecture.ts && npm run typecheck",
+    "lint": "eslint src",
+    "lint:strict": "eslint src --max-warnings 0",
+    "validate": "tsx scripts/validate.ts && tsx scripts/validate-architecture.ts && npm run typecheck && npm run lint",
     "seed": "tsx scripts/seed.ts",
     "db:check": "tsx scripts/db-check.ts",
     "dev": "node scripts/dev.mjs",
@@ -33,17 +35,20 @@
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@types/node": "^22.13.10",
     "@types/pg": "^8.11.10",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
     "@vitejs/plugin-react": "^4.3.4",
     "adm-zip": "^0.6.0",
+    "eslint": "^10.7.0",
     "ffmpeg-static": "^5.3.0",
     "mcp-game-helper": "github:xhulz/mcp-game-helper",
     "sharp": "^0.35.3",
     "tsx": "^4.19.3",
     "typescript": "^5.7.0",
+    "typescript-eslint": "^8.65.0",
     "vite": "^6.2.0",
     "vite-plugin-pwa": "^0.21.1"
   }

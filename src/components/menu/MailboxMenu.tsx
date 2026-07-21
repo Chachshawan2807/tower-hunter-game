@@ -3,7 +3,8 @@ import type { SkillPath } from "../../engine/types";
 import { useDismissOnOutside } from "../../hooks/useDismissOnOutside";
 import { t, type Locale } from "../../utils/i18n";
 import { api, type MailboxItem } from "../../utils/api";
-import { BagItemDetail, BagItemSlot } from "./BagItemSlot";
+import { BagItemDetail } from "./BagItemDetail";
+import { BagItemSlot } from "./BagItemSlot";
 
 interface MailboxMenuProps {
   locale: Locale;

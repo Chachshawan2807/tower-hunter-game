@@ -47,8 +47,8 @@ export interface IconPathDef {
   viewBox: string;
   paths: string[];
   fills?: string[];
-  strokes?: string[];
-  strokeWidths?: number[];
+  strokes?: (string | undefined)[];
+  strokeWidths?: (number | undefined)[];
 }
 
 /** Core HUD icons — nav buttons use file SVGs from buildNavButtonSvgs.mjs */

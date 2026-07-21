@@ -1,59 +1,42 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import {
   deriveAutoSkills,
   getSkillsForPath,
   isSkillUnlocked,
   pickAutoSkill,
 } from "../engine/skills";
-import type { SkillLoadout } from "../engine/skills/loadout";
-import type { SkillUpgradeRanks } from "../engine/skills/types";
-import type { BattleSnapshot, PlayerIntent, SkillPath } from "../engine/types";
+import type { BattleSnapshot, PlayerIntent } from "../types";
 import { api, type BattleStepResponse } from "../utils/api";
-import { useAnimationQueue } from "./useAnimationQueue";
+import {
+  extractLoadoutContext,
+  type BattleLoadoutContext,
+} from "./battleLoadoutContext";
+import { useCombatQueue } from "./use-combat-queue";
+import { useBattleAutoReset, useBattleAutoSubmit } from "./useBattleEffects";
 
-export interface BattleLoadoutContext {
-  autoBattle: boolean;
-  playerLoadout: SkillLoadout;
-  playerSkillUpgrades: Record<string, SkillUpgradeRanks>;
-  playerSkillPath: SkillPath;
-  playerUnlockedSkillIds: string[];
-}
+export type { BattleLoadoutContext } from "./battleLoadoutContext";
 
-function extractLoadoutContext(
-  state: BattleStepResponse["state"]
-): BattleLoadoutContext | null {
-  const full = state as BattleStepResponse["state"] & {
-    playerLoadout?: SkillLoadout;
-    playerSkillUpgrades?: Record<string, SkillUpgradeRanks>;
-    playerSkillPath?: SkillPath;
-    playerUnlockedSkillIds?: string[];
-  };
-  if (!full.playerLoadout) return null;
-  return {
-    autoBattle: full.autoBattle,
-    playerLoadout: full.playerLoadout,
-    playerSkillUpgrades: full.playerSkillUpgrades ?? {},
-    playerSkillPath: full.playerSkillPath ?? full.playerLoadout.path,
-    playerUnlockedSkillIds: full.playerUnlockedSkillIds ?? [],
-  };
-}
-
-export function useBattle(userId: string | null, onComplete?: () => void | Promise<void>) {
+export function useBattle(
+  userId: string | null,
+  onComplete?: () => void | Promise<void>
+) {
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [floor, setFloor] = useState(1);
-  const [battleSnapshot, setBattleSnapshot] = useState<BattleSnapshot | null>(null);
-  const [loadoutContext, setLoadoutContext] = useState<BattleLoadoutContext | null>(
+  const [battleSnapshot, setBattleSnapshot] = useState<BattleSnapshot | null>(
     null
   );
+  const [loadoutContext, setLoadoutContext] =
+    useState<BattleLoadoutContext | null>(null);
   const [actionRequired, setActionRequired] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
   const [result, setResult] = useState<"win" | "lose" | null>(null);
   const [busy, setBusy] = useState(false);
   const [startError, setStartError] = useState<string | null>(null);
   const [rewards, setRewards] = useState<BattleStepResponse["rewards"]>();
+  const [turnNonce, setTurnNonce] = useState<string | null>(null);
   const startingRef = useRef(false);
 
-  const animation = useAnimationQueue({
+  const animation = useCombatQueue({
     onQueueComplete: (snapshot) => {
       setBattleSnapshot(snapshot);
       setIsComplete(snapshot.isComplete);
@@ -66,12 +49,11 @@ export function useBattle(userId: string | null, onComplete?: () => void | Promi
 
   const applyStep = useCallback(
     (step: BattleStepResponse) => {
+      setTurnNonce(step.turnNonce);
       setActionRequired(step.actionRequired);
       setRewards(step.rewards);
       const context = extractLoadoutContext(step.state);
-      if (context) {
-        setLoadoutContext(context);
-      }
+      if (context) setLoadoutContext(context);
       animation.enqueue(step.animationQueue);
 
       if (step.animationQueue.events.length === 0) {
@@ -101,12 +83,10 @@ export function useBattle(userId: string | null, onComplete?: () => void | Promi
       try {
         const session = await api.startBattle(userId, targetFloor, true);
         setSessionId(session.id);
+        setTurnNonce(session.turnNonce);
         const context = extractLoadoutContext(session.state);
-        if (context) {
-          setLoadoutContext(context);
-        }
-        const step = await api.battleStep(session.id, 20);
-        applyStep(step);
+        if (context) setLoadoutContext(context);
+        applyStep(await api.battleStep(session.id, 20));
       } catch (err) {
         console.error("Failed to start battle:", err);
         setStartError(err instanceof Error ? err.message : "Battle failed");
@@ -120,11 +100,9 @@ export function useBattle(userId: string | null, onComplete?: () => void | Promi
 
   const continueBattle = useCallback(async () => {
     if (!sessionId || busy || isComplete || animation.isPlaying) return;
-
     setBusy(true);
     try {
-      const step = await api.battleStep(sessionId, 20);
-      applyStep(step);
+      applyStep(await api.battleStep(sessionId, 20));
     } finally {
       setBusy(false);
     }
@@ -133,20 +111,21 @@ export function useBattle(userId: string | null, onComplete?: () => void | Promi
   const manualSkill = useCallback(
     async (skillId: string, targetId: string) => {
       if (!sessionId || busy) return;
-
       setBusy(true);
       try {
-        const step = await api.battleIntent(sessionId, {
-          type: "request_action",
-          skillId,
-          targetId,
-        } satisfies PlayerIntent);
-        applyStep(step);
+        applyStep(
+          await api.battleIntent(sessionId, {
+            type: "request_action",
+            skillId,
+            targetId,
+            turnNonce: turnNonce ?? undefined,
+          } satisfies PlayerIntent)
+        );
       } finally {
         setBusy(false);
       }
     },
-    [sessionId, busy, applyStep]
+    [sessionId, busy, applyStep, turnNonce]
   );
 
   const manualAttack = useCallback(
@@ -161,15 +140,12 @@ export function useBattle(userId: string | null, onComplete?: () => void | Promi
     if (!playerEntity) return;
 
     const unlocked = getSkillsForPath(loadoutContext.playerSkillPath)
-      .filter((s) =>
-        isSkillUnlocked(s, loadoutContext.playerUnlockedSkillIds)
-      )
+      .filter((s) => isSkillUnlocked(s, loadoutContext.playerUnlockedSkillIds))
       .map((s) => s.id);
     const autoIds = deriveAutoSkills(
       unlocked,
       loadoutContext.playerLoadout.activeSlots
     );
-
     const skill = pickAutoSkill(
       playerEntity,
       loadoutContext.playerSkillPath,
@@ -177,45 +153,18 @@ export function useBattle(userId: string | null, onComplete?: () => void | Promi
       loadoutContext.playerSkillUpgrades,
       loadoutContext.playerUnlockedSkillIds
     );
-
     const enemyEntity = battleSnapshot.entities.find((e) => e.side === "enemy");
     const targetId =
-      skill.targetType === "self"
-        ? playerEntity.id
-        : (enemyEntity?.id ?? "");
+      skill.targetType === "self" ? playerEntity.id : (enemyEntity?.id ?? "");
     if (!targetId) return;
 
     await manualSkill(skill.id, targetId);
   }, [sessionId, busy, loadoutContext, battleSnapshot, manualSkill]);
 
-  useEffect(() => {
-    if (
-      !actionRequired ||
-      loadoutContext?.autoBattle ||
-      busy ||
-      animation.isPlaying ||
-      isComplete
-    ) {
-      return;
-    }
-
-    const timer = window.setTimeout(() => {
-      void submitAutoFromPool();
-    }, 8000);
-
-    return () => window.clearTimeout(timer);
-  }, [
-    actionRequired,
-    loadoutContext?.autoBattle,
-    busy,
-    animation.isPlaying,
-    isComplete,
-    submitAutoFromPool,
-  ]);
-
   const resetBattle = useCallback(() => {
     setSessionId(null);
     setStartError(null);
+    setTurnNonce(null);
     animation.reset();
     setBattleSnapshot(null);
     setLoadoutContext(null);
@@ -225,17 +174,24 @@ export function useBattle(userId: string | null, onComplete?: () => void | Promi
     setRewards(undefined);
   }, [animation]);
 
-  useEffect(() => {
-    if (!isComplete || animation.isPlaying || result !== "win" || !loadoutContext?.autoBattle) {
-      return;
-    }
+  useBattleAutoSubmit({
+    enabled:
+      Boolean(actionRequired) &&
+      !loadoutContext?.autoBattle &&
+      !busy &&
+      !animation.isPlaying &&
+      !isComplete,
+    onSubmit: submitAutoFromPool,
+  });
 
-    const timer = window.setTimeout(() => {
-      resetBattle();
-    }, 2200);
-
-    return () => window.clearTimeout(timer);
-  }, [isComplete, animation.isPlaying, result, loadoutContext?.autoBattle, resetBattle]);
+  useBattleAutoReset({
+    enabled:
+      isComplete &&
+      !animation.isPlaying &&
+      result === "win" &&
+      Boolean(loadoutContext?.autoBattle),
+    onReset: resetBattle,
+  });
 
   return {
     floor,
