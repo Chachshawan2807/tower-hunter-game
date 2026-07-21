@@ -74,7 +74,7 @@ Use this order every time:
 4. **API client** — add typed method in `src/api/` and export via `src/utils/api.ts`.
 5. **Hook** — `useXxx.ts` or `use-combat-queue.ts`: fetch/mutate, hold React state, expose actions.
 6. **Component** — present data; use `src/styles/tokens.css` and `src/engine/art/` for visuals.
-7. **i18n** — strings in `src/utils/i18n.ts`.
+7. **i18n** — strings in `src/utils/i18n/` (barrel: `src/utils/i18n.ts`).
 8. **Validation** — assertions in `scripts/validate.ts` for engine rules; `scripts/validate-architecture.ts` for import boundaries; run `npm run validate`.
 
 ### Example: new status effect
@@ -92,7 +92,8 @@ Use this order every time:
 
 | Step | File |
 |------|------|
-| Catalog entry | `src/engine/shop/` or `src/server/shop/catalog.ts` |
+| Catalog entry | `src/engine/shop/equipmentShopItems.ts`, `equipmentShopStats.ts` |
+| Server catalog DTO | `src/server/shop/catalog.ts` |
 | Purchase logic + wallet lock | `src/server/shop/purchase.ts` |
 | Route | `src/server/api/routes/shop.ts` |
 | Client | `src/hooks/usePlayer.ts` or dedicated hook + `ShopMenu.tsx` |
@@ -146,36 +147,48 @@ npm run lint:strict   # fail on any warning
 
 ```
 src/
-├── types/           # Data contracts (lowest layer)
+├── types/              # Data contracts (lowest layer)
 │   ├── combat.interface.ts
 │   ├── state.interface.ts
 │   └── animation.interface.ts
-├── engine/          # Model — pure TS game logic
-│   ├── combat/      # action-gauge, damage-calculator, turn-resolver
-│   ├── formulas/
-│   ├── states/
-│   ├── skills/
-│   │   ├── base-skill.interface.ts
-│   │   └── impl/
-│   ├── statuses/
-│   │   ├── base-status.interface.ts
-│   │   └── impl/
-│   └── art/
-├── server/          # Controller — API, DB, validation
-│   ├── controllers/
-│   ├── repository/
-│   ├── api/routes/
-│   ├── battle/
-│   └── db/
-├── api/             # Client network layer (intent in / result out)
-│   └── combat.api.ts
-├── hooks/           # React state bridges (use-combat-queue.ts)
-├── components/      # View
-│   ├── zones/       # forgotten-dungeon, imperial-bastion, knight-citadel, void-pinnacle
-│   └── ui/
-│       └── action-button.tsx
-├── utils/api.ts     # Facade — re-exports api/* + legacy helpers
-└── styles/          # Design tokens + layout CSS
+├── engine/             # Model — pure TS game logic
+│   ├── combat/         # action-gauge, damage-calculator
+│   ├── formulas/       # damage, progression, status points, equipment
+│   ├── states/         # turnStateMachine, battleAdvance, actionChoice
+│   ├── skills/         # catalog, loadout (4-slot), resolver, enemy AI
+│   │   ├── catalog/    # manifest + registry (skill v2)
+│   │   └── impl/       # per-skill definitions
+│   ├── status/         # runtime DoT/CC (poison, stun, applyOnHit)
+│   ├── statuses/       # status interface + impl/ (ESLint line-limit exception)
+│   ├── shop/           # equipment shop catalog + per-item stats
+│   ├── player/         # display-name helpers
+│   └── art/            # palette, tower zones, equipment visuals
+├── server/             # Controller — API, DB, validation
+│   ├── api/routes/     # battle, skills, shop, users, wallet, health
+│   ├── battle/         # service, factory, rewards, session store
+│   ├── shop/           # catalog DTO, purchase, sell
+│   ├── equipment/      # equip/unequip from inventory
+│   ├── db/             # schema/*.sql migrations, repositories
+│   ├── controllers/    # thin route adapters (e.g. combat)
+│   └── repository/     # wallet repository
+├── api/                # Client network layer (intent in / result out)
+│   ├── combat.api.ts
+│   ├── skills.api.ts
+│   ├── shop.api.ts
+│   └── user.api.ts
+├── hooks/              # React state bridges
+│   ├── useBattle.ts
+│   ├── useAnimationQueue.ts
+│   └── use-combat-queue.ts
+├── components/         # View
+│   ├── battle/         # BattleArena, TowerView, CombatFxCanvas
+│   ├── menu/           # SkillMenu, ShopMenu, BagMenu, CharacterMenu
+│   ├── skills/         # SkillEquipPanel, SkillListCard
+│   ├── character/      # equipment panel, hero portrait
+│   ├── layouts/        # GameShell, TopHud, BottomNav
+│   └── zones/          # per-tower-zone arena backgrounds
+├── utils/api.ts        # Facade — re-exports api/* + legacy helpers
+└── styles/             # Design tokens + layout CSS
 ```
 
 ## Related docs

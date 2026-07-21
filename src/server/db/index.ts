@@ -35,7 +35,6 @@ export {
   toCombatStats,
   applyBattleWinProgress,
   getPlayerSkillPath,
-  setPlayerSkillPath,
   statusAllocationsFromRow,
   type PlayerStatsRow,
 } from "./playerStats";

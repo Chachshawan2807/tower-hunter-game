@@ -1,6 +1,6 @@
 # Art Bible — Implementation Checklist
 
-Status of Master Art Bible wiring in code (updated: 2026-07-21).
+Status of Master Art Bible wiring in code (updated: 2026-07-22).
 
 ## Wired in UI (production-ready)
 
@@ -16,13 +16,15 @@ Status of Master Art Bible wiring in code (updated: 2026-07-21).
 | Character | Status point allocation (primary + secondary) | `src/engine/formulas/statusPoints.ts`, `009_status_points.sql`, `011_status_alloc_secondary.sql`, `CharacterMenu.tsx` |
 | Server | Persisted `player_equipment` + API | `src/server/db/schema/006_player_equipment.sql`, `src/server/api/routes/users.ts` |
 | Skills | SP-gated skill unlocks | `src/server/db/schema/007_skill_unlocks.sql`, `src/engine/skills/skillUnlock.ts`, `POST /api/skills/:userId/unlock` |
+| Skills | Skill v2 — 4-slot equip loadout, type catalog, respec | `012_skill_v2.sql`, `src/engine/skills/loadout.ts`, `src/server/db/skillLoadoutV2.ts`, `src/components/skills/SkillEquipPanel.tsx`, `SkillMenu.tsx` |
+| Skills | Manual/auto battle skill buttons | `src/components/battle/BattleActiveSkills.tsx`, `src/hooks/useBattle.ts` |
 | 02–05 | Colors, zones, FX CSS, PWA textures | `tokens.css`, `textures.css`, `effects.css`, `towerZones.ts` |
 | 04/05 | Zone background SVGs (4 zones, floors 1–100) | `public/assets/zones/` (`imperial-bastion` replaces Murim Pagoda) |
 | 08 UI | Imperial Knight stroke icons + `GameIcon` | `public/icons/ui/`, `npm run export:icons` |
 | 08 UI | Equipment slot silhouettes | `public/icons/equipment-slots/` |
 | 08 UI | Settings overlay (audio, language) | `src/components/menu/SettingsMenu.tsx`, `src/components/layouts/TopHud.tsx` |
 | 08 UI | Readable HUD on all screens incl. battle | `src/styles/view-readable.css`, `src/App.tsx` |
-| 08 UI | Path skill tab theming (Imperial / Knight / Vanguard) | `src/styles/menus.css`, `src/components/menu/SkillMenu.tsx` |
+| 08 UI | Skill menu type filters (Active / Passive / CC / Movement) | `src/styles/menus.css`, `src/components/menu/SkillMenu.tsx`, `src/components/skills/SkillEquipPanel.tsx` |
 | 08 UX | Safe-area insets, focus trap, arrow-key nav | `src/styles/tokens.css`, `src/hooks/useFocusTrap.ts`, `src/components/layouts/BottomNav.tsx` |
 | 10 | Kenney CC0 audio + procedural fallback | `public/audio/`, `npm run fetch:audio`, `src/audio/catalog.ts` |
 

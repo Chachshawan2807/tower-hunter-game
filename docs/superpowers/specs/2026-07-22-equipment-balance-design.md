@@ -1,7 +1,7 @@
 # Equipment Balance — Tower Hunter Game
 
 **Date:** 2026-07-22  
-**Status:** Pending approval  
+**Status:** Implemented (2026-07-22)  
 **Pairs with:** `2026-07-21-skill-system-v2-design.md` (rev 7), `2026-07-21-shop-gear-scaling-design.md`  
 **Goal:** Rebalance all shop gear **prices** and **stats** for floors 1–100, aligned with skill v2 and **50/50 power split at every floor band (1–100)**.
 

@@ -1,6 +1,5 @@
 import type { BattleEntity } from "../types";
-import type { SkillPath } from "../types";
-import { getSkillById, getSkillsForPath } from "./catalog";
+import { getSkillById } from "./catalog";
 import { isSkillUnlocked } from "./skillUnlock";
 import type { SkillDefinition } from "./types";
 
@@ -44,16 +43,6 @@ export function canUseSkill(
   if (!isSkillUnlocked(skill, unlockedSkillIds)) return false;
   if (isSkillOnCooldown(entity, skill.id)) return false;
   return canAffordSkill(entity, skill);
-}
-
-export function getAvailableSkills(
-  path: SkillPath,
-  entity: BattleEntity,
-  unlockedSkillIds: ReadonlySet<string> | readonly string[]
-): SkillDefinition[] {
-  return getSkillsForPath(path).filter((skill) =>
-    canUseSkill(entity, skill, unlockedSkillIds)
-  );
 }
 
 export function applySkillCooldown(

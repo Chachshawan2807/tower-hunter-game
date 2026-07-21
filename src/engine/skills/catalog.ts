@@ -1,11 +1,9 @@
 export {
   CATALOG_VERSION,
   getSkillById,
-  getSkillsForPath,
   getPlayerCatalogSkills,
   getSkillsByType,
   getAllSkills,
-  isValidSkillForPath,
   LEGACY_SKILL_ID_MAP,
   normalizeSkillId,
   normalizeSkillPath,

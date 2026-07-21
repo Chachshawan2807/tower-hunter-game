@@ -1,9 +1,9 @@
 # Skill System v2 — Tower Hunter Game
 
 **Date:** 2026-07-21  
-**Status:** Pending approval (rev 7 — 50/50 split floors 1–100)  
+**Status:** Implemented (2026-07-22)  
 **Approach:** Composable Registry (Approach 3)  
-**Supersedes:** `2026-07-14-skill-system-design.md` (loadout, upgrade, catalog, paths)
+**Supersedes:** [archive/superpowers/specs/2026-07-14-skill-system-design.md](../../archive/superpowers/specs/2026-07-14-skill-system-design.md) (loadout, upgrade, catalog, paths)
 
 ---
 
@@ -524,7 +524,7 @@ interface SkillUpgradeRanks {
 
 ### 6.1 Key Modules
 
-`catalog/`, `skillTypes.ts`, `passiveApply.ts`, `equipLoadout.ts`, `skillPicker.ts`, `skillRespec.ts`
+`catalog/`, `skillTypes.ts`, `loadout.ts`, `passiveApply.ts`, `skillPicker.ts`, `skillRespec.ts`
 
 ### 6.2 API
 

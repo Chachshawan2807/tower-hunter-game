@@ -1,7 +1,6 @@
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import {
   getPlayerCatalogSkills,
-  getSkillById,
   isSkillUnlocked,
   MAX_EQUIP_SLOTS,
 } from "../../engine/skills";
@@ -9,7 +8,7 @@ import type { SkillLoadout } from "../../engine/skills/loadout";
 import type { SkillDefinition } from "../../engine/skills/types";
 import { api } from "../../utils/api";
 import { t, type Locale } from "../../utils/i18n";
-import { SkillListCard } from "./SkillListCard";
+import { SkillEquipSlot } from "./SkillEquipSlot";
 
 interface SkillEquipPanelProps {
   locale: Locale;
@@ -19,12 +18,11 @@ interface SkillEquipPanelProps {
   onLoadoutChange: (loadout: SkillLoadout) => void;
 }
 
-function formatSkillMeta(skill: SkillDefinition, locale: Locale): string {
-  const parts = [`MP ${skill.mpCost}`];
-  if (skill.cooldownTurns > 0) {
-    parts.push(`${t("skills.cooldown", locale)} ${skill.cooldownTurns}`);
-  }
-  return parts.join(" · ");
+function getSlotSkillId(
+  equippedSlots: string[],
+  slotIndex: number
+): string | null {
+  return equippedSlots[slotIndex] ?? null;
 }
 
 export function SkillEquipPanel({
@@ -35,6 +33,15 @@ export function SkillEquipPanel({
   onLoadoutChange,
 }: SkillEquipPanelProps) {
   const [busy, setBusy] = useState(false);
+  const [activeSlot, setActiveSlot] = useState<number | null>(null);
+
+  const catalog = useMemo(
+    () =>
+      getPlayerCatalogSkills().filter((skill) =>
+        isSkillUnlocked(skill, unlockedSkillIds)
+      ),
+    [unlockedSkillIds]
+  );
 
   const saveLoadout = useCallback(
     async (next: SkillLoadout) => {
@@ -51,126 +58,79 @@ export function SkillEquipPanel({
     [userId, onLoadoutChange]
   );
 
-  const moveSlot = (from: number, to: number) => {
-    if (to < 0 || to >= loadout.equippedSlots.length) return;
+  const equippedCount = loadout.equippedSlots.length;
+
+  const pickerForSlot = (slotIndex: number): SkillDefinition[] => {
+    const currentId = getSlotSkillId(loadout.equippedSlots, slotIndex);
+    return catalog.filter(
+      (skill) =>
+        skill.id === currentId || !loadout.equippedSlots.includes(skill.id)
+    );
+  };
+
+  const handleEquip = (slotIndex: number, skillId: string) => {
     const slots = [...loadout.equippedSlots];
-    const [item] = slots.splice(from, 1);
-    slots.splice(to, 0, item);
+    if (slotIndex < slots.length) {
+      slots[slotIndex] = skillId;
+    } else if (slotIndex === slots.length) {
+      slots.push(skillId);
+    } else {
+      return;
+    }
     void saveLoadout({ ...loadout, equippedSlots: slots });
+    setActiveSlot(null);
   };
 
-  const removeSlot = (index: number) => {
-    const slots = loadout.equippedSlots.filter((_, i) => i !== index);
+  const handleUnequip = (slotIndex: number) => {
+    const slots = loadout.equippedSlots.filter((_, index) => index !== slotIndex);
     void saveLoadout({ ...loadout, equippedSlots: slots });
+    setActiveSlot(null);
   };
-
-  const addSkill = (skillId: string) => {
-    if (loadout.equippedSlots.length >= MAX_EQUIP_SLOTS) return;
-    if (loadout.equippedSlots.includes(skillId)) return;
-    void saveLoadout({
-      ...loadout,
-      equippedSlots: [...loadout.equippedSlots, skillId],
-    });
-  };
-
-  const catalog = getPlayerCatalogSkills().filter((s) =>
-    isSkillUnlocked(s, unlockedSkillIds)
-  );
-  const availableToAdd = catalog.filter(
-    (s) => !loadout.equippedSlots.includes(s.id)
-  );
-  const emptySlotCount = MAX_EQUIP_SLOTS - loadout.equippedSlots.length;
 
   return (
-    <section className="shop-section skill-equip-panel" aria-label={t("skills.equip_title", locale)}>
+    <section
+      className="skill-equip-panel ui-section"
+      aria-label={t("skills.equip_title", locale)}
+    >
       <div className="skill-equip-panel__header">
         <h3 className="skill-equip-panel__title">
           {t("skills.equip_title", locale)}
         </h3>
         <span className="skill-equip-panel__count tabular-nums">
-          {loadout.equippedSlots.length}/{MAX_EQUIP_SLOTS}
+          {equippedCount}/{MAX_EQUIP_SLOTS}
         </span>
       </div>
 
-      <div className="stat-grid stat-grid--skills skill-equip-panel__grid">
-        {loadout.equippedSlots.map((skillId, index) => {
-          const skill = getSkillById(skillId);
+      <div className="skill-equip-rail" role="group" aria-label={t("skills.equip_title", locale)}>
+        {Array.from({ length: MAX_EQUIP_SLOTS }, (_, slotIndex) => {
+          const skillId = getSlotSkillId(loadout.equippedSlots, slotIndex);
+          const canEquip = slotIndex <= equippedCount;
+
           return (
-            <SkillListCard
-              key={`${skillId}-${index}`}
-              className="skill-equip-card"
-              label={t(skill.stringId, locale)}
-              meta={formatSkillMeta(skill, locale)}
-              footer={
-                <div className="skill-equip-card__actions">
-                  <button
-                    type="button"
-                    className="skill-equip-card__btn"
-                    disabled={busy || index === 0}
-                    aria-label={t("skills.equip_move_up", locale)}
-                    onClick={() => moveSlot(index, index - 1)}
-                  >
-                    ↑
-                  </button>
-                  <button
-                    type="button"
-                    className="skill-equip-card__btn"
-                    disabled={busy || index === loadout.equippedSlots.length - 1}
-                    aria-label={t("skills.equip_move_down", locale)}
-                    onClick={() => moveSlot(index, index + 1)}
-                  >
-                    ↓
-                  </button>
-                  <button
-                    type="button"
-                    className="skill-equip-card__btn skill-equip-card__btn--remove"
-                    disabled={busy}
-                    aria-label={t("skills.equip_remove", locale)}
-                    onClick={() => removeSlot(index)}
-                  >
-                    ×
-                  </button>
-                </div>
+            <SkillEquipSlot
+              key={slotIndex}
+              locale={locale}
+              slotIndex={slotIndex}
+              skillId={skillId}
+              canEquip={canEquip}
+              pickerSkills={pickerForSlot(slotIndex)}
+              isActive={activeSlot === slotIndex}
+              hasPinnedTooltip={activeSlot !== null}
+              busy={busy}
+              onActivate={() =>
+                setActiveSlot((current) =>
+                  current === slotIndex ? null : slotIndex
+                )
+              }
+              onDismissActive={() => setActiveSlot(null)}
+              onEquip={(nextSkillId) => handleEquip(slotIndex, nextSkillId)}
+              onUnequip={
+                skillId ? () => handleUnequip(slotIndex) : undefined
               }
             />
           );
         })}
-
-        {Array.from({ length: emptySlotCount }, (_, index) => (
-          <div
-            key={`empty-${index}`}
-            className="stat-item stat-item--placeholder skill-equip-card skill-equip-card--empty"
-          >
-            <span className="skill-stat-label">{t("skills.equip_empty", locale)}</span>
-            <span className="stat-item__value tabular-nums">—</span>
-          </div>
-        ))}
       </div>
-
-      {emptySlotCount > 0 && availableToAdd.length > 0 && (
-        <div className="skill-equip-panel__add">
-          <label className="skill-equip-panel__add-label" htmlFor="skill-equip-add-select">
-            {t("skills.equip_add", locale)}
-          </label>
-          <select
-            id="skill-equip-add-select"
-            className="skill-equip-panel__add-select"
-            disabled={busy}
-            defaultValue=""
-            onChange={(e) => {
-              if (e.target.value) addSkill(e.target.value);
-              e.target.value = "";
-            }}
-          >
-            <option value="">—</option>
-            {availableToAdd.map((s) => (
-              <option key={s.id} value={s.id}>
-                {t(s.stringId, locale)}
-              </option>
-            ))}
-          </select>
-        </div>
-      )}
     </section>
   );
 }

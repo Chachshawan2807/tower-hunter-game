@@ -140,4 +140,4 @@ export {
   applyBattleWinProgress,
   resetPlayerHpAfterDefeat,
 } from "./playerStatsProgress";
-export { getPlayerSkillPath, setPlayerSkillPath } from "./playerSkillPath";
+export { getPlayerSkillPath } from "./playerSkillPath";

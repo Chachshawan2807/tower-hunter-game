@@ -51,11 +51,6 @@ export function getPlayerCatalogSkills(): SkillDefinition[] {
   return PLAYER_SKILL_MANIFEST;
 }
 
-/** @deprecated Paths removed — returns full player catalog. */
-export function getSkillsForPath(_path?: SkillPath | string): SkillDefinition[] {
-  return getPlayerCatalogSkills();
-}
-
 export function getSkillsByType(skillType: SkillType): SkillDefinition[] {
   return PLAYER_SKILL_MANIFEST.filter((s) => s.skillType === skillType);
 }
@@ -66,11 +61,6 @@ export function getAllSkills(): SkillDefinition[] {
       [...PLAYER_SKILL_MANIFEST, BASIC_ATTACK, ...ENEMY_SKILLS].map((s) => [s.id, s])
     ).values()
   );
-}
-
-export function isValidSkillForPath(skillId: string, _path?: SkillPath): boolean {
-  if (skillId === BASIC_ATTACK.id) return true;
-  return PLAYER_SKILL_MANIFEST.some((s) => s.id === normalizeSkillId(skillId));
 }
 
 export { CATALOG_VERSION, LEGACY_SKILL_ID_MAP, normalizeSkillId } from "./manifest";

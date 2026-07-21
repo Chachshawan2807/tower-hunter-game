@@ -1,6 +1,6 @@
 # Skill System — Completed Summary
 
-> **Status:** Implemented (2026-07). This summary is the canonical plan reference; the step-by-step archive was removed after shipping.
+> **Status:** Implemented (2026-07). Superseded by skill v2 — see [2026-07-21-skill-system-v2-design.md](../../../superpowers/specs/2026-07-21-skill-system-v2-design.md). Archived v1 reference.
 
 **Spec:** [../specs/2026-07-14-skill-system-design.md](../specs/2026-07-14-skill-system-design.md)
 

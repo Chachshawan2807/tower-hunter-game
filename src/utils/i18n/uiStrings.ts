@@ -66,6 +66,12 @@ export const UI_I18N_STRINGS: Record<string, Record<Locale, string>> = {
   },
   "skills.equip_title": { en: "Equipped", th: "สวมสกิล" },
   "skills.equip_empty": { en: "Empty slot", th: "ช่องว่าง" },
+  "skills.equip_slot_label": { en: "Slot {slot}", th: "ช่อง {slot}" },
+  "skills.equip_pick_skill": { en: "Choose skill", th: "เลือกสกิล" },
+  "skills.equip_no_available": {
+    en: "No skills available",
+    th: "ไม่มีสกิลที่ใช้ได้",
+  },
   "skills.equip_add": { en: "Add skill", th: "เพิ่มสกิล" },
   "skills.equip_move_up": { en: "Move up", th: "เลื่อนขึ้น" },
   "skills.equip_move_down": { en: "Move down", th: "เลื่อนลง" },

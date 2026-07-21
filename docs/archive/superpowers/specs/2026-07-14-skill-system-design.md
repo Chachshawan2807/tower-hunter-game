@@ -1,7 +1,7 @@
 # Skill System Design — Tower Hunter Game
 
 **Date:** 2026-07-14  
-**Status:** Approved — implemented  
+**Status:** Superseded — see `2026-07-21-skill-system-v2-design.md` (implemented 2026-07-22). Retained for historical context.  
 **Approach:** Unified Skill Runtime (Approach 1)
 
 > **Path rename (2026-07):** Runtime skill paths are `imperial` · `knight` · `vanguard` (was `murim` · `knight` · `fantasy`). Examples below retain legacy IDs/names where the spec was written; migration: `005_imperial_skill_paths.sql`.

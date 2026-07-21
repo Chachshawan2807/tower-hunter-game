@@ -8,8 +8,8 @@ Pure TypeScript game logic — **no React, no DOM, no database**.
 |--------|---------|
 | `formulas/` | Damage, hit chance, progression, equipment stats, status points |
 | `states/` | Turn state machine, battle advance, action choice |
-| `skills/` | Skill catalog, loadout, resolver, enemy AI |
-| `status/` | Poison, bleed, stun, freeze, on-hit procs |
+| `skills/` | Skill v2 catalog (`catalog/`), 4-slot loadout, resolver, enemy AI, SP/respec |
+| `status/` | Runtime DoT/CC effects and on-hit procs |
 | `art/` | Palette, tower zones, equipment visuals (constants only) |
 | `shop/` | Shop gear catalog, per-item stats, sell prices (data only — purchases in server) |
 | `player/` | Display-name helpers (non-combat metadata) |

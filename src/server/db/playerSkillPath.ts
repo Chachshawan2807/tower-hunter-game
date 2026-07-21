@@ -17,23 +17,3 @@ export async function getPlayerSkillPath(
 
   return normalizeSkillPath(result.rows[0].active_skill_path);
 }
-
-export async function setPlayerSkillPath(
-  pool: DbPool,
-  userId: string,
-  path: SkillPath
-): Promise<SkillPath> {
-  const result = await pool.query<{ active_skill_path: SkillPath }>(
-    `UPDATE player_stats
-     SET active_skill_path = $2, updated_at = NOW()
-     WHERE user_id = $1
-     RETURNING active_skill_path`,
-    [userId, path]
-  );
-
-  if (!result.rowCount) {
-    throw new Error(`Player stats not found for user ${userId}`);
-  }
-
-  return result.rows[0].active_skill_path;
-}

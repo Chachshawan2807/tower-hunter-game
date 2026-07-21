@@ -21,6 +21,10 @@ interface SkillStatGridProps {
   unlockingId: string | null;
   allowUnlock: boolean;
   onUnlockRequest: (pending: PendingSkillUnlock) => void;
+  /** Render skill cards only — parent supplies the stat grid. */
+  embedded?: boolean;
+  /** Catalog grid: 3 compact columns; default keeps 2 columns. */
+  layout?: "default" | "catalog";
 }
 
 function formatSkillValue(skill: SkillDefinition, locale: Locale): string {
@@ -40,45 +44,52 @@ export function SkillStatGrid({
   unlockingId,
   allowUnlock,
   onUnlockRequest,
+  embedded = false,
+  layout = "default",
 }: SkillStatGridProps) {
-  return (
-    <div className="stat-grid stat-grid--skills">
-      {skills.map((skill) => {
-        const label = t(skill.stringId, locale);
-        const unlocked = isSkillUnlocked(skill, unlockedSkillIds);
-        const locked = !unlocked;
-        const unlockCost = getSkillUnlockSpCost(skill);
-        const canUnlock =
-          allowUnlock &&
-          locked &&
-          userId &&
-          skillPoints >= unlockCost &&
-          unlockingId === null;
+  const cards = skills.map((skill) => {
+    const label = t(skill.stringId, locale);
+    const unlocked = isSkillUnlocked(skill, unlockedSkillIds);
+    const locked = !unlocked;
+    const unlockCost = getSkillUnlockSpCost(skill);
+    const canUnlock =
+      allowUnlock &&
+      locked &&
+      userId &&
+      skillPoints >= unlockCost &&
+      unlockingId === null;
 
-        return (
-          <SkillListCard
-            key={skill.id}
-            label={label}
-            meta={
-              locked
-                ? `${t("skills.unlock_sp", locale)} ${unlockCost}`
-                : formatSkillValue(skill, locale)
-            }
-            locked={locked}
-            disabled={unlockingId === skill.id}
-            onClick={
-              canUnlock
-                ? () =>
-                    onUnlockRequest({
-                      skillId: skill.id,
-                      label,
-                      cost: unlockCost,
-                    })
-                : undefined
-            }
-          />
-        );
-      })}
-    </div>
-  );
+    return (
+      <SkillListCard
+        key={skill.id}
+        label={label}
+        meta={
+          locked
+            ? `${t("skills.unlock_sp", locale)} ${unlockCost}`
+            : formatSkillValue(skill, locale)
+        }
+        locked={locked}
+        disabled={unlockingId === skill.id}
+        onClick={
+          canUnlock
+            ? () =>
+                onUnlockRequest({
+                  skillId: skill.id,
+                  label,
+                  cost: unlockCost,
+                })
+            : undefined
+        }
+      />
+    );
+  });
+
+  if (embedded) return <>{cards}</>;
+
+  const gridClass =
+    layout === "catalog"
+      ? "stat-grid stat-grid--skills stat-grid--skills-catalog"
+      : "stat-grid stat-grid--skills";
+
+  return <div className={gridClass}>{cards}</div>;
 }

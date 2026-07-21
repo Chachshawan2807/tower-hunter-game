@@ -1,7 +1,5 @@
 import { memo, useCallback, useMemo } from "react";
 
-import { getSkillById } from "../../engine/skills";
-import { EMPTY_SKILL_UPGRADES } from "../../engine/skills/types";
 import { useEntityAnimation } from "../../hooks/useEntityAnimation";
 import { t } from "../../utils/i18n";
 import { GameIcon } from "../ui/icons";

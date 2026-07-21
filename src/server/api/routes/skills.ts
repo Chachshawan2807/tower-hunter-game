@@ -9,7 +9,7 @@ import {
   resolveEffectiveSkill,
   validateEquipLoadout,
 } from "../../../engine/skills";
-import type { SkillDefinition, SkillUpgradeRanks } from "../../../engine/skills/types";
+import type { SkillDefinition } from "../../../engine/skills/types";
 import { EMPTY_SKILL_UPGRADES } from "../../../engine/skills/types";
 import type { UpgradeBranch } from "../../../engine/skills/skillPoints";
 import type { SkillType } from "../../../engine/skills/skillTypes";

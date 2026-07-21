@@ -30,11 +30,9 @@ export { pickEnemySkill } from "./enemyAi";
 
 export {
   getSkillById,
-  getSkillsForPath,
   getPlayerCatalogSkills,
   getSkillsByType,
   getAllSkills,
-  isValidSkillForPath,
   CATALOG_VERSION,
   normalizeSkillId,
   LEGACY_SKILL_ID_MAP,
@@ -49,7 +47,6 @@ export {
   isSkillUnlocked,
   isSkillOnCooldown,
   getSkillCooldownRemaining,
-  getAvailableSkills,
   getUnlockedSkills,
   applySkillCooldown,
   tickSkillCooldowns,

@@ -51,11 +51,12 @@ Visual standard for the project: **[docs/art-bible/MASTER_ART_BIBLE.md](docs/art
 | `npm run build` | Production PWA build → `dist/` |
 | `npm run start` | Production API server |
 | `npm run seed` | Run DB migrations + seed localization & demo user |
-| `npm run db:check` | Connect, migrate, verify skill-system schema |
+| `npm run db:check` | Connect, migrate, verify skill v2 + status schema |
 | `npm run validate` | Engine tests + architecture boundary checks + `tsc --noEmit` |
 | `npm run export:icons` | Regenerate Imperial Knight UI + skill SVGs |
 | `npm run export:nav` | Regenerate bottom-nav, bag, and shop icons only |
 | `npm run export:equip-slots` | Regenerate equipment slot silhouettes only |
+| `npm run export:equip-items` | Regenerate shop equipment item SVGs only |
 | `npm run export:hero` | Regenerate `imperial-knight-hero.svg` portrait |
 | `npm run generate:sprites` | Regenerate enemy/NPC PNG sprite sheets |
 | `npm run generate:audio` | Regenerate procedural audio placeholders |
