@@ -8,7 +8,7 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import sharp from "sharp";
-import { processSilhouetteBuffer, SHOP_ITEM_STROKE_DILATE } from "./iconSilhouette.mjs";
+import { processShopItemBuffer } from "./iconSilhouette.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, "..");
@@ -29,7 +29,7 @@ async function processItem(name) {
   const source = path.join(REF_DIR, name);
 
   const { data, info } = await sharp(source).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
-  processSilhouetteBuffer(data, info.width, info.height, SHOP_ITEM_STROKE_DILATE);
+  processShopItemBuffer(data, info.width, info.height);
 
   const png = await sharp(Buffer.from(data), {
     raw: { width: info.width, height: info.height, channels: 4 },

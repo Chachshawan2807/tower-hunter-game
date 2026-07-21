@@ -150,8 +150,35 @@ export function toInkShadedSilhouette(data, alphaThreshold = 48) {
 /** Extra pixels for equipment slot strokes — bolder ink to match hero armor weight. */
 export const EQUIP_STROKE_DILATE = 3;
 
-/** Shop item icons — source art is already ink-weighted; dilation blobs out detail. */
-export const SHOP_ITEM_STROKE_DILATE = 0;
+/** Shop item icons — trim light anti-alias fringe; higher = thicker ink. */
+export const SHOP_ITEM_LUM_THRESHOLD = 188;
+
+/** Binarize shop item art, dropping only the lightest gray halo (milder than erosion). */
+export function toShopItemSilhouette(data, alphaThreshold = 48, lumThreshold = SHOP_ITEM_LUM_THRESHOLD) {
+  for (let i = 0; i < data.length; i += 4) {
+    const r = data[i];
+    const g = data[i + 1];
+    const b = data[i + 2];
+    const a = data[i + 3];
+    if (a < alphaThreshold || isBackground(r, g, b)) {
+      data[i + 3] = 0;
+      continue;
+    }
+    const lum = 0.299 * r + 0.587 * g + 0.114 * b;
+    if (lum > lumThreshold) {
+      data[i + 3] = 0;
+      continue;
+    }
+    data[i] = 0;
+    data[i + 1] = 0;
+    data[i + 2] = 0;
+    data[i + 3] = 255;
+  }
+}
+
+export function processShopItemBuffer(data, width, height, lumThreshold = SHOP_ITEM_LUM_THRESHOLD) {
+  toShopItemSilhouette(data, 48, lumThreshold);
+}
 
 export function processInkShadedBuffer(data, width, height, dilateRadius = EQUIP_STROKE_DILATE) {
   toInkShadedSilhouette(data);
