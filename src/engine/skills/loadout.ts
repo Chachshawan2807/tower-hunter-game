@@ -1,61 +1,111 @@
-import { getSkillsForPath } from "./catalog";
-import {
-  getUnlockedSkills,
-  isSkillUnlocked,
-} from "./skillUnlock";
-import type { SkillPath } from "../types";
+import { getSkillById, normalizeSkillId } from "./catalog";
+import { isPassiveSkillType } from "./skillTypes";
+import type { SkillDefinition } from "./types";
+
+export const MAX_EQUIP_SLOTS = 4;
+
+export interface SkillBattlePrefs {
+  healOverrideEnabled: boolean;
+  healThreshold: number;
+}
 
 export interface SkillLoadout {
-  path: SkillPath;
-  activeSlots: [string, string];
+  equippedSlots: string[];
+  battlePrefs: SkillBattlePrefs;
 }
 
-const DEFAULT_ACTIVE: Record<SkillPath, [string, string]> = {
-  imperial: ["murim_palm", "murim_dragon"],
-  knight: ["knight_slash", "knight_charge"],
-  vanguard: ["fantasy_bolt", "fantasy_meteor"],
+export const DEFAULT_BATTLE_PREFS: SkillBattlePrefs = {
+  healOverrideEnabled: true,
+  healThreshold: 0.35,
 };
 
-export function getDefaultLoadout(
-  path: SkillPath,
+export function defaultSkillLoadout(
   unlockedSkillIds: readonly string[]
 ): SkillLoadout {
-  const unlocked = getUnlockedSkills(path, unlockedSkillIds);
-  const preferred = DEFAULT_ACTIVE[path];
-  const slot1 =
-    unlocked.find((s) => s.id === preferred[0])?.id ??
-    unlocked[0]?.id ??
-    preferred[0];
-  const slot2Candidate =
-    unlocked.find((s) => s.id === preferred[1])?.id ??
-    unlocked.find((s) => s.id !== slot1)?.id ??
-    slot1;
-  return { path, activeSlots: [slot1, slot2Candidate] };
+  const unlocked = unlockedSkillIds.map(normalizeSkillId);
+  const preferred = [
+    "active_power_slash",
+    "active_iron_palm",
+    "passive_sturdy_frame",
+  ];
+  const equipped: string[] = [];
+  for (const id of preferred) {
+    if (unlocked.includes(id) && equipped.length < MAX_EQUIP_SLOTS) {
+      equipped.push(id);
+    }
+  }
+  for (const id of unlocked) {
+    if (equipped.length >= MAX_EQUIP_SLOTS) break;
+    if (!equipped.includes(id)) equipped.push(id);
+  }
+  return { equippedSlots: equipped, battlePrefs: { ...DEFAULT_BATTLE_PREFS } };
 }
 
-export function deriveAutoSkills(
-  unlockedIds: string[],
-  activeSlots: [string, string]
-): string[] {
-  const activeSet = new Set(activeSlots);
-  return unlockedIds.filter((id) => !activeSet.has(id));
+/** @deprecated Use defaultSkillLoadout */
+export function getDefaultLoadout(
+  _path: string,
+  unlockedSkillIds: readonly string[]
+): SkillLoadout {
+  return defaultSkillLoadout(unlockedSkillIds);
 }
 
-export function validateLoadout(
-  path: SkillPath,
-  activeSlots: [string, string],
+export function getBattleSkillsFromLoadout(
+  loadout: SkillLoadout
+): SkillDefinition[] {
+  return loadout.equippedSlots
+    .map((id) => getSkillById(id))
+    .filter((s) => s.skillType && !isPassiveSkillType(s.skillType));
+}
+
+export function getPassiveSkillsFromLoadout(
+  loadout: SkillLoadout
+): SkillDefinition[] {
+  return loadout.equippedSlots
+    .map((id) => getSkillById(id))
+    .filter((s) => s.skillType && isPassiveSkillType(s.skillType));
+}
+
+export function validateEquipLoadout(
+  equippedSlots: string[],
   unlockedSkillIds: readonly string[]
 ): { valid: boolean; error?: string } {
-  if (activeSlots[0] === activeSlots[1]) {
-    return { valid: false, error: "DUPLICATE_SLOT" };
+  if (equippedSlots.length > MAX_EQUIP_SLOTS) {
+    return { valid: false, error: "TOO_MANY_SLOTS" };
   }
-  const pathSkillIds = new Set(getSkillsForPath(path).map((s) => s.id));
-  for (const id of activeSlots) {
-    if (!pathSkillIds.has(id)) return { valid: false, error: "INVALID_SKILL" };
-    const skill = getSkillsForPath(path).find((s) => s.id === id)!;
-    if (!isSkillUnlocked(skill, unlockedSkillIds)) {
+  const unlocked = new Set(unlockedSkillIds.map(normalizeSkillId));
+  const seen = new Set<string>();
+  for (const rawId of equippedSlots) {
+    const id = normalizeSkillId(rawId);
+    if (seen.has(id)) return { valid: false, error: "DUPLICATE_SLOT" };
+    seen.add(id);
+    const skill = getSkillById(id);
+    if (skill.path === "basic" || skill.path === "enemy") {
+      return { valid: false, error: "INVALID_SKILL" };
+    }
+    if (!unlocked.has(id) && !unlocked.has(rawId)) {
       return { valid: false, error: "SKILL_LOCKED" };
     }
   }
   return { valid: true };
+}
+
+/** @deprecated */
+export function validateLoadout(
+  _path: string,
+  activeSlots: [string, string] | string[],
+  unlockedSkillIds: readonly string[]
+): { valid: boolean; error?: string } {
+  const slots = Array.isArray(activeSlots) ? activeSlots : [...activeSlots];
+  return validateEquipLoadout(slots, unlockedSkillIds);
+}
+
+/** @deprecated */
+export function deriveAutoSkills(
+  unlockedIds: string[],
+  activeSlots: string[] | [string, string]
+): string[] {
+  const activeSet = new Set(activeSlots.map(normalizeSkillId));
+  return unlockedIds
+    .map(normalizeSkillId)
+    .filter((id) => !activeSet.has(id));
 }

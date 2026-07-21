@@ -2,27 +2,27 @@ import { useEffect } from "react";
 
 interface UseBattleArenaKeyboardOptions {
   enabled: boolean;
-  onSlot: (slotIndex: 0 | 1) => void;
+  onSlot: (slotIndex: number) => void;
+  slotCount?: number;
 }
 
 export function useBattleArenaKeyboard({
   enabled,
   onSlot,
+  slotCount = 4,
 }: UseBattleArenaKeyboardOptions) {
   useEffect(() => {
     if (!enabled) return;
 
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "1") {
+      const index = Number(event.key) - 1;
+      if (index >= 0 && index < slotCount) {
         event.preventDefault();
-        onSlot(0);
-      } else if (event.key === "2") {
-        event.preventDefault();
-        onSlot(1);
+        onSlot(index);
       }
     };
 
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [enabled, onSlot]);
+  }, [enabled, onSlot, slotCount]);
 }

@@ -4,7 +4,7 @@ import {
   isSkillUnlockedByLevel,
 } from "../../engine/skills/skillUnlock";
 import { withTransaction, type DbClient, type DbPool } from "./client";
-import { getPlayerSkillPath, getPlayerStats } from "./playerStats";
+import { getPlayerStats } from "./playerStats";
 
 const UNLOCK_ERROR_CODES = new Set([
   "INVALID_SKILL",
@@ -39,8 +39,7 @@ async function backfillLevelUnlocks(
   const skillIds = getAllSkills()
     .filter(
       (skill) =>
-        skill.path !== "basic" &&
-        skill.path !== "enemy" &&
+        skill.path === "player" &&
         isSkillUnlockedByLevel(skill, playerLevel)
     )
     .map((skill) => skill.id);
@@ -84,18 +83,13 @@ export async function unlockPlayerSkill(
   skillId: string
 ): Promise<{ skillPoints: number; unlockedSkillIds: string[] }> {
   const skill = getSkillById(skillId);
-  if (skill.path === "basic" || skill.path === "enemy") {
+  if (skill.path !== "player") {
     throw new SkillUnlockError("INVALID_SKILL");
   }
 
   const cost = getSkillUnlockSpCost(skill);
 
   return withTransaction(pool, async (client) => {
-    const path = await getPlayerSkillPath(client, userId);
-    if (skill.path !== path) {
-      throw new SkillUnlockError("INVALID_SKILL");
-    }
-
     const existing = await client.query<{ skill_id: string }>(
       `SELECT skill_id FROM player_skill_unlocks
        WHERE user_id = $1 AND skill_id = $2`,
@@ -136,6 +130,15 @@ export async function unlockPlayerSkill(
       unlockedSkillIds,
     };
   });
+}
+
+export async function clearPlayerSkillUnlocks(
+  pool: DbPool,
+  userId: string
+): Promise<void> {
+  await pool.query(`DELETE FROM player_skill_unlocks WHERE user_id = $1`, [
+    userId,
+  ]);
 }
 
 export function isSkillUnlockError(err: unknown): err is SkillUnlockError {

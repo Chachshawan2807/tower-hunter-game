@@ -1,9 +1,6 @@
 import { useCallback, useRef, useState } from "react";
 import {
-  deriveAutoSkills,
-  getSkillsForPath,
-  isSkillUnlocked,
-  pickAutoSkill,
+  pickSkillForTurn,
 } from "../engine/skills";
 import type { BattleSnapshot, PlayerIntent } from "../types";
 import { api, type BattleStepResponse } from "../utils/api";
@@ -139,17 +136,9 @@ export function useBattle(
     const playerEntity = battleSnapshot.entities.find((e) => e.side === "player");
     if (!playerEntity) return;
 
-    const unlocked = getSkillsForPath(loadoutContext.playerSkillPath)
-      .filter((s) => isSkillUnlocked(s, loadoutContext.playerUnlockedSkillIds))
-      .map((s) => s.id);
-    const autoIds = deriveAutoSkills(
-      unlocked,
-      loadoutContext.playerLoadout.activeSlots
-    );
-    const skill = pickAutoSkill(
+    const skill = pickSkillForTurn(
       playerEntity,
-      loadoutContext.playerSkillPath,
-      autoIds,
+      loadoutContext.playerLoadout,
       loadoutContext.playerSkillUpgrades,
       loadoutContext.playerUnlockedSkillIds
     );

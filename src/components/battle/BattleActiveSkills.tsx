@@ -5,21 +5,16 @@ import {
   isSkillUnlocked,
   resolveEffectiveSkill,
 } from "../../engine/skills";
+import { EMPTY_SKILL_UPGRADES } from "../../engine/skills/types";
 import type { SkillUpgradeRanks } from "../../engine/skills/types";
 import type { BattleEntity } from "../../engine/types";
 import { t, type Locale } from "../../utils/i18n";
 import { GameIcon, skillIconName } from "../ui/icons";
 
-const EMPTY_UPGRADES: SkillUpgradeRanks = {
-  damage: 0,
-  cooldown: 0,
-  mpCost: 0,
-};
-
 interface BattleActiveSkillsProps {
   locale: Locale;
   busy: boolean;
-  activeSlots: [string, string];
+  equippedSlots: string[];
   playerEntity?: BattleEntity;
   enemyTargetId: string;
   playerSkillUpgrades: Record<string, SkillUpgradeRanks>;
@@ -30,7 +25,7 @@ interface BattleActiveSkillsProps {
 export function BattleActiveSkills({
   locale,
   busy,
-  activeSlots,
+  equippedSlots,
   playerEntity,
   enemyTargetId,
   playerSkillUpgrades,
@@ -38,14 +33,14 @@ export function BattleActiveSkills({
   onSkill,
 }: BattleActiveSkillsProps) {
   return (
-    <div className="battle-active-skills" aria-label="Active skills">
-      {activeSlots.map((skillId, index) => {
+    <div className="battle-active-skills" aria-label="Equipped skills">
+      {equippedSlots.map((skillId, index) => {
         const base = getSkillById(skillId);
         if (!isSkillUnlocked(base, unlockedSkillIds)) {
           return null;
         }
 
-        const upgrades = playerSkillUpgrades[skillId] ?? EMPTY_UPGRADES;
+        const upgrades = playerSkillUpgrades[skillId] ?? EMPTY_SKILL_UPGRADES;
         const effective = resolveEffectiveSkill(base, upgrades);
         const cd = playerEntity
           ? getSkillCooldownRemaining(playerEntity, skillId)

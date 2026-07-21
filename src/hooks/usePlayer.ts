@@ -44,16 +44,13 @@ export function usePlayer() {
 
   const refreshStats = useCallback(async (id: string) => {
     try {
-      const [data, pathData] = await Promise.all([
-        api.getPlayerStats(id),
-        api.getSkillPath(id).catch(() => ({ path: "imperial" as const, equippedSkills: [] })),
-      ]);
+      const data = await api.getPlayerStats(id);
       setStats(data.stats);
       setGold(data.goldBalance);
       setLevel(data.stats.level);
       setExp(Number(data.stats.exp));
       setCurrentFloor(data.stats.current_floor);
-      setSkillPath(pathData.path ?? data.stats.active_skill_path ?? "imperial");
+      setSkillPath(data.stats.active_skill_path ?? "imperial");
     } catch (err) {
       console.error("Failed to load player stats:", err);
       setStats((prev) =>
@@ -65,13 +62,7 @@ export function usePlayer() {
   const changeSkillPath = useCallback(
     async (path: SkillPath) => {
       if (!userId) return;
-      try {
-        const result = await api.setSkillPath(userId, path);
-        setSkillPath(result.path);
-      } catch (err) {
-        console.error("Failed to set skill path:", err);
-        setSkillPath(path);
-      }
+      setSkillPath(path);
     },
     [userId]
   );

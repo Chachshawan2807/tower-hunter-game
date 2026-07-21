@@ -1,9 +1,9 @@
 import { randomUUID } from "node:crypto";
 import { advanceBattleStep, handlePlayerIntent } from "../../engine/states";
 import type { AnimationEvent, PlayerIntent } from "../../types";
-import { getDefaultLoadout } from "../../engine/skills/loadout";
+import { defaultSkillLoadout } from "../../engine/skills/loadout";
 import {
-  getPlayerLoadout,
+  getPlayerLoadoutV2,
   getPlayerUpgrades,
   getPlayerSkillUnlocks,
   getUserById,
@@ -37,26 +37,20 @@ export async function startBattle(
       throw new BattleServiceError("User not found", "USER_NOT_FOUND", 404);
     }
 
-    const playerSkillPath = statsRow.active_skill_path ?? "imperial";
     const playerStats = await getPlayerCombatStatsWithEquipment(pool, statsRow);
     const playerSkillUpgrades = await getPlayerUpgrades(pool, input.userId);
     const playerUnlockedSkillIds = await getPlayerSkillUnlocks(
       pool,
       input.userId
     );
-    const dbLoadout = await getPlayerLoadout(
-      pool,
-      input.userId,
-      playerSkillPath
-    );
+    const dbLoadout = await getPlayerLoadoutV2(pool, input.userId);
     const playerLoadout =
-      dbLoadout ?? getDefaultLoadout(playerSkillPath, playerUnlockedSkillIds);
+      dbLoadout ?? defaultSkillLoadout(playerUnlockedSkillIds);
 
     const state = createBattleState(input.floor, {
       autoBattle: input.autoBattle ?? true,
       playerStats,
       playerName: user.display_name,
-      playerSkillPath,
       playerLoadout,
       playerSkillUpgrades,
       playerUnlockedSkillIds,

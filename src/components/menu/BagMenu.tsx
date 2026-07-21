@@ -9,6 +9,7 @@ import { ConfirmDialog } from "../ui/ConfirmDialog";
 import { t, type Locale } from "../../utils/i18n";
 import { api, type InventoryItem } from "../../utils/api";
 import { formatDialogMessage } from "../../utils/formatDialogMessage";
+import { formatGoldAmount } from "../../utils/formatGold";
 import { resolveItemLabel } from "../../utils/itemLabel";
 import { BagItemDetail } from "./BagItemDetail";
 import { BagItemSlot } from "./BagItemSlot";
@@ -170,7 +171,9 @@ export function BagMenu({
           title={t("bag.confirm_sell_title", locale)}
           message={formatDialogMessage("bag.confirm_sell_message", locale, {
             item: resolveItemLabel(pendingSellItem.item_id, locale, skillPath),
-            price: (resolveShopItemSellPrice(pendingSellItem.item_id) ?? 0n).toString(),
+            price: formatGoldAmount(
+              resolveShopItemSellPrice(pendingSellItem.item_id) ?? 0n
+            ),
           })}
           confirmLabel={t("bag.sell", locale)}
           busy={sellBusy}

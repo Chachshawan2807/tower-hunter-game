@@ -1,39 +1,18 @@
 import { apiRequest } from "./request";
 import type {
   SkillLoadout,
-  SkillPathResponse,
   SkillProgressionResponse,
   SkillUnlockResponse,
   SkillUpgradeResponse,
+  SkillRespecResponse,
   SkillCatalogEntry,
 } from "./types";
 
 export const skillsApi = {
-  getSkillCatalog() {
-    return apiRequest<{ skills: SkillCatalogEntry[] }>("/api/skills/catalog");
-  },
-
-  getSkillPath(userId: string) {
-    return apiRequest<SkillPathResponse>(`/api/skills/${userId}/path`);
-  },
-
-  setSkillPath(userId: string, path: "imperial" | "knight" | "vanguard") {
-    return apiRequest<SkillPathResponse>(`/api/skills/${userId}/path`, {
-      method: "PATCH",
-      body: JSON.stringify({ path }),
-    });
-  },
-
-  patchSkillLoadout(
-    userId: string,
-    payload: { path: "imperial" | "knight" | "vanguard"; activeSlots: [string, string] }
-  ) {
-    return apiRequest<{ loadout: SkillLoadout }>(
-      `/api/skills/${userId}/loadout`,
-      {
-        method: "PATCH",
-        body: JSON.stringify(payload),
-      }
+  getSkillCatalog(type?: string) {
+    const query = type ? `?type=${encodeURIComponent(type)}` : "";
+    return apiRequest<{ version: number; skills: SkillCatalogEntry[] }>(
+      `/api/skills/catalog${query}`
     );
   },
 
@@ -43,9 +22,28 @@ export const skillsApi = {
     );
   },
 
+  patchSkillLoadout(userId: string, payload: Partial<SkillLoadout>) {
+    return apiRequest<{ loadout: SkillLoadout }>(
+      `/api/skills/${userId}/loadout`,
+      {
+        method: "PATCH",
+        body: JSON.stringify(payload),
+      }
+    );
+  },
+
   upgradeSkill(
     userId: string,
-    payload: { skillId: string; branch: "damage" | "cooldown" | "mpCost" }
+    payload: {
+      skillId: string;
+      branch:
+        | "damage"
+        | "cooldown"
+        | "mpCost"
+        | "statusPotency"
+        | "healPower"
+        | "passivePotency";
+    }
   ) {
     return apiRequest<SkillUpgradeResponse>(`/api/skills/${userId}/upgrade`, {
       method: "POST",
@@ -57,6 +55,13 @@ export const skillsApi = {
     return apiRequest<SkillUnlockResponse>(`/api/skills/${userId}/unlock`, {
       method: "POST",
       body: JSON.stringify({ skillId }),
+    });
+  },
+
+  respecSkills(userId: string) {
+    return apiRequest<SkillRespecResponse>(`/api/skills/${userId}/respec`, {
+      method: "POST",
+      body: JSON.stringify({}),
     });
   },
 };

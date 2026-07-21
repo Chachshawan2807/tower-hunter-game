@@ -78,12 +78,7 @@ export function tickSkillCooldowns(
   return next;
 }
 
-export function resolveSkillId(
-  skillId: string | undefined,
-  path: SkillPath
-): string {
+export function resolveSkillId(skillId: string | undefined): string {
   if (!skillId) return "basic_attack";
-  const skill = getSkillById(skillId);
-  if (skill.path !== "basic" && skill.path !== path) return "basic_attack";
-  return skill.id;
+  return getSkillById(skillId).id;
 }

@@ -5,6 +5,7 @@ import {
   type UpgradeBranch,
 } from "../../engine/skills/skillPoints";
 import type { SkillUpgradeRanks } from "../../engine/skills/types";
+import { EMPTY_SKILL_UPGRADES } from "../../engine/skills/types";
 import { withTransaction, type DbClient, type DbPool } from "./client";
 import { getPlayerStatsForUpdate } from "./playerStats";
 
@@ -13,15 +14,19 @@ interface UpgradeRow {
   damage_rank: number;
   cd_rank: number;
   mp_rank: number;
+  status_rank: number;
+  heal_rank: number;
+  passive_rank: number;
 }
-
-const EMPTY_RANKS: SkillUpgradeRanks = { damage: 0, cooldown: 0, mpCost: 0 };
 
 function toSkillUpgradeRanks(row: UpgradeRow): SkillUpgradeRanks {
   return {
     damage: row.damage_rank as SkillUpgradeRanks["damage"],
     cooldown: row.cd_rank as SkillUpgradeRanks["cooldown"],
     mpCost: row.mp_rank as SkillUpgradeRanks["mpCost"],
+    statusPotency: row.status_rank as SkillUpgradeRanks["statusPotency"],
+    healPower: row.heal_rank as SkillUpgradeRanks["healPower"],
+    passivePotency: row.passive_rank as SkillUpgradeRanks["passivePotency"],
   };
 }
 
@@ -31,14 +36,14 @@ async function getUpgradeRow(
   skillId: string
 ): Promise<SkillUpgradeRanks> {
   const result = await client.query<UpgradeRow>(
-    `SELECT skill_id, damage_rank, cd_rank, mp_rank
+    `SELECT skill_id, damage_rank, cd_rank, mp_rank, status_rank, heal_rank, passive_rank
      FROM player_skill_upgrades
      WHERE user_id = $1 AND skill_id = $2`,
     [userId, skillId]
   );
 
   const row = result.rows[0];
-  return row ? toSkillUpgradeRanks(row) : { ...EMPTY_RANKS };
+  return row ? toSkillUpgradeRanks(row) : { ...EMPTY_SKILL_UPGRADES };
 }
 
 export async function getPlayerUpgrades(
@@ -46,7 +51,7 @@ export async function getPlayerUpgrades(
   userId: string
 ): Promise<Record<string, SkillUpgradeRanks>> {
   const result = await pool.query<UpgradeRow>(
-    `SELECT skill_id, damage_rank, cd_rank, mp_rank
+    `SELECT skill_id, damage_rank, cd_rank, mp_rank, status_rank, heal_rank, passive_rank
      FROM player_skill_upgrades
      WHERE user_id = $1`,
     [userId]
@@ -73,7 +78,7 @@ export async function upgradeSkillBranch(
     }
 
     const skill = getSkillById(skillId);
-    if (skill.id !== skillId || skill.path === "basic") {
+    if (skill.id !== skillId || skill.path === "basic" || skill.path === "enemy") {
       throw new Error("INVALID_SKILL");
     }
 
@@ -95,14 +100,28 @@ export async function upgradeSkillBranch(
     };
 
     await client.query(
-      `INSERT INTO player_skill_upgrades (user_id, skill_id, damage_rank, cd_rank, mp_rank)
-       VALUES ($1, $2, $3, $4, $5)
+      `INSERT INTO player_skill_upgrades (
+         user_id, skill_id, damage_rank, cd_rank, mp_rank, status_rank, heal_rank, passive_rank
+       )
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
        ON CONFLICT (user_id, skill_id)
        DO UPDATE SET
          damage_rank = EXCLUDED.damage_rank,
          cd_rank = EXCLUDED.cd_rank,
-         mp_rank = EXCLUDED.mp_rank`,
-      [userId, skillId, newRanks.damage, newRanks.cooldown, newRanks.mpCost]
+         mp_rank = EXCLUDED.mp_rank,
+         status_rank = EXCLUDED.status_rank,
+         heal_rank = EXCLUDED.heal_rank,
+         passive_rank = EXCLUDED.passive_rank`,
+      [
+        userId,
+        skillId,
+        newRanks.damage,
+        newRanks.cooldown,
+        newRanks.mpCost,
+        newRanks.statusPotency,
+        newRanks.healPower,
+        newRanks.passivePotency,
+      ]
     );
 
     const spResult = await client.query<{ skill_points: number }>(
@@ -118,4 +137,13 @@ export async function upgradeSkillBranch(
       skillPoints: spResult.rows[0].skill_points,
     };
   });
+}
+
+export async function clearPlayerUpgrades(
+  pool: DbPool,
+  userId: string
+): Promise<void> {
+  await pool.query(`DELETE FROM player_skill_upgrades WHERE user_id = $1`, [
+    userId,
+  ]);
 }

@@ -60,41 +60,45 @@ export interface PlayerStatsResponse {
 
 export interface SkillCatalogEntry {
   id: string;
-  path: string;
+  skillType?: string;
+  catalogTier?: number;
   stringId: string;
   icon: string;
   mpCost: number;
   kind: string;
   targetType: string;
   unlockLevel: number;
+  unlockSpCost?: number;
   cooldownTurns: number;
   damageMultiplier?: number;
   healPercent?: number;
+  defPierce?: number;
+  passiveEffects?: Array<{ stat: string; magnitude: number }>;
   unlocked?: boolean;
 }
 
-export interface SkillPathResponse {
-  path: "imperial" | "knight" | "vanguard";
-  playerLevel: number;
-  equippedSkills: string[];
-  skills: SkillCatalogEntry[];
+export interface SkillBattlePrefs {
+  healOverrideEnabled: boolean;
+  healThreshold: number;
 }
 
 export interface SkillLoadout {
-  path: "imperial" | "knight" | "vanguard";
-  activeSlots: [string, string];
+  equippedSlots: string[];
+  battlePrefs: SkillBattlePrefs;
 }
 
 export interface SkillUpgradeRanks {
-  damage: 0 | 1 | 2 | 3;
-  cooldown: 0 | 1 | 2 | 3;
-  mpCost: 0 | 1 | 2 | 3;
+  damage: 0 | 1 | 2 | 3 | 4;
+  cooldown: 0 | 1 | 2 | 3 | 4;
+  mpCost: 0 | 1 | 2 | 3 | 4;
+  statusPotency: 0 | 1 | 2 | 3 | 4;
+  healPower: 0 | 1 | 2 | 3 | 4;
+  passivePotency: 0 | 1 | 2 | 3 | 4;
 }
 
 export interface SkillProgressionResponse {
   skillPoints: number;
   upgrades: Record<string, SkillUpgradeRanks>;
-  path: "imperial" | "knight" | "vanguard";
   loadout: SkillLoadout;
   unlockedSkillIds: string[];
   skills: (SkillCatalogEntry & {
@@ -110,6 +114,10 @@ export interface SkillUnlockResponse {
 
 export interface SkillUpgradeResponse {
   ranks: SkillUpgradeRanks;
+  skillPoints: number;
+}
+
+export interface SkillRespecResponse {
   skillPoints: number;
 }
 

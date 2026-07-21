@@ -9,6 +9,7 @@ import {
   combatStatsForLevel,
   levelFromTotalExp,
   totalExpForLevel,
+  calculateFloorGoldReward,
 } from "../src/engine/formulas";
 import { createBattleState, DEFAULT_PLAYER_STATS } from "../src/server/battle/factory";
 import { advanceBattleStep, resolveActionChoice } from "../src/engine/states";
@@ -17,24 +18,27 @@ import { applyStatusOnHit } from "../src/engine/status";
 import {
   canUseSkill,
   getSkillById,
-  getSkillsForPath,
-  pickAutoSkill,
+  getPlayerCatalogSkills,
+  getSkillsByType,
+  pickSkillForTurn,
   isSkillUnlocked,
   isSkillUnlockedByLevel,
   getSkillUnlockSpCost,
   applySkillCooldown,
   tickSkillCooldowns,
+  CATALOG_VERSION,
+  normalizeSkillId,
+  defaultSkillLoadout,
+  validateEquipLoadout,
+  MAX_EQUIP_SLOTS,
+  calculateRespecRefund,
 } from "../src/engine/skills";
-import {
-  deriveAutoSkills,
-  getDefaultLoadout,
-  validateLoadout,
-} from "../src/engine/skills/loadout";
 import { resolveEffectiveSkill } from "../src/engine/skills/effectiveSkill";
 import {
   spCostForNextRank,
   calculateSpGrant,
   canUpgradeBranch,
+  MAX_UPGRADE_RANK,
 } from "../src/engine/skills/skillPoints";
 import {
   calculateStatusPointGrant,
@@ -54,6 +58,9 @@ import {
   BattleValidationError,
   validateTargetEntity,
 } from "../src/server/battle/validation";
+import { getShopRowStats } from "../src/engine/shop/equipmentShopStats";
+import { EQUIPMENT_SHOP_ITEMS } from "../src/engine/shop/equipmentShopItems";
+import { runBalanceCheck } from "./balanceCheck";
 
 let passed = 0;
 let failed = 0;
@@ -157,35 +164,87 @@ const floor10Boss = scaleEnemyStatsForFloor(
 assert(floor10Boss.hp > 400, "boss floor 10 has 1.5x HP multiplier");
 assert(totalExpForLevel(15) <= 1050, "level 15 reachable by floor 15 climb");
 
-console.log("\n=== Validation: Skill Catalog ===");
+console.log("\n=== Validation: Equipment Balance ===");
+const v05AxeCross = getShopRowStats("weapon-axe-cross", 4);
+assert(v05AxeCross.atk === 80, "v05 dual axes ATK");
+assert(v05AxeCross.critDamage === 0.2, "v05 dual axes crit dmg");
+
+const v05Chest = getShopRowStats("chest", 4);
+assert(v05Chest.maxHp === 420, "v05 chest HP");
+
+const v05SwordShield = getShopRowStats("weapon-sword-shield", 4);
+assert(v05SwordShield.atk === 70, "v05 sword-shield ATK");
+assert(v05SwordShield.def === 40, "v05 sword-shield DEF");
+
+const etherHelm = EQUIPMENT_SHOP_ITEMS.find((i) => i.assetKey === "helm-05");
+assert(etherHelm?.cost === 1080n, "Ether Helm price 1080");
+
+const expression = EQUIPMENT_SHOP_ITEMS.find(
+  (i) => i.assetKey === "weapon-axe-cross-05"
+);
+assert(expression?.cost === 1404n, "Expression price 1404");
+
+function cumulativeGoldToFloor(floor: number): bigint {
+  let total = 0n;
+  for (let f = 1; f <= floor; f++) total += calculateFloorGoldReward(f);
+  return total;
+}
+
+assert(
+  cumulativeGoldToFloor(30) >= 2000n,
+  "enough gold to start v03 buys by F30"
+);
+assert(
+  cumulativeGoldToFloor(100) >= 25000n,
+  "enough gold for multiple v05 pieces by F100"
+);
+
+console.log("\n=== Validation: Skill Catalog v2 ===");
+assert(CATALOG_VERSION === 3, "catalog version 3");
 assert(
   SKILL_UNLOCK_LEVELS.join(",") === "1,5,10,15",
   "unlock levels are 1/5/10/15"
 );
-assert(getSkillsForPath("imperial").length === 4, "murim path has 4 skills");
+assert(getPlayerCatalogSkills().length === 22, "22 player skills in catalog");
+assert(getSkillsByType("passive").length === 7, "7 passives");
+assert(getSkillsByType("active").length === 7, "7 actives");
+assert(getSkillsByType("cc").length === 4, "4 cc skills");
+assert(getSkillsByType("movement").length === 4, "4 movement skills");
 
-const palm = getSkillById("murim_palm");
-assert(palm.slotTier === 1 && palm.autoPriority === 75, "palm tier 1");
-const dragon = getSkillById("murim_dragon");
-assert(dragon.unlockLevel === 15 && dragon.damageMultiplier === 1.75, "dragon ultimate");
-
-const bash = getSkillById("knight_bash");
-assert(bash.guaranteedStatus === "stun" && bash.unlockLevel === 10, "knight bash stun");
-
-const meteor = getSkillById("fantasy_meteor");
-assert(meteor.defPierce === 0.5 && meteor.unlockLevel === 15, "fantasy meteor");
-
-assert(isSkillUnlocked(palm, ["murim_palm"]), "palm unlocked when in unlock set");
+const palm = getSkillById("active_iron_palm");
+assert(palm.slotTier === 2 && palm.autoPriority === 70, "iron palm tier 2");
+const dragon = getSkillById("active_dragon_fist");
 assert(
-  !isSkillUnlocked(getSkillById("murim_dash"), ["murim_palm"]),
-  "dash locked without unlock"
+  dragon.unlockLevel === 25 && dragon.damageMultiplier === 1.75,
+  "dragon fist ultimate"
+);
+
+const bash = getSkillById("cc_shield_bash");
+assert(bash.guaranteedStatus === "stun" && bash.unlockLevel === 5, "shield bash stun");
+
+const meteor = getSkillById("active_meteor");
+assert(meteor.defPierce === 0.55 && meteor.unlockLevel === 30, "meteor pierce");
+
+assert(
+  normalizeSkillId("murim_palm") === "active_iron_palm",
+  "legacy murim_palm maps to active_iron_palm"
 );
 assert(
-  isSkillUnlockedByLevel(getSkillById("murim_qi"), 10),
-  "legacy Lv10 gate for backfill"
+  getSkillById("murim_palm").damageMultiplier === palm.damageMultiplier,
+  "legacy murim_palm resolves to iron palm stats"
 );
-assert(getSkillUnlockSpCost(palm) === 1, "tier-1 skill costs 1 SP");
-assert(getSkillUnlockSpCost(dragon) === 4, "tier-4 skill costs 4 SP");
+
+assert(isSkillUnlocked(palm, ["active_iron_palm"]), "palm unlocked when in unlock set");
+assert(
+  !isSkillUnlocked(getSkillById("move_shadow_step"), ["active_iron_palm"]),
+  "shadow step locked without unlock"
+);
+assert(
+  isSkillUnlockedByLevel(getSkillById("active_inner_qi"), 15),
+  "inner qi unlocks at Lv15 (tier 4)"
+);
+assert(getSkillUnlockSpCost(palm) === 2, "tier-2 skill costs 2 SP");
+assert(getSkillUnlockSpCost(dragon) === 10, "tier-6 skill costs 10 SP");
 
 const cooldownEntity: BattleEntity = {
   id: "player",
@@ -197,118 +256,135 @@ const cooldownEntity: BattleEntity = {
   skillCooldowns: {},
 };
 const palmCds = applySkillCooldown(cooldownEntity.skillCooldowns, palm);
-assert(palmCds.murim_palm === palm.cooldownTurns, "skill cooldown applied on use");
+assert(
+  palmCds.active_iron_palm === palm.cooldownTurns,
+  "skill cooldown applied on use"
+);
 const tickedCds = tickSkillCooldowns(palmCds);
 assert(
-  tickedCds.murim_palm === palm.cooldownTurns - 1,
+  tickedCds.active_iron_palm === palm.cooldownTurns - 1,
   "cooldown decrements each turn"
 );
 
-console.log("\n=== Validation: Skill Loadout ===");
+console.log("\n=== Validation: Skill Loadout v2 ===");
+assert(MAX_EQUIP_SLOTS === 4, "max 4 equip slots");
+
+const defaultLoadout = defaultSkillLoadout([
+  "active_iron_palm",
+  "active_power_slash",
+]);
 assert(
-  getDefaultLoadout("imperial", ["murim_palm"]).activeSlots[0] === "murim_palm",
-  "murim default active slot 1 when palm unlocked"
+  defaultLoadout.equippedSlots[0] === "active_power_slash",
+  "default prefers power slash first"
 );
 assert(
-  getDefaultLoadout("knight", ["knight_slash"]).activeSlots[0] === "knight_slash",
-  "knight default active slot 1 when slash unlocked"
-);
-assert(
-  getDefaultLoadout("vanguard", ["fantasy_bolt"]).activeSlots[0] === "fantasy_bolt",
-  "fantasy default active slot 1 when bolt unlocked"
-);
-assert(
-  getDefaultLoadout("imperial", [
-    "murim_palm",
-    "murim_dash",
-    "murim_qi",
-    "murim_dragon",
-  ]).activeSlots[1] === "murim_dragon",
-  "murim default slot 2 uses dragon when unlocked"
+  defaultLoadout.equippedSlots.includes("active_iron_palm"),
+  "default loadout includes unlocked skills"
 );
 
 assert(
-  deriveAutoSkills(["murim_palm"], ["murim_palm", "murim_palm"]).length === 0,
-  "1 unlocked skill → 0 auto slots"
-);
-assert(
-  deriveAutoSkills(
-    ["murim_palm", "murim_dash"],
-    ["murim_palm", "murim_dash"]
-  ).length === 0,
-  "2 unlocked skills → 0 auto slots"
-);
-assert(
-  deriveAutoSkills(
-    ["murim_palm", "murim_dash", "murim_qi"],
-    ["murim_palm", "murim_qi"]
-  ).length === 1 &&
-    deriveAutoSkills(
-      ["murim_palm", "murim_dash", "murim_qi"],
-      ["murim_palm", "murim_qi"]
-    )[0] === "murim_dash",
-  "3 unlocked skills → 1 auto slot"
-);
-assert(
-  deriveAutoSkills(
-    ["murim_palm", "murim_dash", "murim_qi", "murim_dragon"],
-    ["murim_palm", "murim_dragon"]
-  ).length === 2,
-  "4 unlocked skills → 2 auto slots"
-);
-
-assert(
-  !validateLoadout(
-    "imperial",
-    ["murim_palm", "murim_palm"],
-    ["murim_palm", "murim_dash"]
+  !validateEquipLoadout(
+    ["active_iron_palm", "active_iron_palm"],
+    ["active_iron_palm", "active_power_slash"]
   ).valid,
-  "duplicate active slots rejected"
+  "duplicate equip slots rejected"
 );
 assert(
-  !validateLoadout("imperial", ["murim_dash", "murim_palm"], ["murim_palm"]).valid,
-  "locked skill cannot be active"
+  !validateEquipLoadout(
+    ["move_shadow_step", "active_iron_palm"],
+    ["active_iron_palm"]
+  ).valid,
+  "locked skill cannot be equipped"
 );
+assert(
+  !validateEquipLoadout(
+    ["a", "b", "c", "d", "e"],
+    ["a", "b", "c", "d", "e"]
+  ).valid,
+  "more than 4 slots rejected"
+);
+
+console.log("\n=== Validation: Skill Picker ===");
+const pickerEntity: BattleEntity = {
+  id: "player",
+  side: "player",
+  name: "Player",
+  stats: { ...DEFAULT_PLAYER_STATS, mp: 200, hp: 100, maxHp: 500 },
+  actionGauge: 100,
+  statusEffects: [],
+  skillCooldowns: {},
+};
+const healLoadout = defaultSkillLoadout([
+  "active_power_slash",
+  "active_holy_light",
+]);
+const healPick = pickSkillForTurn(
+  pickerEntity,
+  healLoadout,
+  {},
+  ["active_power_slash", "active_holy_light"]
+);
+assert(healPick.id === "active_holy_light", "heal override at low HP");
+
+const slotLoadout = defaultSkillLoadout([
+  "active_power_slash",
+  "cc_shield_bash",
+]);
+const slotPick = pickSkillForTurn(
+  { ...pickerEntity, stats: { ...pickerEntity.stats, hp: 400 } },
+  slotLoadout,
+  {},
+  ["active_power_slash", "cc_shield_bash"]
+);
+assert(slotPick.id === "active_power_slash", "slot-order picks first ready skill");
 
 console.log("\n=== Validation: Loadout Integration ===");
 const loadoutState = createBattleState(1, {
-  playerSkillPath: "imperial",
   autoBattle: false,
-  playerLoadout: { path: "imperial", activeSlots: ["murim_palm", "murim_dash"] },
-  playerUnlockedSkillIds: ["murim_palm", "murim_dash"],
+  playerLoadout: {
+    equippedSlots: ["active_iron_palm", "active_power_slash"],
+    battlePrefs: { healOverrideEnabled: true, healThreshold: 0.35 },
+  },
+  playerUnlockedSkillIds: ["active_iron_palm", "active_power_slash"],
 });
 assert(
   validateManualAction(loadoutState, "player", {
     type: "basic_attack",
     targetId: "enemy_floor_1",
-    skillId: "murim_qi",
+    skillId: "active_inner_qi",
   }) === false,
-  "manual action rejects non-active skill"
+  "manual action rejects non-equipped skill"
 );
 assert(
   validateManualAction(loadoutState, "player", {
     type: "basic_attack",
     targetId: "enemy_floor_1",
-    skillId: "murim_palm",
+    skillId: "active_iron_palm",
   }) === true,
-  "manual action accepts active slot skill"
+  "manual action accepts equipped skill"
 );
 
 console.log("\n=== Validation: Effective Skill ===");
-const palmDamage3 = resolveEffectiveSkill(palm, {
-  damage: 3,
+const palmDamage4 = resolveEffectiveSkill(palm, {
+  damage: 4,
   cooldown: 0,
   mpCost: 0,
+  statusPotency: 0,
+  healPower: 0,
+  passivePotency: 0,
 });
 assert(
-  palmDamage3.damageMultiplier === 1.35 * 1.15,
-  "damage rank 3 adds +15% multiplier on attack"
+  palmDamage4.damageMultiplier === 1.3 * 1.2,
+  "damage rank 4 adds +20% multiplier on attack"
 );
 
 const palmCd3 = resolveEffectiveSkill(palm, {
   damage: 0,
   cooldown: 3,
   mpCost: 0,
+  statusPotency: 0,
+  healPower: 0,
+  passivePotency: 0,
 });
 assert(palmCd3.cooldownTurns === 0, "cooldown rank 3 floors at 0");
 
@@ -316,33 +392,57 @@ const palmMp3 = resolveEffectiveSkill(palm, {
   damage: 0,
   cooldown: 0,
   mpCost: 3,
+  statusPotency: 0,
+  healPower: 0,
+  passivePotency: 0,
 });
-assert(palmMp3.mpCost === 10, "mp rank 3 reduces 15 MP to 10");
+assert(palmMp3.mpCost === 9, "mp rank 3 reduces 12 MP to 9");
 
-const qi = getSkillById("murim_qi");
+const qi = getSkillById("active_inner_qi");
 const qiDamage3 = resolveEffectiveSkill(qi, {
   damage: 3,
   cooldown: 0,
   mpCost: 0,
+  statusPotency: 0,
+  healPower: 0,
+  passivePotency: 0,
 });
 assert(
   qiDamage3.damageMultiplier === undefined,
   "buff skill ignores damage branch"
 );
 
-console.log("\n=== Validation: Skill Points ===");
+console.log("\n=== Validation: Skill Points & Respec ===");
 assert(spCostForNextRank(0) === 1, "rank 0→1 costs 1 SP");
 assert(spCostForNextRank(1) === 2, "rank 1→2 costs 2 SP");
-assert(spCostForNextRank(2) === 3, "rank 2→3 costs 3 SP");
+assert(spCostForNextRank(3) === 4, "rank 3→4 costs 4 SP");
 assert(
-  spCostForNextRank(0) + spCostForNextRank(1) + spCostForNextRank(2) === 6,
-  "escalating SP cost totals 6 for full branch"
+  spCostForNextRank(0) +
+    spCostForNextRank(1) +
+    spCostForNextRank(2) +
+    spCostForNextRank(3) ===
+    10,
+  "escalating SP cost totals 10 for full branch"
 );
 
 assert(calculateSpGrant(4, 5) === 1, "single level up grants +1 skill point");
 assert(calculateSpGrant(1, 3) === 2, "two level ups grant +2 skill points");
 assert(calculateSpGrant(5, 5, false) === 0, "no level gain grants 0 skill points");
 assert(calculateSpGrant(5, 5, true) === 1, "boss floor grants +1 skill point");
+
+assert(
+  calculateRespecRefund(["active_iron_palm", "active_power_slash"], {
+    active_iron_palm: {
+      damage: 1,
+      cooldown: 0,
+      mpCost: 0,
+      statusPotency: 0,
+      healPower: 0,
+      passivePotency: 0,
+    },
+  }) === 4,
+  "respec refunds unlock + upgrade SP"
+);
 
 assert(calculateStatusPointGrant(4, 5) === 5, "single level up grants +5 status points");
 assert(calculateStatusPointGrant(1, 3) === 10, "two level ups grant +10 status points");
@@ -407,9 +507,15 @@ assert(
 );
 
 assert(
-  canUpgradeBranch(palm, "damage", { damage: 3, cooldown: 0, mpCost: 0 })
-    .allowed === false,
-  "cannot upgrade beyond rank 3"
+  canUpgradeBranch(palm, "damage", {
+    damage: MAX_UPGRADE_RANK,
+    cooldown: 0,
+    mpCost: 0,
+    statusPotency: 0,
+    healPower: 0,
+    passivePotency: 0,
+  }).allowed === false,
+  "cannot upgrade beyond max rank"
 );
 
 console.log("\n=== Validation: Enemy Templates ===");
@@ -424,7 +530,13 @@ const floor50Template = resolveEnemyTemplate(50);
 assert(floor50Template.id === "boss_mid", "floor 50 boss → boss_mid");
 assert(floor50Template.skillIds.length === 3, "boss mid has 3 skills");
 
-const floor15Battle = createBattleState(15, { playerSkillPath: "knight" });
+const floor95Template = resolveEnemyTemplate(95);
+assert(floor95Template.id === "guardian_void", "floor 95 → guardian_void");
+
+const floor100Template = resolveEnemyTemplate(100);
+assert(floor100Template.id === "boss_void", "floor 100 boss → boss_void");
+
+const floor15Battle = createBattleState(15);
 const floor15EnemyEntity = floor15Battle.entities.find((e) => e.side === "enemy")!;
 assert(
   floor15EnemyEntity.enemyTemplateId === "guardian_low",
@@ -460,7 +572,7 @@ const bossEnemyBase: BattleEntity = {
 };
 
 assert(
-  canUseSkill(bossEnemyBase, palm, ["murim_palm"]),
+  canUseSkill(bossEnemyBase, palm, ["active_iron_palm"]),
   "canUseSkill skips MP check for enemies"
 );
 const playerNoMp: BattleEntity = {
@@ -469,7 +581,7 @@ const playerNoMp: BattleEntity = {
   stats: { ...bossEnemyBase.stats, mp: 0, maxMp: 100 },
 };
 assert(
-  !canUseSkill(playerNoMp, palm, ["murim_palm"]),
+  !canUseSkill(playerNoMp, palm, ["active_iron_palm"]),
   "player cannot use skill without MP"
 );
 
@@ -501,9 +613,9 @@ const lowHpBoss: BattleEntity = {
   ...bossEnemyBase,
   stats: { ...bossEnemyBase.stats, hp: 200, maxHp: 1000 },
 };
-const healPick = pickEnemySkill(lowHpBoss, BOSS_LATE, () => 0.99);
+const healPickEnemy = pickEnemySkill(lowHpBoss, BOSS_LATE, () => 0.99);
 assert(
-  healPick.id === "enemy_regenerate",
+  healPickEnemy.id === "enemy_regenerate",
   "enemy HP < 30% prefers regenerate"
 );
 
@@ -518,63 +630,43 @@ assert(
 );
 
 console.log("\n=== Validation: Battle Integration ===");
-const knightL15Stats = {
-  ...DEFAULT_PLAYER_STATS,
-  level: 15,
-  mp: 200,
+const battleLoadout = {
+  equippedSlots: ["active_power_slash", "cc_shield_bash"],
+  battlePrefs: { healOverrideEnabled: true, healThreshold: 0.35 },
 };
-const knightL15Loadout: [string, string] = ["knight_slash", "knight_charge"];
-const knightUnlocked = [
-  "knight_slash",
-  "knight_guard",
-  "knight_bash",
-  "knight_charge",
+const battleUnlocked = [
+  "active_power_slash",
+  "cc_shield_bash",
+  "passive_guardian_aura",
 ];
 
-const highLevelKnight: BattleEntity = {
+const highLevelPlayer: BattleEntity = {
   id: "player",
   side: "player",
   name: "Player",
-  stats: knightL15Stats,
+  stats: { ...DEFAULT_PLAYER_STATS, level: 15, mp: 200 },
   actionGauge: 100,
   statusEffects: [],
   skillCooldowns: {},
 };
 
-const autoOnlyPool = deriveAutoSkills(knightUnlocked, knightL15Loadout);
-const autoOnlyPick = pickAutoSkill(
-  highLevelKnight,
-  "knight",
-  autoOnlyPool,
+const autoPick = pickSkillForTurn(
+  highLevelPlayer,
+  battleLoadout,
   {},
-  knightUnlocked,
-  () => 0.99
+  battleUnlocked
 );
 assert(
-  autoOnlyPick.id === "knight_bash",
-  "auto pool excludes active slots when no manual input"
-);
-
-const autoBattlePool = [...new Set([...knightL15Loadout, ...autoOnlyPool])];
-const autoBattlePick = pickAutoSkill(
-  highLevelKnight,
-  "knight",
-  autoBattlePool,
-  {},
-  knightUnlocked,
-  () => 0.99
-);
-assert(
-  autoBattlePick.id === "knight_charge",
-  "auto-battle uses full pool including active slots"
+  autoPick.id === "active_power_slash",
+  "auto picker uses slot-order rotation"
 );
 
 const manualBattleState = withReadyActor(
   createBattleState(1, {
     autoBattle: false,
-    playerSkillPath: "knight",
-    playerStats: knightL15Stats,
-    playerLoadout: { path: "knight", activeSlots: knightL15Loadout },
+    playerStats: DEFAULT_PLAYER_STATS,
+    playerLoadout: battleLoadout,
+    playerUnlockedSkillIds: battleUnlocked,
   }),
   "player"
 );
@@ -583,22 +675,22 @@ assert(
   "manual mode waits for player input"
 );
 
-const bossBattle = withReadyActor(
-  createBattleState(50, { playerSkillPath: "imperial" }),
-  "enemy_floor_50"
-);
+const bossBattle = withReadyActor(createBattleState(50), "enemy_floor_50");
 const enemyAction = resolveActionChoice(bossBattle, "enemy_floor_50");
 assert(
   enemyAction !== null && enemyAction.skillId.startsWith("enemy_"),
   "enemy turn executes enemy skill"
 );
 
-const battleState = createBattleState(1, { playerSkillPath: "knight" });
-assert(battleState.playerSkillPath === "knight", "battle state stores skill path");
+const battleState = createBattleState(1, {
+  playerUnlockedSkillIds: ["active_power_slash"],
+});
 assert(
-  battleState.playerLoadout.activeSlots[0] === "knight_slash",
-  "battle state has default knight loadout"
+  battleState.playerLoadout.equippedSlots.includes("active_power_slash"),
+  "battle state has default loadout from unlocks"
 );
+
+runBalanceCheck(assert);
 
 console.log("\n=== Validation: Status On Hit ===");
 const player = battleState.entities.find((e) => e.side === "player")!;

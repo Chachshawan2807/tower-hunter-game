@@ -1,9 +1,16 @@
 import { scaleEnemyStatsForFloor } from "../../engine/formulas";
-import { resolveEnemyTemplate } from "../../engine/skills/enemyTemplates";
-import { getDefaultLoadout, type SkillLoadout } from "../../engine/skills/loadout";
+import {
+  applyEquippedPassives,
+} from "../../engine/skills/passiveApply";
+import {
+  defaultSkillLoadout,
+  getPassiveSkillsFromLoadout,
+  type SkillLoadout,
+} from "../../engine/skills/loadout";
 import type { SkillUpgradeRanks } from "../../engine/skills/types";
+import { resolveEnemyTemplate } from "../../engine/skills/enemyTemplates";
 import type { BattleState } from "../../engine/states";
-import type { BattleEntity, CombatStats, SkillPath } from "../../engine/types";
+import type { BattleEntity, CombatStats } from "../../engine/types";
 
 export const DEFAULT_PLAYER_STATS: CombatStats = {
   level: 1,
@@ -75,18 +82,20 @@ export function createBattleState(
     autoBattle?: boolean;
     playerStats?: CombatStats;
     playerName?: string;
-    playerSkillPath?: SkillPath;
     playerLoadout?: SkillLoadout;
     playerSkillUpgrades?: Record<string, SkillUpgradeRanks>;
     playerUnlockedSkillIds?: string[];
   }
 ): BattleState {
-  const playerStats = options?.playerStats ?? DEFAULT_PLAYER_STATS;
+  const baseStats = options?.playerStats ?? DEFAULT_PLAYER_STATS;
   const playerName = options?.playerName ?? "Player";
-  const path = options?.playerSkillPath ?? "imperial";
   const unlockedSkillIds = options?.playerUnlockedSkillIds ?? [];
+  const upgrades = options?.playerSkillUpgrades ?? {};
   const loadout =
-    options?.playerLoadout ?? getDefaultLoadout(path, unlockedSkillIds);
+    options?.playerLoadout ?? defaultSkillLoadout(unlockedSkillIds);
+
+  const passiveSkills = getPassiveSkillsFromLoadout(loadout);
+  const playerStats = applyEquippedPassives(baseStats, passiveSkills, upgrades);
 
   return {
     entities: [
@@ -96,9 +105,8 @@ export function createBattleState(
     floor,
     turnNumber: 1,
     autoBattle: options?.autoBattle ?? true,
-    playerSkillPath: path,
     playerLoadout: loadout,
-    playerSkillUpgrades: options?.playerSkillUpgrades ?? {},
+    playerSkillUpgrades: upgrades,
     playerUnlockedSkillIds: [...unlockedSkillIds],
     isComplete: false,
   };

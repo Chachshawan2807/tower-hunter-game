@@ -2,6 +2,27 @@ import type { EquipmentShopCatalogRow } from "./equipmentShopCatalogTypes";
 
 export const EQUIPMENT_SHOP_WEAPON_CATALOG_ROWS: EquipmentShopCatalogRow[] = [
   {
+    prefix: "weapon-sword-shield",
+    baseCost: 68,
+    assetPrefix: "shield",
+    names: {
+      en: [
+        "Iron Sword & Ward",
+        "Solar Blade & Guard",
+        "Rune Sword & Bulwark",
+        "Royal Sword & Aegis",
+        "Ether Sword & Bastion",
+      ],
+      th: [
+        "ดาบและโล่เหล็ก",
+        "ดาบและโล่สุริยัน",
+        "ดาบและโล่รูน",
+        "ดาบและโล่ราชา",
+        "ดาบและโล่เอเทอร์",
+      ],
+    },
+  },
+  {
     prefix: "weapon-sword",
     baseCost: 70,
     names: {

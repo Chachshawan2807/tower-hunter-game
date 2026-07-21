@@ -1,10 +1,13 @@
-import type { SkillPath } from "../types";
-import { getSkillsForPath } from "./catalog";
+import { getPlayerCatalogSkills } from "./catalog";
 import type { SkillDefinition } from "./types";
 
-/** SP cost to unlock a skill (by slot tier: 1–4). */
+const SP_BY_TIER = [1, 2, 4, 6, 8, 10, 12] as const;
+
 export function getSkillUnlockSpCost(skill: SkillDefinition): number {
-  return skill.slotTier;
+  if (skill.unlockSpCost !== undefined) return skill.unlockSpCost;
+  const tier = skill.catalogTier ?? skill.slotTier;
+  const idx = Math.min(Math.max(tier - 1, 0), SP_BY_TIER.length - 1);
+  return SP_BY_TIER[idx];
 }
 
 export function isSkillUnlocked(
@@ -19,15 +22,14 @@ export function isSkillUnlocked(
 }
 
 export function getUnlockedSkills(
-  path: SkillPath,
+  _path: string,
   unlockedSkillIds: ReadonlySet<string> | readonly string[]
 ): SkillDefinition[] {
-  return getSkillsForPath(path).filter((skill) =>
+  return getPlayerCatalogSkills().filter((skill) =>
     isSkillUnlocked(skill, unlockedSkillIds)
   );
 }
 
-/** Legacy level gate — used only for one-time DB backfill. */
 export function isSkillUnlockedByLevel(
   skill: SkillDefinition,
   playerLevel: number

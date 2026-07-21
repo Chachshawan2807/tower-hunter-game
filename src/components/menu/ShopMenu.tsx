@@ -8,6 +8,7 @@ import { useDismissOnOutside } from "../../hooks/useDismissOnOutside";
 import { ConfirmDialog } from "../ui/ConfirmDialog";
 import { api, type ShopCatalogItem } from "../../utils/api";
 import { formatDialogMessage } from "../../utils/formatDialogMessage";
+import { formatGoldAmount } from "../../utils/formatGold";
 import { t, type Locale } from "../../utils/i18n";
 import { GameIcon } from "../ui/icons";
 import { ShopCategorySection } from "./ShopCategorySection";
@@ -167,11 +168,11 @@ export function ShopMenu({
                       type="button"
                       className="shop-item__buy tabular-nums"
                       disabled={!userId || busyId === item.id || !canAfford}
-                      aria-label={`${t("shop.buy", locale)} ${name} ${item.cost}`}
+                      aria-label={`${t("shop.buy", locale)} ${name} ${formatGoldAmount(item.cost)}`}
                       onClick={() => setPendingBuy(item)}
                     >
                       <GameIcon name="gold" size={18} className="shop-item__buy-icon" />
-                      {item.cost}
+                      {formatGoldAmount(item.cost)}
                     </button>
                   </li>
                 );
@@ -187,7 +188,7 @@ export function ShopMenu({
           title={t("shop.confirm_buy_title", locale)}
           message={formatDialogMessage("shop.confirm_buy_message", locale, {
             item: resolveShopItemName(pendingBuy, locale),
-            cost: pendingBuy.cost,
+            cost: formatGoldAmount(pendingBuy.cost),
           })}
           confirmLabel={t("shop.buy", locale)}
           busy={busyId === pendingBuy.id}

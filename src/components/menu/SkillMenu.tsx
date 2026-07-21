@@ -1,15 +1,19 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
-  getSkillsForPath,
+  defaultSkillLoadout,
+  getPlayerCatalogSkills,
+  getSkillsByType,
   isSkillUnlocked,
 } from "../../engine/skills";
+import type { SkillLoadout } from "../../engine/skills/loadout";
 import type { SkillDefinition } from "../../engine/skills/types";
-import type { SkillPath } from "../../engine/types";
+import type { SkillType } from "../../engine/skills/skillTypes";
 import { useDismissOnOutside } from "../../hooks/useDismissOnOutside";
 import { api } from "../../utils/api";
 import { formatDialogMessage } from "../../utils/formatDialogMessage";
 import { t, type Locale } from "../../utils/i18n";
 import { ConfirmDialog } from "../ui/ConfirmDialog";
+import { SkillEquipPanel } from "../skills/SkillEquipPanel";
 import {
   SkillCategorySection,
   type SkillMenuCategory,
@@ -22,15 +26,23 @@ import {
 interface SkillMenuProps {
   locale: Locale;
   userId: string | null;
-  activePath: SkillPath;
   skillPoints: number;
   onSkillPointsChange?: (skillPoints: number) => void;
 }
 
 const DEFAULT_EXPANDED: SkillMenuCategory[] = ["owned"];
+const TYPE_FILTERS: Array<SkillType | "all"> = [
+  "all",
+  "active",
+  "passive",
+  "cc",
+  "movement",
+];
 
-function sortPathSkills(path: SkillPath): SkillDefinition[] {
-  return [...getSkillsForPath(path)].sort((a, b) => a.slotTier - b.slotTier);
+function sortCatalogSkills(skills: SkillDefinition[]): SkillDefinition[] {
+  return [...skills].sort(
+    (a, b) => (a.catalogTier ?? a.slotTier) - (b.catalogTier ?? b.slotTier)
+  );
 }
 
 function isDefaultExpanded(expanded: Set<SkillMenuCategory>): boolean {
@@ -40,63 +52,69 @@ function isDefaultExpanded(expanded: Set<SkillMenuCategory>): boolean {
 export function SkillMenu({
   locale,
   userId,
-  activePath,
   skillPoints,
   onSkillPointsChange,
 }: SkillMenuProps) {
   const [unlockedSkillIds, setUnlockedSkillIds] = useState<string[]>([]);
+  const [loadout, setLoadout] = useState<SkillLoadout>(
+    defaultSkillLoadout([])
+  );
+  const [typeFilter, setTypeFilter] = useState<SkillType | "all">("all");
   const [unlockingId, setUnlockingId] = useState<string | null>(null);
   const [pendingUnlock, setPendingUnlock] = useState<PendingSkillUnlock | null>(
     null
   );
+  const [pendingRespec, setPendingRespec] = useState(false);
+  const [respecBusy, setRespecBusy] = useState(false);
   const [expandedCategories, setExpandedCategories] = useState<
     Set<SkillMenuCategory>
   >(() => new Set(DEFAULT_EXPANDED));
 
   useDismissOnOutside(
-    !isDefaultExpanded(expandedCategories) && !pendingUnlock,
+    !isDefaultExpanded(expandedCategories) && !pendingUnlock && !pendingRespec,
     () => setExpandedCategories(new Set(DEFAULT_EXPANDED)),
     [".shop-section"]
   );
 
-  const fetchUnlocks = useCallback(async () => {
+  const fetchProgression = useCallback(async () => {
     if (!userId) {
       setUnlockedSkillIds([]);
+      setLoadout(defaultSkillLoadout([]));
       return;
     }
     try {
       const data = await api.getSkillProgression(userId);
       setUnlockedSkillIds(data.unlockedSkillIds ?? []);
+      setLoadout(data.loadout ?? defaultSkillLoadout(data.unlockedSkillIds));
       onSkillPointsChange?.(data.skillPoints);
     } catch {
       setUnlockedSkillIds([]);
     }
-  }, [userId, activePath, onSkillPointsChange]);
+  }, [userId, onSkillPointsChange]);
 
   useEffect(() => {
-    fetchUnlocks();
-  }, [fetchUnlocks]);
+    void fetchProgression();
+  }, [fetchProgression]);
 
-  const pathSkills = useMemo(
-    () => sortPathSkills(activePath),
-    [activePath]
-  );
+  const catalogSkills = useMemo(() => {
+    const base = sortCatalogSkills(getPlayerCatalogSkills());
+    if (typeFilter === "all") return base;
+    return getSkillsByType(typeFilter);
+  }, [typeFilter]);
+
   const ownedSkills = useMemo(
     () =>
-      pathSkills.filter((skill) =>
+      catalogSkills.filter((skill) =>
         isSkillUnlocked(skill, unlockedSkillIds)
       ),
-    [pathSkills, unlockedSkillIds]
+    [catalogSkills, unlockedSkillIds]
   );
 
   const toggleCategory = (category: SkillMenuCategory) => {
     setExpandedCategories((prev) => {
       const next = new Set(prev);
-      if (next.has(category)) {
-        next.delete(category);
-      } else {
-        next.add(category);
-      }
+      if (next.has(category)) next.delete(category);
+      else next.add(category);
       return next;
     });
   };
@@ -109,15 +127,80 @@ export function SkillMenu({
       setUnlockedSkillIds(result.unlockedSkillIds);
       onSkillPointsChange?.(result.skillPoints);
       setPendingUnlock(null);
-    } catch {
-      // keep current state
     } finally {
       setUnlockingId(null);
     }
   };
 
+  const handleRespec = async () => {
+    if (!userId || respecBusy) return;
+    setRespecBusy(true);
+    try {
+      const result = await api.respecSkills(userId);
+      setUnlockedSkillIds([]);
+      setLoadout(defaultSkillLoadout([]));
+      onSkillPointsChange?.(result.skillPoints);
+      setPendingRespec(false);
+    } finally {
+      setRespecBusy(false);
+    }
+  };
+
   return (
     <div className="skill-menu">
+      <div className="skill-menu__section ui-section">
+        <div className="stat-grid stat-grid--skills skill-menu__sp-row">
+          <div
+            className="stat-item stat-item--status-point skill-menu__sp-card"
+            aria-label={`${t("skills.skill_points", locale)} ${skillPoints}`}
+          >
+            <span className="stat-item__status-row">
+              <span className="stat-item__status-label">
+                {t("skills.skill_points", locale)}
+              </span>
+              <span className="stat-item__status-value tabular-nums">
+                {skillPoints}
+              </span>
+              <button
+                type="button"
+                className="stat-item__reset-btn"
+                disabled={!userId || respecBusy || pendingRespec}
+                aria-label={t("skills.reset.aria", locale)}
+                title={t("skills.reset.aria", locale)}
+                onClick={() => setPendingRespec(true)}
+              >
+                {t("skills.reset", locale)}
+              </button>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <SkillEquipPanel
+        locale={locale}
+        userId={userId}
+        loadout={loadout}
+        unlockedSkillIds={unlockedSkillIds}
+        onLoadoutChange={setLoadout}
+      />
+
+      <div className="skill-menu__filters">
+        {TYPE_FILTERS.map((filter) => (
+          <button
+            key={filter}
+            type="button"
+            className={
+              typeFilter === filter
+                ? "skill-filter-btn skill-filter-btn--active"
+                : "skill-filter-btn"
+            }
+            onClick={() => setTypeFilter(filter)}
+          >
+            {filter === "all" ? t("skills.filter.all", locale) : filter}
+          </button>
+        ))}
+      </div>
+
       <div className="shop-sections">
         <SkillCategorySection
           category="owned"
@@ -146,7 +229,7 @@ export function SkillMenu({
         <SkillCategorySection
           category="all"
           labelKey="skills.category.all"
-          itemCount={pathSkills.length}
+          itemCount={catalogSkills.length}
           locale={locale}
           expanded={expandedCategories.has("all")}
           onToggle={() => toggleCategory("all")}
@@ -154,7 +237,7 @@ export function SkillMenu({
           <SkillStatGrid
             locale={locale}
             userId={userId}
-            skills={pathSkills}
+            skills={catalogSkills}
             unlockedSkillIds={unlockedSkillIds}
             skillPoints={skillPoints}
             unlockingId={unlockingId}
@@ -183,6 +266,21 @@ export function SkillMenu({
             if (unlockingId !== pendingUnlock.skillId) {
               setPendingUnlock(null);
             }
+          }}
+        />
+      )}
+
+      {pendingRespec && (
+        <ConfirmDialog
+          locale={locale}
+          title={t("skills.reset_confirm_title", locale)}
+          message={t("skills.reset_confirm_message", locale)}
+          confirmLabel={t("skills.reset", locale)}
+          confirmTone="crimson"
+          busy={respecBusy}
+          onConfirm={() => void handleRespec()}
+          onCancel={() => {
+            if (!respecBusy) setPendingRespec(false);
           }}
         />
       )}

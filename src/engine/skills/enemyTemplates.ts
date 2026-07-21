@@ -90,13 +90,39 @@ export const BOSS_LATE: EnemyTemplate = {
   },
 };
 
+export const GUARDIAN_VOID: EnemyTemplate = {
+  id: "guardian_void",
+  nameKey: "enemies.guardian_void",
+  tier: "normal",
+  baseStats: { ...DEFAULT_ENEMY_BASE, def: 22 },
+  skillIds: ["enemy_armor_break", "enemy_poison_stab"],
+  aiProfile: {
+    skillBias: 0.85,
+    skillPriority: ["enemy_armor_break", "enemy_poison_stab"],
+  },
+};
+
+export const BOSS_VOID: EnemyTemplate = {
+  id: "boss_void",
+  nameKey: "enemies.boss_void",
+  tier: "boss",
+  baseStats: { ...DEFAULT_ENEMY_BASE, def: 28 },
+  skillIds: ["enemy_stun_smash", "enemy_regenerate", "enemy_enrage"],
+  aiProfile: {
+    skillBias: 0.92,
+    skillPriority: ["enemy_stun_smash", "enemy_regenerate", "enemy_enrage"],
+  },
+};
+
 export const ENEMY_TEMPLATES: EnemyTemplate[] = [
   GUARDIAN_LOW,
   GUARDIAN_MID,
   GUARDIAN_HIGH,
+  GUARDIAN_VOID,
   BOSS_EARLY,
   BOSS_MID,
   BOSS_LATE,
+  BOSS_VOID,
 ];
 
 const TEMPLATE_BY_ID = new Map(ENEMY_TEMPLATES.map((t) => [t.id, t]));
@@ -109,9 +135,11 @@ export function resolveEnemyTemplate(floor: number): EnemyTemplate {
   if (isBossFloor(floor)) {
     if (floor <= 30) return BOSS_EARLY;
     if (floor <= 60) return BOSS_MID;
-    return BOSS_LATE;
+    if (floor <= 90) return BOSS_LATE;
+    return BOSS_VOID;
   }
   if (floor <= 30) return GUARDIAN_LOW;
   if (floor <= 60) return GUARDIAN_MID;
-  return GUARDIAN_HIGH;
+  if (floor <= 90) return GUARDIAN_HIGH;
+  return GUARDIAN_VOID;
 }

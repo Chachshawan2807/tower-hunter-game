@@ -4,7 +4,7 @@ import {
 } from "../../engine/skills";
 import type { SkillDefinition } from "../../engine/skills/types";
 import { t, type Locale } from "../../utils/i18n";
-import { GameIcon } from "../ui/icons";
+import { SkillListCard } from "../skills/SkillListCard";
 
 export type PendingSkillUnlock = {
   skillId: string;
@@ -55,53 +55,28 @@ export function SkillStatGrid({
           skillPoints >= unlockCost &&
           unlockingId === null;
 
-        const content = (
-          <>
-            <span className="skill-stat-label">
-              {locked ? (
-                <GameIcon
-                  name="lock"
-                  size={17}
-                  className="skill-stat-label__icon skill-stat-label__icon--locked"
-                />
-              ) : null}
-              {label}
-            </span>
-            <span className="stat-item__value tabular-nums">
-              {locked
-                ? `${t("skills.unlock_sp", locale)} ${unlockCost}`
-                : formatSkillValue(skill, locale)}
-            </span>
-          </>
-        );
-
-        if (canUnlock) {
-          return (
-            <button
-              key={skill.id}
-              type="button"
-              className="stat-item stat-item--locked stat-item--unlockable"
-              onClick={() =>
-                onUnlockRequest({
-                  skillId: skill.id,
-                  label,
-                  cost: unlockCost,
-                })
-              }
-              disabled={unlockingId === skill.id}
-            >
-              {content}
-            </button>
-          );
-        }
-
         return (
-          <div
+          <SkillListCard
             key={skill.id}
-            className={`stat-item${locked ? " stat-item--locked" : ""}`}
-          >
-            {content}
-          </div>
+            label={label}
+            meta={
+              locked
+                ? `${t("skills.unlock_sp", locale)} ${unlockCost}`
+                : formatSkillValue(skill, locale)
+            }
+            locked={locked}
+            disabled={unlockingId === skill.id}
+            onClick={
+              canUnlock
+                ? () =>
+                    onUnlockRequest({
+                      skillId: skill.id,
+                      label,
+                      cost: unlockCost,
+                    })
+                : undefined
+            }
+          />
         );
       })}
     </div>

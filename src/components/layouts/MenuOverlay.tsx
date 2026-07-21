@@ -148,7 +148,6 @@ export function MenuOverlay({
         <SkillMenu
           locale={locale}
           userId={userId}
-          activePath={skillPath}
           skillPoints={displaySkillPoints}
           onSkillPointsChange={setDisplaySkillPoints}
         />

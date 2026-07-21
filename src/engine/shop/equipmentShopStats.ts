@@ -7,7 +7,7 @@ const PREFIX_TO_SLOT: Record<string, EquipmentSlot> = {
   boots: "boots",
   gloves: "gloves",
   cloak: "cloak",
-  shield: "weapon",
+  "weapon-sword-shield": "weapon",
   "weapon-sword": "weapon",
   "weapon-sword-cross": "weapon",
   "weapon-axe": "weapon",
@@ -19,92 +19,78 @@ export function resolveSlotFromAssetPrefix(prefix: string): EquipmentSlot {
 }
 
 /**
- * Per-item combat stats for shop gear.
- * Rules:
- * - Each equipment type boosts ONE primary stat (v01–v03).
- * - Top 2 price tiers per type (v04–v05) add a secondary stat.
- * - No rarity — values are authored per variant.
+ * Per-item combat stats for shop gear (spec 2026-07-22-equipment-balance-design §3).
  */
 export const SHOP_EQUIPMENT_STATS: Record<string, GearStatBonus[]> = {
-  /** Helm → DEF */
   helm: [
-    { def: 5 },
-    { def: 6 },
-    { def: 10 },
-    { def: 14, maxHp: 30 },
-    { def: 18, maxHp: 50 },
+    { def: 8 },
+    { def: 14, maxHp: 25 },
+    { def: 24, maxHp: 45 },
+    { def: 36, maxHp: 70 },
+    { def: 48, maxHp: 100 },
   ],
-  /** Chest → HP */
   chest: [
-    { maxHp: 40 },
-    { maxHp: 48 },
-    { maxHp: 80 },
-    { maxHp: 110, def: 8 },
-    { maxHp: 150, def: 12 },
+    { maxHp: 70 },
+    { maxHp: 130 },
+    { maxHp: 220 },
+    { maxHp: 320, def: 18 },
+    { maxHp: 420, def: 28 },
   ],
-  /** Boots → SPD */
   boots: [
-    { speed: 4 },
     { speed: 5 },
-    { speed: 8 },
-    { speed: 11, evasion: 3 },
-    { speed: 15, evasion: 6 },
+    { speed: 9 },
+    { speed: 14 },
+    { speed: 18, evasion: 5 },
+    { speed: 22, evasion: 10 },
   ],
-  /** Sword → ATK */
-  "weapon-sword": [
-    { atk: 7 },
-    { atk: 9 },
-    { atk: 14 },
-    { atk: 20, critChance: 0.015 },
-    { atk: 28, critChance: 0.025 },
-  ],
-  /** Dual swords → ATK */
-  "weapon-sword-cross": [
-    { atk: 8 },
-    { atk: 10 },
-    { atk: 16 },
-    { atk: 22, critChance: 0.015 },
-    { atk: 32, critChance: 0.03 },
-  ],
-  /** Shield → DEF (weapon slot, defensive) */
-  shield: [
-    { def: 6 },
-    { def: 7 },
-    { def: 12 },
-    { def: 16, maxHp: 35 },
-    { def: 22, maxHp: 55 },
-  ],
-  /** Gloves → CRIT; v04–v05 secondary → ACC */
   gloves: [
-    { critChance: 0.02 },
     { critChance: 0.025 },
     { critChance: 0.035 },
-    { critChance: 0.045, accuracy: 4 },
+    { critChance: 0.05 },
     { critChance: 0.06, accuracy: 8 },
+    { critChance: 0.07, accuracy: 12 },
   ],
-  /** Cloak → Status resist */
   cloak: [
-    { statusResist: 0.03 },
-    { statusResist: 0.035 },
+    { statusResist: 0.04 },
     { statusResist: 0.055 },
-    { statusResist: 0.075, evasion: 2 },
-    { statusResist: 0.1, evasion: 5 },
+    { statusResist: 0.075 },
+    { statusResist: 0.095, maxMp: 50 },
+    { statusResist: 0.12, maxMp: 80 },
   ],
-  /** Axe → ATK */
+  "weapon-sword-shield": [
+    { atk: 9, def: 6 },
+    { atk: 16, def: 11 },
+    { atk: 28, def: 18 },
+    { atk: 42, def: 26, critChance: 0.015 },
+    { atk: 70, def: 40, critChance: 0.02 },
+  ],
+  "weapon-sword": [
+    { atk: 12 },
+    { atk: 22 },
+    { atk: 38 },
+    { atk: 56, critChance: 0.035 },
+    { atk: 88, critChance: 0.05 },
+  ],
+  "weapon-sword-cross": [
+    { atk: 11, speed: 2 },
+    { atk: 20, speed: 3 },
+    { atk: 34, critChance: 0.03, speed: 5 },
+    { atk: 52, critChance: 0.055, speed: 6 },
+    { atk: 82, critChance: 0.07, speed: 8 },
+  ],
   "weapon-axe": [
-    { atk: 8 },
-    { atk: 10 },
-    { atk: 16 },
-    { atk: 23, critDamage: 0.12 },
-    { atk: 33, critDamage: 0.22 },
+    { atk: 12 },
+    { atk: 22 },
+    { atk: 38 },
+    { atk: 56, critDamage: 0.2 },
+    { atk: 86, critDamage: 0.3 },
   ],
-  /** Dual axes → ATK */
   "weapon-axe-cross": [
-    { atk: 9 },
-    { atk: 11 },
-    { atk: 18 },
-    { atk: 25, critDamage: 0.15 },
-    { atk: 36, critDamage: 0.25 },
+    { atk: 11, critChance: 0.015 },
+    { atk: 20, critChance: 0.02 },
+    { atk: 34, critDamage: 0.12 },
+    { atk: 52, critChance: 0.035, critDamage: 0.16 },
+    { atk: 80, critChance: 0.04, critDamage: 0.2 },
   ],
 };
 

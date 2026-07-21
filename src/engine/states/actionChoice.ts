@@ -1,14 +1,14 @@
 import {
   canUseSkill,
-  deriveAutoSkills,
   getSkillById,
-  getSkillsForPath,
-  isSkillUnlocked,
-  pickAutoSkill,
-  pickEnemySkill,
-  resolveEnemyTemplate,
-  resolveSkillId,
+  normalizeSkillId,
+  pickSkillForTurn,
 } from "../skills";
+import { pickEnemySkill } from "../skills/enemyAi";
+import { resolveEnemyTemplate } from "../skills/enemyTemplates";
+import { isSkillUnlocked } from "../skills/skillUnlock";
+import { resolveEffectiveSkill } from "../skills/effectiveSkill";
+import { EMPTY_SKILL_UPGRADES } from "../skills/types";
 import {
   findEntity,
   getOpponents,
@@ -16,30 +16,20 @@ import {
   type BattleState,
 } from "./battleState";
 
-/**
- * Phase 2 — Action Choice:
- * Auto AI picks best usable skill (level unlock + cooldown + MP).
- */
 export function resolveActionChoice(
   state: BattleState,
   actorId: string,
   manualAction?: BattleAction
 ): BattleAction | null {
   if (manualAction) {
-    const skillId = resolveSkillId(
-      manualAction.skillId,
-      state.playerSkillPath
-    );
+    const skillId = normalizeSkillId(manualAction.skillId ?? "basic_attack");
     return { ...manualAction, skillId };
   }
 
   const actor = findEntity(state, actorId);
   if (!actor) return null;
 
-  const requiresManualInput =
-    actor.side === "player" && !state.autoBattle;
-
-  if (requiresManualInput) {
+  if (actor.side === "player" && !state.autoBattle) {
     return null;
   }
 
@@ -53,20 +43,9 @@ export function resolveActionChoice(
   let skillId: string;
 
   if (actor.side === "player") {
-    const { activeSlots } = state.playerLoadout;
-    const unlocked = getSkillsForPath(state.playerSkillPath)
-      .filter((s) => isSkillUnlocked(s, state.playerUnlockedSkillIds))
-      .map((s) => s.id);
-
-    const autoIds = deriveAutoSkills(unlocked, activeSlots);
-    const skillPool = state.autoBattle
-      ? [...new Set([...activeSlots, ...autoIds])]
-      : autoIds;
-
-    const skill = pickAutoSkill(
+    const skill = pickSkillForTurn(
       actor,
-      state.playerSkillPath,
-      skillPool,
+      state.playerLoadout,
       state.playerSkillUpgrades,
       state.playerUnlockedSkillIds
     );
@@ -98,21 +77,19 @@ export function validateManualAction(
   const actor = findEntity(state, actorId);
   if (!actor) return false;
 
-  const skillId = resolveSkillId(action.skillId, state.playerSkillPath);
-  const resolved = getSkillById(skillId);
+  const skillId = normalizeSkillId(action.skillId ?? "basic_attack");
+  const resolved = resolveEffectiveSkill(
+    getSkillById(skillId),
+    state.playerSkillUpgrades[skillId] ?? EMPTY_SKILL_UPGRADES
+  );
 
-  if (
-    skillId !== "basic_attack" &&
-    !state.playerLoadout.activeSlots.includes(skillId)
-  ) {
-    return false;
-  }
-
-  if (
-    skillId !== "basic_attack" &&
-    !canUseSkill(actor, resolved, state.playerUnlockedSkillIds)
-  ) {
-    return false;
+  if (skillId !== "basic_attack") {
+    const equipped = state.playerLoadout.equippedSlots.map(normalizeSkillId);
+    if (!equipped.includes(skillId)) return false;
+    if (!isSkillUnlocked(resolved, state.playerUnlockedSkillIds)) return false;
+    if (!canUseSkill(actor, resolved, state.playerUnlockedSkillIds)) {
+      return false;
+    }
   }
 
   if (resolved.targetType === "self") {

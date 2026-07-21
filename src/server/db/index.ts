@@ -47,9 +47,11 @@ export {
 } from "./statusAllocations";
 
 export {
-  getPlayerLoadout,
-  upsertPlayerLoadout,
-} from "./skillLoadout";
+  getPlayerLoadoutV2,
+  upsertPlayerLoadoutV2,
+} from "./skillLoadoutV2";
+
+export { respecPlayerSkills } from "./skillRespec";
 
 export {
   getPlayerUpgrades,

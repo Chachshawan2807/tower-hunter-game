@@ -127,7 +127,6 @@ export function App() {
               locale={locale}
               currentFloor={currentFloor}
               climbFloor={player.currentFloor}
-              skillPath={player.skillPath}
               playerLevel={player.level}
               playerEquipment={playerEquipment}
               battle={battle}

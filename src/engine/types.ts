@@ -53,7 +53,7 @@ export function isBossFloor(floor: number): boolean {
 }
 
 export function isCrowdControl(type: import("../types").StatusEffectType): boolean {
-  return type === "stun" || type === "freeze";
+  return type === "stun" || type === "freeze" || type === "silence";
 }
 
 export function isDot(type: import("../types").StatusEffectType): boolean {

@@ -65,26 +65,6 @@ const ARMOR_ROWS: EquipmentShopCatalogRow[] = [
     },
   },
   {
-    prefix: "shield",
-    baseCost: 65,
-    names: {
-      en: [
-        "Iron Bulwark",
-        "Zenith Aegis",
-        "Raptor Ward",
-        "Fang Bastion",
-        "Rex Ultima",
-      ],
-      th: [
-        "ไอรอนบูลวาร์ค",
-        "ซีนิธอีจิส",
-        "แรพเตอร์วาร์ด",
-        "แฟงก์บาสเตียน",
-        "เร็กซ์อัลติมา",
-      ],
-    },
-  },
-  {
     prefix: "gloves",
     baseCost: 45,
     names: {
@@ -132,9 +112,9 @@ export const EQUIPMENT_SHOP_CATALOG_ROWS: EquipmentShopCatalogRow[] = [
   ARMOR_ROWS[2],
   EQUIPMENT_SHOP_WEAPON_CATALOG_ROWS[0],
   EQUIPMENT_SHOP_WEAPON_CATALOG_ROWS[1],
+  EQUIPMENT_SHOP_WEAPON_CATALOG_ROWS[2],
   ARMOR_ROWS[3],
   ARMOR_ROWS[4],
-  ARMOR_ROWS[5],
-  EQUIPMENT_SHOP_WEAPON_CATALOG_ROWS[2],
   EQUIPMENT_SHOP_WEAPON_CATALOG_ROWS[3],
+  EQUIPMENT_SHOP_WEAPON_CATALOG_ROWS[4],
 ];

@@ -1,13 +1,35 @@
 import type { SkillPath, StatusEffectType, StatValue } from "../types";
+import type { SkillType } from "./skillTypes";
 
 export type SkillKind = "attack" | "buff" | "heal";
 export type SkillTargetType = "enemy" | "self";
 export type SkillSlotTier = 1 | 2 | 3 | 4;
+export type SkillOwner = SkillPath | "basic" | "enemy" | "player";
+
+export type UpgradeRank = 0 | 1 | 2 | 3 | 4;
 
 export interface SkillUpgradeRanks {
-  damage: 0 | 1 | 2 | 3;
-  cooldown: 0 | 1 | 2 | 3;
-  mpCost: 0 | 1 | 2 | 3;
+  damage: UpgradeRank;
+  cooldown: UpgradeRank;
+  mpCost: UpgradeRank;
+  statusPotency: UpgradeRank;
+  healPower: UpgradeRank;
+  passivePotency: UpgradeRank;
+}
+
+export interface PassiveEffect {
+  stat:
+    | "atk"
+    | "maxHp"
+    | "maxMp"
+    | "def"
+    | "speed"
+    | "critChance"
+    | "critDamage"
+    | "evasion"
+    | "statusResist"
+    | "accuracy";
+  magnitude: number;
 }
 
 export interface SkillSelfStatus {
@@ -18,19 +40,18 @@ export interface SkillSelfStatus {
 
 export interface SkillDefinition {
   id: string;
-  path: SkillPath | "basic" | "enemy";
+  path: SkillOwner;
+  skillType?: SkillType;
+  catalogTier?: number;
+  unlockSpCost?: number;
   stringId: string;
   icon: string;
   mpCost: StatValue;
   kind: SkillKind;
   targetType: SkillTargetType;
-  /** Minimum player level required to use this skill. */
   unlockLevel: StatValue;
-  /** Which unlock tier (1–4) this skill occupies. */
   slotTier: SkillSlotTier;
-  /** Higher values are preferred by auto-battle AI when choosing skills. */
   autoPriority: number;
-  /** Turns before the skill can be used again after casting. */
   cooldownTurns: StatValue;
   damageMultiplier?: StatValue;
   accuracyBonus?: StatValue;
@@ -39,7 +60,18 @@ export interface SkillDefinition {
   statusProcBonus?: StatValue;
   selfStatus?: SkillSelfStatus;
   healPercent?: StatValue;
+  passiveEffects?: PassiveEffect[];
+  gaugeBoost?: StatValue;
 }
 
-/** Slot 1 / 2 / 3 / 4 unlock thresholds shared across all paths. */
+/** Slot unlock thresholds (legacy backfill). */
 export const SKILL_UNLOCK_LEVELS = [1, 5, 10, 15] as const;
+
+export const EMPTY_SKILL_UPGRADES: SkillUpgradeRanks = {
+  damage: 0,
+  cooldown: 0,
+  mpCost: 0,
+  statusPotency: 0,
+  healPower: 0,
+  passivePotency: 0,
+};

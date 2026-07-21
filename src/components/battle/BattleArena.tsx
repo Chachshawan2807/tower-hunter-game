@@ -1,12 +1,7 @@
 import { memo, useCallback, useMemo } from "react";
 
-import {
-  canUseSkill,
-  getSkillById,
-  isSkillUnlocked,
-  resolveEffectiveSkill,
-} from "../../engine/skills";
-import type { SkillUpgradeRanks } from "../../engine/skills/types";
+import { getSkillById } from "../../engine/skills";
+import { EMPTY_SKILL_UPGRADES } from "../../engine/skills/types";
 import { useEntityAnimation } from "../../hooks/useEntityAnimation";
 import { t } from "../../utils/i18n";
 import { GameIcon } from "../ui/icons";
@@ -19,12 +14,6 @@ import type { BattleArenaProps } from "./battleArenaTypes";
 import { getEntityHp } from "./battleArenaUtils";
 import { CombatFxCanvas } from "./CombatFxCanvas";
 import { useBattleArenaKeyboard } from "./useBattleArenaKeyboard";
-
-const EMPTY_UPGRADES: SkillUpgradeRanks = {
-  damage: 0,
-  cooldown: 0,
-  mpCost: 0,
-};
 
 export type { BattleArenaProps } from "./battleArenaTypes";
 
@@ -45,8 +34,8 @@ export const BattleArena = memo(function BattleArena({
   onSkip,
   onAttack,
   onSkill,
-  activeSlots,
-  autoSkillIds,
+  equippedSlots,
+  passiveLabel,
   playerSkillUpgrades = {},
   unlockedSkillIds = [],
   enemyTargetId,
@@ -78,46 +67,21 @@ export const BattleArena = memo(function BattleArena({
     battleResult: result,
   });
 
-  const autoLabel = useMemo(() => {
-    if (autoSkillIds.length === 0) return null;
-    return autoSkillIds
-      .map((id) => t(getSkillById(id).stringId, locale))
-      .join(" · ");
-  }, [autoSkillIds, locale]);
-
   const tryUseSlot = useCallback(
-    (slotIndex: 0 | 1) => {
+    (slotIndex: number) => {
       if (!onSkill || !enemyTargetId || !playerEntity || busy) return;
-
-      const skillId = activeSlots[slotIndex];
-      const base = getSkillById(skillId);
-      if (!isSkillUnlocked(base, unlockedSkillIds)) return;
-
-      const effective = resolveEffectiveSkill(
-        base,
-        playerSkillUpgrades[skillId] ?? EMPTY_UPGRADES
-      );
-      if (!canUseSkill(playerEntity, effective, unlockedSkillIds)) return;
-
-      const targetId =
-        effective.targetType === "self" ? playerEntity.id : enemyTargetId;
-      onSkill(skillId, targetId);
+      const skillId = equippedSlots[slotIndex];
+      if (!skillId) return;
+      onSkill(skillId, enemyTargetId);
     },
-    [
-      onSkill,
-      enemyTargetId,
-      playerEntity,
-      busy,
-      activeSlots,
-      unlockedSkillIds,
-      playerSkillUpgrades,
-    ]
+    [onSkill, enemyTargetId, playerEntity, busy, equippedSlots]
   );
 
   useBattleArenaKeyboard({
     enabled:
       actionRequired && !autoBattle && !isComplete && !isPlaying && !busy,
     onSlot: tryUseSlot,
+    slotCount: equippedSlots.length,
   });
 
   const showManualActions =
@@ -160,16 +124,16 @@ export const BattleArena = memo(function BattleArena({
           snapshot={snapshot}
           events={recentEvents}
         />
+        {passiveLabel && (
+          <p className="battle-passive-info" aria-label={`Passive: ${passiveLabel}`}>
+            Passive: {passiveLabel}
+          </p>
+        )}
         {actionRequired && !isComplete && !isPlaying && (
           <p className="battle-turn-hint">{t("battle.waiting", locale)}</p>
         )}
         {showResult && result && (
           <BattleArenaResult locale={locale} result={result} onReset={onReset} />
-        )}
-        {showManualActions && autoLabel && (
-          <p className="battle-auto-info" aria-label={`Auto: ${autoLabel}`}>
-            Auto: {autoLabel}
-          </p>
         )}
         <div className="battle-actions" aria-label="Battle actions">
           {showManualActions && (
@@ -187,7 +151,7 @@ export const BattleArena = memo(function BattleArena({
                 <BattleActiveSkills
                   locale={locale}
                   busy={busy}
-                  activeSlots={activeSlots}
+                  equippedSlots={equippedSlots}
                   playerEntity={playerEntity}
                   enemyTargetId={enemyTargetId}
                   playerSkillUpgrades={playerSkillUpgrades}

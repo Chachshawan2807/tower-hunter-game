@@ -5,7 +5,6 @@ import type {
   BattleEntity,
   BattleSnapshot,
   EntitySide,
-  SkillPath,
 } from "../types";
 
 export interface BattleAction {
@@ -19,7 +18,6 @@ export interface BattleState {
   floor: number;
   turnNumber: number;
   autoBattle: boolean;
-  playerSkillPath: SkillPath;
   playerLoadout: SkillLoadout;
   playerSkillUpgrades: Record<string, SkillUpgradeRanks>;
   playerUnlockedSkillIds: string[];

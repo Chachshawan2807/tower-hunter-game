@@ -13,7 +13,7 @@ export interface EquipmentShopItemDef {
   label: { en: string; th: string };
 }
 
-const VARIANT_COST_MULT = [1, 1.2, 2, 3.5, 6] as const;
+const VARIANT_COST_MULT = [1, 2.5, 5, 10, 18] as const;
 
 function shopId(prefix: string, variant: number): string {
   const suffix = String(variant).padStart(2, "0");
@@ -24,7 +24,8 @@ export const EQUIPMENT_SHOP_ITEMS: EquipmentShopItemDef[] =
   EQUIPMENT_SHOP_CATALOG_ROWS.flatMap((row) =>
     row.names.en.map((enName, index) => {
       const variant = index + 1;
-      const assetKey = `${row.prefix}-${String(variant).padStart(2, "0")}`;
+      const assetPrefix = row.assetPrefix ?? row.prefix;
+      const assetKey = `${assetPrefix}-${String(variant).padStart(2, "0")}`;
       const cost = BigInt(Math.round(row.baseCost * VARIANT_COST_MULT[index]));
       return {
         id: shopId(row.prefix, variant),

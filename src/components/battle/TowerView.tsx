@@ -1,9 +1,9 @@
 import { useMemo } from "react";
 import {
-  deriveAutoSkills,
-  getDefaultLoadout,
-  getSkillsForPath,
-  isSkillUnlocked,
+  defaultSkillLoadout,
+  getEquippedBattleSkillIds,
+  getEquippedPassiveSkillIds,
+  getSkillById,
 } from "../../engine/skills";
 import { t, type Locale } from "../../utils/i18n";
 import { playUiClick } from "../../hooks/useGameAudio";
@@ -12,12 +12,11 @@ import { ZoneBattleArena } from "../zones";
 import { TowerScrollColumn } from "./TowerScrollColumn";
 import type { CharacterEquipmentVisual } from "../../engine/art/equipment/catalog";
 import type { useBattle } from "../../hooks/useBattle";
-import type { SkillPath } from "../../engine/types";
+
 interface TowerViewProps {
   locale: Locale;
   currentFloor: number;
   climbFloor: number;
-  skillPath: SkillPath;
   playerLevel: number;
   playerEquipment: CharacterEquipmentVisual;
   battle: ReturnType<typeof useBattle>;
@@ -27,7 +26,6 @@ export function TowerView({
   locale,
   currentFloor,
   climbFloor,
-  skillPath,
   playerLevel: _playerLevel,
   playerEquipment,
   battle,
@@ -39,19 +37,30 @@ export function TowerView({
 
   const floorLabel = t("tower.floor", locale);
 
-  const unlockedSkillIds =    battle.loadoutContext?.playerUnlockedSkillIds ?? [];
+  const unlockedSkillIds =
+    battle.loadoutContext?.playerUnlockedSkillIds ?? [];
 
-  const activeSlots =
-    battle.loadoutContext?.playerLoadout.activeSlots ??
-    getDefaultLoadout(skillPath, unlockedSkillIds).activeSlots;
+  const equippedSlots =
+    battle.loadoutContext?.playerLoadout.equippedSlots ??
+    defaultSkillLoadout(unlockedSkillIds).equippedSlots;
 
-  const autoSkillIds = useMemo(() => {
-    const path = battle.loadoutContext?.playerSkillPath ?? skillPath;
-    const unlocked = getSkillsForPath(path)
-      .filter((s) => isSkillUnlocked(s, unlockedSkillIds))
-      .map((s) => s.id);
-    return deriveAutoSkills(unlocked, activeSlots);
-  }, [battle.loadoutContext, skillPath, unlockedSkillIds, activeSlots]);
+  const battleSkillIds = useMemo(
+    () => getEquippedBattleSkillIds({ equippedSlots, battlePrefs: { healOverrideEnabled: true, healThreshold: 0.35 } }),
+    [equippedSlots]
+  );
+
+  const passiveSkillIds = useMemo(
+    () => getEquippedPassiveSkillIds({ equippedSlots, battlePrefs: { healOverrideEnabled: true, healThreshold: 0.35 } }),
+    [equippedSlots]
+  );
+
+  const passiveLabels = useMemo(
+    () =>
+      passiveSkillIds
+        .map((id) => t(getSkillById(id).stringId, locale))
+        .join(" · "),
+    [passiveSkillIds, locale]
+  );
 
   const playerSkillUpgrades =
     battle.loadoutContext?.playerSkillUpgrades ?? {};
@@ -82,14 +91,13 @@ export function TowerView({
             busy={battle.busy}
             isPlaying={battle.isPlaying}
             speed={battle.speed}
-            skillPath={skillPath}
             playerEquipment={playerEquipment}
             onSpeedChange={battle.setSpeed}
             onSkip={battle.skip}
             onAttack={() => battle.manualAttack(`enemy_floor_${currentFloor}`)}
             onSkill={(skillId, targetId) => battle.manualSkill(skillId, targetId)}
-            activeSlots={activeSlots}
-            autoSkillIds={autoSkillIds}
+            equippedSlots={battleSkillIds}
+            passiveLabel={passiveLabels || null}
             playerSkillUpgrades={playerSkillUpgrades}
             unlockedSkillIds={unlockedSkillIds}
             enemyTargetId={`enemy_floor_${currentFloor}`}

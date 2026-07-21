@@ -29,6 +29,31 @@ async function verifySchema(pool: ReturnType<typeof createDbPool>): Promise<void
   }
   console.log("✓ Column player_stats.status_points exists");
 
+  const loadoutV2Table = await pool.query<{ table_name: string }>(
+    `SELECT table_name
+     FROM information_schema.tables
+     WHERE table_schema = 'public'
+       AND table_name = 'player_skill_loadout_v2'`
+  );
+
+  if (!loadoutV2Table.rowCount) {
+    throw new Error("Missing table: player_skill_loadout_v2");
+  }
+  console.log("✓ Table player_skill_loadout_v2 exists");
+
+  const upgradeColumns = await pool.query<{ column_name: string }>(
+    `SELECT column_name
+     FROM information_schema.columns
+     WHERE table_schema = 'public'
+       AND table_name = 'player_skill_upgrades'
+       AND column_name IN ('status_rank', 'heal_rank', 'passive_rank')`
+  );
+
+  if (upgradeColumns.rowCount !== 3) {
+    throw new Error("Missing v2 upgrade columns on player_skill_upgrades");
+  }
+  console.log("✓ Upgrade columns status_rank, heal_rank, passive_rank exist");
+
   const loadoutTable = await pool.query<{ table_name: string }>(
     `SELECT table_name
      FROM information_schema.tables

@@ -65,6 +65,8 @@ export type StatusEffectType =
   | "bleed"
   | "stun"
   | "freeze"
+  | "slow"
+  | "silence"
   | "atk_buff"
   | "def_buff"
   | "atk_debuff"

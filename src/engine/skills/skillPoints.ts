@@ -1,6 +1,15 @@
 import type { SkillDefinition, SkillUpgradeRanks } from "./types";
+import { isPassiveSkillType } from "./skillTypes";
 
-export type UpgradeBranch = "damage" | "cooldown" | "mpCost";
+export type UpgradeBranch =
+  | "damage"
+  | "cooldown"
+  | "mpCost"
+  | "statusPotency"
+  | "healPower"
+  | "passivePotency";
+
+export const MAX_UPGRADE_RANK = 4;
 
 export function spCostForNextRank(currentRank: number): number {
   return currentRank + 1;
@@ -9,7 +18,6 @@ export function spCostForNextRank(currentRank: number): number {
 export const SKILL_POINTS_PER_LEVEL_UP = 1;
 export const SKILL_POINTS_BOSS_BONUS = 1;
 
-/** Skill points for unlocks/upgrades (+1 per level, +1 bonus on boss floor win). */
 export function calculateSpGrant(
   oldLevel: number,
   newLevel: number,
@@ -26,11 +34,27 @@ export function canUpgradeBranch(
   branch: UpgradeBranch,
   ranks: SkillUpgradeRanks
 ): { allowed: boolean; reason?: string } {
+  if (ranks[branch] >= MAX_UPGRADE_RANK) {
+    return { allowed: false, reason: "MAX_RANK" };
+  }
   if (branch === "damage" && skill.kind !== "attack") {
     return { allowed: false, reason: "NOT_ATTACK" };
   }
-  if (ranks[branch] >= 3) {
-    return { allowed: false, reason: "MAX_RANK" };
+  if (branch === "healPower" && skill.kind !== "heal") {
+    return { allowed: false, reason: "NOT_HEAL" };
+  }
+  if (
+    branch === "passivePotency" &&
+    (!skill.skillType || !isPassiveSkillType(skill.skillType))
+  ) {
+    return { allowed: false, reason: "NOT_PASSIVE" };
+  }
+  if (
+    branch === "statusPotency" &&
+    !skill.guaranteedStatus &&
+    !skill.statusProcBonus
+  ) {
+    return { allowed: false, reason: "NOT_STATUS" };
   }
   return { allowed: true };
 }

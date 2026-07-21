@@ -2,14 +2,13 @@ export type {
   SkillDefinition,
   SkillKind,
   SkillTargetType,
-  SkillSelfStatus,
   SkillUpgradeRanks,
+  PassiveEffect,
+  SkillOwner,
+  UpgradeRank,
 } from "./types";
 
 export { BASIC_ATTACK } from "./basicAttack";
-export { IMPERIAL_SKILLS } from "./imperial";
-export { KNIGHT_SKILLS } from "./knight";
-export { VANGUARD_SKILLS } from "./vanguard";
 export { ENEMY_SKILLS } from "./enemy";
 
 export {
@@ -19,9 +18,11 @@ export {
   GUARDIAN_LOW,
   GUARDIAN_MID,
   GUARDIAN_HIGH,
+  GUARDIAN_VOID,
   BOSS_EARLY,
   BOSS_MID,
   BOSS_LATE,
+  BOSS_VOID,
 } from "./enemyTemplates";
 export type { EnemyTemplate } from "./enemyTemplates";
 
@@ -30,9 +31,17 @@ export { pickEnemySkill } from "./enemyAi";
 export {
   getSkillById,
   getSkillsForPath,
+  getPlayerCatalogSkills,
+  getSkillsByType,
   getAllSkills,
   isValidSkillForPath,
+  CATALOG_VERSION,
+  normalizeSkillId,
+  LEGACY_SKILL_ID_MAP,
 } from "./catalog";
+
+export type { SkillType } from "./skillTypes";
+export { isBattleSkillType, isPassiveSkillType } from "./skillTypes";
 
 export {
   canAffordSkill,
@@ -44,16 +53,29 @@ export {
   getUnlockedSkills,
   applySkillCooldown,
   tickSkillCooldowns,
-  pickAutoSkill,
   resolveSkillId,
 } from "./resolver";
 
 export {
-  deriveAutoSkills,
+  defaultSkillLoadout,
   getDefaultLoadout,
+  validateEquipLoadout,
   validateLoadout,
+  deriveAutoSkills,
+  getBattleSkillsFromLoadout,
+  getPassiveSkillsFromLoadout,
+  MAX_EQUIP_SLOTS,
+  DEFAULT_BATTLE_PREFS,
 } from "./loadout";
-export type { SkillLoadout } from "./loadout";
+export type { SkillLoadout, SkillBattlePrefs } from "./loadout";
+
+export { applyEquippedPassives } from "./passiveApply";
+export {
+  pickSkillForTurn,
+  pickAutoSkill,
+  getEquippedBattleSkillIds,
+  getEquippedPassiveSkillIds,
+} from "./skillPicker";
 
 export { resolveEffectiveSkill } from "./effectiveSkill";
 
@@ -61,6 +83,7 @@ export {
   spCostForNextRank,
   calculateSpGrant,
   canUpgradeBranch,
+  MAX_UPGRADE_RANK,
 } from "./skillPoints";
 export type { UpgradeBranch } from "./skillPoints";
 
@@ -69,4 +92,10 @@ export {
   isSkillUnlockedByLevel,
 } from "./skillUnlock";
 
-export { SKILL_UNLOCK_LEVELS } from "./types";
+export {
+  calculateRespecRefund,
+  calculateUnlockSpSpent,
+  calculateUpgradeSpSpent,
+} from "./skillRespec";
+
+export { SKILL_UNLOCK_LEVELS, EMPTY_SKILL_UPGRADES } from "./types";
