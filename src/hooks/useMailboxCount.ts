@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
+import { getHotGameDataForUser } from "../client/cache/gameDataMemory";
 import { api } from "../utils/api";
 
 export function useMailboxCount(userId: string | null) {
-  const [count, setCount] = useState(0);
+  const hot = getHotGameDataForUser(userId);
+  const [count, setCount] = useState(hot?.mailboxCount ?? 0);
 
   const refresh = useCallback(async () => {
     if (!userId) {
@@ -13,13 +15,28 @@ export function useMailboxCount(userId: string | null) {
       const mail = await api.getMailbox(userId);
       setCount(mail.items.length);
     } catch {
-      setCount(0);
+      const cached = getHotGameDataForUser(userId);
+      setCount(cached?.mailboxCount ?? 0);
     }
   }, [userId]);
 
   useEffect(() => {
-    void refresh();
-  }, [refresh]);
+    if (!userId) {
+      setCount(0);
+      return;
+    }
+
+    const cached = getHotGameDataForUser(userId);
+    if (cached) {
+      setCount(cached.mailboxCount);
+    }
+
+    const timer = window.setTimeout(() => {
+      void refresh();
+    }, 0);
+
+    return () => window.clearTimeout(timer);
+  }, [userId, refresh]);
 
   return { count, refresh };
 }

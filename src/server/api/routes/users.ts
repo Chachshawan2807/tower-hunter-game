@@ -11,8 +11,13 @@ import {
   resetStatusAllocations,
   StatusAllocationError,
 } from "../../db";
+import { listPlayerEquipment } from "../../db/equipment";
+import { buildPlayerRevision } from "../../db/playerRevision";
+import { getPlayerSkillPath } from "../../db/playerStats";
+import { equipmentPayloadFromRows } from "../../equipment/equipmentFromRows";
 import { getPlayerEquipmentBonuses } from "../../equipment/playerCombatStats";
 import type { ServerBindings, ServerVariables } from "../types";
+import { buildUserBootstrap } from "../../users/buildBootstrap";
 import { jsonBigInt } from "../middleware/errorHandler";
 import { userInventoryRoutes } from "./userInventoryRoutes";
 
@@ -86,16 +91,37 @@ userRoutes.patch("/:userId", async (c) => {
   }
 });
 
+userRoutes.get("/:userId/bootstrap", async (c) => {
+  const userId = c.req.param("userId");
+  const payload = await buildUserBootstrap(c.get("db"), userId);
+  if (!payload) {
+    return c.json({ error: "User not found", code: "USER_NOT_FOUND" }, 404);
+  }
+  return jsonBigInt(c, payload);
+});
+
 userRoutes.get("/:userId/stats", async (c) => {
   const userId = c.req.param("userId");
-  const stats = await getPlayerStats(c.get("db"), userId);
+  const pool = c.get("db");
+  const [stats, wallet, equipmentRows, skillPath] = await Promise.all([
+    getPlayerStats(pool, userId),
+    getWalletBalance(pool, userId),
+    listPlayerEquipment(pool, userId),
+    getPlayerSkillPath(pool, userId),
+  ]);
+
   if (!stats) {
     return c.json({ error: "Player stats not found", code: "STATS_NOT_FOUND" }, 404);
   }
 
-  const wallet = await getWalletBalance(c.get("db"), userId);
-  const statBonus = await getPlayerEquipmentBonuses(c.get("db"), userId);
-  return jsonBigInt(c, { stats, goldBalance: wallet, equipmentStatBonus: statBonus });
+  const statBonus = equipmentPayloadFromRows(skillPath, equipmentRows).statBonus;
+  const revision = buildPlayerRevision(stats);
+  return jsonBigInt(c, {
+    stats,
+    goldBalance: wallet,
+    equipmentStatBonus: statBonus,
+    revision,
+  });
 });
 
 userRoutes.post("/:userId/stats/allocate", async (c) => {
@@ -110,7 +136,13 @@ userRoutes.post("/:userId/stats/allocate", async (c) => {
     const stats = await allocateStatusPoint(c.get("db"), userId, body.stat);
     const wallet = await getWalletBalance(c.get("db"), userId);
     const statBonus = await getPlayerEquipmentBonuses(c.get("db"), userId);
-    return jsonBigInt(c, { stats, goldBalance: wallet, equipmentStatBonus: statBonus });
+    const revision = buildPlayerRevision(stats);
+    return jsonBigInt(c, {
+      stats,
+      goldBalance: wallet,
+      equipmentStatBonus: statBonus,
+      revision,
+    });
   } catch (err) {
     if (err instanceof StatusAllocationError) {
       return c.json({ error: err.message, code: err.code }, 400);
@@ -126,7 +158,13 @@ userRoutes.post("/:userId/stats/reset-status", async (c) => {
     const stats = await resetStatusAllocations(c.get("db"), userId);
     const wallet = await getWalletBalance(c.get("db"), userId);
     const statBonus = await getPlayerEquipmentBonuses(c.get("db"), userId);
-    return jsonBigInt(c, { stats, goldBalance: wallet, equipmentStatBonus: statBonus });
+    const revision = buildPlayerRevision(stats);
+    return jsonBigInt(c, {
+      stats,
+      goldBalance: wallet,
+      equipmentStatBonus: statBonus,
+      revision,
+    });
   } catch (err) {
     if (err instanceof StatusAllocationError) {
       return c.json({ error: err.message, code: err.code }, 400);

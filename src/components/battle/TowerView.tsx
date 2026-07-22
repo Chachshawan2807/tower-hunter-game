@@ -111,6 +111,11 @@ export function TowerView({
                 {battle.startError}
               </p>
             )}
+            {battle.offlineMessage && (
+              <p className="tower-offline-notice" role="status">
+                {t("common.offline_queued", locale)}
+              </p>
+            )}
             <button
               className="action-btn action-btn--climb"
               disabled={battle.busy || !climbFloor}

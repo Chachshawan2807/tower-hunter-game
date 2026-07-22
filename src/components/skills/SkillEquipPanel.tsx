@@ -6,7 +6,9 @@ import {
 } from "../../engine/skills";
 import type { SkillLoadout } from "../../engine/skills/loadout";
 import type { SkillDefinition } from "../../engine/skills/types";
+import { runWithOfflineQueue } from "../../client/offline/queueMutation";
 import { api } from "../../utils/api";
+import { createActionIdempotencyKey } from "../../utils/idempotencyKey";
 import { t, type Locale } from "../../utils/i18n";
 import { SkillEquipSlot } from "./SkillEquipSlot";
 
@@ -34,6 +36,7 @@ export function SkillEquipPanel({
 }: SkillEquipPanelProps) {
   const [busy, setBusy] = useState(false);
   const [activeSlot, setActiveSlot] = useState<number | null>(null);
+  const [queueMessage, setQueueMessage] = useState<string | null>(null);
 
   const catalog = useMemo(
     () =>
@@ -48,14 +51,35 @@ export function SkillEquipPanel({
       onLoadoutChange(next);
       if (!userId) return;
       setBusy(true);
+      setQueueMessage(null);
       try {
-        const result = await api.patchSkillLoadout(userId, next);
-        onLoadoutChange(result.loadout);
+        const idempotencyKey = createActionIdempotencyKey(
+          "skill_loadout",
+          userId,
+          next.equippedSlots.join(",")
+        );
+        const result = await runWithOfflineQueue(
+          "skill_loadout",
+          userId,
+          idempotencyKey,
+          { loadoutJson: JSON.stringify(next) },
+          () => api.patchSkillLoadout(userId, next)
+        );
+
+        if (result.status === "queued") {
+          setQueueMessage(t("common.offline_queued", locale));
+          return;
+        }
+        if (result.status === "error") {
+          throw result.error;
+        }
+
+        onLoadoutChange(result.data.loadout);
       } finally {
         setBusy(false);
       }
     },
-    [userId, onLoadoutChange]
+    [userId, onLoadoutChange, locale]
   );
 
   const equippedCount = loadout.equippedSlots.length;
@@ -100,6 +124,11 @@ export function SkillEquipPanel({
           {equippedCount}/{MAX_EQUIP_SLOTS}
         </span>
       </div>
+      {queueMessage ? (
+        <p className="skill-equip-panel__message" role="status">
+          {queueMessage}
+        </p>
+      ) : null}
 
       <div className="skill-equip-rail" role="group" aria-label={t("skills.equip_title", locale)}>
         {Array.from({ length: MAX_EQUIP_SLOTS }, (_, slotIndex) => {

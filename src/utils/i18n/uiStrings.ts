@@ -28,6 +28,10 @@ export const UI_I18N_STRINGS: Record<string, Record<Locale, string>> = {
   "menu.close": { en: "Close", th: "ปิด" },
   "dialog.confirm": { en: "Confirm", th: "ยืนยัน" },
   "dialog.cancel": { en: "Cancel", th: "ยกเลิก" },
+  "common.offline_queued": {
+    en: "Offline — action queued for sync",
+    th: "ออฟไลน์ — คิวไว้รอซิงค์",
+  },
   "char.stats": { en: "Stats", th: "ค่าสถานะ" },
   "skills.basic_attack": { en: "Basic Attack", th: "โจมตีปกติ" },
   "skills.paths": { en: "Skill Paths", th: "แนวสกิล" },
@@ -95,6 +99,10 @@ export const UI_I18N_STRINGS: Record<string, Record<Locale, string>> = {
   },
   "bag.sold": { en: "Item sold", th: "ขายสำเร็จ" },
   "bag.sell_error": { en: "Could not sell item", th: "ขายไม่สำเร็จ" },
+  "bag.queued_offline": {
+    en: "Offline — sell queued for sync",
+    th: "ออฟไลน์ — คิวขายไว้รอซิงค์",
+  },
   "bag.expires": { en: "Expires", th: "หมดอายุ" },
   "bag.rarity_short.common": { en: "Com", th: "ธรรมดา" },
   "bag.rarity_short.rare": { en: "Rare", th: "หายาก" },
@@ -123,6 +131,10 @@ export const UI_I18N_STRINGS: Record<string, Record<Locale, string>> = {
     th: "ซื้อสำเร็จ — กระเป๋าเต็ม ส่งไปกล่องจดหมายแล้ว",
   },
   "shop.error": { en: "Purchase failed", th: "ซื้อไม่สำเร็จ" },
+  "shop.queued_offline": {
+    en: "Offline — purchase queued for sync",
+    th: "ออฟไลน์ — คิวซื้อไว้รอซิงค์",
+  },
   "shop.sell_price": { en: "Sell", th: "ขาย" },
   "shop.category.gloves": { en: "Gloves", th: "ถุงมือ" },
   "shop.category.boots": { en: "Boots", th: "รองเท้า" },

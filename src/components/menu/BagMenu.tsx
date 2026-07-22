@@ -3,11 +3,13 @@ import type { SkillPath } from "../../engine/types";
 import type { ItemRarityVisual } from "../../engine/art/weaponTypes";
 import type { EquipmentSlot } from "../../engine/art/equipment/slots";
 import type { CharacterEquipmentVisual } from "../../engine/art/equipment/catalog";
+import { queueMutationIfOffline } from "../../client/offline/queueMutation";
 import { useDismissOnOutside } from "../../hooks/useDismissOnOutside";
 import { resolveShopItemSellPrice } from "../../engine/shop/sellPrice";
 import { ConfirmDialog } from "../ui/ConfirmDialog";
 import { t, type Locale } from "../../utils/i18n";
 import { api, type InventoryItem } from "../../utils/api";
+import { createActionIdempotencyKey } from "../../utils/idempotencyKey";
 import { formatDialogMessage } from "../../utils/formatDialogMessage";
 import { formatGoldAmount } from "../../utils/formatGold";
 import { resolveItemLabel } from "../../utils/itemLabel";
@@ -76,15 +78,31 @@ export function BagMenu({
     if (!userId || sellBusy) return false;
     setSellBusy(true);
     setMessage(null);
+    const idempotencyKey = createActionIdempotencyKey(
+      "shop_sell",
+      userId,
+      inventoryId
+    );
     try {
-      const result = await api.sellShopItem(userId, inventoryId, crypto.randomUUID());
+      const result = await api.sellShopItem(userId, inventoryId, idempotencyKey);
       setMessage(t("bag.sold", locale));
       setSelectedId(null);
       setPendingSellId(null);
       await reload();
       onSellComplete?.(result.balanceAfter);
       return true;
-    } catch {
+    } catch (err) {
+      const queued = await queueMutationIfOffline(
+        "shop_sell",
+        userId,
+        idempotencyKey,
+        { inventoryId },
+        err
+      );
+      if (queued) {
+        setMessage(t("common.offline_queued", locale));
+        return false;
+      }
       setMessage(t("bag.sell_error", locale));
       return false;
     } finally {

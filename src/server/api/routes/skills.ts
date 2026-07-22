@@ -1,16 +1,13 @@
 import { Hono } from "hono";
 import {
   CATALOG_VERSION,
-  defaultSkillLoadout,
   getPlayerCatalogSkills,
   getSkillById,
   getSkillsByType,
-  isSkillUnlocked,
-  resolveEffectiveSkill,
   validateEquipLoadout,
 } from "../../../engine/skills";
 import type { SkillDefinition } from "../../../engine/skills/types";
-import { EMPTY_SKILL_UPGRADES } from "../../../engine/skills/types";
+import { buildSkillProgressionPayload } from "../../users/buildSkillProgression";
 import type { UpgradeBranch } from "../../../engine/skills/skillPoints";
 import type { SkillType } from "../../../engine/skills/skillTypes";
 import { getPlayerStats } from "../../db/playerStats";
@@ -18,7 +15,7 @@ import {
   getPlayerLoadoutV2,
   upsertPlayerLoadoutV2,
 } from "../../db/skillLoadoutV2";
-import { getPlayerUpgrades, upgradeSkillBranch } from "../../db/skillUpgrades";
+import { upgradeSkillBranch } from "../../db/skillUpgrades";
 import {
   getPlayerSkillUnlocks,
   isSkillUnlockError,
@@ -84,34 +81,13 @@ skillRoutes.get("/catalog", (c) => {
 
 skillRoutes.get("/:userId/progression", async (c) => {
   const userId = c.req.param("userId");
-  const [stats, upgrades, dbLoadout, unlockedSkillIds] = await Promise.all([
-    getPlayerStats(c.get("db"), userId),
-    getPlayerUpgrades(c.get("db"), userId),
-    getPlayerLoadoutV2(c.get("db"), userId),
-    getPlayerSkillUnlocks(c.get("db"), userId),
-  ]);
-
-  const skillPoints = stats?.skill_points ?? 0;
-  const loadout = dbLoadout ?? defaultSkillLoadout(unlockedSkillIds);
-
-  const skills = getPlayerCatalogSkills().map((skill) => {
-    const skillUpgrades = upgrades[skill.id] ?? EMPTY_SKILL_UPGRADES;
-    const effective = resolveEffectiveSkill(skill, skillUpgrades);
-
-    return {
-      ...mapSkill(effective),
-      unlocked: isSkillUnlocked(skill, unlockedSkillIds),
-      upgrades: skillUpgrades,
-    };
-  });
-
-  return c.json({
-    skillPoints,
-    upgrades,
-    skills,
-    loadout,
-    unlockedSkillIds,
-  });
+  const stats = await getPlayerStats(c.get("db"), userId);
+  const progression = await buildSkillProgressionPayload(
+    c.get("db"),
+    userId,
+    stats
+  );
+  return c.json(progression);
 });
 
 skillRoutes.post("/:userId/unlock", async (c) => {

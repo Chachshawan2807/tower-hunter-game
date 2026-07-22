@@ -15,6 +15,7 @@ export const shopApi = {
       inventoryOutcome: string;
     }>(`/api/shop/${userId}/purchase`, {
       method: "POST",
+      retry: true,
       body: JSON.stringify({ itemId, idempotencyKey, quantity: 1 }),
     });
   },
@@ -26,6 +27,7 @@ export const shopApi = {
       balanceAfter: string;
     }>(`/api/shop/${userId}/sell`, {
       method: "POST",
+      retry: true,
       body: JSON.stringify({ inventoryId, idempotencyKey }),
     });
   },

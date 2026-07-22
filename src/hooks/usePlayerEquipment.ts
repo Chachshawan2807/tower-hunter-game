@@ -5,7 +5,11 @@ import type { CharacterEquipmentVisual } from "../engine/art/equipment/catalog";
 import type { GearStatBonus } from "../engine/art/equipment/statBonuses";
 import type { EquipmentSlot, PlayerEquipmentLoadout } from "../engine/art/equipment/slots";
 import type { SkillPath } from "../engine/types";
+import { patchGameDataCache } from "../client/cache/gameDataStore";
+import { getHotGameDataForUser } from "../client/cache/gameDataMemory";
+import { runWithOfflineQueue } from "../client/offline/queueMutation";
 import { api } from "../utils/api";
+import { createActionIdempotencyKey } from "../utils/idempotencyKey";
 import { t, type Locale } from "../utils/i18n";
 
 export function usePlayerEquipment(
@@ -13,31 +17,59 @@ export function usePlayerEquipment(
   skillPath: SkillPath,
   locale: Locale = "en"
 ) {
-  const [serverSlots, setServerSlots] = useState<Partial<PlayerEquipmentLoadout>>();
-  const [statBonus, setStatBonus] = useState<GearStatBonus>({});
-  const [loading, setLoading] = useState(false);
+  const hot = getHotGameDataForUser(userId);
+  const [serverSlots, setServerSlots] = useState<
+    Partial<PlayerEquipmentLoadout> | undefined
+  >(hot?.equipment.slots as Partial<PlayerEquipmentLoadout> | undefined);
+  const [statBonus, setStatBonus] = useState<GearStatBonus>(
+    () => hot?.equipment.statBonus ?? {}
+  );
+  const [hydrated, setHydrated] = useState(Boolean(hot));
   const [equipBusy, setEquipBusy] = useState(false);
   const [equipMessage, setEquipMessage] = useState<string | null>(null);
 
+  const applyEquipment = useCallback(
+    (slots: Partial<PlayerEquipmentLoadout>, bonus: GearStatBonus) => {
+      setServerSlots(slots);
+      setStatBonus(bonus);
+      setHydrated(true);
+      if (userId) {
+        patchGameDataCache(userId, {
+          equipment: { path: skillPath, slots, statBonus: bonus },
+        });
+      }
+    },
+    [skillPath, userId]
+  );
+
   const refresh = useCallback(async () => {
     if (!userId) return;
-    setLoading(true);
     try {
       const data = await api.getPlayerEquipment(userId);
-      setServerSlots(data.slots);
-      setStatBonus(data.statBonus ?? {});
+      applyEquipment(data.slots, data.statBonus ?? {});
     } catch (err) {
       console.error("Failed to load equipment:", err);
-      setServerSlots(undefined);
-      setStatBonus({});
-    } finally {
-      setLoading(false);
     }
-  }, [userId]);
+  }, [userId, applyEquipment]);
 
   useEffect(() => {
-    void refresh();
-  }, [refresh, skillPath]);
+    if (!userId) {
+      setServerSlots(undefined);
+      setStatBonus({});
+      setHydrated(false);
+      return;
+    }
+
+    const cached = getHotGameDataForUser(userId);
+    if (cached) {
+      applyEquipment(cached.equipment.slots, cached.equipment.statBonus ?? {});
+      return;
+    }
+
+    if (!hydrated) {
+      void refresh();
+    }
+  }, [userId, hydrated, applyEquipment, refresh]);
 
   const loadout = useMemo(
     (): PlayerEquipmentLoadout => mergeEquipmentLoadout(skillPath, serverSlots),
@@ -55,10 +87,29 @@ export function usePlayerEquipment(
       setEquipBusy(true);
       setEquipMessage(null);
       try {
-        const result = await api.equipFromBag(userId, slot, inventoryId);
-        setServerSlots(result.loadout);
-        await refresh();
-        const bonusText = result.statBonusLines.join(" · ");
+        const idempotencyKey = createActionIdempotencyKey(
+          "equip_from_bag",
+          userId,
+          `${slot}:${inventoryId}`
+        );
+        const result = await runWithOfflineQueue(
+          "equip_from_bag",
+          userId,
+          idempotencyKey,
+          { slot, inventoryId },
+          () => api.equipFromBag(userId, slot, inventoryId)
+        );
+
+        if (result.status === "queued") {
+          setEquipMessage(t("common.offline_queued", locale));
+          return true;
+        }
+        if (result.status === "error") {
+          throw result.error;
+        }
+
+        applyEquipment(result.data.loadout, statBonus);
+        const bonusText = result.data.statBonusLines.join(" · ");
         setEquipMessage(
           bonusText
             ? `${t("bag.equipped", locale)} — ${bonusText}`
@@ -73,7 +124,7 @@ export function usePlayerEquipment(
         setEquipBusy(false);
       }
     },
-    [userId, equipBusy, refresh, locale]
+    [userId, equipBusy, applyEquipment, statBonus, locale]
   );
 
   const unequipSlot = useCallback(
@@ -82,10 +133,28 @@ export function usePlayerEquipment(
       setEquipBusy(true);
       setEquipMessage(null);
       try {
-        const result = await api.unequipSlot(userId, slot);
-        setServerSlots(result.loadout);
-        setStatBonus(result.statBonus ?? {});
-        await refresh();
+        const idempotencyKey = createActionIdempotencyKey(
+          "unequip_slot",
+          userId,
+          slot
+        );
+        const result = await runWithOfflineQueue(
+          "unequip_slot",
+          userId,
+          idempotencyKey,
+          { slot },
+          () => api.unequipSlot(userId, slot)
+        );
+
+        if (result.status === "queued") {
+          setEquipMessage(t("common.offline_queued", locale));
+          return true;
+        }
+        if (result.status === "error") {
+          throw result.error;
+        }
+
+        applyEquipment(result.data.loadout, result.data.statBonus ?? {});
         setEquipMessage(t("bag.unequipped", locale));
         return true;
       } catch (err) {
@@ -96,7 +165,7 @@ export function usePlayerEquipment(
         setEquipBusy(false);
       }
     },
-    [userId, equipBusy, refresh, locale]
+    [userId, equipBusy, applyEquipment, locale]
   );
 
   const computedBonus = useMemo(
@@ -112,7 +181,7 @@ export function usePlayerEquipment(
     visual,
     loadout,
     statBonus: Object.keys(statBonus).length > 0 ? statBonus : computedBonus,
-    loading,
+    loading: !hydrated,
     equipBusy,
     equipMessage,
     refresh,

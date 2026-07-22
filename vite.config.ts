@@ -68,18 +68,6 @@ export default defineConfig({
               },
             },
           },
-          {
-            urlPattern: /^\/api\/.*/i,
-            handler: "NetworkFirst",
-            options: {
-              cacheName: "tower-hunter-api",
-              networkTimeoutSeconds: 8,
-              expiration: {
-                maxEntries: 64,
-                maxAgeSeconds: 60 * 10,
-              },
-            },
-          },
         ],
       },
     }),

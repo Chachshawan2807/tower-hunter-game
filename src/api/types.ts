@@ -56,6 +56,7 @@ export interface PlayerStatsResponse {
   };
   goldBalance: string;
   equipmentStatBonus?: GearStatBonusDto;
+  revision: string;
 }
 
 export interface SkillCatalogEntry {

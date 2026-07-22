@@ -59,6 +59,11 @@ export function SkillMenu({
 
   return (
     <div className="skill-menu">
+      {progression.offlineMessage ? (
+        <p className="skill-menu__offline-notice" role="status">
+          {t(progression.offlineMessage, locale)}
+        </p>
+      ) : null}
       <SkillEquipPanel
         locale={locale}
         userId={userId}

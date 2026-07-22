@@ -9,6 +9,7 @@ import {
 export interface IdempotencyReservation {
   replay: boolean;
   cachedResult?: WalletTransactionResult;
+  cachedPayload?: Record<string, unknown>;
 }
 
 interface ReserveIdempotencyParams {
@@ -47,10 +48,14 @@ export async function reserveIdempotencyKey(
   }
 
   if (row.status === "completed" && row.response_payload) {
-    return {
-      replay: true,
-      cachedResult: parseCachedWalletResult(row.response_payload),
-    };
+    const payload = row.response_payload;
+    if (payload.kind === "wallet") {
+      return {
+        replay: true,
+        cachedResult: parseCachedWalletResult(payload),
+      };
+    }
+    return { replay: true, cachedPayload: payload };
   }
 
   if (row.status === "processing") {
@@ -64,6 +69,20 @@ export async function completeIdempotencyKey(
   client: DbClient,
   key: string,
   payload: WalletTransactionResult,
+  status: IdempotencyStatus = "completed"
+): Promise<void> {
+  await completeIdempotencyPayload(client, key, {
+    kind: "wallet",
+    ...payload,
+    amount: payload.amount.toString(),
+    balanceAfter: payload.balanceAfter.toString(),
+  }, status);
+}
+
+export async function completeIdempotencyPayload(
+  client: DbClient,
+  key: string,
+  payload: Record<string, unknown>,
   status: IdempotencyStatus = "completed"
 ): Promise<void> {
   await client.query(
@@ -108,6 +127,12 @@ function parseCachedWalletResult(
     idempotencyKey: String(payload.idempotencyKey),
     replayed: true,
   };
+}
+
+export function parseCachedOperationPayload<T extends Record<string, unknown>>(
+  payload: Record<string, unknown>
+): T {
+  return payload as T;
 }
 
 export function buildWalletOperationKey(

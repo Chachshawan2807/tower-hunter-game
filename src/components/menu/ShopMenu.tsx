@@ -4,9 +4,11 @@ import {
   type ShopItemCategory,
 } from "../../engine/shop/shopCatalogLayout";
 import { getEquipmentShopLabel } from "../../engine/shop/equipmentShopItems";
+import { queueMutationIfOffline } from "../../client/offline/queueMutation";
 import { useDismissOnOutside } from "../../hooks/useDismissOnOutside";
 import { ConfirmDialog } from "../ui/ConfirmDialog";
 import { api, type ShopCatalogItem } from "../../utils/api";
+import { createActionIdempotencyKey } from "../../utils/idempotencyKey";
 import { formatDialogMessage } from "../../utils/formatDialogMessage";
 import { formatGoldAmount } from "../../utils/formatGold";
 import { t, type Locale } from "../../utils/i18n";
@@ -96,8 +98,13 @@ export function ShopMenu({
 
     setBusyId(item.id);
     setMessage(null);
+    const idempotencyKey = createActionIdempotencyKey(
+      "shop_purchase",
+      userId,
+      item.id
+    );
     try {
-      const result = await api.purchaseShopItem(userId, item.id, crypto.randomUUID());
+      const result = await api.purchaseShopItem(userId, item.id, idempotencyKey);
       onGoldChange(result.balanceAfter);
       setMessage(
         result.inventoryOutcome === "mailbox"
@@ -105,7 +112,18 @@ export function ShopMenu({
           : t("shop.purchased", locale)
       );
       onPurchase(result);
-    } catch {
+    } catch (err) {
+      const queued = await queueMutationIfOffline(
+        "shop_purchase",
+        userId,
+        idempotencyKey,
+        { itemId: item.id },
+        err
+      );
+      if (queued) {
+        setMessage(t("common.offline_queued", locale));
+        return;
+      }
       onGoldChange(previousGold);
       onPurchaseError?.();
       setMessage(t("shop.error", locale));

@@ -1,37 +1,62 @@
-import { useCallback, useEffect, useState } from "react";
-import { combatStatsForLevel } from "../engine/formulas/playerProgression";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { SkillPath } from "../engine/types";
-import { api, type PlayerStatsResponse } from "../utils/api";
+import { getHotGameDataForUser } from "../client/cache/gameDataMemory";
+import { onNetworkOnline } from "../client/offline/networkStatus";
+import { flushOfflineQueue } from "../client/offline/flushOfflineQueue";
+import type { PlayerStatsResponse } from "../utils/api";
+import { api } from "../utils/api";
+import {
+  buildFallbackStats,
+  persistPlayerSnapshot,
+  readCachedPlayerState,
+  runPlayerBootstrap,
+} from "./playerBootstrap";
+import { patchGameDataCache } from "../client/cache/gameDataStore";
 
-const USER_KEY = "tower_hunter_user_id";
+type PlayerSetters = {
+  setStats: (s: PlayerStatsResponse["stats"]) => void;
+  setGold: (g: string) => void;
+  setLevel: (l: number) => void;
+  setExp: (e: number) => void;
+  setCurrentFloor: (f: number) => void;
+  setSkillPath: (p: SkillPath) => void;
+  setRevision: (r: string) => void;
+};
 
-function buildFallbackStats(
-  userId: string,
-  level = 1,
-  floor = 1,
-  path: SkillPath = "imperial"
-): PlayerStatsResponse["stats"] {
-  const base = combatStatsForLevel(level);
-  return {
-    user_id: userId,
-    level: base.level,
-    exp: "0",
-    hp: String(base.maxHp),
-    max_hp: String(base.maxHp),
-    mp: String(base.maxMp),
-    max_mp: String(base.maxMp),
-    atk: String(base.atk),
-    def: String(base.def),
-    speed: String(base.speed),
-    current_floor: floor,
-    active_skill_path: path,
-  };
+function applyStatsResponse(data: PlayerStatsResponse, setters: PlayerSetters) {
+  setters.setStats(data.stats);
+  setters.setGold(data.goldBalance);
+  setters.setLevel(data.stats.level);
+  setters.setExp(Number(data.stats.exp));
+  setters.setCurrentFloor(data.stats.current_floor);
+  setters.setSkillPath(data.stats.active_skill_path ?? "imperial");
+  setters.setRevision(data.revision);
+}
+
+function applyCachedState(
+  cached: NonNullable<Awaited<ReturnType<typeof readCachedPlayerState>>>,
+  setters: PlayerSetters
+) {
+  setters.setStats(cached.stats);
+  setters.setGold(cached.gold);
+  setters.setLevel(cached.level);
+  setters.setExp(cached.exp);
+  setters.setCurrentFloor(cached.currentFloor);
+  setters.setSkillPath(cached.skillPath);
+  setters.setRevision(cached.revision);
+}
+
+function applyBootstrapToSetters(
+  bootstrap: NonNullable<Awaited<ReturnType<typeof runPlayerBootstrap>>["bootstrap"]>,
+  setters: PlayerSetters,
+  setDisplayName: (name: string) => void
+) {
+  setDisplayName(bootstrap.user.display_name);
+  applyStatsResponse(bootstrap.stats, setters);
 }
 
 export function usePlayer() {
-  const [userId, setUserId] = useState<string | null>(
-    () => localStorage.getItem(USER_KEY)
-  );
+  const [userId, setUserId] = useState<string | null>(null);
   const [displayName, setDisplayName] = useState("Player");
   const [gold, setGold] = useState("0");
   const [level, setLevel] = useState(1);
@@ -39,97 +64,135 @@ export function usePlayer() {
   const [currentFloor, setCurrentFloor] = useState(1);
   const [skillPath, setSkillPath] = useState<SkillPath>("imperial");
   const [stats, setStats] = useState<PlayerStatsResponse["stats"] | null>(null);
+  const [revision, setRevision] = useState("0");
   const [loading, setLoading] = useState(true);
   const [nameBusy, setNameBusy] = useState(false);
+  const [fromCache, setFromCache] = useState(false);
+  const userIdRef = useRef(userId);
+  userIdRef.current = userId;
 
-  const refreshStats = useCallback(async (id: string) => {
-    try {
-      const data = await api.getPlayerStats(id);
-      setStats(data.stats);
-      setGold(data.goldBalance);
-      setLevel(data.stats.level);
-      setExp(Number(data.stats.exp));
-      setCurrentFloor(data.stats.current_floor);
-      setSkillPath(data.stats.active_skill_path ?? "imperial");
-    } catch (err) {
-      console.error("Failed to load player stats:", err);
-      setStats((prev) =>
-        prev ?? buildFallbackStats(id, level, currentFloor, skillPath)
-      );
-    }
-  }, [level, currentFloor, skillPath]);
+  const setters: PlayerSetters = {
+    setStats,
+    setGold,
+    setLevel,
+    setExp,
+    setCurrentFloor,
+    setSkillPath,
+    setRevision,
+  };
 
-  const changeSkillPath = useCallback(
-    async (path: SkillPath) => {
-      if (!userId) return;
-      setSkillPath(path);
-    },
-    [userId]
-  );
-
-  const changeDisplayName = useCallback(
-    async (name: string) => {
-      if (!userId) return;
-      setNameBusy(true);
+  const refreshStats = useCallback(
+    async (id: string) => {
       try {
-        const user = await api.updateDisplayName(userId, name);
-        setDisplayName(user.display_name);
-      } finally {
-        setNameBusy(false);
+        const data = await api.getPlayerStats(id);
+        applyStatsResponse(data, setters);
+        setFromCache(false);
+        patchGameDataCache(id, { stats: data });
+        void persistPlayerSnapshot(id, displayName, data);
+        return data;
+      } catch (err) {
+        console.error("Failed to load player stats:", err);
+        const hot = getHotGameDataForUser(id);
+        if (hot) {
+          applyStatsResponse(hot.stats, setters);
+          setFromCache(true);
+          return hot.stats;
+        }
+        const cached = await readCachedPlayerState(id);
+        if (cached) {
+          applyCachedState(cached, setters);
+          setFromCache(true);
+          return null;
+        }
+        setStats((prev) => prev ?? buildFallbackStats(id, level, currentFloor, skillPath));
+        return null;
       }
     },
-    [userId]
+    [currentFloor, displayName, level, skillPath]
   );
 
   useEffect(() => {
     let cancelled = false;
 
     async function bootstrap() {
-      let id = userId;
+      const storedId = localStorage.getItem("tower_hunter_user_id");
+      const hot = getHotGameDataForUser(storedId);
 
-      try {
-        if (!id) {
-          const externalId = `guest_${crypto.randomUUID().slice(0, 8)}`;
-          const user = await api.createUser(externalId, "Player");
-          id = user.id;
-          localStorage.setItem(USER_KEY, id);
-          if (!cancelled) {
-            setUserId(id);
-            setDisplayName(user.display_name);
-          }
-        }
-
-        if (id) {
-          const user = await api.getUser(id);
-          if (!cancelled) {
-            setDisplayName(user.display_name);
-          }
-          await refreshStats(id);
-        }
-      } catch (err) {
-        console.error("Player bootstrap failed:", err);
-      } finally {
-        if (!cancelled && id) {
-          const fallbackId = id;
-          setStats((prev) => prev ?? buildFallbackStats(fallbackId));
-        }
-        if (!cancelled) {
+      if (hot && !cancelled) {
+        setUserId(hot.userId);
+        applyBootstrapToSetters(
+          {
+            user: hot.user,
+            stats: hot.stats,
+            equipment: hot.equipment,
+            skillProgression: hot.skillProgression,
+            mailboxCount: hot.mailboxCount,
+            revision: hot.revision,
+          },
+          setters,
+          setDisplayName
+        );
+        setFromCache(true);
+        setLoading(false);
+      } else if (storedId && !cancelled) {
+        const cached = await readCachedPlayerState(storedId);
+        if (cached) {
+          setUserId(storedId);
+          setDisplayName(cached.displayName);
+          applyCachedState(cached, setters);
+          setFromCache(true);
           setLoading(false);
         }
       }
+
+      try {
+        const result = await runPlayerBootstrap();
+        if (cancelled) return;
+
+        setUserId(result.userId);
+        if (result.bootstrap) {
+          applyBootstrapToSetters(result.bootstrap, setters, setDisplayName);
+        } else {
+          setStats(buildFallbackStats(result.userId));
+        }
+        setFromCache(result.fromCache);
+      } catch (err) {
+        console.error("Player bootstrap failed:", err);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
     }
 
-    bootstrap();
-
+    void bootstrap();
     return () => {
       cancelled = true;
     };
-  }, [userId, refreshStats]);
-
-  const applyGoldBalance = useCallback((balance: string) => {
-    setGold(balance);
   }, []);
 
+  useEffect(() => {
+    return onNetworkOnline(() => {
+      const id = userIdRef.current;
+      if (!id) return;
+      void flushOfflineQueue().then(() => refreshStats(id));
+    });
+  }, [refreshStats]);
+
+  const changeSkillPath = useCallback(async (path: SkillPath) => {
+    setSkillPath(path);
+  }, []);
+
+  const changeDisplayName = useCallback(async (name: string) => {
+    if (!userId) return;
+    setNameBusy(true);
+    try {
+      const user = await api.updateDisplayName(userId, name);
+      setDisplayName(user.display_name);
+    } finally {
+      setNameBusy(false);
+    }
+  }, [userId]);
+
+  const applyGoldBalance = useCallback((balance: string) => setGold(balance), []);
   const applyPlayerStats = useCallback((next: PlayerStatsResponse["stats"]) => {
     setStats(next);
     setLevel(next.level);
@@ -155,6 +218,8 @@ export function usePlayer() {
     currentFloor,
     skillPath,
     stats,
+    revision,
+    fromCache,
     loading,
     nameBusy,
     refreshStats,

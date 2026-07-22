@@ -8,6 +8,11 @@ import {
   withTransaction,
   type DbPool,
 } from "../db";
+import {
+  completeIdempotencyPayload,
+  parseCachedOperationPayload,
+  reserveIdempotencyKey,
+} from "../db/idempotency";
 
 export class ShopSellError extends Error {
   constructor(
@@ -31,11 +36,46 @@ export interface ShopSellResult {
   balanceAfter: bigint;
 }
 
+function buildShopSellKey(idempotencyKey: string): string {
+  return `shop:sell:${idempotencyKey}`;
+}
+
+function serializeSellResult(result: ShopSellResult): Record<string, unknown> {
+  return {
+    kind: "shop_sell",
+    itemId: result.itemId,
+    goldReceived: result.goldReceived.toString(),
+    balanceAfter: result.balanceAfter.toString(),
+  };
+}
+
+function deserializeSellResult(payload: Record<string, unknown>): ShopSellResult {
+  return {
+    itemId: String(payload.itemId),
+    goldReceived: BigInt(String(payload.goldReceived)),
+    balanceAfter: BigInt(String(payload.balanceAfter)),
+  };
+}
+
 export async function sellShopItem(
   pool: DbPool,
   input: ShopSellInput
 ): Promise<ShopSellResult> {
+  const operationKey = buildShopSellKey(input.idempotencyKey);
+
   return withTransaction(pool, async (client) => {
+    const reservation = await reserveIdempotencyKey(client, {
+      key: operationKey,
+      userId: input.userId,
+      operation: "shop_sell",
+    });
+
+    if (reservation.replay && reservation.cachedPayload) {
+      return deserializeSellResult(
+        parseCachedOperationPayload(reservation.cachedPayload)
+      );
+    }
+
     const invRow = await getInventoryItemById(client, input.userId, input.inventoryId);
     if (!invRow) {
       throw new ShopSellError("Inventory item not found", "ITEM_NOT_FOUND");
@@ -59,7 +99,7 @@ export async function sellShopItem(
     await removeInventoryQuantity(client, input.userId, input.inventoryId, 1);
 
     const walletResult = await processWalletTransactionClient(client, {
-      idempotencyKey: input.idempotencyKey,
+      idempotencyKey: `wallet:${input.idempotencyKey}`,
       userId: input.userId,
       amount: sellPrice,
       type: "sell",
@@ -69,10 +109,18 @@ export async function sellShopItem(
       },
     });
 
-    return {
+    const result: ShopSellResult = {
       itemId: invRow.item_id,
       goldReceived: sellPrice,
       balanceAfter: walletResult.balanceAfter,
     };
+
+    await completeIdempotencyPayload(
+      client,
+      operationKey,
+      serializeSellResult(result)
+    );
+
+    return result;
   });
 }

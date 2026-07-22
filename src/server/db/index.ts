@@ -11,8 +11,10 @@ export {
 export {
   reserveIdempotencyKey,
   completeIdempotencyKey,
+  completeIdempotencyPayload,
   failIdempotencyKey,
   buildWalletOperationKey,
+  parseCachedOperationPayload,
   type IdempotencyReservation,
 } from "./idempotency";
 

@@ -9,8 +9,8 @@ import {
 } from "../../db";
 import {
   listPlayerEquipment,
-  rowsToEquipmentDto,
 } from "../../db/equipment";
+import { equipmentPayloadFromRows } from "../../equipment/equipmentFromRows";
 import {
   EquipValidationError,
   equipFromInventory,
@@ -66,15 +66,13 @@ userInventoryRoutes.post("/:userId/mailbox/:mailboxItemId/claim", async (c) => {
 userInventoryRoutes.get("/:userId/equipment", async (c) => {
   const pool = c.get("db");
   const userId = c.req.param("userId");
-  const path = await getPlayerSkillPath(pool, userId);
 
-  const rows = await listPlayerEquipment(pool, userId);
+  const [path, rows] = await Promise.all([
+    getPlayerSkillPath(pool, userId),
+    listPlayerEquipment(pool, userId),
+  ]);
 
-  return c.json({
-    path,
-    slots: rowsToEquipmentDto(rows),
-    statBonus: await getPlayerEquipmentBonuses(pool, userId),
-  });
+  return c.json(equipmentPayloadFromRows(path, rows));
 });
 
 userInventoryRoutes.patch("/:userId/equipment", async (c) => {

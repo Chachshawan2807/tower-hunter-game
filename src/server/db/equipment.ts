@@ -1,7 +1,7 @@
 import type { EquipmentSlot } from "../../engine/art/equipment/slots";
 import type { DbClient, DbPool } from "./client";
 
-interface EquipmentRow {
+export interface EquipmentRow {
   slot: EquipmentSlot;
   gear_id: string;
   rarity: "common" | "rare" | "epic" | "legendary";

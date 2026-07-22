@@ -10,6 +10,7 @@ import type {
   UnequipSlotResponse,
   UserProfile,
 } from "./types";
+import type { UserBootstrapResponse } from "../types/gameData.interface";
 
 export const userApi = {
   createUser(externalId: string, displayName: string) {
@@ -36,6 +37,10 @@ export const userApi = {
 
   getPlayerStats(userId: string) {
     return apiRequest<PlayerStatsResponse>(`/api/users/${userId}/stats`);
+  },
+
+  getBootstrap(userId: string) {
+    return apiRequest<UserBootstrapResponse>(`/api/users/${userId}/bootstrap`);
   },
 
   allocateStatusPoint(

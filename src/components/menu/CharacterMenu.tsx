@@ -1,8 +1,10 @@
 import { useState } from "react";
 import type { GearStatBonus } from "../../engine/art/equipment";
 import { STATUS_POINT_COST, type StatusStatKey } from "../../engine/formulas/statusPoints";
+import { runWithOfflineQueue } from "../../client/offline/queueMutation";
 import { t, type Locale } from "../../utils/i18n";
 import { api, type PlayerStatsResponse } from "../../utils/api";
+import { createActionIdempotencyKey } from "../../utils/idempotencyKey";
 import type { CharacterEquipmentVisual } from "../../engine/art/equipment/catalog";
 import type { EquipmentSlot } from "../../engine/art/equipment/slots";
 import type { SkillPath } from "../../engine/types";
@@ -63,8 +65,28 @@ export function CharacterMenu({
     setAllocBusy(stat);
     setAllocMessage(null);
     try {
-      const result = await api.allocateStatusPoint(userId, stat);
-      onStatsChange?.(result.stats);
+      const idempotencyKey = createActionIdempotencyKey(
+        "status_allocate",
+        userId,
+        stat
+      );
+      const result = await runWithOfflineQueue(
+        "status_allocate",
+        userId,
+        idempotencyKey,
+        { stat },
+        () => api.allocateStatusPoint(userId, stat)
+      );
+
+      if (result.status === "queued") {
+        setAllocMessage(t("common.offline_queued", locale));
+        return;
+      }
+      if (result.status === "error") {
+        throw result.error;
+      }
+
+      onStatsChange?.(result.data.stats);
     } catch (err) {
       setAllocMessage(
         err instanceof Error
@@ -81,8 +103,29 @@ export function CharacterMenu({
     setResetBusy(true);
     setAllocMessage(null);
     try {
-      const result = await api.resetStatusAllocations(userId);
-      onStatsChange?.(result.stats);
+      const idempotencyKey = createActionIdempotencyKey(
+        "status_reset",
+        userId,
+        "all"
+      );
+      const result = await runWithOfflineQueue(
+        "status_reset",
+        userId,
+        idempotencyKey,
+        {},
+        () => api.resetStatusAllocations(userId)
+      );
+
+      if (result.status === "queued") {
+        setAllocMessage(t("common.offline_queued", locale));
+        setResetConfirmOpen(false);
+        return;
+      }
+      if (result.status === "error") {
+        throw result.error;
+      }
+
+      onStatsChange?.(result.data.stats);
       setResetConfirmOpen(false);
     } catch (err) {
       setAllocMessage(
