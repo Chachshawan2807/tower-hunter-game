@@ -3,6 +3,10 @@ import { defaultSkillLoadout } from "../../engine/skills";
 import type { SkillLoadout } from "../../engine/skills/loadout";
 import { getHotGameDataForUser } from "../../client/cache/gameDataMemory";
 import { patchGameDataCache } from "../../client/cache/gameDataStore";
+import {
+  patchSkillProgressionAfterRespec,
+  patchSkillProgressionAfterUnlock,
+} from "../../client/cache/skillProgressionCachePatch";
 import { runWithOfflineQueue } from "../../client/offline/queueMutation";
 import { api } from "../../utils/api";
 import { createActionIdempotencyKey } from "../../utils/idempotencyKey";
@@ -65,28 +69,6 @@ export function useSkillMenuProgression({
     [onSkillPointsChange, userId]
   );
 
-  const fetchProgression = useCallback(async () => {
-    if (!userId) {
-      setUnlockedSkillIds([]);
-      setLoadout(defaultSkillLoadout([]));
-      return;
-    }
-
-    const hot = getHotGameDataForUser(userId);
-    if (hot) {
-      applyProgression(hot.skillProgression);
-    }
-
-    try {
-      const data = await api.getSkillProgression(userId);
-      applyProgression(data);
-    } catch {
-      if (!hot) {
-        setUnlockedSkillIds([]);
-      }
-    }
-  }, [userId, applyProgression]);
-
   useEffect(() => {
     const next = initialFromHot(userId);
     setUnlockedSkillIds(next.unlockedSkillIds);
@@ -140,7 +122,7 @@ export function useSkillMenuProgression({
       setUnlockedSkillIds(result.data.unlockedSkillIds);
       onSkillPointsChange?.(result.data.skillPoints);
       setPendingUnlock(null);
-      void fetchProgression();
+      patchSkillProgressionAfterUnlock(userId, result.data);
     } finally {
       setUnlockingId(null);
     }
@@ -177,7 +159,7 @@ export function useSkillMenuProgression({
       setLoadout(defaultSkillLoadout([]));
       onSkillPointsChange?.(result.data.skillPoints);
       setPendingRespec(false);
-      void fetchProgression();
+      patchSkillProgressionAfterRespec(userId, result.data);
     } finally {
       setRespecBusy(false);
     }

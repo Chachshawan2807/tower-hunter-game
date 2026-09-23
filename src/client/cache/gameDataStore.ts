@@ -1,4 +1,5 @@
 import type { GameDataCache, UserBootstrapResponse } from "../../types/gameData.interface";
+import { getHotGameDataForUser, setHotGameData } from "./gameDataMemory";
 import { idbGet, idbPut, STORES } from "./idb";
 import { snapshotFromStats } from "../../types/playerSnapshot.interface";
 import { writePlayerSnapshot } from "./playerSnapshotStore";
@@ -51,6 +52,15 @@ export function patchGameDataCache(
   userId: string,
   patch: Partial<Pick<GameDataCache, "equipment" | "skillProgression" | "stats" | "mailboxCount">>
 ): void {
+  const hot = getHotGameDataForUser(userId);
+  if (hot) {
+    setHotGameData({
+      ...hot,
+      ...patch,
+      cachedAt: new Date().toISOString(),
+    });
+  }
+
   void readGameDataCache(userId).then((existing) => {
     if (!existing) return;
     writeGameDataCacheDeferred({ ...existing, ...patch, cachedAt: new Date().toISOString() });
