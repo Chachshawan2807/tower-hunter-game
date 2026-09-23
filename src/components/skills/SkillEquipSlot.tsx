@@ -1,4 +1,4 @@
-import { useId, useState } from "react";
+import { useId, useRef, useState } from "react";
 import { getSkillById } from "../../engine/skills";
 import type { SkillDefinition } from "../../engine/skills/types";
 import { useDismissOnOutside } from "../../hooks/useDismissOnOutside";
@@ -23,7 +23,10 @@ export interface SkillEquipSlotProps {
   busy?: boolean;
   onActivate: () => void;
   onDismissActive?: () => void;
+  onShowDetail?: (skill: SkillDefinition) => void;
 }
+
+const LONG_PRESS_MS = 450;
 
 export function SkillEquipSlot({
   locale,
@@ -34,9 +37,23 @@ export function SkillEquipSlot({
   hasPinnedTooltip,
   onActivate,
   onDismissActive,
+  onShowDetail,
 }: SkillEquipSlotProps) {
   const [hovered, setHovered] = useState(false);
   const tooltipId = useId();
+  const longPressFiredRef = useRef(false);
+  const pressTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const clearPressTimer = () => {
+    if (pressTimerRef.current) {
+      clearTimeout(pressTimerRef.current);
+      pressTimerRef.current = null;
+    }
+  };
+
+  const showEquippedDetail = (equippedSkill: SkillDefinition) => {
+    onShowDetail?.(equippedSkill);
+  };
 
   const isEquipped = Boolean(skillId);
   const skill = skillId ? getSkillById(skillId) : null;
@@ -80,9 +97,31 @@ export function SkillEquipSlot({
         aria-describedby={visible ? tooltipId : undefined}
         aria-expanded={isActive}
         disabled={!interactive}
+        onContextMenu={(e) => {
+          if (isEquipped && skill && onShowDetail) {
+            e.preventDefault();
+            showEquippedDetail(skill);
+          }
+        }}
+        onPointerDown={(e) => {
+          if (!isEquipped || !skill || !onShowDetail || e.button !== 0) return;
+          longPressFiredRef.current = false;
+          clearPressTimer();
+          pressTimerRef.current = setTimeout(() => {
+            longPressFiredRef.current = true;
+            showEquippedDetail(skill);
+          }, LONG_PRESS_MS);
+        }}
+        onPointerUp={() => clearPressTimer()}
+        onPointerCancel={() => clearPressTimer()}
+        onPointerLeave={() => clearPressTimer()}
         onClick={(e) => {
           e.stopPropagation();
           if (!interactive) return;
+          if (isEquipped && onShowDetail && longPressFiredRef.current) {
+            longPressFiredRef.current = false;
+            return;
+          }
           onActivate();
         }}
         onMouseEnter={() => setHovered(true)}

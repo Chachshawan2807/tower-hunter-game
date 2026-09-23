@@ -45,6 +45,9 @@ export function SkillEquipPanel({
   const [queueMessage, setQueueMessage] = useState<string | null>(null);
   const [detailSkill, setDetailSkill] = useState<SkillDefinition | null>(null);
   const [detailSlotIndex, setDetailSlotIndex] = useState<number | null>(null);
+  const [detailEquippedSlot, setDetailEquippedSlot] = useState<number | null>(
+    null
+  );
 
   const catalog = useMemo(
     () =>
@@ -111,6 +114,7 @@ export function SkillEquipPanel({
     setActiveSlot(null);
     setDetailSkill(null);
     setDetailSlotIndex(null);
+    setDetailEquippedSlot(null);
   };
 
   const handleUnequip = (slotIndex: number) => {
@@ -120,8 +124,22 @@ export function SkillEquipPanel({
   };
 
   const openPickerDetail = (skill: SkillDefinition, slotIndex: number) => {
+    setDetailEquippedSlot(null);
     setDetailSkill(skill);
     setDetailSlotIndex(slotIndex);
+  };
+
+  const openEquippedDetail = (skill: SkillDefinition, slotIndex: number) => {
+    setDetailSlotIndex(null);
+    setDetailEquippedSlot(slotIndex);
+    setDetailSkill(skill);
+  };
+
+  const unequipFromEquippedDetail = () => {
+    if (detailEquippedSlot === null) return;
+    handleUnequip(detailEquippedSlot);
+    setDetailSkill(null);
+    setDetailEquippedSlot(null);
   };
 
   const equipFromDetail = () => {
@@ -214,6 +232,7 @@ export function SkillEquipPanel({
                   )
                 }
                 onDismissActive={() => setActiveSlot(null)}
+                onShowDetail={(skill) => openEquippedDetail(skill, slotIndex)}
               />
             );
           })}
@@ -254,9 +273,13 @@ export function SkillEquipPanel({
           unlocked
           equipActionLabel={equipSlotLabel}
           onEquip={detailSlotIndex !== null ? equipFromDetail : undefined}
+          onUnequip={
+            detailEquippedSlot !== null ? unequipFromEquippedDetail : undefined
+          }
           onClose={() => {
             setDetailSkill(null);
             setDetailSlotIndex(null);
+            setDetailEquippedSlot(null);
           }}
           busy={busy}
         />

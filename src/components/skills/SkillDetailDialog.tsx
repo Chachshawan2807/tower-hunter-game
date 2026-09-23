@@ -16,6 +16,10 @@ export interface SkillDetailDialogProps {
   canUnlock?: boolean;
   equipActionLabel?: string;
   onEquip?: () => void;
+  unequipActionLabel?: string;
+  onUnequip?: () => void;
+  pickSkillActionLabel?: string;
+  onPickSkill?: () => void;
   onUnlockRequest?: () => void;
   onClose: () => void;
   busy?: boolean;
@@ -29,6 +33,10 @@ export function SkillDetailDialog({
   canUnlock = false,
   equipActionLabel,
   onEquip,
+  unequipActionLabel,
+  onUnequip,
+  pickSkillActionLabel,
+  onPickSkill,
   onUnlockRequest,
   onClose,
   busy = false,
@@ -41,6 +49,8 @@ export function SkillDetailDialog({
   const name = t(skill.stringId, locale);
   const description = getSkillDescription(skill, locale);
   const statLines = formatSkillDetailLines(skill, locale);
+  const unequipOnly =
+    Boolean(onUnequip) && !onEquip && !onPickSkill && !onUnlockRequest;
 
   useLayoutEffect(() => {
     const panel = document.querySelector(".overlay__panel");
@@ -114,6 +124,18 @@ export function SkillDetailDialog({
         ) : null}
 
         <div className="confirm-dialog__actions skill-detail-dialog__actions">
+          {unequipOnly ? (
+            <button
+              ref={closeRef}
+              type="button"
+              className="confirm-dialog__btn confirm-dialog__btn--confirm"
+              disabled={busy}
+              onClick={onUnequip}
+            >
+              {unequipActionLabel ?? t("bag.unequip", locale)}
+            </button>
+          ) : (
+            <>
           <button
             ref={closeRef}
             type="button"
@@ -123,6 +145,16 @@ export function SkillDetailDialog({
           >
             {t("dialog.cancel", locale)}
           </button>
+          {onPickSkill ? (
+            <button
+              type="button"
+              className="confirm-dialog__btn confirm-dialog__btn--confirm"
+              disabled={busy}
+              onClick={onPickSkill}
+            >
+              {pickSkillActionLabel ?? t("skills.equip_pick_skill", locale)}
+            </button>
+          ) : null}
           {onEquip ? (
             <button
               type="button"
@@ -143,6 +175,18 @@ export function SkillDetailDialog({
               {t("skills.unlock_confirm_action", locale)}
             </button>
           ) : null}
+          {onUnequip && !unequipOnly ? (
+            <button
+              type="button"
+              className="confirm-dialog__btn confirm-dialog__btn--confirm"
+              disabled={busy}
+              onClick={onUnequip}
+            >
+              {unequipActionLabel ?? t("bag.unequip", locale)}
+            </button>
+          ) : null}
+            </>
+          )}
         </div>
       </div>
     </div>
