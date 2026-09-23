@@ -1,6 +1,5 @@
 import type { CSSProperties } from "react";
 import type { SkillDefinition } from "../../engine/skills/types";
-import { GameIcon } from "../ui/icons";
 import { SkillIcon } from "./SkillIcon";
 
 interface SkillIconTileProps {
@@ -78,11 +77,6 @@ export function SkillIconTile({
       </span>
       {showLockOverlay ? (
         <span className="skill-icon-tile__lock-overlay" aria-hidden>
-          <GameIcon
-            name="lock"
-            size={17}
-            className="skill-icon-tile__lock"
-          />
           {badgeText ? (
             <span className="skill-icon-tile__badge tabular-nums">
               {badgeText}

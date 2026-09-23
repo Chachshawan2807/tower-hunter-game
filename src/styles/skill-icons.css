@@ -143,7 +143,6 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4px;
   transform: translate(-50%, -50%);
   pointer-events: none;
   text-align: center;
@@ -155,11 +154,6 @@
   box-shadow:
     0 1px 2px rgba(0, 0, 0, 0.06),
     0 0 0 1px rgba(255, 255, 255, 0.35) inset;
-}
-
-.skill-icon-tile__lock-overlay .skill-icon-tile__lock {
-  color: var(--ink-black);
-  filter: drop-shadow(0 0 1px rgba(255, 255, 255, 0.85));
 }
 
 .skill-icon-tile__lock-overlay .skill-icon-tile__badge {
