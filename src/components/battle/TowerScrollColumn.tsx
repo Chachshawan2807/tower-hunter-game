@@ -19,7 +19,7 @@ export function TowerScrollColumn({
 
   const floors = useMemo(() => {
     const list: number[] = [];
-    for (let floor = TOWER_TOTAL_FLOORS; floor >= 1; floor -= 1) {
+    for (let floor = 1; floor <= TOWER_TOTAL_FLOORS; floor += 1) {
       list.push(floor);
     }
     return list;
@@ -32,17 +32,18 @@ export function TowerScrollColumn({
       role="region"
       aria-label={t("tower.floors", locale)}
     >
-      <div className="tower-spire" role="list">
+      <ul className="tower-floor-grid" role="list">
         {floors.map((floor) => (
-          <TowerFloorBlock
-            key={floor}
-            floor={floor}
-            currentFloor={currentFloor}
-            localeLabel={floorLabel}
-            onRegister={(el) => registerFloor(floor, el)}
-          />
+          <li key={floor} className="tower-floor-grid__cell">
+            <TowerFloorBlock
+              floor={floor}
+              currentFloor={currentFloor}
+              localeLabel={floorLabel}
+              onRegister={(el) => registerFloor(floor, el)}
+            />
+          </li>
         ))}
-      </div>
+      </ul>
     </div>
   );
 }

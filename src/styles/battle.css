@@ -25,11 +25,12 @@
 .tower-view__center {
   flex: 1;
   display: flex;
-  align-items: center;
-  justify-content: flex-end;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
   min-height: 0;
   width: 100%;
-  padding-bottom: 0;
+  padding: 0 var(--space-2);
 }
 
 .tower-view__footer .action-btn--climb {
@@ -89,11 +90,10 @@
   align-items: center;
   gap: var(--space-1);
   width: 100%;
-  margin-top: -44px;
-  padding-top: 0;
-  padding-bottom: 0;
+  margin-top: 0;
+  padding: var(--space-2) var(--space-2) var(--space-1);
   position: relative;
-  z-index: 2;
+  z-index: 1;
 }
 
 .tower-start-error {
