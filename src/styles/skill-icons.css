@@ -238,6 +238,15 @@
   letter-spacing: 0.02em;
 }
 
+.skill-menu .stat-grid--skills-catalog .skill-icon-tile--locked .skill-icon-tile__blur-layer {
+  filter: blur(3.25px);
+  opacity: 0.65;
+}
+
+.skill-menu .stat-grid--skills-catalog .skill-icon-tile--locked .skill-icon-tile__blur-layer::after {
+  background: rgba(6, 8, 12, 0.22);
+}
+
 .skill-icon-tile__meta {
   display: inline-flex;
   align-items: center;
