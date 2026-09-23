@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useState, type CSSProperties } from "react";
 import {
   getPlayerCatalogSkills,
   isSkillUnlocked,
@@ -12,6 +12,7 @@ import { createActionIdempotencyKey } from "../../utils/idempotencyKey";
 import { t, type Locale } from "../../utils/i18n";
 import { SkillDetailDialog } from "./SkillDetailDialog";
 import { SkillEquipSlot } from "./SkillEquipSlot";
+import { SkillEquipSlotPicker } from "./SkillEquipSlotPicker";
 
 interface SkillEquipPanelProps {
   locale: Locale;
@@ -91,11 +92,9 @@ export function SkillEquipPanel({
 
   const equippedCount = loadout.equippedSlots.length;
 
-  const pickerForSlot = (slotIndex: number): SkillDefinition[] => {
-    const currentId = getSlotSkillId(loadout.equippedSlots, slotIndex);
+  const pickerForSlot = (_slotIndex: number): SkillDefinition[] => {
     return catalog.filter(
-      (skill) =>
-        skill.id === currentId || !loadout.equippedSlots.includes(skill.id)
+      (skill) => !loadout.equippedSlots.includes(skill.id)
     );
   };
 
@@ -132,10 +131,26 @@ export function SkillEquipPanel({
   };
 
   const equipSlotLabel =
-    detailSlotIndex !== null
-      ? t("skills.equip_slot_label", locale, {
-          slot: String(detailSlotIndex + 1),
-        })
+    detailSlotIndex !== null ? t("skills.equip_action", locale) : undefined;
+
+  const activePickerSkills =
+    activeSlot !== null ? pickerForSlot(activeSlot) : [];
+  const activePickerColumns = Math.min(
+    4,
+    Math.max(1, activePickerSkills.length)
+  );
+  const activeSlotSkillId =
+    activeSlot !== null
+      ? getSlotSkillId(loadout.equippedSlots, activeSlot)
+      : null;
+  const activeSlotLabel = t("skills.equip_action", locale);
+
+  const equipStageStyle =
+    activeSlot !== null
+      ? ({
+          ["--skill-equip-active-slot" as string]: String(activeSlot),
+          ["--skill-equip-picker-cols" as string]: String(activePickerColumns),
+        } as CSSProperties)
       : undefined;
 
   return (
@@ -171,35 +186,65 @@ export function SkillEquipPanel({
         </p>
       ) : null}
 
-      <div className="skill-equip-rail" role="group" aria-label={t("skills.equip_title", locale)}>
-        {Array.from({ length: MAX_EQUIP_SLOTS }, (_, slotIndex) => {
-          const skillId = getSlotSkillId(loadout.equippedSlots, slotIndex);
-          const canEquip = slotIndex <= equippedCount;
+      <div
+        className={
+          activeSlot !== null
+            ? "skill-equip-stage skill-equip-stage--open"
+            : "skill-equip-stage"
+        }
+        style={equipStageStyle}
+      >
+        <div className="skill-equip-rail" role="group" aria-label={t("skills.equip_title", locale)}>
+          {Array.from({ length: MAX_EQUIP_SLOTS }, (_, slotIndex) => {
+            const skillId = getSlotSkillId(loadout.equippedSlots, slotIndex);
+            const canEquip = slotIndex <= equippedCount;
 
-          return (
-            <SkillEquipSlot
-              key={slotIndex}
+            return (
+              <SkillEquipSlot
+                key={slotIndex}
+                locale={locale}
+                slotIndex={slotIndex}
+                skillId={skillId}
+                canEquip={canEquip}
+                isActive={activeSlot === slotIndex}
+                hasPinnedTooltip={activeSlot !== null}
+                onActivate={() =>
+                  setActiveSlot((current) =>
+                    current === slotIndex ? null : slotIndex
+                  )
+                }
+                onDismissActive={() => setActiveSlot(null)}
+              />
+            );
+          })}
+        </div>
+
+        {activeSlot !== null ? (
+          <div
+            className="skill-equip-picker-panel"
+            role="region"
+            aria-label={activeSlotLabel}
+          >
+            <span className="sr-only">{activeSlotLabel}</span>
+            <SkillEquipSlotPicker
               locale={locale}
-              slotIndex={slotIndex}
-              skillId={skillId}
-              canEquip={canEquip}
-              pickerSkills={pickerForSlot(slotIndex)}
-              isActive={activeSlot === slotIndex}
-              hasPinnedTooltip={activeSlot !== null}
+              skills={activePickerSkills}
+              columnCount={activePickerColumns}
               busy={busy}
-              onActivate={() =>
-                setActiveSlot((current) =>
-                  current === slotIndex ? null : slotIndex
-                )
-              }
-              onDismissActive={() => setActiveSlot(null)}
-              onSkillInspect={(skill) => openPickerDetail(skill, slotIndex)}
-              onUnequip={
-                skillId ? () => handleUnequip(slotIndex) : undefined
-              }
+              onSkillSelect={(skill) => openPickerDetail(skill, activeSlot)}
             />
-          );
-        })}
+            {activeSlotSkillId ? (
+              <button
+                type="button"
+                className="skill-equip-picker-panel__unequip"
+                disabled={busy}
+                onClick={() => handleUnequip(activeSlot)}
+              >
+                {t("bag.unequip", locale)}
+              </button>
+            ) : null}
+          </div>
+        ) : null}
       </div>
 
       {detailSkill ? (

@@ -150,11 +150,11 @@
   line-height: 1;
   padding: 5px 7px;
   border-radius: var(--radius-sm);
-  background: rgba(255, 252, 245, 0.96);
-  border: 1px solid rgba(0, 0, 0, 0.16);
+  background: rgba(255, 252, 245, 0.72);
+  border: 1px solid rgba(0, 0, 0, 0.08);
   box-shadow:
-    0 1px 3px rgba(0, 0, 0, 0.12),
-    0 0 0 1px rgba(255, 255, 255, 0.65) inset;
+    0 1px 2px rgba(0, 0, 0, 0.06),
+    0 0 0 1px rgba(255, 255, 255, 0.35) inset;
 }
 
 .skill-icon-tile__lock-overlay .skill-icon-tile__lock {
@@ -319,13 +319,51 @@
 }
 
 .char-equip-picker--icons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-  justify-content: center;
-  padding: var(--space-1) 0;
+  display: grid;
+  grid-template-columns: repeat(
+    var(--skill-equip-picker-cols, 4),
+    var(--skill-equip-tile-size, 42px)
+  );
+  gap: var(--space-1);
+  width: max-content;
+  max-width: 100%;
+  margin-inline: auto;
+  padding: 0;
   list-style: none;
-  margin: 0;
+}
+
+.char-equip-picker--icons .char-equip-picker__tile {
+  --skill-tile-width: var(--skill-equip-tile-size, 42px);
+  --skill-icon-inset: 2px;
+  --skill-icon-glyph-inset: 1px;
+  --skill-tile-footer-min: 0px;
+  --skill-icon-box-height: calc(
+    var(--skill-equip-tile-size, 42px) - var(--skill-icon-inset) * 2
+  );
+  --skill-tile-height: var(--skill-equip-tile-size, 42px);
+  grid-template-rows: var(--skill-icon-box-height);
+  width: var(--skill-equip-tile-size, 42px);
+  min-width: var(--skill-equip-tile-size, 42px);
+  max-width: var(--skill-equip-tile-size, 42px);
+  height: var(--skill-tile-height);
+  min-height: var(--skill-tile-height);
+  max-height: var(--skill-tile-height);
+  padding: var(--skill-icon-inset);
+  justify-self: center;
+}
+
+.skill-menu .char-equip-picker--icons .skill-icon-tile {
+  width: var(--skill-equip-tile-size, 42px);
+  min-width: var(--skill-equip-tile-size, 42px);
+  max-width: var(--skill-equip-tile-size, 42px);
+  height: var(--skill-tile-height);
+  min-height: var(--skill-tile-height);
+  max-height: var(--skill-tile-height);
+}
+
+.char-equip-picker--icons .char-equip-picker__tile.skill-icon-tile--locked
+  .skill-icon-tile__blur-layer {
+  grid-template-rows: var(--skill-icon-box-height);
 }
 
 .battle-passive-row {

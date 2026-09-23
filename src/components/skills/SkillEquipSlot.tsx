@@ -5,7 +5,6 @@ import { useDismissOnOutside } from "../../hooks/useDismissOnOutside";
 import { t, type Locale } from "../../utils/i18n";
 import { GameIcon } from "../ui/icons";
 import { SkillIcon } from "./SkillIcon";
-import { SkillEquipSlotPicker } from "./SkillEquipSlotPicker";
 
 function formatSkillMeta(skill: SkillDefinition, locale: Locale): string {
   const parts = [`MP ${skill.mpCost}`];
@@ -20,14 +19,11 @@ export interface SkillEquipSlotProps {
   slotIndex: number;
   skillId: string | null;
   canEquip: boolean;
-  pickerSkills: SkillDefinition[];
   isActive: boolean;
   hasPinnedTooltip: boolean;
   busy?: boolean;
   onActivate: () => void;
   onDismissActive?: () => void;
-  onSkillInspect: (skill: SkillDefinition) => void;
-  onUnequip?: () => void;
 }
 
 export function SkillEquipSlot({
@@ -35,14 +31,10 @@ export function SkillEquipSlot({
   slotIndex,
   skillId,
   canEquip,
-  pickerSkills,
   isActive,
   hasPinnedTooltip,
-  busy = false,
   onActivate,
   onDismissActive,
-  onSkillInspect,
-  onUnequip,
 }: SkillEquipSlotProps) {
   const [hovered, setHovered] = useState(false);
   const tooltipId = useId();
@@ -54,11 +46,7 @@ export function SkillEquipSlot({
   });
   const skillName = skill ? t(skill.stringId, locale) : "";
   const label = isEquipped ? `${slotLabel}: ${skillName}` : slotLabel;
-  const visible = isActive || (hovered && !hasPinnedTooltip);
-  const showUnequip = isActive && isEquipped && Boolean(onUnequip);
-  const showPicker =
-    isActive && (canEquip || isEquipped) && pickerSkills.length > 0;
-  const showActions = showUnequip || showPicker;
+  const visible = !isActive && hovered && !hasPinnedTooltip;
   const interactive = isEquipped || canEquip;
 
   useDismissOnOutside(
@@ -70,17 +58,20 @@ export function SkillEquipSlot({
   useDismissOnOutside(
     isActive,
     () => onDismissActive?.(),
-    [".skill-equip-slot-wrap"]
+    [".skill-equip-slot-wrap", ".skill-equip-picker-panel"]
   );
 
   return (
-    <div className="skill-equip-slot-wrap">
+    <div
+      className="skill-equip-slot-wrap"
+      style={{ gridColumn: slotIndex + 1, gridRow: 1 }}
+    >
       <button
         type="button"
         className={[
           "char-equip-slot",
           "skill-equip-slot",
-          isActive ? "char-equip-slot--active" : "",
+          isActive ? "char-equip-slot--active skill-equip-slot--picking" : "",
           !isEquipped ? "char-equip-slot--empty" : "char-equip-slot--equipped",
           !interactive ? "skill-equip-slot--locked" : "",
         ]
@@ -105,7 +96,7 @@ export function SkillEquipSlot({
             <SkillIcon
               skill={skill}
               size={34}
-              height={44}
+              height={38}
               className="skill-equip-slot__icon"
             />
           ) : (
@@ -131,49 +122,21 @@ export function SkillEquipSlot({
       {visible && (
         <div
           id={tooltipId}
-          className={[
-            "char-equip-tooltip",
-            "skill-equip-tooltip",
-            showActions ? "char-equip-tooltip--actions" : "",
-            showPicker ? "char-equip-tooltip--picker" : "",
-          ]
+          className={["char-equip-tooltip", "skill-equip-tooltip"]
             .filter(Boolean)
             .join(" ")}
           role="tooltip"
         >
-          <p className="char-equip-tooltip__name">
-            {showPicker ? slotLabel : skillName}
-          </p>
-          {!isEquipped && !showPicker && (
+          <p className="char-equip-tooltip__name">{skillName || slotLabel}</p>
+          {!isEquipped && (
             <p className="char-equip-tooltip__empty">
               {t("skills.equip_empty", locale)}
             </p>
           )}
-          {isEquipped && skill && !showPicker && (
+          {isEquipped && skill && (
             <p className="skill-equip-tooltip__meta tabular-nums">
               {formatSkillMeta(skill, locale)}
             </p>
-          )}
-          {showPicker && (
-            <SkillEquipSlotPicker
-              locale={locale}
-              skills={pickerSkills}
-              busy={busy}
-              onSkillSelect={onSkillInspect}
-            />
-          )}
-          {showUnequip && (
-            <button
-              type="button"
-              className="char-equip-tooltip__unequip"
-              disabled={busy}
-              onClick={(e) => {
-                e.stopPropagation();
-                onUnequip?.();
-              }}
-            >
-              {t("bag.unequip", locale)}
-            </button>
           )}
         </div>
       )}

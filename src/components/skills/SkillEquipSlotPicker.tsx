@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import type { SkillDefinition } from "../../engine/skills/types";
 import { t, type Locale } from "../../utils/i18n";
 import { SkillIconTile } from "./SkillIconTile";
@@ -5,6 +6,7 @@ import { SkillIconTile } from "./SkillIconTile";
 interface SkillEquipSlotPickerProps {
   locale: Locale;
   skills: SkillDefinition[];
+  columnCount?: number;
   busy?: boolean;
   onSkillSelect: (skill: SkillDefinition) => void;
 }
@@ -12,9 +14,11 @@ interface SkillEquipSlotPickerProps {
 export function SkillEquipSlotPicker({
   locale,
   skills,
+  columnCount,
   busy = false,
   onSkillSelect,
 }: SkillEquipSlotPickerProps) {
+  const cols = columnCount ?? Math.min(4, Math.max(1, skills.length));
   if (skills.length === 0) {
     return (
       <p className="char-equip-picker__status">
@@ -26,8 +30,13 @@ export function SkillEquipSlotPicker({
   return (
     <div
       className="char-equip-picker char-equip-picker--icons"
+      style={
+        {
+          ["--skill-equip-picker-cols" as string]: String(cols),
+        } as CSSProperties
+      }
       role="listbox"
-      aria-label={t("skills.equip_pick_skill", locale)}
+      aria-label={t("skills.equip_action", locale)}
     >
       {skills.map((skill) => {
         const name = t(skill.stringId, locale);
