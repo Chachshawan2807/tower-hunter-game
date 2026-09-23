@@ -1,5 +1,4 @@
 import { memo } from "react";
-import { GameIcon } from "../ui/icons";
 
 interface TowerFloorBlockProps {
   floor: number;
@@ -41,15 +40,19 @@ export const TowerFloorBlock = memo(function TowerFloorBlock({
       aria-label={`${localeLabel} ${floor}${isLocked ? ` (${lockedLabel})` : ""}`}
       aria-current={isActive ? "true" : undefined}
     >
-      <span className="tower-floor-card__icon" aria-hidden>
-        {isLocked ? (
-          <GameIcon name="lock" size={22} className="tower-floor-card__lock-icon" />
-        ) : (
-          <span className="tower-floor-card__num tabular-nums">{floor}</span>
-        )}
-      </span>
-      <span className="tower-floor-card__meta">
-        <span className="tower-floor-card__label tabular-nums">{floor}</span>
+      {isLocked ? (
+        <span className="tower-floor-card__chains-back" aria-hidden />
+      ) : null}
+      <span
+        className={[
+          "tower-floor-card__value",
+          isLocked ? "tower-floor-card__value--locked" : "",
+        ]
+          .filter(Boolean)
+          .join(" ")}
+        aria-hidden
+      >
+        <span className="tower-floor-card__num tabular-nums">{floor}</span>
       </span>
     </div>
   );

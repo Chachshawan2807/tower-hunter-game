@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none">
+  <!-- Imperial Knight Hero  crossed chain links -->
+  <rect
+    x="2.5"
+    y="8.25"
+    width="11"
+    height="7.5"
+    rx="3.75"
+    stroke="#1a1a1a"
+    stroke-width="1.85"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    transform="rotate(-48 8 11.75)"
+  />
+  <rect
+    x="10.5"
+    y="8.25"
+    width="11"
+    height="7.5"
+    rx="3.75"
+    stroke="#1a1a1a"
+    stroke-width="1.85"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    transform="rotate(48 16 11.75)"
+  />
+</svg>

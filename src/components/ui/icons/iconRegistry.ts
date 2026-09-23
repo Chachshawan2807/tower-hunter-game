@@ -19,6 +19,7 @@ export const FILE_ICON_NAMES = new Set<GameIconName>([
   "path-knight",
   "path-vanguard",
   "lock",
+  "chains-cross",
   "skill-spark",
   "skill-sword",
   "skill-slash",

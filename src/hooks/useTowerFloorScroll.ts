@@ -1,4 +1,17 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useLayoutEffect, useRef } from "react";
+
+function scrollTopToPinFloorAtBottom(
+  scrollEl: HTMLElement,
+  floorEl: HTMLElement,
+): number {
+  const scrollRect = scrollEl.getBoundingClientRect();
+  const floorRect = floorEl.getBoundingClientRect();
+  const floorBottomInContent =
+    scrollEl.scrollTop + (floorRect.bottom - scrollRect.top);
+  const raw = floorBottomInContent - scrollEl.clientHeight;
+  const max = scrollEl.scrollHeight - scrollEl.clientHeight;
+  return Math.max(0, Math.min(max, raw));
+}
 
 export function useTowerFloorScroll(currentFloor: number) {
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -10,19 +23,24 @@ export function useTowerFloorScroll(currentFloor: number) {
     else floorRefs.current.delete(floor);
   }, []);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const scrollEl = scrollRef.current;
     const floorEl = floorRefs.current.get(currentFloor);
     if (!scrollEl || !floorEl) return;
 
-    const targetTop =
-      floorEl.offsetTop - scrollEl.clientHeight / 2 + floorEl.offsetHeight / 2;
+    const apply = () => {
+      const targetTop = scrollTopToPinFloorAtBottom(scrollEl, floorEl);
+      scrollEl.scrollTo({
+        top: targetTop,
+        behavior: initialScrollDone.current ? "smooth" : "auto",
+      });
+      initialScrollDone.current = true;
+    };
 
-    scrollEl.scrollTo({
-      top: targetTop,
-      behavior: initialScrollDone.current ? "smooth" : "auto",
-    });
-    initialScrollDone.current = true;
+    apply();
+    if (scrollEl.clientHeight === 0) {
+      requestAnimationFrame(apply);
+    }
   }, [currentFloor]);
 
   return { scrollRef, registerFloor };

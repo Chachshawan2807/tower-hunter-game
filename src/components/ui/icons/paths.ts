@@ -19,6 +19,7 @@ export type GameIconName =
   | "path-knight"
   | "path-vanguard"
   | "lock"
+  | "chains-cross"
   | "skill-spark"
   | "skill-fist"
   | "skill-wind"

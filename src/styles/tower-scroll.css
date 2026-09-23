@@ -116,10 +116,10 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
+  justify-content: center;
   width: 100%;
   min-height: 72px;
-  padding: 6px 4px 5px;
+  padding: 6px 4px;
   border-radius: var(--radius-sm);
   background: linear-gradient(
     165deg,
@@ -138,45 +138,61 @@
     opacity var(--duration-fast);
 }
 
-.tower-floor-card__icon {
+.tower-floor-card__value {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 28px;
   width: 100%;
+  flex: 1;
+  min-height: 0;
 }
 
-.tower-floor-card__lock-icon {
-  display: block;
-  color: var(--stone-700);
+.tower-floor-card__chains-back {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background-color: var(--ink-black);
+  -webkit-mask-image: url("/icons/ui/chains-cross.png");
+  mask-image: url("/icons/ui/chains-cross.png");
+  -webkit-mask-mode: luminance;
+  mask-mode: luminance;
+  -webkit-mask-size: cover;
+  mask-size: cover;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
 }
 
 .tower-floor-card__num {
+  position: relative;
+  z-index: 1;
   font-family: var(--font-stat);
   font-size: 1rem;
   font-weight: 700;
   letter-spacing: 0.02em;
   color: var(--ink-black);
   line-height: 1;
-}
-
-.tower-floor-card__meta {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-  min-width: 0;
-}
-
-.tower-floor-card__label {
-  font-family: var(--font-stat);
-  font-size: clamp(0.58rem, 0.52rem + 0.35vw, 0.62rem);
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  color: var(--ink-black);
-  line-height: 1.2;
   text-align: center;
-  text-wrap: balance;
+}
+
+/* Matches .skill-icon-tile__lock-overlay — readable badge on locked art */
+.tower-floor-card__value--locked .tower-floor-card__num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.75rem;
+  padding: 5px 7px;
+  border-radius: var(--radius-sm);
+  background: rgba(255, 252, 245, 0.9);
+  border: 1px solid rgba(0, 0, 0, 0.16);
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.12),
+    0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+  text-shadow: 0 0 1px rgba(255, 255, 255, 0.9);
 }
 
 .tower-floor-card--passed {
@@ -202,11 +218,19 @@
 }
 
 .tower-floor-card--locked {
+  padding: 0;
+  overflow: hidden;
   background: linear-gradient(
     165deg,
     rgba(220, 216, 208, 0.88) 0%,
     rgba(196, 190, 178, 0.9) 100%
   );
+}
+
+.tower-floor-card--locked .tower-floor-card__value {
+  position: relative;
+  z-index: 1;
+  min-height: 72px;
 }
 
 @media (max-width: 359px) {
