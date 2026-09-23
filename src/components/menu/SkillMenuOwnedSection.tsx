@@ -1,6 +1,5 @@
 ﻿import type { SkillDefinition } from "../../engine/skills/types";
 import { t, type Locale } from "../../utils/i18n";
-import { ConfirmDialog } from "../ui/ConfirmDialog";
 import { SkillStatGrid, type PendingSkillUnlock } from "./SkillStatGrid";
 
 interface SkillMenuOwnedSectionProps {
@@ -11,11 +10,7 @@ interface SkillMenuOwnedSectionProps {
   unlockedSkillIds: string[];
   unlockingId: string | null;
   canRespec: boolean;
-  pendingRespec: boolean;
-  respecBusy: boolean;
   onRespecRequest: () => void;
-  onRespecConfirm: () => void;
-  onRespecCancel: () => void;
   onUnlockRequest: (unlock: PendingSkillUnlock) => void;
 }
 
@@ -27,11 +22,7 @@ export function SkillMenuOwnedSection({
   unlockedSkillIds,
   unlockingId,
   canRespec,
-  pendingRespec,
-  respecBusy,
   onRespecRequest,
-  onRespecConfirm,
-  onRespecCancel,
   onUnlockRequest,
 }: SkillMenuOwnedSectionProps) {
   return (
@@ -68,19 +59,6 @@ export function SkillMenuOwnedSection({
           </p>
         )}
       </div>
-
-      {pendingRespec ? (
-        <ConfirmDialog
-          locale={locale}
-          title={t("skills.reset_confirm_title", locale)}
-          message={t("skills.reset_confirm_message", locale)}
-          confirmLabel={t("skills.reset", locale)}
-          confirmTone="crimson"
-          busy={respecBusy}
-          onConfirm={onRespecConfirm}
-          onCancel={onRespecCancel}
-        />
-      ) : null}
     </div>
   );
 }

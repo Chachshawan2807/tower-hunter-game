@@ -347,44 +347,6 @@
   margin-bottom: var(--space-2);
 }
 
-.skill-menu__section:has(> .confirm-dialog-layer) {
-  overflow: hidden;
-  border-radius: var(--radius-lg);
-}
-
-/* Owned-grid reset confirm: keep blur scoped to this section, fit dialog inside */
-.skill-menu__section > .confirm-dialog-layer {
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  padding-block: var(--space-2);
-  box-sizing: border-box;
-}
-
-.skill-menu__section > .confirm-dialog-layer .confirm-dialog {
-  flex: 0 1 auto;
-  width: min(94%, 232px);
-  max-height: 100%;
-  padding: var(--space-2);
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-}
-
-.skill-menu__section > .confirm-dialog-layer .confirm-dialog__title {
-  font-size: 0.72rem;
-}
-
-.skill-menu__section > .confirm-dialog-layer .confirm-dialog__message {
-  margin-bottom: var(--space-2);
-  font-size: 0.68rem;
-  line-height: 1.3;
-}
-
-.skill-menu__section > .confirm-dialog-layer .confirm-dialog__btn {
-  min-height: 30px;
-  font-size: 0.64rem;
-}
-
 .stat-grid--skills-catalog,
 .skill-menu__owned-grid {
   grid-template-columns: repeat(3, minmax(0, 1fr));

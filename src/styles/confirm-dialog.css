@@ -1,3 +1,15 @@
+.overlay__panel {
+  position: relative;
+}
+
+.confirm-dialog-layer--overlay-panel {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  border-radius: inherit;
+  overflow: hidden;
+}
+
 .confirm-dialog-layer {
   position: absolute;
   inset: 0;

@@ -87,13 +87,7 @@ export function SkillMenu({
         unlockedSkillIds={progression.unlockedSkillIds}
         unlockingId={progression.unlockingId}
         canRespec={progression.canRespec}
-        pendingRespec={progression.pendingRespec}
-        respecBusy={progression.respecBusy}
         onRespecRequest={() => progression.setPendingRespec(true)}
-        onRespecConfirm={() => void progression.handleRespec()}
-        onRespecCancel={() => {
-          if (!progression.respecBusy) progression.setPendingRespec(false);
-        }}
         onUnlockRequest={progression.setPendingUnlock}
       />
 
@@ -125,6 +119,22 @@ export function SkillMenu({
           />
         </SkillCategorySection>
       </div>
+
+      {progression.pendingRespec ? (
+        <ConfirmDialog
+          placement="overlay-panel"
+          locale={locale}
+          title={t("skills.reset_confirm_title", locale)}
+          message={t("skills.reset_confirm_message", locale)}
+          confirmLabel={t("skills.reset", locale)}
+          confirmTone="crimson"
+          busy={progression.respecBusy}
+          onConfirm={() => void progression.handleRespec()}
+          onCancel={() => {
+            if (!progression.respecBusy) progression.setPendingRespec(false);
+          }}
+        />
+      ) : null}
 
       {pendingUnlock ? (
         <ConfirmDialog

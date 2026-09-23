@@ -1,4 +1,5 @@
-import { useEffect, useId, useRef } from "react";
+import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { t, type Locale } from "../../utils/i18n";
 
 export interface ConfirmDialogProps {
@@ -9,6 +10,8 @@ export interface ConfirmDialogProps {
   cancelLabel?: string;
   busy?: boolean;
   confirmTone?: "gold" | "crimson";
+  /** `overlay-panel` centers over the open menu sheet (not a local section). */
+  placement?: "inline" | "overlay-panel";
   onConfirm: () => void;
   onCancel: () => void;
 }
@@ -21,11 +24,22 @@ export function ConfirmDialog({
   cancelLabel,
   busy = false,
   confirmTone = "gold",
+  placement = "inline",
   onConfirm,
   onCancel,
 }: ConfirmDialogProps) {
   const titleId = useId();
   const confirmRef = useRef<HTMLButtonElement>(null);
+  const [portalRoot, setPortalRoot] = useState<HTMLElement | null>(null);
+
+  useLayoutEffect(() => {
+    if (placement !== "overlay-panel") {
+      setPortalRoot(null);
+      return;
+    }
+    const panel = document.querySelector(".overlay__panel");
+    setPortalRoot(panel instanceof HTMLElement ? panel : null);
+  }, [placement]);
 
   useEffect(() => {
     confirmRef.current?.focus();
@@ -41,9 +55,14 @@ export function ConfirmDialog({
     return () => document.removeEventListener("keydown", onKeyDown);
   }, [busy, onCancel]);
 
-  return (
+  const layerClass =
+    placement === "overlay-panel"
+      ? "confirm-dialog-layer confirm-dialog-layer--overlay-panel"
+      : "confirm-dialog-layer";
+
+  const layer = (
     <div
-      className="confirm-dialog-layer"
+      className={layerClass}
       role="presentation"
       onPointerDown={(e) => {
         if (busy || e.target !== e.currentTarget) return;
@@ -85,4 +104,11 @@ export function ConfirmDialog({
       </div>
     </div>
   );
+
+  if (placement === "overlay-panel") {
+    if (!portalRoot) return null;
+    return createPortal(layer, portalRoot);
+  }
+
+  return layer;
 }
