@@ -92,6 +92,45 @@ function erodeInkAlpha(rgba, width, height, passes) {
   return buf;
 }
 
+/** Drops a small ink island separated from the main glyph by a tall empty band. */
+export function stripFloatingTopSpecks(
+  rgba,
+  width,
+  height,
+  minGapRows = 12
+) {
+  function rowHasInk(y) {
+    for (let x = 0; x < width; x++) {
+      if (rgba[(y * width + x) * 4 + 3] > 10) return true;
+    }
+    return false;
+  }
+
+  let y = 0;
+  while (y < height) {
+    while (y < height && !rowHasInk(y)) y++;
+    if (y >= height) break;
+    const topStart = y;
+    while (y < height && rowHasInk(y)) y++;
+    const topEnd = y;
+    const gapStart = y;
+    while (y < height && !rowHasInk(y)) y++;
+    const gap = y - gapStart;
+    if (gap >= minGapRows) {
+      for (let yy = topStart; yy < topEnd; yy++) {
+        for (let x = 0; x < width; x++) {
+          const o = (yy * width + x) * 4;
+          rgba[o + 3] = 0;
+        }
+      }
+      y = 0;
+      continue;
+    }
+    break;
+  }
+  return rgba;
+}
+
 export async function preprocessRaster(inputBuffer, mode = "paper") {
   const chain = sharp(inputBuffer).rotate().greyscale();
   if (mode === "dark") {
@@ -119,7 +158,11 @@ export async function bufferToSkillPng(inputBuffer, options = {}) {
     .raw()
     .toBuffer({ resolveWithObject: true });
 
-  const rgba = rgbaFromTile(data, info.width, info.height, mode, erodePasses);
+  const rgba = stripFloatingTopSpecks(
+    rgbaFromTile(data, info.width, info.height, mode, erodePasses),
+    info.width,
+    info.height
+  );
   const inner = Math.max(
     1,
     Math.round(OUTPUT_SIZE * (1 - FRAME_PADDING * 2))
