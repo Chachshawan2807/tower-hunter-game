@@ -3,7 +3,6 @@ import {
   defaultSkillLoadout,
   getEquippedBattleSkillIds,
   getEquippedPassiveSkillIds,
-  getSkillById,
 } from "../../engine/skills";
 import { t, type Locale } from "../../utils/i18n";
 import { playUiClick } from "../../hooks/useGameAudio";
@@ -54,14 +53,6 @@ export function TowerView({
     [equippedSlots]
   );
 
-  const passiveLabels = useMemo(
-    () =>
-      passiveSkillIds
-        .map((id) => t(getSkillById(id).stringId, locale))
-        .join(" · "),
-    [passiveSkillIds, locale]
-  );
-
   const playerSkillUpgrades =
     battle.loadoutContext?.playerSkillUpgrades ?? {};
 
@@ -97,7 +88,7 @@ export function TowerView({
             onAttack={() => battle.manualAttack(`enemy_floor_${currentFloor}`)}
             onSkill={(skillId, targetId) => battle.manualSkill(skillId, targetId)}
             equippedSlots={battleSkillIds}
-            passiveLabel={passiveLabels || null}
+            passiveSkillIds={passiveSkillIds}
             playerSkillUpgrades={playerSkillUpgrades}
             unlockedSkillIds={unlockedSkillIds}
             enemyTargetId={`enemy_floor_${currentFloor}`}

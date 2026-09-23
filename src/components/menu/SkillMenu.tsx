@@ -1,16 +1,19 @@
 import { useMemo, useState } from "react";
 import {
   getPlayerCatalogSkills,
+  getSkillUnlockSpCost,
   getSkillsByType,
   isSkillUnlocked,
   sortSkillsByEquipOrder,
 } from "../../engine/skills";
+import type { SkillDefinition } from "../../engine/skills/types";
 import type { SkillType } from "../../engine/skills/skillTypes";
 import { useDismissOnOutside } from "../../hooks/useDismissOnOutside";
 import { formatDialogMessage } from "../../utils/formatDialogMessage";
 import { t, type Locale } from "../../utils/i18n";
-import { ConfirmDialog } from "../ui/ConfirmDialog";
+import { SkillDetailDialog } from "../skills/SkillDetailDialog";
 import { SkillEquipPanel } from "../skills/SkillEquipPanel";
+import { ConfirmDialog } from "../ui/ConfirmDialog";
 import { SkillCategorySection } from "./SkillCategorySection";
 import { SkillMenuOwnedSection } from "./SkillMenuOwnedSection";
 import { SkillMenuTypeFilters } from "./SkillMenuTypeFilters";
@@ -32,12 +35,14 @@ export function SkillMenu({
   onSkillPointsChange,
 }: SkillMenuProps) {
   const [typeFilter, setTypeFilter] = useState<SkillType | "all">("all");
+  const [detailSkill, setDetailSkill] = useState<SkillDefinition | null>(null);
   const progression = useSkillMenuProgression({ userId, onSkillPointsChange });
 
   useDismissOnOutside(
     !isDefaultExpanded(progression.expandedCategories) &&
       !progression.pendingUnlock &&
-      !progression.pendingRespec,
+      !progression.pendingRespec &&
+      !detailSkill,
     progression.collapseCategories,
     [".shop-section"]
   );
@@ -64,6 +69,34 @@ export function SkillMenu({
 
   const pendingUnlock = progression.pendingUnlock;
 
+  const openSkillDetail = (skill: SkillDefinition) => {
+    setDetailSkill(skill);
+  };
+
+  const detailUnlocked = detailSkill
+    ? isSkillUnlocked(detailSkill, progression.unlockedSkillIds)
+    : false;
+  const detailUnlockCost = detailSkill
+    ? getSkillUnlockSpCost(detailSkill)
+    : 0;
+  const detailCanUnlock =
+    Boolean(detailSkill) &&
+    !detailUnlocked &&
+    Boolean(userId) &&
+    skillPoints >= detailUnlockCost &&
+    progression.unlockingId === null;
+
+  const requestUnlockFromDetail = () => {
+    if (!detailSkill) return;
+    const label = t(detailSkill.stringId, locale);
+    setDetailSkill(null);
+    progression.setPendingUnlock({
+      skillId: detailSkill.id,
+      label,
+      cost: detailUnlockCost,
+    });
+  };
+
   return (
     <div className="skill-menu">
       {progression.offlineMessage ? (
@@ -81,14 +114,12 @@ export function SkillMenu({
 
       <SkillMenuOwnedSection
         locale={locale}
-        userId={userId}
-        skillPoints={skillPoints}
         ownedSkills={ownedSkills}
         unlockedSkillIds={progression.unlockedSkillIds}
         unlockingId={progression.unlockingId}
         canRespec={progression.canRespec}
         onRespecRequest={() => progression.setPendingRespec(true)}
-        onUnlockRequest={progression.setPendingUnlock}
+        onSkillSelect={openSkillDetail}
       />
 
       <SkillMenuTypeFilters
@@ -108,17 +139,27 @@ export function SkillMenu({
         >
           <SkillStatGrid
             locale={locale}
-            userId={userId}
             skills={catalogSkills}
             unlockedSkillIds={progression.unlockedSkillIds}
-            skillPoints={skillPoints}
             unlockingId={progression.unlockingId}
-            allowUnlock
             layout="catalog"
-            onUnlockRequest={progression.setPendingUnlock}
+            onSkillSelect={openSkillDetail}
           />
         </SkillCategorySection>
       </div>
+
+      {detailSkill ? (
+        <SkillDetailDialog
+          locale={locale}
+          skill={detailSkill}
+          unlocked={detailUnlocked}
+          unlockCost={detailUnlockCost}
+          canUnlock={detailCanUnlock}
+          onUnlockRequest={requestUnlockFromDetail}
+          onClose={() => setDetailSkill(null)}
+          busy={progression.unlockingId === detailSkill.id}
+        />
+      ) : null}
 
       {progression.pendingRespec ? (
         <ConfirmDialog
@@ -138,6 +179,7 @@ export function SkillMenu({
 
       {pendingUnlock ? (
         <ConfirmDialog
+          placement="overlay-panel"
           locale={locale}
           title={t("skills.unlock_confirm_title", locale)}
           message={formatDialogMessage(

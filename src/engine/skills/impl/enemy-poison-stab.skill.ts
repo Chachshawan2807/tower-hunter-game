@@ -12,7 +12,7 @@ export const ENEMY_POISON_STAB: SkillDefinition = {
   ...ENEMY_DEFAULTS,
   id: "enemy_poison_stab",
   stringId: "skills.enemy.poison_stab",
-  icon: "🗡",
+  iconId: "enemy_poison_stab",
   kind: "attack",
   targetType: "enemy",
   cooldownTurns: 3,

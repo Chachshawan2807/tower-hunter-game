@@ -12,7 +12,7 @@ export const ENEMY_REGENERATE: SkillDefinition = {
   ...ENEMY_DEFAULTS,
   id: "enemy_regenerate",
   stringId: "skills.enemy.regenerate",
-  icon: "💚",
+  iconId: "enemy_regenerate",
   kind: "heal",
   targetType: "self",
   cooldownTurns: 5,

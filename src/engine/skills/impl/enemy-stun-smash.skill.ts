@@ -12,7 +12,7 @@ export const ENEMY_STUN_SMASH: SkillDefinition = {
   ...ENEMY_DEFAULTS,
   id: "enemy_stun_smash",
   stringId: "skills.enemy.stun_smash",
-  icon: "🔱",
+  iconId: "enemy_stun_smash",
   kind: "attack",
   targetType: "enemy",
   cooldownTurns: 4,

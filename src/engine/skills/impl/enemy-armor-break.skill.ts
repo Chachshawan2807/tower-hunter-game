@@ -12,7 +12,7 @@ export const ENEMY_ARMOR_BREAK: SkillDefinition = {
   ...ENEMY_DEFAULTS,
   id: "enemy_armor_break",
   stringId: "skills.enemy.armor_break",
-  icon: "💢",
+  iconId: "enemy_armor_break",
   kind: "attack",
   targetType: "enemy",
   cooldownTurns: 3,

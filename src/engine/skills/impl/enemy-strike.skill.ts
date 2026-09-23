@@ -12,7 +12,7 @@ export const ENEMY_STRIKE: SkillDefinition = {
   ...ENEMY_DEFAULTS,
   id: "enemy_strike",
   stringId: "skills.enemy.strike",
-  icon: "👊",
+  iconId: "enemy_strike",
   kind: "attack",
   targetType: "enemy",
   cooldownTurns: 0,

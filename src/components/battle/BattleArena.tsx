@@ -1,8 +1,11 @@
-import { memo, useCallback, useMemo } from "react";
+import { memo, useCallback, useMemo, useState } from "react";
 
+import type { SkillDefinition } from "../../engine/skills/types";
 import { useEntityAnimation } from "../../hooks/useEntityAnimation";
 import { t } from "../../utils/i18n";
 import { GameIcon } from "../ui/icons";
+import { SkillDetailDialog } from "../skills/SkillDetailDialog";
+import { SkillPassiveRow } from "../skills/SkillPassiveRow";
 import { BattleActiveSkills } from "./BattleActiveSkills";
 import { BattleArenaControls } from "./BattleArenaControls";
 import { BattleArenaEntities } from "./BattleArenaEntities";
@@ -33,13 +36,16 @@ export const BattleArena = memo(function BattleArena({
   onAttack,
   onSkill,
   equippedSlots,
-  passiveLabel,
+  passiveSkillIds = [],
   playerSkillUpgrades = {},
   unlockedSkillIds = [],
   enemyTargetId,
   onContinue,
   onReset,
 }: BattleArenaProps) {
+  const [passiveDetail, setPassiveDetail] = useState<SkillDefinition | null>(
+    null
+  );
   const playerHp = useMemo(() => getEntityHp(snapshot, "player"), [snapshot]);
   const enemyHp = useMemo(() => getEntityHp(snapshot, "enemy"), [snapshot]);
   const recentEvents = useMemo(
@@ -122,11 +128,21 @@ export const BattleArena = memo(function BattleArena({
           snapshot={snapshot}
           events={recentEvents}
         />
-        {passiveLabel && (
-          <p className="battle-passive-info" aria-label={`Passive: ${passiveLabel}`}>
-            Passive: {passiveLabel}
-          </p>
-        )}
+        {passiveSkillIds.length > 0 ? (
+          <SkillPassiveRow
+            locale={locale}
+            skillIds={passiveSkillIds}
+            onSkillPress={setPassiveDetail}
+          />
+        ) : null}
+        {passiveDetail ? (
+          <SkillDetailDialog
+            locale={locale}
+            skill={passiveDetail}
+            unlocked
+            onClose={() => setPassiveDetail(null)}
+          />
+        ) : null}
         {actionRequired && !isComplete && !isPlaying && (
           <p className="battle-turn-hint">{t("battle.waiting", locale)}</p>
         )}

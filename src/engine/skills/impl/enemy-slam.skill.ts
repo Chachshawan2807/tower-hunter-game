@@ -12,7 +12,7 @@ export const ENEMY_SLAM: SkillDefinition = {
   ...ENEMY_DEFAULTS,
   id: "enemy_slam",
   stringId: "skills.enemy.slam",
-  icon: "💥",
+  iconId: "enemy_slam",
   kind: "attack",
   targetType: "enemy",
   cooldownTurns: 3,

@@ -4,7 +4,7 @@ import {
 } from "../../engine/skills";
 import type { SkillDefinition } from "../../engine/skills/types";
 import { t, type Locale } from "../../utils/i18n";
-import { SkillListCard } from "../skills/SkillListCard";
+import { SkillIconTile } from "../skills/SkillIconTile";
 
 export type PendingSkillUnlock = {
   skillId: string;
@@ -14,82 +14,51 @@ export type PendingSkillUnlock = {
 
 interface SkillStatGridProps {
   locale: Locale;
-  userId: string | null;
   skills: SkillDefinition[];
   unlockedSkillIds: string[];
-  skillPoints: number;
   unlockingId: string | null;
-  allowUnlock: boolean;
-  onUnlockRequest: (pending: PendingSkillUnlock) => void;
-  /** Render skill cards only — parent supplies the stat grid. */
+  onSkillSelect: (skill: SkillDefinition) => void;
   embedded?: boolean;
-  /** Catalog grid: 3 compact columns; default keeps 2 columns. */
   layout?: "default" | "catalog";
-}
-
-function formatSkillValue(skill: SkillDefinition, locale: Locale): string {
-  const parts = [`MP ${skill.mpCost}`];
-  if (skill.cooldownTurns > 0) {
-    parts.push(`${t("skills.cooldown", locale)} ${skill.cooldownTurns}`);
-  }
-  return parts.join(" · ");
 }
 
 export function SkillStatGrid({
   locale,
-  userId,
   skills,
   unlockedSkillIds,
-  skillPoints,
   unlockingId,
-  allowUnlock,
-  onUnlockRequest,
+  onSkillSelect,
   embedded = false,
   layout = "default",
 }: SkillStatGridProps) {
-  const cards = skills.map((skill) => {
+  const tiles = skills.map((skill) => {
     const label = t(skill.stringId, locale);
     const unlocked = isSkillUnlocked(skill, unlockedSkillIds);
     const locked = !unlocked;
     const unlockCost = getSkillUnlockSpCost(skill);
-    const canUnlock =
-      allowUnlock &&
-      locked &&
-      userId &&
-      skillPoints >= unlockCost &&
-      unlockingId === null;
+    const badgeText = locked
+      ? `${t("skills.unlock_sp", locale)} ${unlockCost}`
+      : undefined;
 
     return (
-      <SkillListCard
+      <SkillIconTile
         key={skill.id}
+        skill={skill}
         label={label}
-        meta={
-          locked
-            ? `${t("skills.unlock_sp", locale)} ${unlockCost}`
-            : formatSkillValue(skill, locale)
-        }
         locked={locked}
+        badgeText={badgeText}
         disabled={unlockingId === skill.id}
-        onClick={
-          canUnlock
-            ? () =>
-                onUnlockRequest({
-                  skillId: skill.id,
-                  label,
-                  cost: unlockCost,
-                })
-            : undefined
-        }
+        onClick={() => onSkillSelect(skill)}
       />
     );
   });
 
-  if (embedded) return <>{cards}</>;
+  if (embedded) return <>{tiles}</>;
 
   const gridClass =
     layout === "catalog"
-      ? "stat-grid stat-grid--skills stat-grid--skills-catalog"
-      : "stat-grid stat-grid--skills";
+      ? "stat-grid stat-grid--skills stat-grid--skills-catalog stat-grid--skill-icons"
+      : "stat-grid stat-grid--skills stat-grid--skill-icons";
 
-  return <div className={gridClass}>{cards}</div>;
+  return <div className={gridClass}>{tiles}</div>;
 }

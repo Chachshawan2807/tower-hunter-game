@@ -12,7 +12,7 @@ export const ENEMY_HEAVY_BLOW: SkillDefinition = {
   ...ENEMY_DEFAULTS,
   id: "enemy_heavy_blow",
   stringId: "skills.enemy.heavy_blow",
-  icon: "🔨",
+  iconId: "enemy_heavy_blow",
   kind: "attack",
   targetType: "enemy",
   cooldownTurns: 2,

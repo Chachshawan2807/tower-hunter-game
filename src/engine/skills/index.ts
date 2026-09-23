@@ -97,3 +97,10 @@ export {
 } from "./skillRespec";
 
 export { SKILL_UNLOCK_LEVELS, EMPTY_SKILL_UPGRADES } from "./types";
+
+export {
+  getSkillIconId,
+  skillIconUrl,
+  skillDescriptionKey,
+  SKILL_ICON_FALLBACK_ID,
+} from "./skillIcon";

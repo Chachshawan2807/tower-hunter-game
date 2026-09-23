@@ -15,8 +15,14 @@ export function tierDefaults(tier: number) {
 }
 
 export function playerSkill(
-  partial: Omit<SkillDefinition, "path"> & { skillType: SkillType }
+  partial: Omit<SkillDefinition, "path" | "iconId"> &
+    { skillType: SkillType; iconId?: string }
 ): SkillDefinition {
-  const { skillType, ...rest } = partial;
-  return { ...rest, path: "player", skillType };
+  const { skillType, iconId, ...rest } = partial;
+  return {
+    ...rest,
+    path: "player",
+    skillType,
+    iconId: iconId ?? rest.id,
+  };
 }

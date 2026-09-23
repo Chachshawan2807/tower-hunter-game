@@ -13,7 +13,7 @@ export const ENEMY_ENRAGE: SkillDefinition = {
   ...ENEMY_DEFAULTS,
   id: "enemy_enrage",
   stringId: "skills.enemy.enrage",
-  icon: "😤",
+  iconId: "enemy_enrage",
   kind: "buff",
   targetType: "self",
   cooldownTurns: 4,

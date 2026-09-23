@@ -22,7 +22,7 @@ export interface BattleArenaProps {
   onAttack: () => void;
   onSkill?: (skillId: string, targetId: string) => void;
   equippedSlots: string[];
-  passiveLabel?: string | null;
+  passiveSkillIds?: string[];
   playerSkillUpgrades?: Record<string, SkillUpgradeRanks>;
   unlockedSkillIds?: string[];
   enemyTargetId?: string;

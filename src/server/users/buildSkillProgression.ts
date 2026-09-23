@@ -18,7 +18,7 @@ function mapSkill(skill: ReturnType<typeof resolveEffectiveSkill>) {
     skillType: skill.skillType,
     catalogTier: skill.catalogTier,
     stringId: skill.stringId,
-    icon: skill.icon,
+    iconId: skill.iconId,
     mpCost: skill.mpCost,
     kind: skill.kind,
     targetType: skill.targetType,

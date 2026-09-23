@@ -64,7 +64,7 @@ export interface SkillCatalogEntry {
   skillType?: string;
   catalogTier?: number;
   stringId: string;
-  icon: string;
+  iconId: string;
   mpCost: number;
   kind: string;
   targetType: string;

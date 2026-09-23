@@ -4,7 +4,7 @@ export const BASIC_ATTACK: SkillDefinition = {
   id: "basic_attack",
   path: "basic",
   stringId: "skills.basic_attack",
-  icon: "⚔",
+  iconId: "basic_attack",
   mpCost: 0,
   kind: "attack",
   targetType: "enemy",

@@ -10,6 +10,7 @@ import { runWithOfflineQueue } from "../../client/offline/queueMutation";
 import { api } from "../../utils/api";
 import { createActionIdempotencyKey } from "../../utils/idempotencyKey";
 import { t, type Locale } from "../../utils/i18n";
+import { SkillDetailDialog } from "./SkillDetailDialog";
 import { SkillEquipSlot } from "./SkillEquipSlot";
 
 interface SkillEquipPanelProps {
@@ -37,6 +38,8 @@ export function SkillEquipPanel({
   const [busy, setBusy] = useState(false);
   const [activeSlot, setActiveSlot] = useState<number | null>(null);
   const [queueMessage, setQueueMessage] = useState<string | null>(null);
+  const [detailSkill, setDetailSkill] = useState<SkillDefinition | null>(null);
+  const [detailSlotIndex, setDetailSlotIndex] = useState<number | null>(null);
 
   const catalog = useMemo(
     () =>
@@ -103,6 +106,8 @@ export function SkillEquipPanel({
     }
     void saveLoadout({ ...loadout, equippedSlots: slots });
     setActiveSlot(null);
+    setDetailSkill(null);
+    setDetailSlotIndex(null);
   };
 
   const handleUnequip = (slotIndex: number) => {
@@ -110,6 +115,24 @@ export function SkillEquipPanel({
     void saveLoadout({ ...loadout, equippedSlots: slots });
     setActiveSlot(null);
   };
+
+  const openPickerDetail = (skill: SkillDefinition, slotIndex: number) => {
+    setDetailSkill(skill);
+    setDetailSlotIndex(slotIndex);
+  };
+
+  const equipFromDetail = () => {
+    if (detailSkill && detailSlotIndex !== null) {
+      handleEquip(detailSlotIndex, detailSkill.id);
+    }
+  };
+
+  const equipSlotLabel =
+    detailSlotIndex !== null
+      ? t("skills.equip_slot_label", locale, {
+          slot: String(detailSlotIndex + 1),
+        })
+      : undefined;
 
   return (
     <section
@@ -152,7 +175,7 @@ export function SkillEquipPanel({
                 )
               }
               onDismissActive={() => setActiveSlot(null)}
-              onEquip={(nextSkillId) => handleEquip(slotIndex, nextSkillId)}
+              onSkillInspect={(skill) => openPickerDetail(skill, slotIndex)}
               onUnequip={
                 skillId ? () => handleUnequip(slotIndex) : undefined
               }
@@ -160,6 +183,21 @@ export function SkillEquipPanel({
           );
         })}
       </div>
+
+      {detailSkill ? (
+        <SkillDetailDialog
+          locale={locale}
+          skill={detailSkill}
+          unlocked
+          equipActionLabel={equipSlotLabel}
+          onEquip={detailSlotIndex !== null ? equipFromDetail : undefined}
+          onClose={() => {
+            setDetailSkill(null);
+            setDetailSlotIndex(null);
+          }}
+          busy={busy}
+        />
+      ) : null}
     </section>
   );
 }

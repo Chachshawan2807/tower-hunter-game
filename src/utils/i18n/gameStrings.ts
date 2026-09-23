@@ -29,27 +29,115 @@ export const GAME_I18N_STRINGS: Record<string, Record<Locale, string>> = {
   "skills.fantasy.meteor": { en: "Meteor", th: "อุกกาบาต" },
   "skills.fantasy.meteor.desc": { en: "Devastating magic, pierces 50% DEF", th: "เวทมนตร์ทำลายล้าง ทะลุ DEF 50%" },
   "skills.active.power_slash": { en: "Power Slash", th: "ฟันพลัง" },
+  "skills.active.power_slash.desc": {
+    en: "Reliable slash that deals solid physical damage",
+    th: "ฟันดาบมั่นคง ดาเมจกายภาพดี",
+  },
   "skills.active.iron_palm": { en: "Iron Palm", th: "ฝ่ามือเหล็ก" },
+  "skills.active.iron_palm.desc": {
+    en: "Crushing strike that may inflict bleed",
+    th: "ฟาดทลาย มีโอกาสทำให้เลือดไหล",
+  },
   "skills.active.arcane_bolt": { en: "Arcane Bolt", th: "ลูกบอลเวท" },
+  "skills.active.arcane_bolt.desc": {
+    en: "Arcane bolt that pierces part of enemy DEF",
+    th: "ลูกเวททะลุ DEF ศัตรูบางส่วน",
+  },
   "skills.active.inner_qi": { en: "Inner Qi", th: "พลังปราณ" },
+  "skills.active.inner_qi.desc": {
+    en: "Rally your ATK for several turns",
+    th: "ปลุกพลังโจมตีหลายเทิร์น",
+  },
   "skills.active.holy_light": { en: "Holy Light", th: "แสงศักดิ์สิทธิ์" },
+  "skills.active.holy_light.desc": {
+    en: "Restore a portion of your HP",
+    th: "ฟื้น HP ส่วนหนึ่ง",
+  },
   "skills.active.dragon_fist": { en: "Dragon Fist", th: "หมัดมังกร" },
+  "skills.active.dragon_fist.desc": {
+    en: "Devastating strike with heavy bleed",
+    th: "โจมตีรุนแรง เลือดไหลหนัก",
+  },
   "skills.active.meteor": { en: "Meteor", th: "อุกกาบาต" },
+  "skills.active.meteor.desc": {
+    en: "Ultimate arcane blast that pierces DEF",
+    th: "ระเบิดเวทขั้นสุด ทะลุ DEF",
+  },
   "skills.passive.sturdy_frame": { en: "Sturdy Frame", th: "ร่างกายแข็งแกร่ง" },
+  "skills.passive.sturdy_frame.desc": {
+    en: "Increases maximum HP",
+    th: "เพิ่ม HP สูงสุด",
+  },
   "skills.passive.blade_mastery": { en: "Blade Mastery", th: "ความเชี่ยวชาญดาบ" },
+  "skills.passive.blade_mastery.desc": {
+    en: "Increases ATK",
+    th: "เพิ่ม ATK",
+  },
   "skills.passive.arcane_mind": { en: "Arcane Mind", th: "จิตเวท" },
+  "skills.passive.arcane_mind.desc": {
+    en: "Increases maximum MP",
+    th: "เพิ่ม MP สูงสุด",
+  },
   "skills.passive.swift_feet": { en: "Swift Feet", th: "เท้าสายลม" },
+  "skills.passive.swift_feet.desc": {
+    en: "Boosts speed and evasion",
+    th: "เพิ่มความเร็วและการหลบหลีก",
+  },
   "skills.passive.keen_eye": { en: "Keen Eye", th: "สายตาเฉียบคม" },
+  "skills.passive.keen_eye.desc": {
+    en: "Improves crit chance and accuracy",
+    th: "เพิ่มโอกาสคริและความแม่นยำ",
+  },
   "skills.passive.guardian_aura": { en: "Guardian Aura", th: "ออร่าผู้พิทักษ์" },
+  "skills.passive.guardian_aura.desc": {
+    en: "Raises DEF and status resist",
+    th: "เพิ่ม DEF และต้านสถานะ",
+  },
   "skills.passive.brutal_strikes": { en: "Brutal Strikes", th: "โจมตีโหดร้าย" },
+  "skills.passive.brutal_strikes.desc": {
+    en: "Increases critical damage",
+    th: "เพิ่มดาเมจคริ",
+  },
   "skills.cc.shield_bash": { en: "Shield Bash", th: "ทุบโล่" },
+  "skills.cc.shield_bash.desc": {
+    en: "Shield slam that can stun the target",
+    th: "ทุบด้วยโล่ มีโอกาสมึนงง",
+  },
   "skills.cc.frost_nova": { en: "Frost Nova", th: "น้ำแข็งระเบิด" },
+  "skills.cc.frost_nova.desc": {
+    en: "Frost burst that can freeze the target",
+    th: "ระเบิดน้ำแข็ง มีโอกาสแช่แข็ง",
+  },
   "skills.cc.silencing_word": { en: "Silencing Word", th: "คำสาปเงียบ" },
+  "skills.cc.silencing_word.desc": {
+    en: "Silences the target for several turns",
+    th: "ทำให้เป้าหมายเงียบหลายเทิร์น",
+  },
   "skills.cc.hamstring": { en: "Hamstring", th: "ตัดเส้นเอ็น" },
+  "skills.cc.hamstring.desc": {
+    en: "Crippling blow that slows the target",
+    th: "โจมตีทำให้ช้าลง",
+  },
   "skills.move.shadow_step": { en: "Shadow Step", th: "ก้าวเงา" },
+  "skills.move.shadow_step.desc": {
+    en: "Quick strike with a brief DEF buff",
+    th: "โจมตีเร็ว พร้อมบัฟ DEF ชั่วคราว",
+  },
   "skills.move.dodge_roll": { en: "Dodge Roll", th: "กลิ้งหลบ" },
+  "skills.move.dodge_roll.desc": {
+    en: "Roll aside and raise DEF",
+    th: "กลิ้งหลบและเพิ่ม DEF",
+  },
   "skills.move.cavalry_charge": { en: "Cavalry Charge", th: "พุ่งทหารม้า" },
+  "skills.move.cavalry_charge.desc": {
+    en: "Heavy charge that may stun",
+    th: "พุ่งชนรุนแรง อาจมึนงง",
+  },
   "skills.move.flash_step": { en: "Flash Step", th: "ก้าวแสง" },
+  "skills.move.flash_step.desc": {
+    en: "Surge forward and boost action gauge",
+    th: "พุ่งเร็วและเพิ่มเกจเทิร์น",
+  },
   "skills.enemy.strike": { en: "Strike", th: "โจมตี" },
   "skills.enemy.heavy_blow": { en: "Heavy Blow", th: "หมัดหนัก" },
   "skills.enemy.poison_stab": { en: "Poison Stab", th: "แทงพิษ" },

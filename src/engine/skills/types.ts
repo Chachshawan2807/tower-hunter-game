@@ -45,7 +45,8 @@ export interface SkillDefinition {
   catalogTier?: number;
   unlockSpCost?: number;
   stringId: string;
-  icon: string;
+  /** File stem under `public/icons/skills/{iconId}.svg` */
+  iconId: string;
   mpCost: StatValue;
   kind: SkillKind;
   targetType: SkillTargetType;

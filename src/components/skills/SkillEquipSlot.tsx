@@ -3,7 +3,8 @@ import { getSkillById } from "../../engine/skills";
 import type { SkillDefinition } from "../../engine/skills/types";
 import { useDismissOnOutside } from "../../hooks/useDismissOnOutside";
 import { t, type Locale } from "../../utils/i18n";
-import { GameIcon, skillIconName } from "../ui/icons";
+import { GameIcon } from "../ui/icons";
+import { SkillIcon } from "./SkillIcon";
 import { SkillEquipSlotPicker } from "./SkillEquipSlotPicker";
 
 function formatSkillMeta(skill: SkillDefinition, locale: Locale): string {
@@ -25,7 +26,7 @@ export interface SkillEquipSlotProps {
   busy?: boolean;
   onActivate: () => void;
   onDismissActive?: () => void;
-  onEquip: (skillId: string) => void;
+  onSkillInspect: (skill: SkillDefinition) => void;
   onUnequip?: () => void;
 }
 
@@ -40,7 +41,7 @@ export function SkillEquipSlot({
   busy = false,
   onActivate,
   onDismissActive,
-  onEquip,
+  onSkillInspect,
   onUnequip,
 }: SkillEquipSlotProps) {
   const [hovered, setHovered] = useState(false);
@@ -101,8 +102,9 @@ export function SkillEquipSlot({
       >
         <span className="char-equip-slot__icon-stack" aria-hidden>
           {isEquipped && skill ? (
-            <GameIcon
-              name={skillIconName(skill.id)}
+            <SkillIcon
+              label={skillName}
+              skill={skill}
               size={26}
               className="skill-equip-slot__icon"
             />
@@ -157,7 +159,7 @@ export function SkillEquipSlot({
               locale={locale}
               skills={pickerSkills}
               busy={busy}
-              onEquip={onEquip}
+              onSkillSelect={onSkillInspect}
             />
           )}
           {showUnequip && (
