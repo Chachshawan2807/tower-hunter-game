@@ -1,8 +1,10 @@
 import { useEffect, useRef } from "react";
+import { isPointerOnScrollbar } from "./isPointerOnScrollbar";
 
 /**
  * Invoke `onDismiss` on document pointerdown when `active` and the event target
  * is outside every selector in `ignoreSelectors` (closest-match).
+ * Scrollbar gutter clicks on scroll containers are ignored so desktop scrolling works.
  */
 export function useDismissOnOutside(
   active: boolean,
@@ -22,6 +24,10 @@ export function useDismissOnOutside(
       const target = event.target;
       if (!(target instanceof Element)) {
         onDismissRef.current();
+        return;
+      }
+
+      if (isPointerOnScrollbar(target, event.clientX, event.clientY)) {
         return;
       }
 
