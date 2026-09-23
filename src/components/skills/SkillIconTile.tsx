@@ -62,7 +62,9 @@ export function SkillIconTile({
         {showFooter ? (
           <span className="skill-icon-tile__footer">
             {showName ? (
-              <span className="skill-icon-tile__name">{label}</span>
+              <span className="skill-icon-tile__name">
+                <span className="skill-icon-tile__name-inner">{label}</span>
+              </span>
             ) : null}
             {badgeText && !locked ? (
               <span className="skill-icon-tile__meta">

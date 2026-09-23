@@ -211,9 +211,17 @@
 }
 
 .skill-icon-tile__name {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
   max-width: 100%;
   min-height: 2.5em;
+}
+
+.skill-icon-tile__name-inner {
+  width: 100%;
+  max-width: 100%;
   font-family: var(--font-body);
   font-size: 0.6875rem;
   font-weight: 600;
