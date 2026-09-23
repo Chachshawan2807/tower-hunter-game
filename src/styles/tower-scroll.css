@@ -71,9 +71,12 @@
   max-height: none;
   overflow-x: hidden;
   overflow-y: auto;
+  padding-inline: max(var(--space-1), var(--safe-inline));
+  padding-bottom: var(--space-2);
   scrollbar-width: thin;
   scrollbar-color: var(--stone-600) transparent;
   scroll-behavior: smooth;
+  scroll-padding-block: var(--space-3);
   -webkit-overflow-scrolling: touch;
   overscroll-behavior-y: contain;
   touch-action: pan-y;
@@ -104,6 +107,8 @@
   min-width: 0;
   flex: 0 0 calc((100% - 3 * 6px) / 4);
   max-width: calc((100% - 3 * 6px) / 4);
+  content-visibility: auto;
+  contain-intrinsic-size: auto 72px;
 }
 
 .tower-floor-card {
@@ -165,12 +170,13 @@
 
 .tower-floor-card__label {
   font-family: var(--font-stat);
-  font-size: 0.62rem;
+  font-size: clamp(0.58rem, 0.52rem + 0.35vw, 0.62rem);
   font-weight: 700;
   letter-spacing: 0.04em;
   color: var(--ink-black);
   line-height: 1.2;
   text-align: center;
+  text-wrap: balance;
 }
 
 .tower-floor-card--passed {
@@ -201,6 +207,13 @@
     rgba(220, 216, 208, 0.88) 0%,
     rgba(196, 190, 178, 0.9) 100%
   );
+}
+
+@media (max-width: 359px) {
+  .tower-floor-grid__cell {
+    flex-basis: calc((100% - 2 * 6px) / 3);
+    max-width: calc((100% - 2 * 6px) / 3);
+  }
 }
 
 @media (min-width: 380px) {

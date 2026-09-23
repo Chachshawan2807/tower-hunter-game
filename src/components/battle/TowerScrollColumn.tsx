@@ -39,6 +39,7 @@ export function TowerScrollColumn({
               floor={floor}
               currentFloor={currentFloor}
               localeLabel={floorLabel}
+              lockedLabel={t("tower.locked", locale)}
               onRegister={(el) => registerFloor(floor, el)}
             />
           </li>

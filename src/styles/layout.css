@@ -3,6 +3,8 @@
   grid-template-columns: 1fr var(--frame-width) 1fr;
   height: 100%;
   width: 100%;
+  min-height: 0;
+  padding-inline: max(0px, var(--safe-left), var(--safe-right));
   background: var(--stone-950);
 }
 
@@ -211,7 +213,8 @@
 }
 
 .name-editor--hud:focus-visible {
-  outline: none;
+  outline: 2px solid var(--antique-gold);
+  outline-offset: 2px;
 }
 
 .name-editor--hud:hover:not(:disabled) {
@@ -572,7 +575,10 @@
   padding: var(--space-2) var(--content-inline) var(--overlay-bottom-inset);
   position: relative;
   min-height: 0;
+  overflow-x: hidden;
   overflow-y: auto;
+  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
 }
 
 .bottom-nav {
@@ -627,6 +633,11 @@
   opacity: 0.9;
 }
 
+.nav-btn:focus-visible {
+  outline: 2px solid var(--ember-400);
+  outline-offset: 2px;
+}
+
 .nav-btn--active {
   color: var(--ember-400);
 }
@@ -668,6 +679,7 @@
   display: flex;
   align-items: flex-end;
   z-index: 30;
+  overscroll-behavior: contain;
 }
 
 .overlay__panel {
@@ -703,14 +715,18 @@
   font-weight: 600;
   color: var(--ember-400);
   letter-spacing: 0.06em;
+  text-wrap: balance;
 }
 
 .overlay__body {
   padding: var(--space-4) var(--content-inline);
+  overflow-x: hidden;
   overflow-y: auto;
+  overscroll-behavior: contain;
   flex: 1;
   scrollbar-width: thin;
   scrollbar-color: var(--stone-600) transparent;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* Centered dialog — mailbox, settings */

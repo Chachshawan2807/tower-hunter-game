@@ -2,7 +2,7 @@
 
   width: 100%;
 
-  max-width: 360px;
+  max-width: min(360px, 100%);
 
   display: flex;
 
@@ -83,6 +83,11 @@
   border-color: var(--ember-600);
 }
 
+.tower-view__footer .action-btn--climb:focus-visible {
+  outline: 2px solid var(--ember-400);
+  outline-offset: 3px;
+}
+
 .tower-view__footer {
   flex-shrink: 0;
   display: flex;
@@ -91,7 +96,7 @@
   gap: var(--space-1);
   width: 100%;
   margin-top: 0;
-  padding: var(--space-2) var(--space-2) var(--space-1);
+  padding: var(--space-2) var(--space-2) max(var(--space-1), var(--safe-bottom));
   position: relative;
   z-index: 1;
 }
@@ -194,11 +199,13 @@
 
 .speed-btn {
 
-  min-width: 40px;
+  min-width: var(--touch-min);
 
-  height: 34px;
+  min-height: 44px;
 
-  padding: 0 8px;
+  height: 44px;
+
+  padding: 0 10px;
 
   border-radius: var(--radius-sm);
 
@@ -480,9 +487,13 @@
 
   width: 100%;
 
-  max-height: 96px;
+  max-height: min(96px, 18dvh);
 
   overflow-y: auto;
+
+  overscroll-behavior: contain;
+
+  -webkit-overflow-scrolling: touch;
 
   font-size: 0.75rem;
 
@@ -837,6 +848,14 @@
   border-color: var(--arcane-500);
 
   transform: translateY(-2px);
+
+}
+
+.battle-skill-btn:focus-visible {
+
+  outline: 2px solid var(--ember-400);
+
+  outline-offset: 2px;
 
 }
 

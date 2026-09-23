@@ -5,6 +5,7 @@ interface TowerFloorBlockProps {
   floor: number;
   currentFloor: number;
   localeLabel: string;
+  lockedLabel: string;
   onRegister?: (el: HTMLDivElement | null) => void;
 }
 
@@ -16,6 +17,7 @@ export const TowerFloorBlock = memo(function TowerFloorBlock({
   floor,
   currentFloor,
   localeLabel,
+  lockedLabel,
   onRegister,
 }: TowerFloorBlockProps) {
   const isActive = floor === currentFloor;
@@ -36,7 +38,7 @@ export const TowerFloorBlock = memo(function TowerFloorBlock({
         .join(" ")}
       ref={onRegister}
       role="listitem"
-      aria-label={`${localeLabel} ${floor}${isLocked ? " (locked)" : ""}`}
+      aria-label={`${localeLabel} ${floor}${isLocked ? ` (${lockedLabel})` : ""}`}
       aria-current={isActive ? "true" : undefined}
     >
       <span className="tower-floor-card__icon" aria-hidden>

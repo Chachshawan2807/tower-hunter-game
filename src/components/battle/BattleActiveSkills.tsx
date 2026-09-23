@@ -33,7 +33,7 @@ export function BattleActiveSkills({
   onSkill,
 }: BattleActiveSkillsProps) {
   return (
-    <div className="battle-active-skills" aria-label="Equipped skills">
+    <div className="battle-active-skills" aria-label={t("battle.equipped_skills", locale)}>
       {equippedSlots.map((skillId, index) => {
         const base = getSkillById(skillId);
         if (!isSkillUnlocked(base, unlockedSkillIds)) {

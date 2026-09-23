@@ -1112,7 +1112,7 @@
   align-items: center;
   justify-content: center;
   gap: var(--space-1);
-  transition: all var(--duration-fast);
+  transition: background var(--duration-fast), color var(--duration-fast), border-color var(--duration-fast);
 }
 
 .bag-tab:hover,
