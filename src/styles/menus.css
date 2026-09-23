@@ -419,16 +419,16 @@
 
 .skill-filter-btn {
   flex: 1 1 auto;
-  min-height: var(--touch-min);
-  padding: var(--space-2) var(--space-3);
+  min-height: 2.25rem;
+  padding: var(--space-1) var(--space-2);
   border: 1px solid var(--border);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-sm);
   background: var(--stone-800);
-  color: var(--text-muted);
+  color: #ffffff;
   font-family: var(--font-body);
-  font-size: 0.62rem;
+  font-size: 0.56rem;
   font-weight: 600;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
   cursor: pointer;
   transition:
@@ -444,7 +444,8 @@
 }
 
 .skill-filter-btn:not(.skill-filter-btn--active):hover {
-  color: var(--text-primary);
+  color: #ffffff;
+  background: var(--stone-700);
 }
 
 .skill-equip-panel {
