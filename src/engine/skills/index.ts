@@ -61,6 +61,7 @@ export {
   deriveAutoSkills,
   getBattleSkillsFromLoadout,
   getPassiveSkillsFromLoadout,
+  sortSkillsByEquipOrder,
   MAX_EQUIP_SLOTS,
   DEFAULT_BATTLE_PREFS,
 } from "./loadout";

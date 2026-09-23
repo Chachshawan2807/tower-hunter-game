@@ -30,6 +30,7 @@ import {
   normalizeSkillId,
   defaultSkillLoadout,
   validateEquipLoadout,
+  sortSkillsByEquipOrder,
   MAX_EQUIP_SLOTS,
   calculateRespecRefund,
 } from "../src/engine/skills";
@@ -302,6 +303,29 @@ assert(
     ["a", "b", "c", "d", "e"]
   ).valid,
   "more than 4 slots rejected"
+);
+
+const equipOrderSorted = sortSkillsByEquipOrder(
+  getPlayerCatalogSkills().filter((s) =>
+    [
+      "active_power_slash",
+      "active_iron_palm",
+      "move_shadow_step",
+      "active_arcane_bolt",
+      "active_dragon_fist",
+    ].includes(s.id)
+  ),
+  [
+    "move_shadow_step",
+    "active_arcane_bolt",
+    "active_power_slash",
+    "active_iron_palm",
+  ]
+);
+assert(
+  equipOrderSorted.map((s) => s.id).join(",") ===
+    "move_shadow_step,active_arcane_bolt,active_power_slash,active_iron_palm,active_dragon_fist",
+  "owned skill list follows equip slot order then unequipped"
 );
 
 console.log("\n=== Validation: Skill Picker ===");

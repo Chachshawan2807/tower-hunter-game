@@ -65,6 +65,28 @@ export function getPassiveSkillsFromLoadout(
     .filter((s) => s.skillType && isPassiveSkillType(s.skillType));
 }
 
+/** Equipped skills first, in slot order; others keep stable catalog-tier order. */
+export function sortSkillsByEquipOrder(
+  skills: SkillDefinition[],
+  equippedSlots: readonly string[]
+): SkillDefinition[] {
+  const slotIndex = new Map<string, number>();
+  equippedSlots.forEach((id, index) => {
+    slotIndex.set(normalizeSkillId(id), index);
+  });
+
+  return [...skills].sort((a, b) => {
+    const aIdx = slotIndex.get(normalizeSkillId(a.id));
+    const bIdx = slotIndex.get(normalizeSkillId(b.id));
+    const aEquipped = aIdx !== undefined;
+    const bEquipped = bIdx !== undefined;
+    if (aEquipped && bEquipped) return aIdx - bIdx;
+    if (aEquipped) return -1;
+    if (bEquipped) return 1;
+    return (a.catalogTier ?? a.slotTier) - (b.catalogTier ?? b.slotTier);
+  });
+}
+
 export function validateEquipLoadout(
   equippedSlots: string[],
   unlockedSkillIds: readonly string[]

@@ -3,6 +3,7 @@ import {
   getPlayerCatalogSkills,
   getSkillsByType,
   isSkillUnlocked,
+  sortSkillsByEquipOrder,
 } from "../../engine/skills";
 import type { SkillType } from "../../engine/skills/skillTypes";
 import { useDismissOnOutside } from "../../hooks/useDismissOnOutside";
@@ -47,13 +48,19 @@ export function SkillMenu({
     return getSkillsByType(typeFilter);
   }, [typeFilter]);
 
-  const ownedSkills = useMemo(
-    () =>
-      catalogSkills.filter((skill) =>
-        isSkillUnlocked(skill, progression.unlockedSkillIds)
-      ),
-    [catalogSkills, progression.unlockedSkillIds]
-  );
+  const ownedSkills = useMemo(() => {
+    const unlocked = catalogSkills.filter((skill) =>
+      isSkillUnlocked(skill, progression.unlockedSkillIds)
+    );
+    return sortSkillsByEquipOrder(
+      unlocked,
+      progression.loadout.equippedSlots
+    );
+  }, [
+    catalogSkills,
+    progression.unlockedSkillIds,
+    progression.loadout.equippedSlots,
+  ]);
 
   const pendingUnlock = progression.pendingUnlock;
 
