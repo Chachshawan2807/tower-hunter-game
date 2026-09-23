@@ -13,9 +13,12 @@ export async function purgeStaleIdempotencyKeys(
   retentionDays: number = DEFAULT_IDEMPOTENCY_RETENTION_DAYS
 ): Promise<number> {
   const result = await pool.query(
-    `DELETE FROM idempotency_keys
-     WHERE completed_at IS NOT NULL
-       AND completed_at < NOW() - ($1::int * INTERVAL '1 day')`,
+    `DELETE FROM idempotency_keys ik
+     WHERE ik.completed_at IS NOT NULL
+       AND ik.completed_at < NOW() - ($1::int * INTERVAL '1 day')
+       AND NOT EXISTS (
+         SELECT 1 FROM wallet_ledger wl WHERE wl.idempotency_key = ik.key
+       )`,
     [retentionDays]
   );
   return result.rowCount ?? 0;
