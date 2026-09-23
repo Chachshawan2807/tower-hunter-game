@@ -1,307 +1,120 @@
 /**
- * Slice Imperial Knight skill icon sheet → public/icons/skills/{iconId}.svg
+ * Crop skill icon sheet → public/icons/skills/{iconId}.svg
  *
- * Sheet layout: 8×4 grid, 28 icons (row 4 has icons in columns 0–3 only).
- * Icon numbers in comments are 1-based (top-left = 1, index 0).
- *
- * Usage:
- *   node scripts/importSkillIconSheet.mjs [sheet.jpg]
- *   node scripts/importSkillIconSheet.mjs --debug-cells   # export public/icons/skills/_cells/
+ *   node scripts/importSkillIconSheet.mjs [sheet.jpg] [--dark-sheet]
  */
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import sharp from "sharp";
+import {
+  bufferToSkillPng,
+} from "./skillIconProcess.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, "..");
 const OUT = path.join(ROOT, "public", "icons", "skills");
 const DEFAULT_SHEET = path.join(OUT, "skill-icon-sheet.jpg");
+/** Upscale small sheets before crop (more source pixels → sharper icons). */
+const SHEET_TARGET_WIDTH = 2048;
 
-const COLS = 8;
-const ROWS = 4;
-/** Trim neighbor bleed from 8×4 grid gutters */
-const CELL_INSET = 0.22;
-const OUTPUT_SIZE = 384;
-/** Default scale art down inside square (overridden per skill in SKILL_ICON_CONFIG). */
-const ARTWORK_SCALE = 0.78;
-/** Single-pass 4-neighbor erosion thins bold sheet strokes toward art-bible weight. */
-const INK_ERODE_PASSES = 1;
+const ROW_COLS = [7, 7, 7, 5];
+
+/** Labeled parchment sheets (text band at bottom of each row). */
+const LABELED_LABEL_BAND = 0.3;
+const LABELED_INSET_X = 0.06;
+const LABELED_INSET_TOP = 0.03;
+
+/** White-on-black sheet (1024×682): square cells, no captions. */
+const DARK_LABEL_BAND = 0;
+const DARK_INSET_X = 0.04;
+const DARK_INSET_TOP = 0.06;
 
 /**
- * Player skill iconId → sheet cell + per-icon framing.
- * Must cover exactly 23 ids (basic_attack + catalog). Each cell index unique.
+ * White sheet layout — matched to prior skill semantics (23 unique cells).
+ * Row2 c0–c1 empty; meteor uses knight+ sword (r1c3); shadow uses helm visor (r2c6).
  */
-const SKILL_ICON_CONFIG = {
-  basic_attack: { cell: 3, scale: 0.82, note: "Static sword — default strike" },
-  active_power_slash: { cell: 0, scale: 0.76, note: "Diagonal slash + motion" },
-  active_iron_palm: { cell: 11, scale: 0.8, note: "Armored gauntlet — palm strike" },
-  active_arcane_bolt: { cell: 18, scale: 0.74, note: "Lightning orb" },
-  active_inner_qi: { cell: 20, scale: 0.68, note: "Lion banner — rally ATK" },
-  active_holy_light: { cell: 17, scale: 0.68, note: "Holy heart + wings — heal" },
-  active_dragon_fist: { cell: 12, scale: 0.74, note: "Spiked power punch — ultimate" },
-  active_meteor: { cell: 19, scale: 0.72, note: "Meteor shower" },
-  passive_sturdy_frame: { cell: 8, scale: 0.72, note: "Full plate armor" },
-  passive_blade_mastery: { cell: 1, scale: 0.76, note: "Horizontal blade swing" },
-  passive_arcane_mind: { cell: 22, scale: 0.78, note: "Brain in helm — MP" },
-  passive_swift_feet: { cell: 21, scale: 0.74, note: "Winged sword — speed" },
-  passive_keen_eye: { cell: 14, scale: 0.8, note: "Helm crosshair — crit/acc" },
-  passive_guardian_aura: { cell: 23, scale: 0.72, note: "Shield + aura rings" },
-  passive_brutal_strikes: { cell: 5, scale: 0.76, note: "Bloody axe — crit dmg" },
-  cc_shield_bash: { cell: 10, scale: 0.78, note: "Shield block impact — stun" },
-  cc_frost_nova: { cell: 7, scale: 0.74, note: "Arcane burst (no ice cell) — freeze" },
-  cc_silencing_word: { cell: 15, scale: 0.78, note: "Helm shout — silence" },
-  cc_hamstring: { cell: 24, scale: 0.7, note: "Leg hamstring" },
-  move_shadow_step: { cell: 26, scale: 0.76, note: "Sprint B — quick step" },
-  move_dodge_roll: { cell: 25, scale: 0.76, note: "Sprint A — evade" },
-  move_cavalry_charge: { cell: 6, scale: 0.74, note: "Hammer slam — heavy charge" },
-  move_flash_step: { cell: 27, scale: 0.76, note: "Starburst — gauge flash" },
+export const SKILL_SLOTS = {
+  basic_attack: { row: 0, col: 0 },
+  active_power_slash: { row: 0, col: 1 },
+  active_iron_palm: { row: 0, col: 2 },
+  active_arcane_bolt: { row: 0, col: 3 },
+  active_inner_qi: { row: 0, col: 4 },
+  active_holy_light: { row: 0, col: 5 },
+  active_dragon_fist: { row: 0, col: 6 },
+  active_meteor: { row: 1, col: 3 },
+  passive_sturdy_frame: { row: 1, col: 2 },
+  passive_blade_mastery: { row: 1, col: 4 },
+  passive_arcane_mind: { row: 1, col: 5 },
+  passive_swift_feet: { row: 1, col: 6 },
+  passive_keen_eye: { row: 2, col: 0 },
+  passive_guardian_aura: { row: 2, col: 1 },
+  passive_brutal_strikes: { row: 2, col: 2 },
+  cc_shield_bash: { row: 2, col: 3 },
+  cc_frost_nova: { row: 2, col: 4 },
+  cc_silencing_word: { row: 2, col: 5 },
+  cc_hamstring: { row: 3, col: 0 },
+  move_shadow_step: { row: 2, col: 6 },
+  move_dodge_roll: { row: 3, col: 2 },
+  move_cavalry_charge: { row: 3, col: 3 },
+  move_flash_step: { row: 3, col: 4 },
 };
 
-const EXPECTED_SKILL_ICON_IDS = [
-  "basic_attack",
-  ...[
-    "active_power_slash",
-    "active_iron_palm",
-    "active_arcane_bolt",
-    "active_inner_qi",
-    "active_holy_light",
-    "active_dragon_fist",
-    "active_meteor",
-  ],
-  ...[
-    "passive_sturdy_frame",
-    "passive_blade_mastery",
-    "passive_arcane_mind",
-    "passive_swift_feet",
-    "passive_keen_eye",
-    "passive_guardian_aura",
-    "passive_brutal_strikes",
-  ],
-  ...["cc_shield_bash", "cc_frost_nova", "cc_silencing_word", "cc_hamstring"],
-  ...[
-    "move_shadow_step",
-    "move_dodge_roll",
-    "move_cavalry_charge",
-    "move_flash_step",
-  ],
-];
-
-/** Reference labels for cells 0–27 (matches attached sprite sheet). */
-export const CELL_LABELS = [
-  "01 slash diagonal",
-  "02 slash horizontal",
-  "03 sword impact",
-  "04 static sword",
-  "05 drip dagger",
-  "06 bloody axe",
-  "07 hammer slam",
-  "08 spinning hammer",
-  "09 plate armor",
-  "10 axe on shield",
-  "11 shield block",
-  "12 gauntlet",
-  "13 power punch",
-  "14 helm heal +",
-  "15 helm crosshair",
-  "16 helm shout",
-  "17 cross wings",
-  "18 heart holy",
-  "19 lightning orb",
-  "20 meteors",
-  "21 lion banner",
-  "22 winged sword",
-  "23 brain helm",
-  "24 shield aura",
-  "25 hamstring",
-  "26 sprint A",
-  "27 sprint B",
-  "28 starburst",
-];
-
-function assertSkillIconConfig() {
-  const keys = Object.keys(SKILL_ICON_CONFIG);
-  if (keys.length !== EXPECTED_SKILL_ICON_IDS.length) {
-    throw new Error(
-      `SKILL_ICON_CONFIG has ${keys.length} entries, expected ${EXPECTED_SKILL_ICON_IDS.length}`
-    );
-  }
-  for (const id of EXPECTED_SKILL_ICON_IDS) {
-    if (!SKILL_ICON_CONFIG[id]) {
-      throw new Error(`Missing SKILL_ICON_CONFIG for ${id}`);
-    }
-  }
-  const cells = keys.map((id) => SKILL_ICON_CONFIG[id].cell);
-  if (new Set(cells).size !== cells.length) {
-    throw new Error("Duplicate sheet cells in SKILL_ICON_CONFIG");
-  }
-}
-
-function cellRect(index, width, height, inset = CELL_INSET) {
-  const col = index % COLS;
-  const row = Math.floor(index / COLS);
-  const cellW = width / COLS;
-  const cellH = height / ROWS;
+function cellRect(row, col, width, height, darkSheet) {
+  const labelBand = darkSheet ? DARK_LABEL_BAND : LABELED_LABEL_BAND;
+  const insetX = darkSheet ? DARK_INSET_X : LABELED_INSET_X;
+  const insetTop = darkSheet ? DARK_INSET_TOP : LABELED_INSET_TOP;
+  const rows = ROW_COLS.length;
+  const rowH = height / rows;
+  const cols = ROW_COLS[row];
+  const cellW = width / cols;
   const left0 = Math.floor(col * cellW);
-  const top0 = Math.floor(row * cellH);
-  const right =
-    col === COLS - 1 ? width : Math.floor((col + 1) * cellW);
-  const bottom =
-    row === ROWS - 1 ? height : Math.floor((row + 1) * cellH);
-  const rawW = Math.max(1, right - left0);
-  const rawH = Math.max(1, bottom - top0);
-  const padX = Math.floor(rawW * inset);
-  const padY = Math.floor(rawH * inset);
+  const top0 = Math.floor(row * rowH + rowH * insetTop);
+  const padX = Math.floor(cellW * insetX);
+  const iconH = Math.floor(rowH * (1 - labelBand - insetTop));
+  const innerW = Math.max(1, Math.floor(cellW - padX * 2));
+  const innerH = Math.max(1, iconH);
+  const size = Math.min(innerW, innerH);
+  const cx = left0 + padX + innerW / 2;
+  const cy = top0 + innerH / 2;
   return {
-    left: left0 + padX,
-    top: top0 + padY,
-    width: Math.max(1, rawW - padX * 2),
-    height: Math.max(1, rawH - padY * 2),
+    left: Math.max(0, Math.floor(cx - size / 2)),
+    top: Math.max(0, Math.floor(cy - size / 2)),
+    width: size,
+    height: size,
   };
 }
 
-function isChecker(r, g, b) {
-  const lum = (r + g + b) / 3;
-  const chroma = Math.max(r, g, b) - Math.min(r, g, b);
-  return lum >= 165 && chroma <= 32;
-}
-
-function rgbaFromTile(data, width, height) {
-  const out = Buffer.alloc(width * height * 4);
-  for (let y = 0; y < height; y++) {
-    for (let x = 0; x < width; x++) {
-      const i = (y * width + x) * 4;
-      const r = data[i];
-      const g = data[i + 1];
-      const b = data[i + 2];
-      const o = (y * width + x) * 4;
-      if (isChecker(r, g, b)) {
-        out[o + 3] = 0;
-        continue;
-      }
-      const lum = (r + g + b) / 3;
-      const max = Math.max(r, g, b);
-      const min = Math.min(r, g, b);
-      const isInk =
-        lum < 108 || (max - min < 38 && lum < 162 && lum > 45);
-      out[o] = 26;
-      out[o + 1] = 26;
-      out[o + 2] = 26;
-      out[o + 3] = isInk ? 255 : 0;
+function assertSlots() {
+  const ids = Object.keys(SKILL_SLOTS);
+  if (ids.length !== 23) {
+    throw new Error(`Expected 23 skill slots, got ${ids.length}`);
+  }
+  const seen = new Set();
+  for (const [id, { row, col }] of Object.entries(SKILL_SLOTS)) {
+    const key = `${row}:${col}`;
+    if (seen.has(key)) throw new Error(`Duplicate slot ${key} for ${id}`);
+    seen.add(key);
+    if (col >= ROW_COLS[row]) {
+      throw new Error(`Col ${col} out of range for row ${row} (${id})`);
     }
   }
-  return erodeInkAlpha(out, width, height, INK_ERODE_PASSES);
 }
 
-function erodeInkAlpha(rgba, width, height, passes) {
-  let buf = rgba;
-  const neighbors = [
-    [-1, 0],
-    [1, 0],
-    [0, -1],
-    [0, 1],
-  ];
-  for (let pass = 0; pass < passes; pass++) {
-    const src = buf;
-    const next = Buffer.alloc(width * height * 4);
-    src.copy(next);
-    for (let y = 0; y < height; y++) {
-      for (let x = 0; x < width; x++) {
-        const o = (y * width + x) * 4;
-        if (src[o + 3] === 0) continue;
-        let core = true;
-        for (const [dx, dy] of neighbors) {
-          const nx = x + dx;
-          const ny = y + dy;
-          if (nx < 0 || ny < 0 || nx >= width || ny >= height) {
-            core = false;
-            break;
-          }
-          if (src[(ny * width + nx) * 4 + 3] === 0) {
-            core = false;
-            break;
-          }
-        }
-        if (!core) next[o + 3] = 0;
-      }
-    }
-    buf = next;
-  }
-  return buf;
-}
-
-async function tileToPng(inputBuffer, rect, options = {}) {
-  const scale =
-    typeof options.scale === "number" ? options.scale : ARTWORK_SCALE;
-  const { data, info } = await sharp(inputBuffer)
-    .extract(rect)
-    .ensureAlpha()
-    .raw()
-    .toBuffer({ resolveWithObject: true });
-
-  const rgba = rgbaFromTile(data, info.width, info.height);
-
-  const inner = Math.max(1, Math.round(OUTPUT_SIZE * scale));
-
-  const trimmed = await sharp(rgba, {
-    raw: { width: info.width, height: info.height, channels: 4 },
-  })
-    .trim({ threshold: 12 })
-    .resize(inner, inner, {
-      fit: "contain",
-      background: { r: 0, g: 0, b: 0, alpha: 0 },
-      kernel: sharp.kernel.lanczos3,
-    })
-    .png()
-    .toBuffer();
-
-  return sharp({
-    create: {
-      width: OUTPUT_SIZE,
-      height: OUTPUT_SIZE,
-      channels: 4,
-      background: { r: 0, g: 0, b: 0, alpha: 0 },
-    },
-  })
-    .composite([{ input: trimmed, gravity: "center" }])
-    .png()
-    .toBuffer();
-}
-
-function wrapSvg(pngBase64, iconId) {
-  return [
-    `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 24 24">`,
-    `  <!-- ${iconId} -->`,
-    `  <image width="24" height="24" preserveAspectRatio="xMidYMid meet" href="data:image/png;base64,${pngBase64}"/>`,
-    `</svg>`,
-    "",
-  ].join("\n");
-}
-
-async function exportDebugCells(sheetBuffer, width, height) {
-  const dir = path.join(OUT, "_cells");
-  fs.mkdirSync(dir, { recursive: true });
-  for (let index = 0; index < 28; index++) {
-    const rect = cellRect(index, width, height);
-    const png = await tileToPng(sheetBuffer, rect);
-    const label = CELL_LABELS[index]?.replace(/\s+/g, "-") ?? "cell";
-    fs.writeFileSync(
-      path.join(dir, `${String(index).padStart(2, "0")}-${label}.png`),
-      png
-    );
-  }
-  console.log("Debug cells → public/icons/skills/_cells/");
+async function tileToPng(inputBuffer, rect, darkSheet) {
+  const crop = await sharp(inputBuffer).extract(rect).png().toBuffer();
+  return bufferToSkillPng(crop, {
+    inkMode: darkSheet ? "dark" : "paper",
+  });
 }
 
 async function main() {
-  assertSkillIconConfig();
-  const debugOnly = process.argv.includes("--debug-cells");
+  assertSlots();
+  const darkSheet = process.argv.includes("--dark-sheet");
   const sheetArg = process.argv.find(
-    (a) => !a.startsWith("--") && a.endsWith(".jpg")
+    (a) => !a.startsWith("--") && /\.(jpg|jpeg|png)$/i.test(a)
   );
-  const sheetPath = sheetArg
-    ? path.resolve(sheetArg)
-    : DEFAULT_SHEET;
+  const sheetPath = sheetArg ? path.resolve(sheetArg) : DEFAULT_SHEET;
 
   if (!fs.existsSync(sheetPath)) {
     console.error("Sheet not found:", sheetPath);
@@ -309,43 +122,39 @@ async function main() {
   }
 
   fs.mkdirSync(OUT, { recursive: true });
-  const sheetBuffer = fs.readFileSync(sheetPath);
+  let sheetBuffer = await sharp(fs.readFileSync(sheetPath)).png().toBuffer();
+  const meta0 = await sharp(sheetBuffer).metadata();
+  if (meta0.width && meta0.width < SHEET_TARGET_WIDTH) {
+    sheetBuffer = await sharp(sheetBuffer)
+      .resize(SHEET_TARGET_WIDTH, null, {
+        kernel: sharp.kernel.lanczos3,
+      })
+      .png()
+      .toBuffer();
+  }
   const { width, height } = await sharp(sheetBuffer).metadata();
   if (!width || !height) throw new Error("Could not read sheet dimensions");
 
-  if (path.resolve(sheetPath) !== path.resolve(DEFAULT_SHEET)) {
-    fs.copyFileSync(sheetPath, DEFAULT_SHEET);
-  }
+  fs.copyFileSync(sheetPath, DEFAULT_SHEET);
 
-  if (debugOnly) {
-    await exportDebugCells(sheetBuffer, width, height);
-    return;
-  }
+  const debugDir = path.join(OUT, "_cells");
+  fs.mkdirSync(debugDir, { recursive: true });
 
-  await exportDebugCells(sheetBuffer, width, height);
+  for (const [iconId, slot] of Object.entries(SKILL_SLOTS)) {
+    const rect = cellRect(slot.row, slot.col, width, height, darkSheet);
+    const png = await tileToPng(sheetBuffer, rect, darkSheet);
+    fs.writeFileSync(path.join(OUT, `${iconId}.png`), png);
+    fs.writeFileSync(path.join(debugDir, `${iconId}.png`), png);
 
-  for (const [iconId, cfg] of Object.entries(SKILL_ICON_CONFIG)) {
-    const cellIndex = cfg.cell;
-    const rect = cellRect(cellIndex, width, height, cfg.inset ?? CELL_INSET);
-    const png = await tileToPng(sheetBuffer, rect, { scale: cfg.scale });
-    const b64 = png.toString("base64");
-    if (!b64.startsWith("iVBORw0KGgo") || b64.length > 120_000) {
-      throw new Error(
-        `Bad PNG for ${iconId} (cell ${cellIndex}): len=${b64.length}`
-      );
-    }
-    fs.writeFileSync(
-      path.join(OUT, `${iconId}.svg`),
-      wrapSvg(b64, iconId),
-      "utf8"
-    );
-    const label = CELL_LABELS[cellIndex] ?? "?";
+    const legacySvg = path.join(OUT, `${iconId}.svg`);
+    if (fs.existsSync(legacySvg)) fs.unlinkSync(legacySvg);
+
     console.log(
-      `${iconId} ← cell ${cellIndex} (${label}) scale=${cfg.scale ?? ARTWORK_SCALE}`
+      `${iconId} ← r${slot.row}c${slot.col} (${rect.width}×${rect.height})`
     );
   }
 
-  console.log(`\nImported ${Object.keys(SKILL_ICON_CONFIG).length} skill icons.`);
+  console.log(`\nImported ${Object.keys(SKILL_SLOTS).length} icons → ${OUT}`);
 }
 
 main().catch((err) => {

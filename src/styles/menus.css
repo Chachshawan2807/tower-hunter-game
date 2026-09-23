@@ -349,12 +349,12 @@
 
 .stat-grid--skills-catalog,
 .skill-menu__owned-grid {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: var(--space-1);
 }
 
 .skill-menu__owned-grid .skill-menu__reset-wrap {
-  grid-column: 3;
+  grid-column: 4;
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -496,8 +496,8 @@
 
 .skill-equip-slot {
   position: relative;
-  width: 48px;
-  height: 48px;
+  width: 46px;
+  height: 56px;
 }
 
 .skill-equip-slot--locked {

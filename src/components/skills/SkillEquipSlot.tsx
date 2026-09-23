@@ -103,9 +103,9 @@ export function SkillEquipSlot({
         <span className="char-equip-slot__icon-stack" aria-hidden>
           {isEquipped && skill ? (
             <SkillIcon
-              label={skillName}
               skill={skill}
-              size={26}
+              size={34}
+              height={44}
               className="skill-equip-slot__icon"
             />
           ) : (

@@ -36,7 +36,7 @@ export function SkillEquipSlotPicker({
             key={skill.id}
             skill={skill}
             label={name}
-            size={32}
+            showName={false}
             disabled={busy}
             className="char-equip-picker__tile"
             onClick={() => onSkillSelect(skill)}

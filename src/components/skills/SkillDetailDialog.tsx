@@ -6,6 +6,8 @@ import {
   formatSkillDetailLines,
   getSkillDescription,
 } from "./skillDetailStats";
+import { SkillIcon } from "./SkillIcon";
+
 export interface SkillDetailDialogProps {
   locale: Locale;
   skill: SkillDefinition;
@@ -86,6 +88,7 @@ export function SkillDetailDialog({
         onPointerDown={(e) => e.stopPropagation()}
       >
         <div className="skill-detail-dialog__hero">
+          <SkillIcon skill={skill} size={48} />
           <h3
             className="confirm-dialog__title skill-detail-dialog__title"
             id={titleId}

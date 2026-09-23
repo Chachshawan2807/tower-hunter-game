@@ -33,7 +33,7 @@ export function SkillPassiveRow({
               key={id}
               skill={skill}
               label={name}
-              size={28}
+              showName={false}
               className="battle-passive-row__tile"
               onClick={() => onSkillPress(skill)}
             />

@@ -102,5 +102,6 @@ export {
   getSkillIconId,
   skillIconUrl,
   skillDescriptionKey,
+  SKILL_ICON_ASSETS_ENABLED,
   SKILL_ICON_FALLBACK_ID,
 } from "./skillIcon";

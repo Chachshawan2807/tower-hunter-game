@@ -11,6 +11,7 @@ import type { SkillUpgradeRanks } from "../../engine/skills/types";
 import type { BattleEntity } from "../../engine/types";
 import { t, type Locale } from "../../utils/i18n";
 import { SkillDetailDialog } from "../skills/SkillDetailDialog";
+import { SkillIcon } from "../skills/SkillIcon";
 
 interface BattleActiveSkillsProps {
   locale: Locale;
@@ -96,6 +97,9 @@ export function BattleActiveSkills({
                 }
                 onClick={() => onSkill(skillId, targetId)}
               >
+                <span className="battle-skill-btn__icon" aria-hidden="true">
+                  <SkillIcon skill={base} size={20} />
+                </span>
                 <span className="battle-skill-btn__label">{name}</span>
                 <span
                   className={`battle-skill-btn__cost${!canAfford ? " battle-skill-btn__cost--low" : ""}`}
