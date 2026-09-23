@@ -50,30 +50,40 @@ export function SkillIconTile({
     .filter(Boolean)
     .join(" ");
 
+  const showLockOverlay = locked;
+  const showFooter = showName || (badgeText && !locked);
+
   const content = (
     <>
-      <span className="skill-icon-tile__icon-wrap" aria-hidden>
-        <SkillIcon skill={skill} layout="tile" />
-      </span>
-      {showName || badgeText || locked ? (
-        <span className="skill-icon-tile__footer" aria-hidden>
-          {showName ? (
-            <span className="skill-icon-tile__name">{label}</span>
-          ) : null}
-          {badgeText || locked ? (
-            <span className="skill-icon-tile__meta">
-              {locked ? (
-                <GameIcon
-                  name="lock"
-                  size={12}
-                  className="skill-icon-tile__lock"
-                />
-              ) : null}
-              {badgeText ? (
+      <span className="skill-icon-tile__blur-layer" aria-hidden>
+        <span className="skill-icon-tile__icon-wrap">
+          <SkillIcon skill={skill} layout="tile" />
+        </span>
+        {showFooter ? (
+          <span className="skill-icon-tile__footer">
+            {showName ? (
+              <span className="skill-icon-tile__name">{label}</span>
+            ) : null}
+            {badgeText && !locked ? (
+              <span className="skill-icon-tile__meta">
                 <span className="skill-icon-tile__badge tabular-nums">
                   {badgeText}
                 </span>
-              ) : null}
+              </span>
+            ) : null}
+          </span>
+        ) : null}
+      </span>
+      {showLockOverlay ? (
+        <span className="skill-icon-tile__lock-overlay" aria-hidden>
+          <GameIcon
+            name="lock"
+            size={17}
+            className="skill-icon-tile__lock"
+          />
+          {badgeText ? (
+            <span className="skill-icon-tile__badge tabular-nums">
+              {badgeText}
             </span>
           ) : null}
         </span>
