@@ -4,7 +4,6 @@ import {
   getSkillUnlockSpCost,
   getSkillsByType,
   isSkillUnlocked,
-  sortSkillsByEquipOrder,
 } from "../../engine/skills";
 import type { SkillDefinition } from "../../engine/skills/types";
 import type { SkillType } from "../../engine/skills/skillTypes";
@@ -15,7 +14,6 @@ import { SkillDetailDialog } from "../skills/SkillDetailDialog";
 import { SkillEquipPanel } from "../skills/SkillEquipPanel";
 import { ConfirmDialog } from "../ui/ConfirmDialog";
 import { SkillCategorySection } from "./SkillCategorySection";
-import { SkillMenuOwnedSection } from "./SkillMenuOwnedSection";
 import { SkillMenuTypeFilters } from "./SkillMenuTypeFilters";
 import { SkillStatGrid } from "./SkillStatGrid";
 import { isDefaultExpanded, sortCatalogSkills } from "./skillMenuConstants";
@@ -52,20 +50,6 @@ export function SkillMenu({
     if (typeFilter === "all") return base;
     return getSkillsByType(typeFilter);
   }, [typeFilter]);
-
-  const ownedSkills = useMemo(() => {
-    const unlocked = catalogSkills.filter((skill) =>
-      isSkillUnlocked(skill, progression.unlockedSkillIds)
-    );
-    return sortSkillsByEquipOrder(
-      unlocked,
-      progression.loadout.equippedSlots
-    );
-  }, [
-    catalogSkills,
-    progression.unlockedSkillIds,
-    progression.loadout.equippedSlots,
-  ]);
 
   const pendingUnlock = progression.pendingUnlock;
 
@@ -110,16 +94,8 @@ export function SkillMenu({
         loadout={progression.loadout}
         unlockedSkillIds={progression.unlockedSkillIds}
         onLoadoutChange={progression.setLoadout}
-      />
-
-      <SkillMenuOwnedSection
-        locale={locale}
-        ownedSkills={ownedSkills}
-        unlockedSkillIds={progression.unlockedSkillIds}
-        unlockingId={progression.unlockingId}
         canRespec={progression.canRespec}
         onRespecRequest={() => progression.setPendingRespec(true)}
-        onSkillSelect={openSkillDetail}
       />
 
       <SkillMenuTypeFilters

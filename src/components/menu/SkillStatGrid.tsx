@@ -18,7 +18,6 @@ interface SkillStatGridProps {
   unlockedSkillIds: string[];
   unlockingId: string | null;
   onSkillSelect: (skill: SkillDefinition) => void;
-  embedded?: boolean;
   layout?: "default" | "catalog";
 }
 
@@ -28,7 +27,6 @@ export function SkillStatGrid({
   unlockedSkillIds,
   unlockingId,
   onSkillSelect,
-  embedded = false,
   layout = "default",
 }: SkillStatGridProps) {
   const tiles = skills.map((skill) => {
@@ -52,8 +50,6 @@ export function SkillStatGrid({
       />
     );
   });
-
-  if (embedded) return <>{tiles}</>;
 
   const gridClass =
     layout === "catalog"

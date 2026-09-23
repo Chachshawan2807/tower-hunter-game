@@ -19,6 +19,8 @@ interface SkillEquipPanelProps {
   loadout: SkillLoadout;
   unlockedSkillIds: string[];
   onLoadoutChange: (loadout: SkillLoadout) => void;
+  canRespec?: boolean;
+  onRespecRequest?: () => void;
 }
 
 function getSlotSkillId(
@@ -34,6 +36,8 @@ export function SkillEquipPanel({
   loadout,
   unlockedSkillIds,
   onLoadoutChange,
+  canRespec = false,
+  onRespecRequest,
 }: SkillEquipPanelProps) {
   const [busy, setBusy] = useState(false);
   const [activeSlot, setActiveSlot] = useState<number | null>(null);
@@ -143,9 +147,23 @@ export function SkillEquipPanel({
         <h3 className="skill-equip-panel__title">
           {t("skills.equip_title", locale)}
         </h3>
-        <span className="skill-equip-panel__count tabular-nums">
-          {equippedCount}/{MAX_EQUIP_SLOTS}
-        </span>
+        <div className="skill-equip-panel__header-actions">
+          <span className="skill-equip-panel__count tabular-nums">
+            {equippedCount}/{MAX_EQUIP_SLOTS}
+          </span>
+          {onRespecRequest ? (
+            <button
+              type="button"
+              className="skill-menu__reset-btn"
+              disabled={!canRespec}
+              aria-label={t("skills.reset.aria", locale)}
+              title={t("skills.reset.aria", locale)}
+              onClick={onRespecRequest}
+            >
+              {t("skills.reset", locale)}
+            </button>
+          ) : null}
+        </div>
       </div>
       {queueMessage ? (
         <p className="skill-equip-panel__message" role="status">

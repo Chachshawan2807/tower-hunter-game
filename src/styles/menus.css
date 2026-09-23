@@ -340,24 +340,9 @@
   border-radius: var(--radius-lg);
 }
 
-.skill-menu__section {
-  position: relative;
-  margin-top: var(--space-1);
-  gap: var(--space-1);
-  margin-bottom: var(--space-2);
-}
-
-.stat-grid--skills-catalog,
-.skill-menu__owned-grid {
+.stat-grid--skills-catalog {
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: var(--space-1);
-}
-
-.skill-menu__owned-grid .skill-menu__reset-wrap {
-  grid-column: 4;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
 }
 
 .skill-menu__reset-btn {
@@ -403,12 +388,6 @@
 
 .view-readable .skill-menu__reset-btn {
   color: var(--crimson-deep);
-}
-
-.skill-menu__owned-empty {
-  grid-column: 1 / -1;
-  margin: 0;
-  padding: var(--space-4) var(--space-3);
 }
 
 .skill-menu__filters {
@@ -474,6 +453,14 @@
   color: var(--dark-yellow-deep);
 }
 
+.skill-equip-panel__header-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
 .skill-equip-panel__count {
   font-family: var(--font-mono);
   font-size: 0.72rem;
@@ -523,15 +510,13 @@
   pointer-events: none;
 }
 
-.skill-menu .stat-grid--skills-catalog .stat-item,
-.skill-menu .skill-menu__owned-grid .stat-item {
+.skill-menu .stat-grid--skills-catalog .stat-item {
   align-self: start;
   padding: 0.34rem 0.42rem;
   min-height: 0;
 }
 
-.skill-menu .stat-grid--skills-catalog .stat-item > .skill-stat-label,
-.skill-menu .skill-menu__owned-grid .stat-item > .skill-stat-label {
+.skill-menu .stat-grid--skills-catalog .stat-item > .skill-stat-label {
   font-size: 0.58rem;
   margin-bottom: 0;
   line-height: 1.15;
@@ -540,8 +525,7 @@
   text-overflow: unset;
 }
 
-.skill-menu .stat-grid--skills-catalog .stat-item__value,
-.skill-menu .skill-menu__owned-grid .stat-item__value {
+.skill-menu .stat-grid--skills-catalog .stat-item__value {
   font-size: 0.6rem;
   line-height: 1.2;
   margin-top: 0.12rem;
