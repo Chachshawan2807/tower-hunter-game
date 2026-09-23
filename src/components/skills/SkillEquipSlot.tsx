@@ -3,7 +3,6 @@ import { getSkillById } from "../../engine/skills";
 import type { SkillDefinition } from "../../engine/skills/types";
 import { useDismissOnOutside } from "../../hooks/useDismissOnOutside";
 import { t, type Locale } from "../../utils/i18n";
-import { GameIcon } from "../ui/icons";
 import { SkillIcon } from "./SkillIcon";
 
 function formatSkillMeta(skill: SkillDefinition, locale: Locale): string {
@@ -91,28 +90,17 @@ export function SkillEquipSlot({
         onFocus={() => setHovered(true)}
         onBlur={() => setHovered(false)}
       >
-        <span className="char-equip-slot__icon-stack" aria-hidden>
+        <span className="char-equip-slot__icon-wrap" aria-hidden>
           {isEquipped && skill ? (
-            <SkillIcon
-              skill={skill}
-              size={34}
-              height={38}
-              className="skill-equip-slot__icon"
-            />
-          ) : (
-            <>
-              <GameIcon
-                name="book"
-                size={26}
-                className="char-equip-slot__icon char-equip-slot__icon--shade"
+            <span className="char-equip-slot__icon-stack">
+              <SkillIcon
+                skill={skill}
+                size={40}
+                height={44}
+                className="skill-equip-slot__icon"
               />
-              <GameIcon
-                name="book"
-                size={26}
-                className="char-equip-slot__icon"
-              />
-            </>
-          )}
+            </span>
+          ) : null}
         </span>
         <span className="skill-equip-slot__key tabular-nums" aria-hidden>
           {slotIndex + 1}

@@ -428,9 +428,9 @@
 }
 
 .skill-equip-panel {
-  --skill-equip-tile-size: 42px;
-  --skill-equip-icon-w: 34px;
-  --skill-equip-icon-h: 38px;
+  --skill-equip-tile-size: 52px;
+  --skill-equip-icon-w: 40px;
+  --skill-equip-icon-h: 44px;
   --skill-equip-slot-gap: var(--space-2);
   position: relative;
   flex-shrink: 0;
@@ -644,6 +644,14 @@
   padding: 2px;
 }
 
+.skill-equip-slot .char-equip-slot__icon-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
 .skill-equip-slot .char-equip-slot__icon-stack {
   width: var(--skill-equip-icon-w, 34px);
   height: var(--skill-equip-icon-h, 38px);
@@ -655,14 +663,14 @@
   height: var(--skill-equip-icon-h, 38px);
 }
 
-.skill-equip-slot.char-equip-slot--empty .char-equip-slot__icon-stack {
-  width: 26px;
-  height: 26px;
+.skill-equip-slot.char-equip-slot--empty {
+  border-color: rgba(0, 0, 0, 0.1);
+  background: rgba(255, 252, 245, 0.55);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.04);
 }
 
-.skill-equip-slot.char-equip-slot--empty .char-equip-slot__icon {
-  width: 26px;
-  height: 26px;
+.skill-equip-slot.char-equip-slot--empty .char-equip-slot__icon-wrap {
+  display: none;
 }
 
 .skill-equip-slot--locked {
