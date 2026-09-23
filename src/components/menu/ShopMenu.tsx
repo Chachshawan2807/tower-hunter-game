@@ -1,10 +1,12 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import {
   groupShopCatalogByCategory,
   type ShopItemCategory,
 } from "../../engine/shop/shopCatalogLayout";
 import { getEquipmentShopLabel } from "../../engine/shop/equipmentShopItems";
 import { queueMutationIfOffline } from "../../client/offline/queueMutation";
+import { invalidatePlayerPanels, panelCacheKey } from "../../client/cache/readCache";
+import { useCachedQuery } from "../../hooks/useCachedQuery";
 import { useDismissOnOutside } from "../../hooks/useDismissOnOutside";
 import { ConfirmDialog } from "../ui/ConfirmDialog";
 import { api, type ShopCatalogItem } from "../../utils/api";
@@ -44,14 +46,19 @@ export function ShopMenu({
   onPurchase,
   onPurchaseError,
 }: ShopMenuProps) {
-  const [catalog, setCatalog] = useState<ShopCatalogItem[]>([]);
-  const [loading, setLoading] = useState(true);
   const [busyId, setBusyId] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [expandedCategories, setExpandedCategories] = useState<Set<ShopItemCategory>>(
     () => new Set()
   );
   const [pendingBuy, setPendingBuy] = useState<ShopCatalogItem | null>(null);
+  const catalogQuery = useCachedQuery(
+    panelCacheKey.shopCatalog,
+    () => api.getShopCatalog().then((catalog) => catalog.items),
+    300_000
+  );
+  const catalog = catalogQuery.data ?? [];
+  const loading = catalogQuery.loading;
 
   useDismissOnOutside(
     expandedCategories.size > 0 && !pendingBuy,
@@ -60,21 +67,10 @@ export function ShopMenu({
   );
 
   const goldBalance = BigInt(gold || "0");
-  const catalogGroups = useMemo(() => groupShopCatalogByCategory(catalog), [catalog]);
-
-  const loadCatalog = useCallback(async () => {
-    setLoading(true);
-    try {
-      const { items } = await api.getShopCatalog();
-      setCatalog(items);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    void loadCatalog();
-  }, [loadCatalog]);
+  const catalogGroups = useMemo(
+    () => groupShopCatalogByCategory(catalog),
+    [catalog]
+  );
 
   const toggleCategory = (category: ShopItemCategory) => {
     setExpandedCategories((prev) => {
@@ -112,6 +108,7 @@ export function ShopMenu({
           : t("shop.purchased", locale)
       );
       onPurchase(result);
+      invalidatePlayerPanels(userId, ["inventory", "mailbox"]);
     } catch (err) {
       const queued = await queueMutationIfOffline(
         "shop_purchase",

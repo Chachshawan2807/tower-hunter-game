@@ -6,16 +6,13 @@ import {
   getUserByExternalId,
   updateDisplayName,
   getPlayerStats,
-  getWalletBalance,
   allocateStatusPoint,
   resetStatusAllocations,
   StatusAllocationError,
 } from "../../db";
 import { listPlayerEquipment } from "../../db/equipment";
 import { buildPlayerRevision } from "../../db/playerRevision";
-import { getPlayerSkillPath } from "../../db/playerStats";
 import { equipmentPayloadFromRows } from "../../equipment/equipmentFromRows";
-import { getPlayerEquipmentBonuses } from "../../equipment/playerCombatStats";
 import type { ServerBindings, ServerVariables } from "../types";
 import { buildUserBootstrap } from "../../users/buildBootstrap";
 import { jsonBigInt } from "../middleware/errorHandler";
@@ -103,22 +100,24 @@ userRoutes.get("/:userId/bootstrap", async (c) => {
 userRoutes.get("/:userId/stats", async (c) => {
   const userId = c.req.param("userId");
   const pool = c.get("db");
-  const [stats, wallet, equipmentRows, skillPath] = await Promise.all([
+  const [stats, wallet, equipmentRows] = await Promise.all([
     getPlayerStats(pool, userId),
-    getWalletBalance(pool, userId),
+    getUserById(pool, userId),
     listPlayerEquipment(pool, userId),
-    getPlayerSkillPath(pool, userId),
   ]);
 
-  if (!stats) {
+  if (!stats || !wallet) {
     return c.json({ error: "Player stats not found", code: "STATS_NOT_FOUND" }, 404);
   }
 
-  const statBonus = equipmentPayloadFromRows(skillPath, equipmentRows).statBonus;
+  const statBonus = equipmentPayloadFromRows(
+    stats.active_skill_path,
+    equipmentRows
+  ).statBonus;
   const revision = buildPlayerRevision(stats);
   return jsonBigInt(c, {
     stats,
-    goldBalance: wallet,
+    goldBalance: wallet.gold_balance.toString(),
     equipmentStatBonus: statBonus,
     revision,
   });

@@ -110,6 +110,10 @@ export const userApi = {
     );
   },
 
+  getMailboxCount(userId: string) {
+    return apiRequest<{ count: number }>(`/api/users/${userId}/mailbox/count`);
+  },
+
   claimMailboxItem(userId: string, mailboxItemId: string) {
     return apiRequest<{
       item: MailboxItem;

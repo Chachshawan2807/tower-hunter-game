@@ -2,6 +2,7 @@ import { Hono } from "hono";
 import {
   getWalletBalance,
   listInventoryItems,
+  countActiveMailboxItems,
   listMailboxItems,
   claimMailboxItem,
   addItemToInventory,
@@ -36,6 +37,14 @@ userInventoryRoutes.get("/:userId/wallet", async (c) => {
 userInventoryRoutes.get("/:userId/inventory", async (c) => {
   const items = await listInventoryItems(c.get("db"), c.req.param("userId"));
   return c.json({ items });
+});
+
+userInventoryRoutes.get("/:userId/mailbox/count", async (c) => {
+  const count = await countActiveMailboxItems(
+    c.get("db"),
+    c.req.param("userId")
+  );
+  return c.json({ count });
 });
 
 userInventoryRoutes.get("/:userId/mailbox", async (c) => {

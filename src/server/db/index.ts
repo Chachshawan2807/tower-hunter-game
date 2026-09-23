@@ -88,6 +88,7 @@ export {
 export {
   addToMailbox,
   addToMailboxClient,
+  countActiveMailboxItems,
   listMailboxItems,
   purgeExpiredMailboxItems,
   claimMailboxItem,

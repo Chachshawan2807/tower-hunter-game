@@ -1,14 +1,16 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { SkillPath } from "../../engine/types";
 import type { ItemRarityVisual } from "../../engine/art/weaponTypes";
 import type { EquipmentSlot } from "../../engine/art/equipment/slots";
 import type { CharacterEquipmentVisual } from "../../engine/art/equipment/catalog";
 import { queueMutationIfOffline } from "../../client/offline/queueMutation";
+import { panelCacheKey } from "../../client/cache/readCache";
+import { useCachedQuery } from "../../hooks/useCachedQuery";
 import { useDismissOnOutside } from "../../hooks/useDismissOnOutside";
 import { resolveShopItemSellPrice } from "../../engine/shop/sellPrice";
 import { ConfirmDialog } from "../ui/ConfirmDialog";
 import { t, type Locale } from "../../utils/i18n";
-import { api, type InventoryItem } from "../../utils/api";
+import { api } from "../../utils/api";
 import { createActionIdempotencyKey } from "../../utils/idempotencyKey";
 import { formatDialogMessage } from "../../utils/formatDialogMessage";
 import { formatGoldAmount } from "../../utils/formatGold";
@@ -37,12 +39,18 @@ export function BagMenu({
   equipBusy,
   equipMessage,
 }: BagMenuProps) {
-  const [inventory, setInventory] = useState<InventoryItem[]>([]);
-  const [loading, setLoading] = useState(true);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [sellBusy, setSellBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [pendingSellId, setPendingSellId] = useState<string | null>(null);
+
+  const inventoryQuery = useCachedQuery(
+    userId ? panelCacheKey.inventory(userId) : null,
+    () => api.getInventory(userId!).then((inv) => inv.items),
+    8_000
+  );
+  const inventory = inventoryQuery.data ?? [];
+  const loading = inventoryQuery.loading;
 
   useDismissOnOutside(
     selectedId !== null && !pendingSellId,
@@ -50,26 +58,11 @@ export function BagMenu({
     [".bag-item-slot", ".bag-slot-detail"]
   );
 
-  const reload = async () => {
-    if (!userId) return;
-    setLoading(true);
-    try {
-      const inv = await api.getInventory(userId);
-      setInventory(inv.items);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    void reload();
-  }, [userId]);
-
   const handleEquip = async (slot: EquipmentSlot, inventoryId: string): Promise<boolean> => {
     const ok = await onEquip(slot, inventoryId);
     if (ok) {
       setSelectedId(null);
-      await reload();
+      await inventoryQuery.reload(true);
     }
     return ok;
   };
@@ -88,7 +81,7 @@ export function BagMenu({
       setMessage(t("bag.sold", locale));
       setSelectedId(null);
       setPendingSellId(null);
-      await reload();
+      await inventoryQuery.reload(true);
       onSellComplete?.(result.balanceAfter);
       return true;
     } catch (err) {

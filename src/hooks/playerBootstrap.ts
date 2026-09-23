@@ -11,6 +11,7 @@ import {
   readGameDataCache,
 } from "../client/cache/gameDataStore";
 import { setHotGameData } from "../client/cache/gameDataMemory";
+import { panelCacheKey, putReadCache } from "../client/cache/readCache";
 import { flushOfflineQueue } from "../client/offline/flushOfflineQueue";
 import { snapshotFromStats } from "../types/playerSnapshot.interface";
 import type { UserBootstrapResponse } from "../types/gameData.interface";
@@ -95,6 +96,7 @@ function resultFromBootstrap(
 ): PlayerBootstrapResult {
   const cache = bootstrapToGameDataCache(bootstrap);
   setHotGameData(cache);
+  putReadCache(panelCacheKey.mailboxCount(bootstrap.user.id), bootstrap.mailboxCount);
   persistBootstrapCache(bootstrap);
   return {
     userId: bootstrap.user.id,

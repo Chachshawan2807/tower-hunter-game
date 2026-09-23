@@ -1,14 +1,12 @@
 import type { DbPool } from "../db/client";
 import { listPlayerEquipment } from "../db/equipment";
-import { listMailboxItems } from "../db/mailbox";
+import { countActiveMailboxItems } from "../db/mailbox";
 import { getPlayerStats } from "../db/playerStats";
 import { buildPlayerRevision } from "../db/playerRevision";
-import { getPlayerSkillPath } from "../db/playerStats";
 import { getPlayerLoadoutV2 } from "../db/skillLoadoutV2";
 import { getPlayerUpgrades } from "../db/skillUpgrades";
 import { getPlayerSkillUnlocks } from "../db/skillUnlocks";
 import { getUserById } from "../db/users";
-import { getWalletBalance } from "../db/wallet";
 import { equipmentPayloadFromRows } from "../equipment/equipmentFromRows";
 import { buildSkillProgressionPayload } from "./buildSkillProgression";
 
@@ -16,20 +14,16 @@ export async function buildUserBootstrap(pool: DbPool, userId: string) {
   const [
     user,
     stats,
-    wallet,
     equipmentRows,
-    skillPath,
-    mailboxItems,
+    mailboxCount,
     upgrades,
     dbLoadout,
     unlockedSkillIds,
   ] = await Promise.all([
     getUserById(pool, userId),
     getPlayerStats(pool, userId),
-    getWalletBalance(pool, userId),
     listPlayerEquipment(pool, userId),
-    getPlayerSkillPath(pool, userId),
-    listMailboxItems(pool, userId),
+    countActiveMailboxItems(pool, userId),
     getPlayerUpgrades(pool, userId),
     getPlayerLoadoutV2(pool, userId),
     getPlayerSkillUnlocks(pool, userId),
@@ -39,7 +33,10 @@ export async function buildUserBootstrap(pool: DbPool, userId: string) {
     return null;
   }
 
-  const equipment = equipmentPayloadFromRows(skillPath, equipmentRows);
+  const equipment = equipmentPayloadFromRows(
+    stats.active_skill_path,
+    equipmentRows
+  );
   const revision = buildPlayerRevision(stats);
   const skillProgression = await buildSkillProgressionPayload(
     pool,
@@ -58,13 +55,13 @@ export async function buildUserBootstrap(pool: DbPool, userId: string) {
     },
     stats: {
       stats,
-      goldBalance: wallet.toString(),
+      goldBalance: user.gold_balance.toString(),
       equipmentStatBonus: equipment.statBonus,
       revision,
     },
     equipment,
     skillProgression,
-    mailboxCount: mailboxItems.length,
+    mailboxCount,
     revision,
   };
 }

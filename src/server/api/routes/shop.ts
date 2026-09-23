@@ -10,14 +10,17 @@ export const shopRoutes = new Hono<{
   Variables: ServerVariables;
 }>();
 
+const SHOP_CATALOG_PAYLOAD = {
+  items: SHOP_CATALOG.map((item) => ({
+    ...item,
+    cost: item.cost.toString(),
+    sellPrice: item.sellPrice.toString(),
+  })),
+};
+
 shopRoutes.get("/catalog", (c) => {
-  return jsonBigInt(c, {
-    items: SHOP_CATALOG.map((item) => ({
-      ...item,
-      cost: item.cost.toString(),
-      sellPrice: item.sellPrice.toString(),
-    })),
-  });
+  c.header("Cache-Control", "public, max-age=300");
+  return jsonBigInt(c, SHOP_CATALOG_PAYLOAD);
 });
 
 shopRoutes.post("/:userId/sell", async (c) => {

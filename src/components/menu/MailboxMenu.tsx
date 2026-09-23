@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import type { SkillPath } from "../../engine/types";
+import { invalidatePlayerPanels, panelCacheKey, putReadCache, invalidateReadCache } from "../../client/cache/readCache";
+import { useCachedQuery } from "../../hooks/useCachedQuery";
 import { useDismissOnOutside } from "../../hooks/useDismissOnOutside";
 import { t, type Locale } from "../../utils/i18n";
-import { api, type MailboxItem } from "../../utils/api";
+import { api } from "../../utils/api";
 import { BagItemDetail } from "./BagItemDetail";
 import { BagItemSlot } from "./BagItemSlot";
 
@@ -19,33 +21,27 @@ export function MailboxMenu({
   skillPath,
   onMailboxChange,
 }: MailboxMenuProps) {
-  const [mailbox, setMailbox] = useState<MailboxItem[]>([]);
-  const [loading, setLoading] = useState(true);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [claimBusy, setClaimBusy] = useState(false);
   const [actionMessage, setActionMessage] = useState<string | null>(null);
+  const mailboxQuery = useCachedQuery(
+    userId ? panelCacheKey.mailbox(userId) : null,
+    () => api.getMailbox(userId!).then((mail) => mail.items),
+    8_000
+  );
+  const mailbox = mailboxQuery.data ?? [];
+  const loading = mailboxQuery.loading;
+
+  useEffect(() => {
+    if (!userId || !mailboxQuery.data) return;
+    putReadCache(panelCacheKey.mailboxCount(userId), mailboxQuery.data.length);
+  }, [mailboxQuery.data, userId]);
 
   useDismissOnOutside(
     selectedId !== null,
     () => setSelectedId(null),
     [".bag-item-slot", ".bag-slot-detail"]
   );
-
-  const reload = async () => {
-    if (!userId) return;
-    setLoading(true);
-    try {
-      const mail = await api.getMailbox(userId);
-      setMailbox(mail.items);
-      onMailboxChange?.();
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    void reload();
-  }, [userId]);
 
   const handleClaim = async (mailboxId: string): Promise<boolean> => {
     if (!userId || claimBusy) return false;
@@ -54,9 +50,12 @@ export function MailboxMenu({
     setActionMessage(null);
     try {
       await api.claimMailboxItem(userId, mailboxId);
+      invalidatePlayerPanels(userId, ["inventory"]);
       setActionMessage(t("bag.claimed", locale));
       setSelectedId(null);
-      await reload();
+      invalidateReadCache(panelCacheKey.mailboxCount(userId));
+      await mailboxQuery.reload(true);
+      onMailboxChange?.();
       return true;
     } catch {
       return false;

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   filterInventoryForEquipmentSlot,
   isEquipmentSlotEquipped,
@@ -8,6 +8,8 @@ import type { EquipmentSlot } from "../../engine/art/equipment/slots";
 import type { InventoryBagEntry } from "../../engine/art/equipment/slotInventory";
 import type { SkillPath } from "../../engine/types";
 import { api, type InventoryItem } from "../../utils/api";
+import { panelCacheKey } from "../../client/cache/readCache";
+import { useCachedQuery } from "../../hooks/useCachedQuery";
 import { t, type Locale } from "../../utils/i18n";
 import { CharacterFigure } from "./CharacterFigure";
 import { EquipSlot } from "./EquipSlot";
@@ -113,32 +115,19 @@ export function CharacterEquipmentPanel({
   onUnequip,
 }: CharacterEquipmentPanelProps) {
   const [activeSlot, setActiveSlot] = useState<EquipmentSlot | null>(null);
-  const [inventory, setInventory] = useState<InventoryItem[]>([]);
-  const [inventoryLoading, setInventoryLoading] = useState(false);
+  const inventoryQuery = useCachedQuery(
+    userId ? panelCacheKey.inventory(userId) : null,
+    () => api.getInventory(userId!).then((inv) => inv.items),
+    8_000
+  );
+  const inventory = inventoryQuery.data ?? [];
+  const inventoryLoading = inventoryQuery.loading;
 
-  const reloadInventory = useCallback(async () => {
-    if (!userId) {
-      setInventory([]);
-      return;
-    }
-    setInventoryLoading(true);
-    try {
-      const inv = await api.getInventory(userId);
-      setInventory(inv.items);
-    } catch {
-      setInventory([]);
-    } finally {
-      setInventoryLoading(false);
-    }
-  }, [userId]);
-
-  useEffect(() => {
-    void reloadInventory();
-  }, [reloadInventory]);
+  const reloadInventory = inventoryQuery.reload;
 
   useEffect(() => {
     if (!activeSlot || isEquipmentSlotEquipped(equipment, activeSlot)) return;
-    void reloadInventory();
+    void reloadInventory(true);
   }, [activeSlot, equipment, reloadInventory]);
 
   const handleSlotActivate = (slot: EquipmentSlot) => {
@@ -157,7 +146,7 @@ export function CharacterEquipmentPanel({
     void onEquipFromBag(slot, inventoryId).then(async (ok) => {
       if (ok) {
         setActiveSlot(null);
-        await reloadInventory();
+        await reloadInventory(true);
       }
     });
   };

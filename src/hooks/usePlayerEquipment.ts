@@ -6,6 +6,7 @@ import type { GearStatBonus } from "../engine/art/equipment/statBonuses";
 import type { EquipmentSlot, PlayerEquipmentLoadout } from "../engine/art/equipment/slots";
 import type { SkillPath } from "../engine/types";
 import { patchGameDataCache } from "../client/cache/gameDataStore";
+import { invalidatePlayerPanels } from "../client/cache/readCache";
 import { getHotGameDataForUser } from "../client/cache/gameDataMemory";
 import { runWithOfflineQueue } from "../client/offline/queueMutation";
 import { api } from "../utils/api";
@@ -109,6 +110,7 @@ export function usePlayerEquipment(
         }
 
         applyEquipment(result.data.loadout, statBonus);
+        invalidatePlayerPanels(userId, ["inventory"]);
         const bonusText = result.data.statBonusLines.join(" · ");
         setEquipMessage(
           bonusText
@@ -155,6 +157,7 @@ export function usePlayerEquipment(
         }
 
         applyEquipment(result.data.loadout, result.data.statBonus ?? {});
+        invalidatePlayerPanels(userId, ["inventory"]);
         setEquipMessage(t("bag.unequipped", locale));
         return true;
       } catch (err) {

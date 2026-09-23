@@ -51,6 +51,21 @@ export async function addToMailbox(
   );
 }
 
+export async function countActiveMailboxItems(
+  pool: DbPool,
+  userId: string
+): Promise<number> {
+  const result = await pool.query<{ count: string }>(
+    `SELECT COUNT(*)::text AS count
+     FROM mailbox_items
+     WHERE user_id = $1
+       AND expires_at > NOW()`,
+    [userId]
+  );
+
+  return Number(result.rows[0]?.count ?? 0);
+}
+
 export async function listMailboxItems(
   pool: DbPool,
   userId: string
