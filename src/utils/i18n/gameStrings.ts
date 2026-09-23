@@ -114,7 +114,10 @@ export const GAME_I18N_STRINGS: Record<string, Record<Locale, string>> = {
     en: "Could not reset status points",
     th: "รีเซ็ตแต้มสถานะไม่สำเร็จ",
   },
-  "char.stat_gear_bonus": { en: "Equipment bonus", th: "โบนัสจากไอเทม" },
+  "char.stat_gear_bonus": {
+    en: "Status and equipment bonus",
+    th: "โบนัสจากแต้มสถานะและไอเทม",
+  },
   "char.allocate.success": {
     en: "{stat} +1",
     th: "{stat} +1",

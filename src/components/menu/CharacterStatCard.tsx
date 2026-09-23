@@ -5,7 +5,7 @@ import type { StatRow } from "./characterStatRows";
 interface CharacterStatCardProps {
   stat: StatRow;
   canAllocate: boolean;
-  allocBusy: StatusStatKey | null;
+  allocBusy: ReadonlySet<StatusStatKey>;
   userId: string | null;
   locale: Locale;
   onAllocate: (stat: StatusStatKey) => void;
@@ -40,13 +40,19 @@ export function CharacterStatCard({
           <button
             type="button"
             className="stat-item__alloc-btn"
-            disabled={!canAllocate || !userId}
+            disabled={
+              !canAllocate ||
+              !userId ||
+              (stat.allocStat !== undefined && allocBusy.has(stat.allocStat))
+            }
             aria-label={t("char.allocate.aria", locale, { stat: stat.key })}
             title={t("char.allocate.hint", locale, { cost: STATUS_POINT_COST })}
             onClick={() => onAllocate(stat.allocStat!)}
           >
             <span className="stat-item__alloc-btn-icon" aria-hidden="true">
-              {allocBusy === stat.allocStat ? "…" : "+"}
+              {stat.allocStat !== undefined && allocBusy.has(stat.allocStat)
+                ? "…"
+                : "+"}
             </span>
           </button>
         )}

@@ -134,13 +134,9 @@ userRoutes.post("/:userId/stats/allocate", async (c) => {
 
   try {
     const stats = await allocateStatusPoint(c.get("db"), userId, body.stat);
-    const wallet = await getWalletBalance(c.get("db"), userId);
-    const statBonus = await getPlayerEquipmentBonuses(c.get("db"), userId);
     const revision = buildPlayerRevision(stats);
     return jsonBigInt(c, {
       stats,
-      goldBalance: wallet,
-      equipmentStatBonus: statBonus,
       revision,
     });
   } catch (err) {
@@ -156,13 +152,9 @@ userRoutes.post("/:userId/stats/reset-status", async (c) => {
 
   try {
     const stats = await resetStatusAllocations(c.get("db"), userId);
-    const wallet = await getWalletBalance(c.get("db"), userId);
-    const statBonus = await getPlayerEquipmentBonuses(c.get("db"), userId);
     const revision = buildPlayerRevision(stats);
     return jsonBigInt(c, {
       stats,
-      goldBalance: wallet,
-      equipmentStatBonus: statBonus,
       revision,
     });
   } catch (err) {

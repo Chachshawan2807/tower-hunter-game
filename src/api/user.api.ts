@@ -61,6 +61,7 @@ export const userApi = {
       `/api/users/${userId}/stats/allocate`,
       {
         method: "POST",
+        maxRetries: 0,
         body: JSON.stringify({ stat }),
       }
     );
@@ -69,7 +70,7 @@ export const userApi = {
   resetStatusAllocations(userId: string) {
     return apiRequest<StatusAllocateResponse>(
       `/api/users/${userId}/stats/reset-status`,
-      { method: "POST" }
+      { method: "POST", maxRetries: 0 }
     );
   },
 

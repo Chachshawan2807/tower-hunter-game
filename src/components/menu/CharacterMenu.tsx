@@ -12,6 +12,11 @@ import { CharacterEquipmentPanel } from "../character/CharacterEquipmentPanel";
 import { ConfirmDialog } from "../ui/ConfirmDialog";
 import { CharacterStatCard } from "./CharacterStatCard";
 import { buildCharacterStatRows, totalAllocatedFromStats } from "./characterStatRows";
+import {
+  optimisticStatusAllocate,
+  optimisticStatusReset,
+} from "./statusAllocFromStats";
+import { useCharacterMenuStats } from "./useCharacterMenuStats";
 
 interface CharacterMenuProps {
   locale: Locale;
@@ -42,27 +47,30 @@ export function CharacterMenu({
   onUnequip,
   onStatsChange,
 }: CharacterMenuProps) {
-  const [allocBusy, setAllocBusy] = useState<StatusStatKey | null>(null);
+  const [allocBusy, setAllocBusy] = useState<ReadonlySet<StatusStatKey>>(
+    () => new Set()
+  );
   const [resetBusy, setResetBusy] = useState(false);
   const [resetConfirmOpen, setResetConfirmOpen] = useState(false);
   const [allocMessage, setAllocMessage] = useState<string | null>(null);
+  const { displayStats, pushStats } = useCharacterMenuStats(stats, onStatsChange);
 
-  if (!stats) {
+  if (!displayStats) {
     return <p className="menu-empty">{t("char.stats", locale)}...</p>;
   }
 
-  const statusPoints = stats.status_points ?? 0;
-  const allocatedTotal = totalAllocatedFromStats(stats);
-  const interactionBusy = resetBusy || allocBusy !== null;
+  const statusPoints = displayStats.status_points ?? 0;
+  const allocatedTotal = totalAllocatedFromStats(displayStats);
+  const resetInteractionBusy = resetBusy || allocBusy.size > 0;
   const canAllocate =
-    statusPoints >= STATUS_POINT_COST &&
-    !interactionBusy &&
-    !resetConfirmOpen;
-  const canReset = allocatedTotal > 0 && !interactionBusy && Boolean(userId);
+    statusPoints >= STATUS_POINT_COST && !resetBusy && !resetConfirmOpen;
+  const canReset = allocatedTotal > 0 && !resetInteractionBusy && Boolean(userId);
 
   const handleAllocate = async (stat: StatusStatKey) => {
     if (!userId || !canAllocate) return;
-    setAllocBusy(stat);
+    const snapshot = displayStats;
+    pushStats(optimisticStatusAllocate(displayStats, stat));
+    setAllocBusy((prev) => new Set(prev).add(stat));
     setAllocMessage(null);
     try {
       const idempotencyKey = createActionIdempotencyKey(
@@ -86,20 +94,28 @@ export function CharacterMenu({
         throw result.error;
       }
 
-      onStatsChange?.(result.data.stats);
+      pushStats(result.data.stats);
     } catch (err) {
+      pushStats(snapshot);
       setAllocMessage(
         err instanceof Error
           ? err.message
           : t("char.allocate.error", locale)
       );
     } finally {
-      setAllocBusy(null);
+      setAllocBusy((prev) => {
+        const next = new Set(prev);
+        next.delete(stat);
+        return next;
+      });
     }
   };
 
   const handleResetStatus = async () => {
     if (!userId || resetBusy || allocatedTotal <= 0) return;
+    const snapshot = displayStats;
+    pushStats(optimisticStatusReset(displayStats));
+    setResetConfirmOpen(false);
     setResetBusy(true);
     setAllocMessage(null);
     try {
@@ -118,16 +134,16 @@ export function CharacterMenu({
 
       if (result.status === "queued") {
         setAllocMessage(t("common.offline_queued", locale));
-        setResetConfirmOpen(false);
         return;
       }
       if (result.status === "error") {
         throw result.error;
       }
 
-      onStatsChange?.(result.data.stats);
-      setResetConfirmOpen(false);
+      pushStats(result.data.stats);
     } catch (err) {
+      pushStats(snapshot);
+      setResetConfirmOpen(true);
       setAllocMessage(
         err instanceof Error
           ? err.message
@@ -138,7 +154,7 @@ export function CharacterMenu({
     }
   };
 
-  const statRows = buildCharacterStatRows(stats, equipmentStatBonus);
+  const statRows = buildCharacterStatRows(displayStats, equipmentStatBonus);
 
   return (
     <div className="char-menu">
