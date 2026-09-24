@@ -2,7 +2,7 @@ import type { Locale } from "../i18n";
 
 export const UI_I18N_STRINGS: Record<string, Record<Locale, string>> = {
   "app.title": { en: "Tower Hunter", th: "นักล่าหอคอย" },
-  "hud.level": { en: "Lv", th: "เลเวล" },
+  "hud.level": { en: "LV", th: "LV" },
   "hud.exp": { en: "EXP", th: "EXP" },
   "nav.character": { en: "Character", th: "ตัวละคร" },
   "nav.skills": { en: "Skills", th: "สกิล" },

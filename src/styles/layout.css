@@ -182,7 +182,7 @@
 }
 
 .top-hud--compact .hud-level-badge {
-  color: var(--dark-yellow-deep);
+  color: var(--ink-black);
   flex-shrink: 0;
 }
 
@@ -432,7 +432,7 @@
   font-family: var(--font-stat);
   font-size: var(--text-lg);
   font-weight: 700;
-  color: var(--ember-400);
+  color: var(--ink-black);
   flex-shrink: 0;
 }
 

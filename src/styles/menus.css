@@ -1007,7 +1007,7 @@
 
 .char-overlay-title__level {
   flex-shrink: 0;
-  color: var(--dark-yellow-deep);
+  color: var(--ink-black);
 }
 
 .char-overlay-title__name {
@@ -1157,7 +1157,7 @@
 }
 
 .view-readable .overlay__title .char-overlay-title__level {
-  color: var(--dark-yellow-deep);
+  color: var(--ink-black);
 }
 
 .view-readable .overlay__title .char-overlay-title__name {

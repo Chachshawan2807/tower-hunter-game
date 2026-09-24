@@ -47,7 +47,7 @@ export function TopHud({
           {!compact && <span className="hud-name">{displayName}</span>}
           <div className="hud-level-row">
             <span className="hud-level-badge tabular-nums">
-              {t("hud.level", locale)} {level}
+              LV {level}
             </span>
             {compact && nameEditable && onRename ? (
               <CharacterNameEditor
