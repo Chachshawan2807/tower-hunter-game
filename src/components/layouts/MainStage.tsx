@@ -1,7 +1,7 @@
 import { t, type Locale } from "../../utils/i18n";
 import type { SkillPath } from "../../engine/types";
 import type { CharacterEquipmentVisual } from "../../engine/art/equipment/catalog";
-import { CharacterFigure } from "../character/CharacterFigure";
+import { PlayerHeroShowcase } from "../character/PlayerHeroShowcase";
 
 interface MainStageProps {
   locale: Locale;
@@ -22,13 +22,11 @@ export function MainStage({
         <div className="hero-showcase__spotlight" aria-hidden="true" />
         <div className="hero-showcase__platform">
           <div className="hero-showcase__pedestal" aria-hidden="true" />
-          <CharacterFigure
-            equipment={equipment}
-            path={skillPath}
-            side="player"
-            animState="idle"
+          <PlayerHeroShowcase
             size="stage"
-            label={displayName}
+            skillPath={skillPath}
+            displayName={displayName}
+            equipment={equipment}
           />
         </div>
       </div>

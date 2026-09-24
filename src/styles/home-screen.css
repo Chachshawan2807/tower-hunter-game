@@ -103,12 +103,50 @@
   position: relative;
   z-index: 1;
   display: flex;
-  align-items: flex-end;
+  align-items: stretch;
   justify-content: center;
   height: var(--hero-stage-height);
   width: auto;
   aspect-ratio: 413 / 985;
   max-width: calc(var(--frame-width) - 2 * var(--content-inline));
+}
+
+.hero-showcase__platform .character-figure--stage {
+  justify-content: flex-end;
+  align-self: stretch;
+}
+
+.hero-showcase .character-figure--stage::after {
+  content: none;
+}
+
+.hero-showcase__platform:has(.hero-showcase__canvas3d) .hero-showcase__pedestal {
+  display: none;
+}
+
+.hero-showcase__platform .character-figure__sprite-wrap {
+  flex: 1 1 auto;
+  align-self: stretch;
+  min-height: 0;
+}
+
+.hero-showcase__canvas3d {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.hero-showcase__canvas3d-inner {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.hero-showcase__canvas3d-inner canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
 }
 
 @keyframes hero-spotlight-pulse {

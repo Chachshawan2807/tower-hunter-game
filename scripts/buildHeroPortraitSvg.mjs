@@ -25,6 +25,7 @@ const SOURCE_CANDIDATES = [
 ];
 const SOURCE = SOURCE_CANDIDATES.find((p) => fs.existsSync(p));
 const OUT_SVG = path.join(ROOT, "public", "assets", "characters", "imperial-knight-hero.svg");
+const OUT_PNG = path.join(ROOT, "public", "assets", "characters", "imperial-knight-hero.png");
 
 function isBackground(r, g, b, a) {
   if (a < 8) return true;
@@ -83,7 +84,9 @@ async function main() {
   ].join("\n");
 
   fs.writeFileSync(OUT_SVG, svg, "utf8");
+  fs.writeFileSync(OUT_PNG, png);
   console.log("wrote", path.relative(ROOT, OUT_SVG), `(${info.width}x${info.height}px embedded)`);
+  console.log("wrote", path.relative(ROOT, OUT_PNG));
   console.log("wrote", path.relative(ROOT, refPng));
 }
 

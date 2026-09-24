@@ -425,6 +425,32 @@
   box-shadow: none;
 }
 
+.char-equip-stage__hero {
+  margin: 0;
+}
+
+.char-equip-stage .character-figure--menu::after {
+  content: none;
+}
+
+.char-equip-stage:has(.char-equip-stage__canvas3d) .char-equip-stage__ring {
+  display: none;
+}
+
+.char-equip-stage__canvas3d {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.char-equip-stage__canvas3d .hero-showcase__canvas3d-inner,
+.char-equip-stage__canvas3d .hero-showcase__canvas3d-inner canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+
 /* Soft ambient pool under figure (contact core lives on .character-figure::after) */
 .char-equip-stage__ring {
   position: absolute;

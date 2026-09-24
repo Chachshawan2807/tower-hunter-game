@@ -11,7 +11,7 @@ import { api, type InventoryItem } from "../../utils/api";
 import { panelCacheKey } from "../../client/cache/readCache";
 import { useCachedQuery } from "../../hooks/useCachedQuery";
 import { t, type Locale } from "../../utils/i18n";
-import { CharacterFigure } from "./CharacterFigure";
+import { PlayerHeroShowcase } from "./PlayerHeroShowcase";
 import { EquipSlot } from "./EquipSlot";
 
 const LEFT_SLOTS: EquipmentSlot[] = ["helm", "chest", "boots"];
@@ -182,13 +182,11 @@ export function CharacterEquipmentPanel({
 
       <div className="char-equip-stage">
         <div className="char-equip-stage__ring" aria-hidden="true" />
-        <CharacterFigure
-          equipment={equipment}
-          path={equipment.path}
-          side="player"
-          animState="idle"
+        <PlayerHeroShowcase
           size="menu"
-          label={displayName}
+          skillPath={skillPath}
+          displayName={displayName}
+          equipment={equipment}
         />
       </div>
 

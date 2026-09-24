@@ -58,6 +58,10 @@ export const CHARACTER_SHEET_URLS: Record<CharacterSheetId, string> = {
 /** Main player hero — Imperial Knight line art (transparent SVG) */
 export const PLAYER_HERO_PORTRAIT_URL = "/assets/characters/imperial-knight-hero.svg";
 
+/** WebGL billboard — PNG (SVG rasterizes poorly in Three.js). Regenerate: npm run export:hero */
+export const PLAYER_HERO_PORTRAIT_TEXTURE_URL =
+  "/assets/characters/imperial-knight-hero.png";
+
 
 
 export function sheetIdForArchetype(archetype: CharacterArchetype): CharacterSheetId {
