@@ -27,11 +27,10 @@ export const TowerFloorBlock = memo(function TowerFloorBlock({
   return (
     <div
       className={[
-        "tower-floor-card",
-        isMilestone ? "tower-floor-card--milestone" : "",
-        isActive ? "tower-floor-card--active" : "",
-        isPassed ? "tower-floor-card--passed" : "",
-        isLocked ? "tower-floor-card--locked" : "",
+        "tower-floor-block",
+        isPassed ? "tower-floor-block--passed" : "",
+        isActive ? "tower-floor-block--active" : "",
+        isLocked ? "tower-floor-block--locked" : "",
       ]
         .filter(Boolean)
         .join(" ")}
@@ -40,19 +39,31 @@ export const TowerFloorBlock = memo(function TowerFloorBlock({
       aria-label={`${localeLabel} ${floor}${isLocked ? ` (${lockedLabel})` : ""}`}
       aria-current={isActive ? "true" : undefined}
     >
-      {isLocked ? (
-        <span className="tower-floor-card__chains-back" aria-hidden />
-      ) : null}
+      <div
+        className={[
+          "tower-floor-card",
+          isMilestone ? "tower-floor-card--milestone" : "",
+          isActive ? "tower-floor-card--active" : "",
+          isLocked ? "tower-floor-card--locked" : "",
+        ]
+          .filter(Boolean)
+          .join(" ")}
+      >
+        {isLocked ? (
+          <span className="tower-floor-card__chains-back" aria-hidden />
+        ) : null}
+      </div>
       <span
         className={[
-          "tower-floor-card__value",
-          isLocked ? "tower-floor-card__value--locked" : "",
+          "tower-floor-block__num",
+          "tabular-nums",
+          isLocked ? "tower-floor-block__num--locked" : "",
         ]
           .filter(Boolean)
           .join(" ")}
         aria-hidden
       >
-        <span className="tower-floor-card__num tabular-nums">{floor}</span>
+        {floor}
       </span>
     </div>
   );

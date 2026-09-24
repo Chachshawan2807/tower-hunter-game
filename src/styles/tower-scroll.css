@@ -1,52 +1,5 @@
 /* Tower spire — scrollable floor card grid */
 
-/* Tower tab — blurred interior backdrop (full frame, HUD sees through) */
-.game-frame:has(.tower-view) {
-  background: var(--primary-black-deep);
-  box-shadow: 0 0 0 1px var(--border-strong);
-  isolation: isolate;
-}
-
-.game-frame:has(.tower-view)::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  background: url("/backgrounds/tower-interior.svg") center top / cover no-repeat;
-  filter: blur(0.5px);
-  pointer-events: none;
-}
-
-.game-frame:has(.tower-view)::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  background: linear-gradient(
-    180deg,
-    rgba(5, 5, 5, 0.48) 0%,
-    rgba(5, 5, 5, 0.18) 42%,
-    rgba(5, 5, 5, 0.62) 100%
-  );
-  pointer-events: none;
-}
-
-.game-frame.env-zone--forgotten-dungeon:has(.tower-view),
-.game-frame.env-zone--imperial-bastion:has(.tower-view),
-.game-frame.env-zone--knight-citadel:has(.tower-view),
-.game-frame.env-zone--void-pinnacle:has(.tower-view) {
-  background: var(--primary-black-deep);
-}
-
-.game-frame:has(.tower-view) .env-zone-bg,
-.game-frame:has(.tower-view) .env-illustration,
-.game-frame:has(.tower-view) .env-wall,
-.game-frame:has(.tower-view) .env-chains,
-.game-frame:has(.tower-view) .env-fog,
-.game-frame:has(.tower-view) .env-rain {
-  display: none;
-}
-
 .stage:has(.tower-view) {
   overflow: hidden;
   justify-content: flex-start;
@@ -121,7 +74,23 @@
   flex: 0 0 calc((100% - 3 * 6px) / 4);
   max-width: calc((100% - 3 * 6px) / 4);
   content-visibility: auto;
-  contain-intrinsic-size: auto 72px;
+  contain-intrinsic-size: auto 92px;
+}
+
+.tower-floor-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  gap: 4px;
+}
+
+.tower-floor-block--passed {
+  opacity: 0.52;
+}
+
+.tower-floor-block--active {
+  opacity: 1;
 }
 
 .tower-floor-card {
@@ -151,16 +120,6 @@
     opacity var(--duration-fast);
 }
 
-.tower-floor-card__value {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  flex: 1;
-  min-height: 0;
-}
-
 .tower-floor-card__chains-back {
   position: absolute;
   inset: 0;
@@ -180,36 +139,38 @@
   mask-repeat: no-repeat;
 }
 
-.tower-floor-card__num {
-  position: relative;
-  z-index: 1;
+.tower-floor-block__num {
+  flex-shrink: 0;
   font-family: var(--font-stat);
-  font-size: 1rem;
+  font-size: 0.8125rem;
   font-weight: 700;
   letter-spacing: 0.02em;
-  color: var(--ink-black);
+  color: rgba(255, 252, 245, 0.94);
   line-height: 1;
   text-align: center;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55);
 }
 
-/* Matches .skill-icon-tile__lock-overlay — readable badge on locked art */
-.tower-floor-card__value--locked .tower-floor-card__num {
+.tower-floor-block--active .tower-floor-block__num {
+  color: var(--dark-yellow);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.65);
+}
+
+/* Matches .skill-icon-tile__lock-overlay — readable badge below locked art */
+.tower-floor-block__num--locked {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   min-width: 1.75rem;
-  padding: 5px 7px;
+  padding: 3px 7px;
   border-radius: var(--radius-sm);
-  background: rgba(255, 252, 245, 0.9);
-  border: 1px solid rgba(0, 0, 0, 0.16);
+  color: var(--crimson-deep);
+  background: rgba(255, 252, 245, 0.62);
+  border: 1px solid rgba(0, 0, 0, 0.1);
   box-shadow:
-    0 1px 3px rgba(0, 0, 0, 0.12),
-    0 0 0 1px rgba(255, 255, 255, 0.5) inset;
-  text-shadow: 0 0 1px rgba(255, 255, 255, 0.9);
-}
-
-.tower-floor-card--passed {
-  opacity: 0.52;
+    0 1px 2px rgba(0, 0, 0, 0.08),
+    0 0 0 1px rgba(255, 255, 255, 0.35) inset;
+  text-shadow: 0 0 1px rgba(255, 255, 255, 0.75);
 }
 
 .tower-floor-card--milestone {
@@ -227,7 +188,6 @@
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.65),
     0 0 0 2px rgba(212, 168, 67, 0.45);
-  opacity: 1;
 }
 
 .tower-floor-card--locked {
@@ -238,12 +198,6 @@
     rgba(220, 216, 208, 0.88) 0%,
     rgba(196, 190, 178, 0.9) 100%
   );
-}
-
-.tower-floor-card--locked .tower-floor-card__value {
-  position: relative;
-  z-index: 1;
-  min-height: 72px;
 }
 
 @media (max-width: 359px) {

@@ -69,8 +69,9 @@ export function App() {
 
   const activeBattleSession = battle.sessionId !== null;
   const inTowerBattle = isTowerView && activeBattleSession;
+  const towerLobbyMode = isTowerView && !activeBattleSession;
 
-  useTowerAmbient({ active: isTowerView && !activeBattleSession });
+  useTowerAmbient({ active: towerLobbyMode });
   useBattleAudio({
     displayedEvents: battle.displayedEvents,
     inBattle: activeBattleSession,
@@ -84,7 +85,11 @@ export function App() {
   }
 
   return (
-    <GameShell locale={locale} homeMode={isMainView} towerFloor={isTowerView ? currentFloor : undefined}>
+    <GameShell
+      locale={locale}
+      homeMode={isMainView || towerLobbyMode}
+      towerFloor={inTowerBattle ? currentFloor : undefined}
+    >
       <div
         className={[
           "game-viewport",
@@ -92,7 +97,7 @@ export function App() {
           isAnyOverlayOpen ? "is-menu-open" : "",
           isDialogOpen ? "is-dialog-open" : "",
           inTowerBattle ? "is-tower-battle" : "",
-          isTowerView ? "is-dark-stage" : "",
+          inTowerBattle ? "is-dark-stage" : "",
         ]
           .filter(Boolean)
           .join(" ")}
