@@ -1,7 +1,6 @@
 /**
- * Build MAILBOX icon from standalone reference art (transparent bg, raster-in-SVG).
- * Strips light pixels and normalizes to black silhouette for CSS mask rendering.
- * Run: node scripts/buildMailboxIconSvg.mjs
+ * Legacy mailbox SVG builder — superseded by `py -3 scripts/export-mailbox-icon.py`
+ * (outputs public/icons/ui/mailbox.png for CSS mask). Kept for reference only.
  */
 import fs from "fs";
 import { homedir } from "node:os";

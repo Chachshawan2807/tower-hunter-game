@@ -1,4 +1,4 @@
-import { getIconDef, hasFileIcon } from "./iconRegistry";
+import { fileIconMaskUrl, getIconDef, hasFileIcon } from "./iconRegistry";
 import type { GameIconName } from "./paths";
 
 interface GameIconProps {
@@ -24,7 +24,7 @@ export function GameIcon({
           width: size,
           height: size,
           color,
-          ["--icon-mask" as string]: `url(/icons/ui/${name}.svg)`,
+          ["--icon-mask" as string]: `url(${fileIconMaskUrl(name)})`,
         }}
         role={title ? "img" : undefined}
         aria-hidden={title ? undefined : true}

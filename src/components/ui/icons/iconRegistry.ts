@@ -46,8 +46,16 @@ export const FILE_ICON_NAMES = new Set<GameIconName>([
   "reset-undo",
 ]);
 
+/** Raster masks (alpha PNG) — default file icons use embedded SVG. */
+export const FILE_ICON_PNG_NAMES = new Set<GameIconName>(["mailbox"]);
+
 export function hasFileIcon(name: GameIconName): boolean {
   return FILE_ICON_NAMES.has(name);
+}
+
+export function fileIconMaskUrl(name: GameIconName): string {
+  const ext = FILE_ICON_PNG_NAMES.has(name) ? "png" : "svg";
+  return `/icons/ui/${name}.${ext}`;
 }
 
 export function getIconDef(name: GameIconName): IconPathDef {

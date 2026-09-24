@@ -511,6 +511,11 @@
   gap: var(--space-3);
 }
 
+.hud-action-btn--mailbox .game-icon--mailbox {
+  -webkit-mask-mode: alpha;
+  mask-mode: alpha;
+}
+
 .hud-action-btn__badge {
   position: absolute;
   top: -5px;
