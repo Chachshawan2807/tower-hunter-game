@@ -96,13 +96,18 @@ export default defineConfig({
   },
   build: {
     outDir: "dist",
+    // `three` core minifies to ~830 kB; lazy-loaded 3D layers keep it off the critical path.
+    chunkSizeWarningLimit: 900,
     rollupOptions: {
       output: {
         manualChunks(id) {
-          if (
-            id.includes("node_modules/three") ||
-            id.includes("node_modules/@react-three")
-          ) {
+          if (id.includes("node_modules/@react-three/drei")) {
+            return "vendor-r3f-drei";
+          }
+          if (id.includes("node_modules/@react-three")) {
+            return "vendor-r3f";
+          }
+          if (id.includes("node_modules/three")) {
             return "vendor-three";
           }
         },
