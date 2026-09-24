@@ -269,6 +269,25 @@
   pointer-events: none;
 }
 
+.battle-command-skill--passive {
+  border: 2px solid transparent;
+  background: transparent;
+  opacity: 1;
+  cursor: default;
+  overflow: hidden;
+  isolation: isolate;
+  box-shadow: 0 0 12px rgba(197, 160, 89, 0.28);
+}
+
+.battle-command-skill--passive:disabled {
+  opacity: 1;
+}
+
+.battle-command-skill--passive .skill-icon {
+  position: relative;
+  z-index: 2;
+}
+
 .battle-command-skill--ready:not(:disabled) {
   border-color: rgba(255, 236, 160, 0.85);
 }

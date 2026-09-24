@@ -52,7 +52,15 @@ export function App() {
     }
   }, [player.userId, player.refreshStats]);
 
-  const battle = useBattle(player.userId, onBattleComplete);
+  const onBattleResumed = useCallback(
+    (floor: number) => {
+      setCurrentFloor(floor);
+      selectTab("tower");
+    },
+    [selectTab]
+  );
+
+  const battle = useBattle(player.userId, onBattleComplete, onBattleResumed);
   const { visual: playerEquipment, statBonus, equipFromBag, unequipSlot, equipBusy, equipMessage, clearEquipMessage } =
     usePlayerEquipment(player.userId, player.skillPath, locale);
 

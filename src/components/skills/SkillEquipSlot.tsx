@@ -1,8 +1,9 @@
 import { useId, useRef, useState } from "react";
-import { getSkillById } from "../../engine/skills";
+import { getSkillById, isPassiveSkillType } from "../../engine/skills";
 import type { SkillDefinition } from "../../engine/skills/types";
 import { useDismissOnOutside } from "../../hooks/useDismissOnOutside";
 import { t, type Locale } from "../../utils/i18n";
+import { PassiveSkillSpinFrame } from "./PassiveSkillSpinFrame";
 import { SkillIcon } from "./SkillIcon";
 
 function formatSkillMeta(skill: SkillDefinition, locale: Locale): string {
@@ -61,6 +62,8 @@ export function SkillEquipSlot({
     slot: String(slotIndex + 1),
   });
   const skillName = skill ? t(skill.stringId, locale) : "";
+  const isPassive =
+    Boolean(skill?.skillType) && isPassiveSkillType(skill!.skillType!);
   const label = isEquipped ? `${slotLabel}: ${skillName}` : slotLabel;
   const visible = !isActive && hovered && !hasPinnedTooltip;
   const interactive = isEquipped || canEquip;
@@ -89,6 +92,7 @@ export function SkillEquipSlot({
           "skill-equip-slot",
           isActive ? "char-equip-slot--active skill-equip-slot--picking" : "",
           !isEquipped ? "char-equip-slot--empty" : "char-equip-slot--equipped",
+          isPassive ? "skill-equip-slot--passive" : "",
           !interactive ? "skill-equip-slot--locked" : "",
         ]
           .filter(Boolean)
@@ -129,6 +133,7 @@ export function SkillEquipSlot({
         onFocus={() => setHovered(true)}
         onBlur={() => setHovered(false)}
       >
+        {isPassive ? <PassiveSkillSpinFrame /> : null}
         <span className="char-equip-slot__icon-wrap" aria-hidden>
           {isEquipped && skill ? (
             <span className="char-equip-slot__icon-stack">

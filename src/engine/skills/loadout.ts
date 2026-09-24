@@ -87,6 +87,75 @@ export function sortSkillsByEquipOrder(
   });
 }
 
+export type EquipSkillToLoadoutResult =
+  | { ok: true; loadout: SkillLoadout }
+  | { ok: false; reason: "ALREADY_EQUIPPED" | "SLOTS_FULL" };
+
+/** Appends skill to the next equip slot (max {@link MAX_EQUIP_SLOTS}). */
+export function equipSkillToLoadout(
+  loadout: SkillLoadout,
+  skillId: string
+): EquipSkillToLoadoutResult {
+  const id = normalizeSkillId(skillId);
+  if (
+    loadout.equippedSlots.some((slotId) => normalizeSkillId(slotId) === id)
+  ) {
+    return { ok: false, reason: "ALREADY_EQUIPPED" };
+  }
+  if (loadout.equippedSlots.length >= MAX_EQUIP_SLOTS) {
+    return { ok: false, reason: "SLOTS_FULL" };
+  }
+  return {
+    ok: true,
+    loadout: {
+      ...loadout,
+      equippedSlots: [...loadout.equippedSlots, skillId],
+    },
+  };
+}
+
+export function canSwapAdjacentEquippedSlot(
+  loadout: SkillLoadout,
+  slotIndex: number,
+  direction: -1 | 1
+): boolean {
+  const target = slotIndex + direction;
+  if (target < 0 || target >= MAX_EQUIP_SLOTS) return false;
+  const n = loadout.equippedSlots.length;
+  return slotIndex < n && target < n;
+}
+
+export function swapAdjacentEquippedSlots(
+  loadout: SkillLoadout,
+  slotIndex: number,
+  direction: -1 | 1
+): SkillLoadout | null {
+  if (!canSwapAdjacentEquippedSlot(loadout, slotIndex, direction)) {
+    return null;
+  }
+  const target = slotIndex + direction;
+  const equippedSlots = [...loadout.equippedSlots];
+  [equippedSlots[slotIndex], equippedSlots[target]] = [
+    equippedSlots[target],
+    equippedSlots[slotIndex],
+  ];
+  return { ...loadout, equippedSlots };
+}
+
+export function unequipSkillFromLoadout(
+  loadout: SkillLoadout,
+  skillId: string
+): SkillLoadout | null {
+  const id = normalizeSkillId(skillId);
+  const equippedSlots = loadout.equippedSlots.filter(
+    (slotId) => normalizeSkillId(slotId) !== id
+  );
+  if (equippedSlots.length === loadout.equippedSlots.length) {
+    return null;
+  }
+  return { ...loadout, equippedSlots };
+}
+
 export function validateEquipLoadout(
   equippedSlots: string[],
   unlockedSkillIds: readonly string[]

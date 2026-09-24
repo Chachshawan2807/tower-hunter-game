@@ -16,13 +16,20 @@ import {
   type BattleLoadoutContext,
 } from "./battleLoadoutContext";
 import { useCombatQueue } from "./use-combat-queue";
+import { inferBattleResultFromEntities } from "../engine/states/battleOutcome";
 import { useBattleAutoSubmit } from "./useBattleEffects";
+import {
+  clearActiveBattlePointer,
+  loadActiveBattlePointer,
+  saveActiveBattlePointer,
+} from "../client/battleSessionPersistence";
 
 export type { BattleLoadoutContext } from "./battleLoadoutContext";
 
 export function useBattle(
   userId: string | null,
-  onComplete?: () => void | Promise<void>
+  onComplete?: () => void | Promise<void>,
+  onResumed?: (floor: number) => void
 ) {
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [floor, setFloor] = useState(1);
@@ -46,6 +53,23 @@ export function useBattle(
   const actionRequiredRef = useRef(false);
   const isCompleteRef = useRef(false);
   const continueBattleRef = useRef<() => Promise<void>>(async () => {});
+  const onResumedRef = useRef(onResumed);
+  onResumedRef.current = onResumed;
+  const resumeGenerationRef = useRef(0);
+  const resumeAttemptedUserRef = useRef<string | null>(null);
+  const applyStepRef = useRef<(step: BattleStepResponse) => void>(() => {});
+
+  const persistActiveSession = useCallback(
+    (activeSessionId: string, battleFloor: number) => {
+      if (!userId) return;
+      saveActiveBattlePointer({
+        userId,
+        sessionId: activeSessionId,
+        floor: battleFloor,
+      });
+    },
+    [userId]
+  );
 
   const animation = useCombatQueue({
     onQueueComplete: (snapshot) => {
@@ -57,7 +81,7 @@ export function useBattle(
         void Promise.resolve(onComplete?.());
         return;
       }
-      if (!actionRequiredRef.current) {
+      if (!actionRequiredRef.current && !isCompleteRef.current) {
         void continueBattleRef.current();
       }
     },
@@ -74,23 +98,42 @@ export function useBattle(
       if (context) setLoadoutContext(context);
 
       const { finalState } = step.animationQueue;
-      setBattleSnapshot(finalState);
-      setIsComplete(step.state.isComplete);
-      isCompleteRef.current = step.state.isComplete;
-      setResult(step.state.result ?? null);
+      const resolvedResult =
+        step.state.result ??
+        (step.state.isComplete
+          ? inferBattleResultFromEntities(finalState)
+          : null) ??
+        inferBattleResultFromEntities(finalState);
 
-      animation.enqueue(step.animationQueue);
+      setBattleSnapshot(finalState);
+      setIsComplete(step.state.isComplete || resolvedResult !== null);
+      isCompleteRef.current =
+        step.state.isComplete || resolvedResult !== null;
+      setResult(resolvedResult);
+
+      if (step.state.isComplete || resolvedResult !== null) {
+        animation.enqueue({ events: [], finalState });
+      } else {
+        animation.enqueue(step.animationQueue);
+      }
 
       if (
         step.animationQueue.events.length === 0 &&
         !step.actionRequired &&
-        !step.state.isComplete
+        !step.state.isComplete &&
+        resolvedResult === null
       ) {
         void continueBattleRef.current();
       }
+
+      persistActiveSession(
+        step.sessionId,
+        step.state.floor ?? finalState.floor
+      );
     },
-    [animation]
+    [animation, persistActiveSession]
   );
+  applyStepRef.current = applyStep;
 
   const syncBattleAfterFlush = useCallback(async () => {
     const activeSession = sessionIdRef.current;
@@ -112,6 +155,70 @@ export function useBattle(
     window.addEventListener(OFFLINE_FLUSH_EVENT, handler);
     return () => window.removeEventListener(OFFLINE_FLUSH_EVENT, handler);
   }, [syncBattleAfterFlush]);
+
+  useEffect(() => {
+    if (!userId) {
+      resumeAttemptedUserRef.current = null;
+      return;
+    }
+    if (resumeAttemptedUserRef.current === userId) return;
+    resumeAttemptedUserRef.current = userId;
+
+    const pointer = loadActiveBattlePointer(userId);
+    if (!pointer) return;
+
+    const generation = ++resumeGenerationRef.current;
+    setBusy(true);
+
+    void (async () => {
+      try {
+        const session = await api.getBattleSession(pointer.sessionId);
+        if (generation !== resumeGenerationRef.current) return;
+
+        if (session.userId !== userId) {
+          clearActiveBattlePointer();
+          return;
+        }
+
+        sessionAutoBattleRef.current = session.state.autoBattle ?? true;
+        animation.reset();
+        setSessionId(session.id);
+        setFloor(session.floor);
+        setTurnNonce(session.turnNonce);
+        setRewards(session.rewards);
+        persistActiveSession(session.id, session.floor);
+
+        const finalState = {
+          entities: session.state.entities,
+          floor: session.state.floor,
+          turnNumber: session.state.turnNumber,
+          isComplete: session.state.isComplete,
+          result: session.state.result,
+        };
+
+        applyStepRef.current({
+          sessionId: session.id,
+          state: session.state,
+          events: [],
+          animationQueue: { events: [], finalState },
+          actionRequired: Boolean(session.waitingActorId),
+          waitingActorId: session.waitingActorId,
+          turnNonce: session.turnNonce,
+          rewards: session.rewards,
+        });
+
+        onResumedRef.current?.(session.floor);
+      } catch (err) {
+        if (generation !== resumeGenerationRef.current) return;
+        console.warn("[battle] Could not resume session:", err);
+        clearActiveBattlePointer();
+      } finally {
+        if (generation === resumeGenerationRef.current) {
+          setBusy(false);
+        }
+      }
+    })();
+  }, [userId, animation, persistActiveSession]);
 
   const startBattle = useCallback(
     async (targetFloor: number) => {
@@ -147,6 +254,7 @@ export function useBattle(
         const session = startResult.data;
         const firstStep = await api.battleStep(session.id, 20);
         setSessionId(session.id);
+        persistActiveSession(session.id, targetFloor);
         setTurnNonce(session.turnNonce);
         const context = extractLoadoutContext(session.state);
         if (context) setLoadoutContext(context);
@@ -160,11 +268,20 @@ export function useBattle(
         setBusy(false);
       }
     },
-    [userId, applyStep, animation]
+    [userId, applyStep, animation, persistActiveSession]
   );
 
   const continueBattle = useCallback(async () => {
-    if (!sessionId || !userId || busy || isComplete || animation.isPlaying) return;
+    if (
+      !sessionId ||
+      !userId ||
+      busy ||
+      isComplete ||
+      isCompleteRef.current ||
+      animation.isPlaying
+    ) {
+      return;
+    }
     setBusy(true);
     try {
       const stepResult = await queueBattleStep(userId, sessionId);
@@ -302,6 +419,7 @@ export function useBattle(
   }, [sessionId, busy, loadoutContext, battleSnapshot, manualSkill]);
 
   const resetBattle = useCallback(() => {
+    clearActiveBattlePointer();
     setSessionId(null);
     setStartError(null);
     setOfflineMessage(null);

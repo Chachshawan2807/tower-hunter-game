@@ -1,9 +1,12 @@
 import { useMemo, useState } from "react";
 import {
+  equipSkillToLoadout,
   getPlayerCatalogSkills,
   getSkillUnlockSpCost,
   getSkillsByType,
   isSkillUnlocked,
+  normalizeSkillId,
+  unequipSkillFromLoadout,
 } from "../../engine/skills";
 import type { SkillDefinition } from "../../engine/skills/types";
 import type { SkillType } from "../../engine/skills/skillTypes";
@@ -17,6 +20,7 @@ import { SkillCategorySection } from "./SkillCategorySection";
 import { SkillMenuTypeFilters } from "./SkillMenuTypeFilters";
 import { SkillStatGrid } from "./SkillStatGrid";
 import { isDefaultExpanded, sortCatalogSkills } from "./skillMenuConstants";
+import { usePersistSkillLoadout } from "../../hooks/usePersistSkillLoadout";
 import { useSkillMenuProgression } from "./useSkillMenuProgression";
 
 interface SkillMenuProps {
@@ -35,6 +39,11 @@ export function SkillMenu({
   const [typeFilter, setTypeFilter] = useState<SkillType | "all">("all");
   const [detailSkill, setDetailSkill] = useState<SkillDefinition | null>(null);
   const progression = useSkillMenuProgression({ userId, onSkillPointsChange });
+  const { saveLoadout, busy: loadoutBusy } = usePersistSkillLoadout(
+    userId,
+    locale,
+    progression.setLoadout
+  );
 
   useDismissOnOutside(
     !isDefaultExpanded(progression.expandedCategories) &&
@@ -69,6 +78,33 @@ export function SkillMenu({
     Boolean(userId) &&
     skillPoints >= detailUnlockCost &&
     progression.unlockingId === null;
+
+  const detailIsEquipped = detailSkill
+    ? progression.loadout.equippedSlots.some(
+        (id) => normalizeSkillId(id) === normalizeSkillId(detailSkill.id)
+      )
+    : false;
+
+  const detailCanEquip =
+    Boolean(detailSkill) &&
+    detailUnlocked &&
+    Boolean(userId) &&
+    !detailIsEquipped &&
+    equipSkillToLoadout(progression.loadout, detailSkill!.id).ok;
+
+  const equipFromCatalogDetail = () => {
+    if (!detailSkill) return;
+    const result = equipSkillToLoadout(progression.loadout, detailSkill.id);
+    if (!result.ok) return;
+    void saveLoadout(result.loadout).then(() => setDetailSkill(null));
+  };
+
+  const unequipFromCatalogDetail = () => {
+    if (!detailSkill) return;
+    const next = unequipSkillFromLoadout(progression.loadout, detailSkill.id);
+    if (!next) return;
+    void saveLoadout(next).then(() => setDetailSkill(null));
+  };
 
   const requestUnlockFromDetail = () => {
     if (!detailSkill) return;
@@ -131,9 +167,18 @@ export function SkillMenu({
           unlocked={detailUnlocked}
           unlockCost={detailUnlockCost}
           canUnlock={detailCanUnlock}
+          equipActionLabel={t("skills.equip_action", locale)}
+          onEquip={detailCanEquip ? equipFromCatalogDetail : undefined}
+          onUnequip={
+            detailUnlocked && detailIsEquipped
+              ? unequipFromCatalogDetail
+              : undefined
+          }
           onUnlockRequest={requestUnlockFromDetail}
           onClose={() => setDetailSkill(null)}
-          busy={progression.unlockingId === detailSkill.id}
+          busy={
+            progression.unlockingId === detailSkill.id || loadoutBusy
+          }
         />
       ) : null}
 

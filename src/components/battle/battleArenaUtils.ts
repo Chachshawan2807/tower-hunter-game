@@ -1,6 +1,8 @@
 import type { BattleSnapshot } from "../../engine/types";
 import type { EntityHpView } from "./battleArenaTypes";
 
+export { resolveBattleOutcomeDisplay } from "../../engine/states/battleOutcome";
+
 export function joinBattleClasses(...parts: (string | false | undefined)[]): string {
   return parts.filter(Boolean).join(" ");
 }

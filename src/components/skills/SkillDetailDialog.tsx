@@ -44,7 +44,9 @@ export function SkillDetailDialog({
   const titleId = useId();
   const closeRef = useRef<HTMLButtonElement>(null);
   const [portalRoot, setPortalRoot] = useState<HTMLElement | null>(null);
-  const [usePanelLayer, setUsePanelLayer] = useState(true);
+  const [portalTarget, setPortalTarget] = useState<
+    "overlay-panel" | "game-frame" | "viewport"
+  >("game-frame");
 
   const name = t(skill.stringId, locale);
   const description = getSkillDescription(skill, locale);
@@ -56,11 +58,17 @@ export function SkillDetailDialog({
     const panel = document.querySelector(".overlay__panel");
     if (panel instanceof HTMLElement) {
       setPortalRoot(panel);
-      setUsePanelLayer(true);
+      setPortalTarget("overlay-panel");
+      return;
+    }
+    const frame = document.querySelector(".game-frame");
+    if (frame instanceof HTMLElement) {
+      setPortalRoot(frame);
+      setPortalTarget("game-frame");
       return;
     }
     setPortalRoot(document.body);
-    setUsePanelLayer(false);
+    setPortalTarget("viewport");
   }, []);
 
   useEffect(() => {
@@ -77,9 +85,12 @@ export function SkillDetailDialog({
     return () => document.removeEventListener("keydown", onKeyDown);
   }, [busy, onClose]);
 
-  const layerClass = usePanelLayer
-    ? "confirm-dialog-layer confirm-dialog-layer--overlay-panel skill-detail-layer"
-    : "confirm-dialog-layer skill-detail-layer skill-detail-layer--viewport";
+  const layerClass =
+    portalTarget === "overlay-panel"
+      ? "confirm-dialog-layer confirm-dialog-layer--overlay-panel skill-detail-layer"
+      : portalTarget === "game-frame"
+        ? "confirm-dialog-layer skill-detail-layer skill-detail-layer--game-frame"
+        : "confirm-dialog-layer skill-detail-layer skill-detail-layer--viewport";
 
   const layer = (
     <div

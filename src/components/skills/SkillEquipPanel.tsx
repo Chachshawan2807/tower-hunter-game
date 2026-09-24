@@ -1,17 +1,17 @@
-import { useCallback, useMemo, useState, type CSSProperties } from "react";
+import { useMemo, useState, type CSSProperties } from "react";
 import {
   getPlayerCatalogSkills,
   isSkillUnlocked,
   MAX_EQUIP_SLOTS,
+  swapAdjacentEquippedSlots,
 } from "../../engine/skills";
 import type { SkillLoadout } from "../../engine/skills/loadout";
 import type { SkillDefinition } from "../../engine/skills/types";
-import { runWithOfflineQueue } from "../../client/offline/queueMutation";
-import { api } from "../../utils/api";
-import { createActionIdempotencyKey } from "../../utils/idempotencyKey";
+import { usePersistSkillLoadout } from "../../hooks/usePersistSkillLoadout";
 import { t, type Locale } from "../../utils/i18n";
 import { SkillDetailDialog } from "./SkillDetailDialog";
 import { SkillEquipSlot } from "./SkillEquipSlot";
+import { SkillEquipPickerFooter } from "./SkillEquipPickerFooter";
 import { SkillEquipSlotPicker } from "./SkillEquipSlotPicker";
 
 interface SkillEquipPanelProps {
@@ -40,9 +40,9 @@ export function SkillEquipPanel({
   canRespec = false,
   onRespecRequest,
 }: SkillEquipPanelProps) {
-  const [busy, setBusy] = useState(false);
   const [activeSlot, setActiveSlot] = useState<number | null>(null);
-  const [queueMessage, setQueueMessage] = useState<string | null>(null);
+  const { saveLoadout, busy, offlineNotice: queueMessage } =
+    usePersistSkillLoadout(userId, locale, onLoadoutChange);
   const [detailSkill, setDetailSkill] = useState<SkillDefinition | null>(null);
   const [detailSlotIndex, setDetailSlotIndex] = useState<number | null>(null);
   const [detailEquippedSlot, setDetailEquippedSlot] = useState<number | null>(
@@ -55,42 +55,6 @@ export function SkillEquipPanel({
         isSkillUnlocked(skill, unlockedSkillIds)
       ),
     [unlockedSkillIds]
-  );
-
-  const saveLoadout = useCallback(
-    async (next: SkillLoadout) => {
-      onLoadoutChange(next);
-      if (!userId) return;
-      setBusy(true);
-      setQueueMessage(null);
-      try {
-        const idempotencyKey = createActionIdempotencyKey(
-          "skill_loadout",
-          userId,
-          next.equippedSlots.join(",")
-        );
-        const result = await runWithOfflineQueue(
-          "skill_loadout",
-          userId,
-          idempotencyKey,
-          { loadoutJson: JSON.stringify(next) },
-          () => api.patchSkillLoadout(userId, next)
-        );
-
-        if (result.status === "queued") {
-          setQueueMessage(t("common.offline_queued", locale));
-          return;
-        }
-        if (result.status === "error") {
-          throw result.error;
-        }
-
-        onLoadoutChange(result.data.loadout);
-      } finally {
-        setBusy(false);
-      }
-    },
-    [userId, onLoadoutChange, locale]
   );
 
   const equippedCount = loadout.equippedSlots.length;
@@ -123,6 +87,13 @@ export function SkillEquipPanel({
     setActiveSlot(null);
   };
 
+  const handleSwap = (slotIndex: number, direction: -1 | 1) => {
+    const next = swapAdjacentEquippedSlots(loadout, slotIndex, direction);
+    if (!next) return;
+    void saveLoadout(next);
+    setActiveSlot(slotIndex + direction);
+  };
+
   const openPickerDetail = (skill: SkillDefinition, slotIndex: number) => {
     setDetailEquippedSlot(null);
     setDetailSkill(skill);
@@ -153,10 +124,10 @@ export function SkillEquipPanel({
 
   const activePickerSkills =
     activeSlot !== null ? pickerForSlot(activeSlot) : [];
-  const activePickerColumns = Math.min(
-    4,
-    Math.max(1, activePickerSkills.length)
-  );
+  const activePickerColumns =
+    activePickerSkills.length > 0
+      ? Math.min(4, activePickerSkills.length)
+      : 1;
   const activeSlotSkillId =
     activeSlot !== null
       ? getSlotSkillId(loadout.equippedSlots, activeSlot)
@@ -252,16 +223,15 @@ export function SkillEquipPanel({
               busy={busy}
               onSkillSelect={(skill) => openPickerDetail(skill, activeSlot)}
             />
-            {activeSlotSkillId ? (
-              <button
-                type="button"
-                className="skill-equip-picker-panel__unequip"
-                disabled={busy}
-                onClick={() => handleUnequip(activeSlot)}
-              >
-                {t("bag.unequip", locale)}
-              </button>
-            ) : null}
+            <SkillEquipPickerFooter
+              locale={locale}
+              loadout={loadout}
+              activeSlot={activeSlot}
+              hasEquippedSkill={Boolean(activeSlotSkillId)}
+              busy={busy}
+              onSwap={(direction) => handleSwap(activeSlot, direction)}
+              onUnequip={() => handleUnequip(activeSlot)}
+            />
           </div>
         ) : null}
       </div>

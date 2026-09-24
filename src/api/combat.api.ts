@@ -35,6 +35,10 @@ export const combatApi = {
     });
   },
 
+  getBattleSession(sessionId: string) {
+    return apiRequest<BattleSessionResponse>(`/api/battle/${sessionId}`);
+  },
+
   battleStep(sessionId: string, maxSteps = 5) {
     return apiRequest<BattleStepResponse>(`/api/battle/${sessionId}/step`, {
       method: "POST",

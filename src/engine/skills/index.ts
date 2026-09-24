@@ -62,6 +62,10 @@ export {
   getBattleSkillsFromLoadout,
   getPassiveSkillsFromLoadout,
   sortSkillsByEquipOrder,
+  equipSkillToLoadout,
+  canSwapAdjacentEquippedSlot,
+  swapAdjacentEquippedSlots,
+  unequipSkillFromLoadout,
   MAX_EQUIP_SLOTS,
   DEFAULT_BATTLE_PREFS,
 } from "./loadout";

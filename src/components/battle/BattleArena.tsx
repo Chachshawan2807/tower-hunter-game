@@ -1,13 +1,21 @@
 import { memo, useCallback, useMemo } from "react";
 
-import { getSkillById, resolveEffectiveSkill } from "../../engine/skills";
+import {
+  getSkillById,
+  isPassiveSkillType,
+  resolveEffectiveSkill,
+} from "../../engine/skills";
 import { EMPTY_SKILL_UPGRADES } from "../../engine/skills/types";
 import { useEntityAnimation } from "../../hooks/useEntityAnimation";
 import { BattleArenaEntities } from "./BattleArenaEntities";
 import { BattleArenaResult } from "./BattleArenaResult";
 import { BattleCommandBar } from "./BattleCommandBar";
 import type { BattleArenaProps } from "./battleArenaTypes";
-import { getEntityHp, joinBattleClasses } from "./battleArenaUtils";
+import {
+  getEntityHp,
+  joinBattleClasses,
+  resolveBattleOutcomeDisplay,
+} from "./battleArenaUtils";
 import { CombatFxCanvas } from "./CombatFxCanvas";
 import { useBattleArenaKeyboard } from "./useBattleArenaKeyboard";
 
@@ -63,6 +71,7 @@ export const BattleArena = memo(function BattleArena({
       const skillId = commandSlotIds[slotIndex];
       if (!skillId) return;
       const base = getSkillById(skillId);
+      if (base.skillType && isPassiveSkillType(base.skillType)) return;
       const effective = resolveEffectiveSkill(
         base,
         playerSkillUpgrades[skillId] ?? EMPTY_SKILL_UPGRADES
@@ -86,7 +95,11 @@ export const BattleArena = memo(function BattleArena({
     slotCount: commandSlotIds.length,
   });
 
-  const showResult = isComplete && result !== null && !isPlaying;
+  const { showResult, outcome } = resolveBattleOutcomeDisplay(
+    snapshot,
+    isComplete,
+    result
+  );
 
   return (
     <div
@@ -119,9 +132,9 @@ export const BattleArena = memo(function BattleArena({
             …
           </p>
         )}
-        {showResult && result ? (
+        {showResult && outcome ? (
           <div className="battle-result-overlay" role="presentation">
-            <BattleArenaResult locale={locale} result={result} onReset={onReset} />
+            <BattleArenaResult locale={locale} result={outcome} onReset={onReset} />
           </div>
         ) : null}
       </div>

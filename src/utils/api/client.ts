@@ -8,6 +8,7 @@ export const api = {
   ...shopApi,
   ...skillsApi,
   startBattle: combatApi.startBattle,
+  getBattleSession: combatApi.getBattleSession,
   battleStep: combatApi.battleStep,
   battleIntent: combatApi.battleIntent,
 };

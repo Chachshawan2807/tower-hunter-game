@@ -1,0 +1,31 @@
+.passive-skill-spin__ring {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 160%;
+  height: 160%;
+  transform: translate(-50%, -50%);
+  background: conic-gradient(
+    from 0deg,
+    var(--ember-400) 0deg,
+    var(--antique-gold) 48deg,
+    rgba(12, 14, 20, 0.15) 96deg,
+    rgba(12, 14, 20, 0.15) 168deg,
+    var(--ember-400) 216deg,
+    var(--antique-gold) 264deg,
+    var(--ember-400) 360deg
+  );
+  pointer-events: none;
+  z-index: 0;
+  will-change: transform;
+}
+
+.passive-skill-spin__face {
+  position: absolute;
+  inset: 2px;
+  border-radius: max(2px, calc(var(--radius-sm) - 2px));
+  background: rgba(12, 14, 20, 0.97);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  pointer-events: none;
+  z-index: 1;
+}
