@@ -26,9 +26,11 @@ public/models/                 # Place .glb / .gltf assets here
 
 ## Enabling 3D
 
-| Flag | Effect |
-|------|--------|
-| `npm run dev:web:3d` / `VITE_RENDER_3D_DEV=1` / `?render3d=1` (dev) | Battle WebGL + optional calibration PiP |
+| Command / flag | Effect |
+|----------------|--------|
+| **`npm run dev`** or **`npm run dev:3d`** | API + Vite with `--mode render3d` (battle WebGL **on** in dev) |
+| `npm run dev:2d` | API + Vite without render3d mode (2D-only unless `?render3d=1`) |
+| `npm run dev:web:3d` | Frontend only (no API) — use `npm run dev` for full stack |
 | `VITE_BATTLE_3D=1` (build) | Battle WebGL in production |
 
 Tower battles flow: `TowerView` → `ZoneBattleArena` → `BattleArena` → lazy `BattleArena3D` + `GameCanvas`.
@@ -40,7 +42,7 @@ Tower battles flow: `TowerView` → `ZoneBattleArena` → `BattleArena` → lazy
 3. `BattleArena` passes `playerAnim` / `enemyAnim` into `BattleScene3D` → `BattleFighterMesh` lerps poses from `fighterPose.ts`.
 4. With 3D on, 2D sprites hide (`hideSprites`); HP bars and HUD stay DOM.
 
-Replace placeholder capsules with glTF when assets land (`public/models/`).
+Battle uses one `public/models/battle-fighter.glb` (clips: `idle`, `attack`, `hit_cc`, `defeat`). Player/enemy tint in `tintFighterMaterials.ts`. Regenerate: `npm run generate:battle-models`.
 
 ## Dev calibration PiP
 

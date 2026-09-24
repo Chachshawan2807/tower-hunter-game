@@ -1,5 +1,10 @@
 export { ART_PALETTE, type ArtPaletteKey } from "./palette";
 export { RENDER_3D_ART } from "./render3d";
+export {
+  BATTLE_FIGHTER_CLIP_NAMES,
+  BATTLE_FIGHTER_GLB_URL,
+  BATTLE_FIGHTER_TARGET_HEIGHT,
+} from "./battleFighterModels";
 export { SKIN_TONES, SKIN_CSS_VARS } from "./skinTones";
 export { mapEventToCharacterState } from "./mapAnimationEvent";
 export { resolveItemWeaponVisual, type ItemWeaponVisual } from "./resolveItemWeaponVisual";

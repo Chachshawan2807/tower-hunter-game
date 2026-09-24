@@ -22,8 +22,19 @@ function runNodeScript(scriptPath, args = []) {
   });
 }
 
+const plain2d = process.argv.includes("--2d");
+const viteArgs = plain2d ? [] : ["--mode", "render3d"];
+
+if (plain2d) {
+  console.log("[dev] Vite default mode (2D-only WebGL off unless ?render3d=1).");
+} else {
+  console.log(
+    "[dev] Vite --mode render3d (API + battle WebGL). Use npm run dev:2d to disable."
+  );
+}
+
 const api = runNodeScript(resolveBin("tsx"), ["watch", "src/server/index.ts"]);
-const web = runNodeScript(resolveBin("vite"));
+const web = runNodeScript(resolveBin("vite"), viteArgs);
 
 let exiting = false;
 

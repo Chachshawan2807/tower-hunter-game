@@ -1,6 +1,9 @@
+import { useEffect } from "react";
+
 import type { AnimationState } from "../../../engine/art/animationStates";
 import { RENDER_3D_ART } from "../../../engine/art/render3d";
 import { BattleFighterMesh } from "./BattleFighterMesh";
+import { preloadBattleFighterModels } from "./battleModelPreload";
 import { floorColorForBattle } from "./zoneFloorColor";
 
 export type BattleScene3DProps = {
@@ -11,6 +14,10 @@ export type BattleScene3DProps = {
 
 export function BattleScene3D({ floor, playerAnim, enemyAnim }: BattleScene3DProps) {
   const floorColor = floorColorForBattle(floor);
+
+  useEffect(() => {
+    preloadBattleFighterModels();
+  }, []);
 
   return (
     <>
