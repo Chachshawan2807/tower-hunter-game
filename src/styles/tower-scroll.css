@@ -62,6 +62,19 @@
   z-index: 1;
 }
 
+.game-viewport.is-tower-battle .stage {
+  padding-top: 0;
+  padding-bottom: var(--overlay-bottom-inset);
+  justify-content: stretch;
+  overflow: hidden;
+}
+
+.game-viewport.is-tower-battle .stage > .tower-view {
+  max-width: 100%;
+  align-self: stretch;
+  min-height: 0;
+}
+
 .tower-scroll {
   width: 100%;
   max-width: 100%;

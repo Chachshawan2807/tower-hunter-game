@@ -6,7 +6,8 @@ import type { OfflineMutationResult } from "../client/offline/queueMutation";
 
 export async function queueBattleStart(
   userId: string,
-  floor: number
+  floor: number,
+  autoBattle = true
 ): Promise<OfflineMutationResult<BattleSessionResponse>> {
   const idempotencyKey = createActionIdempotencyKey(
     "battle_start",
@@ -17,8 +18,8 @@ export async function queueBattleStart(
     "battle_start",
     userId,
     idempotencyKey,
-    { floor: String(floor), autoBattle: "true" },
-    () => api.startBattle(userId, floor, true)
+    { floor: String(floor), autoBattle: String(autoBattle) },
+    () => api.startBattle(userId, floor, autoBattle)
   );
 }
 

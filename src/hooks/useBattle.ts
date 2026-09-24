@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import type { AnimationSpeed } from "./useAnimationQueue";
 import {
   pickSkillForTurn,
 } from "../engine/skills";
@@ -15,7 +16,7 @@ import {
   type BattleLoadoutContext,
 } from "./battleLoadoutContext";
 import { useCombatQueue } from "./use-combat-queue";
-import { useBattleAutoReset, useBattleAutoSubmit } from "./useBattleEffects";
+import { useBattleAutoSubmit } from "./useBattleEffects";
 
 export type { BattleLoadoutContext } from "./battleLoadoutContext";
 
@@ -41,14 +42,23 @@ export function useBattle(
   const startingRef = useRef(false);
   const sessionIdRef = useRef(sessionId);
   sessionIdRef.current = sessionId;
+  const sessionAutoBattleRef = useRef(true);
+  const actionRequiredRef = useRef(false);
+  const isCompleteRef = useRef(false);
+  const continueBattleRef = useRef<() => Promise<void>>(async () => {});
 
   const animation = useCombatQueue({
     onQueueComplete: (snapshot) => {
       setBattleSnapshot(snapshot);
       setIsComplete(snapshot.isComplete);
+      isCompleteRef.current = snapshot.isComplete;
       setResult(snapshot.result ?? null);
       if (snapshot.isComplete) {
         void Promise.resolve(onComplete?.());
+        return;
+      }
+      if (!actionRequiredRef.current) {
+        void continueBattleRef.current();
       }
     },
   });
@@ -57,16 +67,26 @@ export function useBattle(
     (step: BattleStepResponse) => {
       setTurnNonce(step.turnNonce);
       setActionRequired(step.actionRequired);
+      actionRequiredRef.current = step.actionRequired;
       setRewards(step.rewards);
       setOfflineMessage(null);
       const context = extractLoadoutContext(step.state);
       if (context) setLoadoutContext(context);
+
+      const { finalState } = step.animationQueue;
+      setBattleSnapshot(finalState);
+      setIsComplete(step.state.isComplete);
+      isCompleteRef.current = step.state.isComplete;
+      setResult(step.state.result ?? null);
+
       animation.enqueue(step.animationQueue);
 
-      if (step.animationQueue.events.length === 0) {
-        setBattleSnapshot(step.animationQueue.finalState);
-        setIsComplete(step.state.isComplete);
-        setResult(step.state.result ?? null);
+      if (
+        step.animationQueue.events.length === 0 &&
+        !step.actionRequired &&
+        !step.state.isComplete
+      ) {
+        void continueBattleRef.current();
       }
     },
     [animation]
@@ -110,7 +130,11 @@ export function useBattle(
       setFloor(targetFloor);
 
       try {
-        const startResult = await queueBattleStart(userId, targetFloor);
+        const startResult = await queueBattleStart(
+          userId,
+          targetFloor,
+          sessionAutoBattleRef.current
+        );
 
         if (startResult.status === "queued") {
           setOfflineMessage("common.offline_queued");
@@ -121,13 +145,15 @@ export function useBattle(
         }
 
         const session = startResult.data;
+        const firstStep = await api.battleStep(session.id, 20);
         setSessionId(session.id);
         setTurnNonce(session.turnNonce);
         const context = extractLoadoutContext(session.state);
         if (context) setLoadoutContext(context);
-        applyStep(await api.battleStep(session.id, 20));
+        applyStep(firstStep);
       } catch (err) {
         console.error("Failed to start battle:", err);
+        setSessionId(null);
         setStartError(err instanceof Error ? err.message : "Battle failed");
       } finally {
         startingRef.current = false;
@@ -158,6 +184,8 @@ export function useBattle(
       setBusy(false);
     }
   }, [sessionId, userId, busy, isComplete, animation.isPlaying, applyStep]);
+
+  continueBattleRef.current = continueBattle;
 
   const manualSkill = useCallback(
     async (skillId: string, targetId: string) => {
@@ -197,9 +225,60 @@ export function useBattle(
     [sessionId, userId, busy, applyStep, turnNonce]
   );
 
-  const manualAttack = useCallback(
-    async (targetId: string) => manualSkill("basic_attack", targetId),
-    [manualSkill]
+  const setAutoBattle = useCallback(
+    async (enabled: boolean) => {
+      sessionAutoBattleRef.current = enabled;
+      setLoadoutContext((prev) =>
+        prev ? { ...prev, autoBattle: enabled } : prev
+      );
+
+      if (!sessionId || !userId) return;
+
+      setBusy(true);
+      try {
+        const intent: PlayerIntent = {
+          type: "toggle_auto_battle",
+          enabled,
+        };
+        const intentResult = await queueBattleIntent(
+          userId,
+          sessionId,
+          intent,
+          turnNonce,
+          "_toggle_auto",
+          enabled ? "on" : "off"
+        );
+
+        if (intentResult.status === "queued") {
+          setOfflineMessage("common.offline_queued");
+          return;
+        }
+        if (intentResult.status === "error") {
+          throw intentResult.error;
+        }
+
+        applyStep(intentResult.data);
+
+        if (enabled && !intentResult.data.actionRequired) {
+          const stepResult = await queueBattleStep(userId, sessionId);
+          if (stepResult.status === "success") {
+            applyStep(stepResult.data);
+          }
+        }
+      } catch (err) {
+        console.error("Failed to toggle auto battle:", err);
+      } finally {
+        setBusy(false);
+      }
+    },
+    [sessionId, userId, applyStep, turnNonce]
+  );
+
+  const setBattleSpeed = useCallback(
+    (next: AnimationSpeed) => {
+      animation.setSpeed(next === 2 ? 2 : 1);
+    },
+    [animation]
   );
 
   const submitAutoFromPool = useCallback(async () => {
@@ -231,7 +310,9 @@ export function useBattle(
     setBattleSnapshot(null);
     setLoadoutContext(null);
     setActionRequired(false);
+    actionRequiredRef.current = false;
     setIsComplete(false);
+    isCompleteRef.current = false;
     setResult(null);
     setRewards(undefined);
   }, [animation]);
@@ -246,16 +327,8 @@ export function useBattle(
     onSubmit: submitAutoFromPool,
   });
 
-  useBattleAutoReset({
-    enabled:
-      isComplete &&
-      !animation.isPlaying &&
-      result === "win" &&
-      Boolean(loadoutContext?.autoBattle),
-    onReset: resetBattle,
-  });
-
   return {
+    sessionId,
     floor,
     battleSnapshot,
     loadoutContext,
@@ -268,12 +341,12 @@ export function useBattle(
     startError,
     offlineMessage,
     isPlaying: animation.isPlaying,
-    speed: animation.speed,
-    setSpeed: animation.setSpeed,
+    speed: animation.speed === 4 ? 2 : animation.speed,
+    setSpeed: setBattleSpeed,
     skip: animation.skip,
     startBattle,
     continueBattle,
-    manualAttack,
+    setAutoBattle,
     manualSkill,
     submitAutoFromPool,
     resetBattle,

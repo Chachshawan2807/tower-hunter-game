@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { TowerView } from "./components/battle/TowerView";
 import { BottomNav } from "./components/layouts/BottomNav";
 import { GameShell } from "./components/layouts/GameShell";
@@ -16,7 +16,6 @@ import { usePlayerEquipment } from "./hooks/usePlayerEquipment";
 import { useAudioSettings } from "./hooks/useAudioSettings";
 import { useMailboxCount } from "./hooks/useMailboxCount";
 import { useBottomNavKeyboard } from "./hooks/useBottomNavKeyboard";
-import { formatBattleEvent } from "./components/battle/battleLog";
 import { Render3dDevPreview } from "./components/render3d";
 
 export function App() {
@@ -60,24 +59,15 @@ export function App() {
   const isMainView = activeMenu === null;
   const isTowerView = activeMenu === "tower";
 
-  const inTowerBattle =
-    isTowerView &&
-    (battle.displayedEvents.length > 0 ||
-      battle.battleSnapshot !== null ||
-      battle.busy);
+  const activeBattleSession = battle.sessionId !== null;
+  const inTowerBattle = isTowerView && activeBattleSession;
 
-  useTowerAmbient({ active: isTowerView && !inTowerBattle });
+  useTowerAmbient({ active: isTowerView && !activeBattleSession });
   useBattleAudio({
     displayedEvents: battle.displayedEvents,
-    inBattle: inTowerBattle,
+    inBattle: activeBattleSession,
     isPlaying: battle.isPlaying,
   });
-
-  const battleLogEntries = useMemo(() => {
-    return battle.displayedEvents.map((ev) =>
-      formatBattleEvent(ev, locale, battle.battleSnapshot?.entities)
-    );
-  }, [battle.displayedEvents, battle.battleSnapshot?.entities, locale]);
 
   useBottomNavKeyboard(navRef, isAnyOverlayOpen);
 
@@ -86,13 +76,14 @@ export function App() {
   }
 
   return (
-    <GameShell locale={locale} battleLog={battleLogEntries} homeMode={isMainView} towerFloor={isTowerView ? currentFloor : undefined}>
+    <GameShell locale={locale} homeMode={isMainView} towerFloor={isTowerView ? currentFloor : undefined}>
       <div
         className={[
           "game-viewport",
           "view-readable",
           isAnyOverlayOpen ? "is-menu-open" : "",
           isDialogOpen ? "is-dialog-open" : "",
+          inTowerBattle ? "is-tower-battle" : "",
           isTowerView ? "is-dark-stage" : "",
         ]
           .filter(Boolean)
@@ -131,6 +122,7 @@ export function App() {
               playerLevel={player.level}
               playerEquipment={playerEquipment}
               battle={battle}
+              onOpenSettings={openSettings}
             />
           </div>
         )}
@@ -187,7 +179,7 @@ export function App() {
           onSelect={selectTab}
         />
 
-        <Render3dDevPreview suppressed={inTowerBattle} />
+        <Render3dDevPreview suppressed={activeBattleSession} />
       </div>
     </GameShell>
   );

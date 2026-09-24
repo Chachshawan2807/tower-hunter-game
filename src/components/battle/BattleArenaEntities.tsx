@@ -20,6 +20,8 @@ interface BattleArenaEntitiesProps {
   enemyAnim: AnimationState;
   /** When true, HP bars remain; 2D sprites hidden (3D fighters shown). */
   hideSprites?: boolean;
+  /** Minimal layout: HP + names only (no sprites, no VS). */
+  overlayOnly?: boolean;
 }
 
 export function BattleArenaEntities({
@@ -34,16 +36,23 @@ export function BattleArenaEntities({
   playerAnim,
   enemyAnim,
   hideSprites = false,
+  overlayOnly = false,
 }: BattleArenaEntitiesProps) {
+  const spriteHidden = hideSprites || overlayOnly;
+
   return (
     <div
       className={[
         "battle-entities",
-        hideSprites ? "battle-entities--3d-overlay" : "battle-entities--sprites",
+        overlayOnly
+          ? "battle-entities--overlay-only"
+          : hideSprites
+            ? "battle-entities--3d-overlay"
+            : "battle-entities--sprites",
       ].join(" ")}
     >
       <div className="battle-entity-slot battle-entity-slot--player">
-        {!hideSprites ? (
+        {!spriteHidden ? (
           <CharacterFigure
             equipment={playerEquipment}
             path={skillPath}
@@ -65,12 +74,14 @@ export function BattleArenaEntities({
         />
       </div>
 
-      <span className="battle-vs" aria-hidden="true">
-        <GameIcon name="sword-cross" size={22} />
-      </span>
+      {overlayOnly ? null : (
+        <span className="battle-vs" aria-hidden="true">
+          <GameIcon name="sword-cross" size={22} />
+        </span>
+      )}
 
       <div className="battle-entity-slot battle-entity-slot--enemy">
-        {!hideSprites ? (
+        {!spriteHidden ? (
           <CharacterFigure
             side="enemy"
             animState={enemyAnim}

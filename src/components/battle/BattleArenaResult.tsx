@@ -1,4 +1,5 @@
 import { t, type Locale } from "../../utils/i18n";
+import { playUiClick } from "../../hooks/useGameAudio";
 
 interface BattleArenaResultProps {
   locale: Locale;
@@ -11,21 +12,29 @@ export function BattleArenaResult({
   result,
   onReset,
 }: BattleArenaResultProps) {
+  const title =
+    result === "win" ? t("battle.win", locale) : t("battle.lose", locale);
+
   return (
-    <button
-      type="button"
-      className={`result-action result-action--${result}`}
-      onClick={onReset}
-      aria-label={
-        result === "win"
-          ? `${t("battle.win", locale)} — ${t("battle.continue", locale)}`
-          : `${t("battle.lose", locale)} — ${t("battle.continue", locale)}`
-      }
+    <div
+      className={`battle-result-card battle-result-card--${result}`}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="battle-result-title"
     >
-      <span className="result-action__title">
-        {result === "win" ? t("battle.win", locale) : t("battle.lose", locale)}
-      </span>
-      <span className="result-action__hint">{t("battle.continue", locale)}</span>
-    </button>
+      <p id="battle-result-title" className="battle-result-card__title">
+        {title}
+      </p>
+      <button
+        type="button"
+        className="action-btn battle-result-card__continue"
+        onClick={() => {
+          playUiClick();
+          onReset();
+        }}
+      >
+        {t("battle.continue", locale)}
+      </button>
+    </div>
   );
 }

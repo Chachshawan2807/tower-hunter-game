@@ -18,15 +18,13 @@ export interface BattleArenaProps {
   skillPath?: "imperial" | "knight" | "vanguard";
   playerEquipment: CharacterEquipmentVisual;
   onSpeedChange: (speed: AnimationSpeed) => void;
-  onSkip: () => void;
-  onAttack: () => void;
+  onToggleAuto: (enabled: boolean) => void;
+  onOpenSettings: () => void;
   onSkill?: (skillId: string, targetId: string) => void;
-  equippedSlots: string[];
-  passiveSkillIds?: string[];
+  commandSlotIds: string[];
   playerSkillUpgrades?: Record<string, SkillUpgradeRanks>;
   unlockedSkillIds?: string[];
   enemyTargetId?: string;
-  onContinue: () => void;
   onReset: () => void;
 }
 
