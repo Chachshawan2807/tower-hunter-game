@@ -42,7 +42,8 @@ export type GameIconName =
   | "slot-gloves"
   | "slot-boots"
   | "slot-cloak"
-  | "slot-weapon";
+  | "slot-weapon"
+  | "reset-undo";
 
 export interface IconPathDef {
   viewBox: string;

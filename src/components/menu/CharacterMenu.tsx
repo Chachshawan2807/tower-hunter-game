@@ -11,6 +11,7 @@ import type { EquipmentSlot } from "../../engine/art/equipment/slots";
 import type { SkillPath } from "../../engine/types";
 import { CharacterEquipmentPanel } from "../character/CharacterEquipmentPanel";
 import { ConfirmDialog } from "../ui/ConfirmDialog";
+import { ResetUndoIcon } from "../ui/icons";
 import { CharacterStatCard } from "./CharacterStatCard";
 import type { StatusAllocAmount } from "./CharacterStatAllocPicker";
 import { buildCharacterStatRows, totalAllocatedFromStats } from "./characterStatRows";
@@ -215,7 +216,7 @@ export function CharacterMenu({
                 title={t("char.status_reset.aria", locale)}
                 onClick={() => setResetConfirmOpen(true)}
               >
-                {t("char.status_reset", locale)}
+                <ResetUndoIcon />
               </button>
             </span>
           </div>

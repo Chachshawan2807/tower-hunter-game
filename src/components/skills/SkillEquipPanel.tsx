@@ -13,6 +13,7 @@ import { SkillDetailDialog } from "./SkillDetailDialog";
 import { SkillEquipSlot } from "./SkillEquipSlot";
 import { SkillEquipPickerFooter } from "./SkillEquipPickerFooter";
 import { SkillEquipSlotPicker } from "./SkillEquipSlotPicker";
+import { ResetUndoIcon } from "../ui/icons";
 
 interface SkillEquipPanelProps {
   locale: Locale;
@@ -164,7 +165,7 @@ export function SkillEquipPanel({
               title={t("skills.reset.aria", locale)}
               onClick={onRespecRequest}
             >
-              {t("skills.reset", locale)}
+              <ResetUndoIcon />
             </button>
           ) : null}
         </div>

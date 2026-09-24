@@ -43,6 +43,7 @@ export const FILE_ICON_NAMES = new Set<GameIconName>([
   "slot-boots",
   "slot-cloak",
   "slot-weapon",
+  "reset-undo",
 ]);
 
 export function hasFileIcon(name: GameIconName): boolean {
