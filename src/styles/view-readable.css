@@ -128,7 +128,7 @@
 }
 
 .view-readable.is-dark-stage .top-hud .hud-level-badge {
-  color: var(--ink-black);
+  color: var(--text-primary);
   text-shadow:
     0 1px 2px rgba(0, 0, 0, 0.92),
     0 0 10px rgba(0, 0, 0, 0.72);
@@ -192,6 +192,11 @@
   background: var(--surface-readable);
   color: var(--ink-black);
   border-color: var(--antique-gold);
+}
+
+/* Tower lobby — same dark base as overlay tab backdrop (no beige sheet) */
+.view-readable.is-tower-lobby .stage:has(.tower-view:not(.tower-view--battle)) {
+  background: #06080c;
 }
 
 .view-readable .overlay__title {

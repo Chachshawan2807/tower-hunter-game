@@ -4,7 +4,6 @@
   overflow: hidden;
   justify-content: flex-start;
   padding-top: 0;
-  background: transparent;
 }
 
 .stage:has(.tower-view) > .tower-view {
@@ -85,11 +84,11 @@
   gap: 4px;
 }
 
-.tower-floor-block--passed {
+.tower-floor-block--passed .tower-floor-card {
   opacity: 0.52;
 }
 
-.tower-floor-block--active {
+.tower-floor-block--active .tower-floor-card {
   opacity: 1;
 }
 
@@ -151,25 +150,29 @@
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55);
 }
 
-.tower-floor-block--active .tower-floor-block__num {
+.tower-floor-block--active .tower-floor-block__num,
+.tower-floor-block__num--passed {
   color: var(--dark-yellow);
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.65);
 }
 
-/* Matches .skill-icon-tile__lock-overlay — readable badge below locked art */
-.tower-floor-block__num--locked {
+/* Readable badge below floor art — locked + cleared floors */
+.tower-floor-block__num--badged {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   min-width: 1.75rem;
   padding: 3px 7px;
   border-radius: var(--radius-sm);
-  color: var(--crimson-deep);
   background: rgba(255, 252, 245, 0.62);
   border: 1px solid rgba(0, 0, 0, 0.1);
   box-shadow:
     0 1px 2px rgba(0, 0, 0, 0.08),
     0 0 0 1px rgba(255, 255, 255, 0.35) inset;
+}
+
+.tower-floor-block__num--locked {
+  color: var(--crimson-deep);
   text-shadow: 0 0 1px rgba(255, 255, 255, 0.75);
 }
 

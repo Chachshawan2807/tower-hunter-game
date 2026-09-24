@@ -57,7 +57,8 @@ export const TowerFloorBlock = memo(function TowerFloorBlock({
         className={[
           "tower-floor-block__num",
           "tabular-nums",
-          isLocked ? "tower-floor-block__num--locked" : "",
+          isLocked ? "tower-floor-block__num--badged tower-floor-block__num--locked" : "",
+          isPassed ? "tower-floor-block__num--passed" : "",
         ]
           .filter(Boolean)
           .join(" ")}

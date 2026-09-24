@@ -87,17 +87,18 @@ export function App() {
   return (
     <GameShell
       locale={locale}
-      homeMode={isMainView || towerLobbyMode}
+      homeMode={isMainView}
       towerFloor={inTowerBattle ? currentFloor : undefined}
     >
       <div
         className={[
           "game-viewport",
           "view-readable",
-          isAnyOverlayOpen ? "is-menu-open" : "",
+          isAnyOverlayOpen || towerLobbyMode ? "is-menu-open" : "",
+          towerLobbyMode ? "is-tower-lobby" : "",
           isDialogOpen ? "is-dialog-open" : "",
           inTowerBattle ? "is-tower-battle" : "",
-          inTowerBattle ? "is-dark-stage" : "",
+          inTowerBattle || towerLobbyMode ? "is-dark-stage" : "",
         ]
           .filter(Boolean)
           .join(" ")}
