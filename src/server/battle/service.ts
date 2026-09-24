@@ -16,6 +16,7 @@ import { BattleServiceError, wrapValidationError } from "./errors";
 import { validateBattleIntent } from "./intent";
 import { getBattleSession } from "./sessionAccess";
 import { createSession, updateSession } from "./sessionStore";
+import { resolveWaitingAutoTurn } from "./resolveWaitingAutoTurn";
 import { applyAdvanceResult, toStepResponse } from "./stepResponse";
 import type { BattleSession, BattleStepResponse, StartBattleInput } from "./types";
 import { BattleValidationError, validateBattleStart } from "./validation";
@@ -84,12 +85,17 @@ export async function runBattleStep(
 
   const steps = Math.max(1, Math.min(maxSteps, DEFAULT_MAX_STEPS));
 
+  session = resolveWaitingAutoTurn(session);
+
   for (let i = 0; i < steps; i++) {
     if (session.state.isComplete) break;
 
     if (session.waitingActorId && !session.state.autoBattle) {
       break;
     }
+
+    session = resolveWaitingAutoTurn(session);
+    if (session.state.isComplete) break;
 
     const result = advanceBattleStep(session.state);
     session = applyAdvanceResult(session, result);

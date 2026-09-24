@@ -28,6 +28,46 @@ interface UseBattleAutoResetOptions {
   delayMs?: number;
 }
 
+interface UseBattleStallWatchdogOptions {
+  active: boolean;
+  pausedForInput: boolean;
+  busy: boolean;
+  isPlaying: boolean;
+  isComplete: boolean;
+  onResume: () => void | Promise<void>;
+  intervalMs?: number;
+}
+
+/** Nudges battle steps if the client queue stalls with auto or neutral flow. */
+export function useBattleStallWatchdog({
+  active,
+  pausedForInput,
+  busy,
+  isPlaying,
+  isComplete,
+  onResume,
+  intervalMs = 3500,
+}: UseBattleStallWatchdogOptions) {
+  useEffect(() => {
+    if (!active || isComplete || pausedForInput) return;
+
+    const id = window.setInterval(() => {
+      if (busy || isPlaying) return;
+      void onResume();
+    }, intervalMs);
+
+    return () => window.clearInterval(id);
+  }, [
+    active,
+    pausedForInput,
+    busy,
+    isPlaying,
+    isComplete,
+    onResume,
+    intervalMs,
+  ]);
+}
+
 export function useBattleAutoReset({
   enabled,
   onReset,

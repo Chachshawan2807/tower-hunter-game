@@ -8,6 +8,7 @@ import { t, type Locale } from "../../utils/i18n";
 import { playUiClick } from "../../hooks/useGameAudio";
 import { GameIcon } from "../ui/icons";
 import { SkillDetailDialog } from "../skills/SkillDetailDialog";
+import { PassiveSkillSpinFrame } from "../skills/PassiveSkillSpinFrame";
 import { BattleCommandSkillButton } from "./BattleCommandSkillButton";
 
 interface BattleCommandBarProps {
@@ -93,7 +94,10 @@ export function BattleCommandBar({
             aria-pressed={autoBattle}
             aria-label={t("tower.auto", locale)}
           >
-            {t("tower.auto", locale)}
+            {autoBattle ? <PassiveSkillSpinFrame /> : null}
+            <span className="battle-command-btn__label">
+              {t("tower.auto", locale)}
+            </span>
           </button>
         </div>
 

@@ -28,7 +28,8 @@ export function toStepResponse(
     state: session.state,
     events,
     animationQueue: buildAnimationQueue(session, events),
-    actionRequired: Boolean(session.waitingActorId),
+    actionRequired:
+      Boolean(session.waitingActorId) && !session.state.autoBattle,
     waitingActorId: session.waitingActorId,
     turnNonce: session.turnNonce,
     rewards: session.rewards,
@@ -51,7 +52,9 @@ export function applyAdvanceResult(
   const updated =
     updateSession(session.id, {
       state: result.state,
-      waitingActorId: result.waitingActorId,
+      waitingActorId: result.actionRequired
+        ? result.waitingActorId
+        : undefined,
       priorEvents: result.actionRequired
         ? result.turnResult?.events
         : undefined,

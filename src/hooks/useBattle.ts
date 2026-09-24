@@ -17,7 +17,8 @@ import {
 } from "./battleLoadoutContext";
 import { useCombatQueue } from "./use-combat-queue";
 import { inferBattleResultFromEntities } from "../engine/states/battleOutcome";
-import { useBattleAutoSubmit } from "./useBattleEffects";
+import { stepPausesForPlayer } from "./battlePause";
+import { useBattleAutoSubmit, useBattleStallWatchdog } from "./useBattleEffects";
 import {
   clearActiveBattlePointer,
   loadActiveBattlePointer,
@@ -90,8 +91,9 @@ export function useBattle(
   const applyStep = useCallback(
     (step: BattleStepResponse) => {
       setTurnNonce(step.turnNonce);
-      setActionRequired(step.actionRequired);
-      actionRequiredRef.current = step.actionRequired;
+      const pausesForPlayer = stepPausesForPlayer(step);
+      setActionRequired(pausesForPlayer);
+      actionRequiredRef.current = pausesForPlayer;
       setRewards(step.rewards);
       setOfflineMessage(null);
       const context = extractLoadoutContext(step.state);
@@ -119,7 +121,7 @@ export function useBattle(
 
       if (
         step.animationQueue.events.length === 0 &&
-        !step.actionRequired &&
+        !pausesForPlayer &&
         !step.state.isComplete &&
         resolvedResult === null
       ) {
@@ -201,7 +203,8 @@ export function useBattle(
           state: session.state,
           events: [],
           animationQueue: { events: [], finalState },
-          actionRequired: Boolean(session.waitingActorId),
+          actionRequired:
+            Boolean(session.waitingActorId) && !session.state.autoBattle,
           waitingActorId: session.waitingActorId,
           turnNonce: session.turnNonce,
           rewards: session.rewards,
@@ -443,6 +446,15 @@ export function useBattle(
       !animation.isPlaying &&
       !isComplete,
     onSubmit: submitAutoFromPool,
+  });
+
+  useBattleStallWatchdog({
+    active: Boolean(sessionId),
+    pausedForInput: actionRequired,
+    busy,
+    isPlaying: animation.isPlaying,
+    isComplete,
+    onResume: continueBattle,
   });
 
   return {

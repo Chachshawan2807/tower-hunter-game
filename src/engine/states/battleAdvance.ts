@@ -116,6 +116,7 @@ export function handlePlayerIntent(
     return {
       state: { ...state, autoBattle: intent.enabled },
       actionRequired: false,
+      waitingActorId: undefined,
     };
   }
 
