@@ -85,7 +85,7 @@ export function CharacterNameEditor({
     return (
       <form
         ref={formRef}
-        className={`name-editor name-editor--editing name-editor--${variant}`}
+        className={`name-editor name-editor--editing name-editor--${variant} player-display-name`}
         onSubmit={(event) => {
           event.preventDefault();
           void submit();
@@ -97,12 +97,15 @@ export function CharacterNameEditor({
         <input
           ref={inputRef}
           id={inputId}
-          className="name-editor__input"
+          className="name-editor__input player-display-name"
           type="text"
           value={draft}
           maxLength={DISPLAY_NAME_MAX_LENGTH}
           autoComplete="off"
+          autoCapitalize="off"
+          autoCorrect="off"
           spellCheck={false}
+          lang="und"
           disabled={busy}
           aria-invalid={error ? true : undefined}
           aria-describedby={error ? `${inputId}-error` : undefined}
@@ -150,13 +153,14 @@ export function CharacterNameEditor({
       type="button"
       className={[
         "name-editor",
+        "player-display-name",
         variant === "hud" ? "hud-name--inline name-editor--hud" : "name-editor--stage",
       ].join(" ")}
       onClick={startEditing}
       disabled={busy}
       aria-label={t("char.name_edit", locale)}
     >
-      <span className="name-editor__label">{displayName}</span>
+      <span className="name-editor__label player-display-name">{displayName}</span>
       {variant === "stage" ? (
         <span className="name-editor__icon" aria-hidden="true">
           <GameIcon name="settings" size={18} />

@@ -37,6 +37,26 @@ export function TopHud({
   const expRatio = expProgressRatio(level, exp);
   const expPct = Math.round(expRatio * 100);
 
+  const expGauge = (
+    <div className="hud-exp-gauge" aria-label={`EXP ${expPct}%`}>
+      <span className="hud-exp-gauge__label tabular-nums">
+        {t("hud.exp", locale)} {exp.toLocaleString()}
+      </span>
+      <div
+        className="hud-exp-gauge__track"
+        role="progressbar"
+        aria-valuenow={expPct}
+        aria-valuemin={0}
+        aria-valuemax={100}
+      >
+        <div
+          className="hud-exp-gauge__fill"
+          style={{ width: `${expPct}%` }}
+        />
+      </div>
+    </div>
+  );
+
   return (
     <header
       className={`top-hud ${compact ? "top-hud--compact" : ""}`}
@@ -58,28 +78,12 @@ export function TopHud({
                 onSave={onRename}
               />
             ) : compact ? (
-              <span className="hud-name--inline">{displayName}</span>
-            ) : null}
-            {!compact ? (
-              <div className="hud-exp-gauge" aria-label={`EXP ${expPct}%`}>
-                <span className="hud-exp-gauge__label tabular-nums">
-                  {t("hud.exp", locale)} {exp.toLocaleString()}
-                </span>
-                <div
-                  className="hud-exp-gauge__track"
-                  role="progressbar"
-                  aria-valuenow={expPct}
-                  aria-valuemin={0}
-                  aria-valuemax={100}
-                >
-                  <div
-                    className="hud-exp-gauge__fill"
-                    style={{ width: `${expPct}%` }}
-                  />
-                </div>
-              </div>
+              <span className="hud-name--inline player-display-name">
+                {displayName}
+              </span>
             ) : null}
           </div>
+          {expGauge}
         </div>
 
         <div className="hud-chrome__wallet">

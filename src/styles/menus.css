@@ -984,16 +984,25 @@
 
 .char-overlay-title {
   display: inline-flex;
-  align-items: baseline;
-  flex-wrap: nowrap;
-  gap: 0.45rem;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.3rem;
   max-width: 100%;
   min-width: 0;
   font-family: var(--font-stat);
   font-size: 0.95rem;
   font-weight: 700;
-  line-height: 1;
+  line-height: 1.2;
   letter-spacing: 0.04em;
+}
+
+.char-overlay-title__head {
+  display: inline-flex;
+  align-items: baseline;
+  flex-wrap: nowrap;
+  gap: 0.45rem;
+  max-width: 100%;
+  min-width: 0;
 }
 
 .char-overlay-title__level,
@@ -1017,8 +1026,6 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   color: var(--ink-black);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
 }
 
 .char-overlay-title__exp {

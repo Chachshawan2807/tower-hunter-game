@@ -141,6 +141,13 @@
   min-height: 0;
 }
 
+.top-hud--compact .hud-exp-gauge {
+  width: 100%;
+  max-width: min(220px, 100%);
+  flex: none;
+  margin-top: 2px;
+}
+
 .top-hud--compact .hud-chrome {
   align-items: center;
 }
@@ -184,6 +191,14 @@
 .top-hud--compact .hud-level-badge {
   color: var(--ink-black);
   flex-shrink: 0;
+}
+
+.player-display-name,
+.player-display-name .name-editor__label,
+.player-display-name .name-editor__input {
+  font-family: var(--font-player-name);
+  text-transform: none;
+  letter-spacing: normal;
 }
 
 .top-hud--compact .hud-name--inline {
@@ -287,8 +302,7 @@
   font-family: var(--font-display);
   font-size: var(--text-xl);
   font-weight: 800;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
+  letter-spacing: 0.02em;
   cursor: pointer;
 }
 
@@ -419,7 +433,14 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  min-height: var(--touch-min);
+  min-height: 0;
+}
+
+.hud-chrome__identity > .hud-exp-gauge {
+  width: 100%;
+  max-width: min(220px, 100%);
+  flex: none;
+  margin-top: var(--space-1);
 }
 
 .hud-level-badge {

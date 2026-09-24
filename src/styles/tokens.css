@@ -83,6 +83,10 @@
   --font-body: "Barlow", "Noto Sans Thai", system-ui, sans-serif;
   --font-mono: "Barlow", "Noto Sans Thai", system-ui, sans-serif;
   --font-stat: "Barlow Condensed", "Noto Sans Thai", system-ui, sans-serif;
+  /* User display names — preserve mixed case; fall through script-specific Noto families */
+  --font-player-name:
+    "Barlow Condensed", "Noto Sans Thai", "Noto Sans JP", "Noto Sans SC",
+    "Noto Sans KR", "Noto Sans Arabic", "Noto Sans", system-ui, sans-serif;
 
   /* Type scale — mobile-first readable */
   --text-xs: 0.88rem;

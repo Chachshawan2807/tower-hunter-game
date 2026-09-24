@@ -515,8 +515,8 @@
   position: absolute;
   top: 50%;
   z-index: 30;
-  min-width: 108px;
-  max-width: 148px;
+  min-width: 96px;
+  max-width: 132px;
   padding: var(--space-2);
   border-radius: var(--radius-sm);
   background: linear-gradient(
@@ -619,6 +619,7 @@
   color: var(--dark-yellow-deep);
 }
 
+/* Default (touch): open toward center for thumb reach */
 .char-equip-slot-wrap--left .char-equip-tooltip {
   left: calc(100% + 6px);
   right: auto;
@@ -627,6 +628,19 @@
 .char-equip-slot-wrap--right .char-equip-tooltip {
   right: calc(100% + 6px);
   left: auto;
+}
+
+/* Desktop hover: open outward into side margin, not over the hero */
+@media (hover: hover) and (pointer: fine) {
+  .char-equip-slot-wrap--left .char-equip-tooltip {
+    left: auto;
+    right: calc(100% + 6px);
+  }
+
+  .char-equip-slot-wrap--right .char-equip-tooltip {
+    right: auto;
+    left: calc(100% + 6px);
+  }
 }
 
 .char-equip-tooltip__name {

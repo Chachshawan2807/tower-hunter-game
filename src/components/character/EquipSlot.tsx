@@ -1,5 +1,6 @@
-import { useId, useState } from "react";
+import { useId, useRef, useState } from "react";
 import { useDismissOnOutside } from "../../hooks/useDismissOnOutside";
+import { useEquipTooltipPanelInset } from "../../hooks/useEquipTooltipPanelInset";
 import {
   formatStatBonus,
   isEquipmentSlotEquipped,
@@ -51,6 +52,7 @@ export function EquipSlot({
 }: EquipSlotProps) {
   const [hovered, setHovered] = useState(false);
   const tooltipId = useId();
+  const tooltipRef = useRef<HTMLDivElement>(null);
 
   const isEquipped = isEquipmentSlotEquipped(equipment, slot);
   const gearId = equipment.gearIds[slot] ?? "";
@@ -65,6 +67,8 @@ export function EquipSlot({
   const showUnequip = isActive && isEquipped && Boolean(onUnequip);
   const showPicker = isActive && !isEquipped && Boolean(onEquipFromBag);
   const showActions = showUnequip || showPicker;
+
+  useEquipTooltipPanelInset(visible, tooltipRef);
 
   useDismissOnOutside(
     hovered && !hasPinnedTooltip,
@@ -133,6 +137,7 @@ export function EquipSlot({
 
       {visible && (
         <div
+          ref={tooltipRef}
           id={tooltipId}
           className={[
             "char-equip-tooltip",

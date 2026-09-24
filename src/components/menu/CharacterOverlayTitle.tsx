@@ -21,17 +21,19 @@ export function CharacterOverlayTitle({
 }: CharacterOverlayTitleProps) {
   return (
     <span className="char-overlay-title">
-      <span className="char-overlay-title__level tabular-nums">
-        LV {level}
-      </span>
-      <span className="char-overlay-title__sep" aria-hidden="true">
-        ·
-      </span>
-      <span className="char-overlay-title__name" title={displayName}>
-        {displayName}
-      </span>
-      <span className="char-overlay-title__sep" aria-hidden="true">
-        ·
+      <span className="char-overlay-title__head">
+        <span className="char-overlay-title__level tabular-nums">
+          LV {level}
+        </span>
+        <span className="char-overlay-title__sep" aria-hidden="true">
+          ·
+        </span>
+        <span
+          className="char-overlay-title__name player-display-name"
+          title={displayName}
+        >
+          {displayName}
+        </span>
       </span>
       <span className="char-overlay-title__exp tabular-nums">
         {t("hud.exp", locale)} {formatExpProgress(level, exp)}
