@@ -187,7 +187,7 @@ export function App() {
           onSelect={selectTab}
         />
 
-        <Render3dDevPreview />
+        <Render3dDevPreview suppressed={inTowerBattle} />
       </div>
     </GameShell>
   );

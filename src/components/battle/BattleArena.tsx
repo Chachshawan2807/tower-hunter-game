@@ -7,14 +7,16 @@ import { GameIcon } from "../ui/icons";
 import { SkillDetailDialog } from "../skills/SkillDetailDialog";
 import { SkillPassiveRow } from "../skills/SkillPassiveRow";
 import { BattleActiveSkills } from "./BattleActiveSkills";
+import { BattleArena3DSlot } from "./BattleArena3DSlot";
 import { BattleArenaControls } from "./BattleArenaControls";
 import { BattleArenaEntities } from "./BattleArenaEntities";
 import { BattleArenaLog } from "./BattleArenaLog";
 import { BattleArenaResult } from "./BattleArenaResult";
 import type { BattleArenaProps } from "./battleArenaTypes";
-import { getEntityHp } from "./battleArenaUtils";
+import { getEntityHp, joinBattleClasses } from "./battleArenaUtils";
 import { CombatFxCanvas } from "./CombatFxCanvas";
 import { useBattleArenaKeyboard } from "./useBattleArenaKeyboard";
+import { isBattle3dEnabled } from "../../utils/render3dEnv";
 
 export type { BattleArenaProps } from "./battleArenaTypes";
 
@@ -91,19 +93,32 @@ export const BattleArena = memo(function BattleArena({
   const showManualActions =
     actionRequired && !isComplete && !isPlaying && !autoBattle;
   const showResult = isComplete && result !== null && !isPlaying;
+  const battle3d = isBattle3dEnabled();
+  const battleFloor = snapshot?.floor ?? 1;
 
   return (
     <div
-      className={[
+      className={joinBattleClasses(
         "battle-arena",
-        showResult ? "battle-arena--result" : "",
-      ]
-        .filter(Boolean)
-        .join(" ")}
+        showResult && "battle-arena--result",
+        battle3d && "battle-arena--3d"
+      )}
       role="region"
       aria-label="Battle"
     >
-      <div className="battle-arena__frame texture-dark-iron">
+      <div
+        className={joinBattleClasses(
+          "battle-arena__frame texture-dark-iron",
+          battle3d && "battle-arena__frame--3d"
+        )}
+      >
+        {battle3d ? (
+          <BattleArena3DSlot
+            floor={battleFloor}
+            playerAnim={playerAnim}
+            enemyAnim={enemyAnim}
+          />
+        ) : null}
         <CombatFxCanvas displayedEvents={displayedEvents} />
         <BattleArenaControls
           speed={speed}
@@ -122,6 +137,7 @@ export const BattleArena = memo(function BattleArena({
           enemyHp={enemyHp}
           playerAnim={playerAnim}
           enemyAnim={enemyAnim}
+          hideSprites={battle3d}
         />
         <BattleArenaLog
           locale={locale}

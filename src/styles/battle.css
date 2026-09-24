@@ -181,7 +181,44 @@
 
 }
 
+.battle-arena__frame--3d {
+  position: relative;
+  overflow: hidden;
+  min-height: 13.5rem;
+}
 
+.battle-arena__canvas3d {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.battle-arena__canvas3d-inner {
+  width: 100%;
+  height: 100%;
+}
+
+.battle-arena__frame--3d > :not(.battle-arena__canvas3d) {
+  position: relative;
+  z-index: 1;
+}
+
+.battle-entities--3d-overlay {
+  min-height: 9.5rem;
+  align-items: flex-end;
+}
+
+.battle-entities--3d-overlay .battle-entity-label {
+  font-size: var(--text-xs, 0.75rem);
+  font-weight: 600;
+  color: var(--ink-black, #000);
+  opacity: 0.65;
+  min-height: 4.5rem;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
 
 .battle-controls {
 

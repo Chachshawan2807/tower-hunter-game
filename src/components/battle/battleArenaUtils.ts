@@ -1,6 +1,10 @@
 import type { BattleSnapshot } from "../../engine/types";
 import type { EntityHpView } from "./battleArenaTypes";
 
+export function joinBattleClasses(...parts: (string | false | undefined)[]): string {
+  return parts.filter(Boolean).join(" ");
+}
+
 export function getEntityHp(
   snapshot: BattleSnapshot | null,
   side: "player" | "enemy"

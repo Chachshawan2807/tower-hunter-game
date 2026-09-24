@@ -18,6 +18,8 @@ interface BattleArenaEntitiesProps {
   enemyHp: EntityHpView;
   playerAnim: AnimationState;
   enemyAnim: AnimationState;
+  /** When true, HP bars remain; 2D sprites hidden (3D fighters shown). */
+  hideSprites?: boolean;
 }
 
 export function BattleArenaEntities({
@@ -31,19 +33,29 @@ export function BattleArenaEntities({
   enemyHp,
   playerAnim,
   enemyAnim,
+  hideSprites = false,
 }: BattleArenaEntitiesProps) {
   return (
-    <div className="battle-entities battle-entities--sprites">
+    <div
+      className={[
+        "battle-entities",
+        hideSprites ? "battle-entities--3d-overlay" : "battle-entities--sprites",
+      ].join(" ")}
+    >
       <div className="battle-entity-slot battle-entity-slot--player">
-        <CharacterFigure
-          equipment={playerEquipment}
-          path={skillPath}
-          side="player"
-          animState={playerAnim}
-          statusEffects={playerEntity?.statusEffects.map((s) => s.type)}
-          label={t("battle.player", locale)}
-          size="battle"
-        />
+        {!hideSprites ? (
+          <CharacterFigure
+            equipment={playerEquipment}
+            path={skillPath}
+            side="player"
+            animState={playerAnim}
+            statusEffects={playerEntity?.statusEffects.map((s) => s.type)}
+            label={t("battle.player", locale)}
+            size="battle"
+          />
+        ) : (
+          <span className="battle-entity-label">{t("battle.player", locale)}</span>
+        )}
         <HpBar
           label="HP"
           hp={playerHp.hp}
@@ -58,14 +70,18 @@ export function BattleArenaEntities({
       </span>
 
       <div className="battle-entity-slot battle-entity-slot--enemy">
-        <CharacterFigure
-          side="enemy"
-          animState={enemyAnim}
-          floor={snapshot?.floor}
-          statusEffects={enemyEntity?.statusEffects.map((s) => s.type)}
-          label={t("battle.enemy", locale)}
-          size="battle"
-        />
+        {!hideSprites ? (
+          <CharacterFigure
+            side="enemy"
+            animState={enemyAnim}
+            floor={snapshot?.floor}
+            statusEffects={enemyEntity?.statusEffects.map((s) => s.type)}
+            label={t("battle.enemy", locale)}
+            size="battle"
+          />
+        ) : (
+          <span className="battle-entity-label">{t("battle.enemy", locale)}</span>
+        )}
         <HpBar
           label="HP"
           hp={enemyHp.hp}

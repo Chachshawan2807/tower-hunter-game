@@ -24,25 +24,27 @@ src/
 public/models/                 # Place .glb / .gltf assets here
 ```
 
-## Dev preview (smoke test)
+## Enabling 3D
 
-Production builds do **not** load the 3D chunk unless you wire a scene into gameplay.
+| Flag | Effect |
+|------|--------|
+| `npm run dev:web:3d` / `VITE_RENDER_3D_DEV=1` / `?render3d=1` (dev) | Battle WebGL + optional calibration PiP |
+| `VITE_BATTLE_3D=1` (build) | Battle WebGL in production |
 
-Enable in development:
+Tower battles flow: `TowerView` → `ZoneBattleArena` → `BattleArena` → lazy `BattleArena3D` + `GameCanvas`.
 
-1. `npm run dev:web:3d` (loads `.env.render3d`), or
-2. `VITE_RENDER_3D_DEV=1` in `.env`, or
-3. Append `?render3d=1` to the dev URL.
+## Battle animation pipeline
 
-A small picture-in-picture calibration view appears (gold pedestal + grid). Remove or replace when battle 3D ships.
+1. Server emits `AnimationEvent[]`; `useAnimationQueue` exposes `displayedEvents`.
+2. `useEntityAnimation` + `mapEventToCharacterState` (engine) → `AnimationState` per fighter (`idle` / `attack` / `hit_cc` / `defeat`).
+3. `BattleArena` passes `playerAnim` / `enemyAnim` into `BattleScene3D` → `BattleFighterMesh` lerps poses from `fighterPose.ts`.
+4. With 3D on, 2D sprites hide (`hideSprites`); HP bars and HUD stay DOM.
 
-## Adding a battle scene (checklist)
+Replace placeholder capsules with glTF when assets land (`public/models/`).
 
-1. Map `AnimationEvent` → motion in **pure TS** (e.g. `src/components/render3d/battle/`) — no combat math.
-2. Mount `<GameCanvas>` inside `BattleArena` (or swap `TowerView` background) with props from `useBattle`.
-3. Load glTF via `useGLTF` from drei or `GLTFLoader` from three.
-4. Reuse `RENDER_3D_ART` / `ART_PALETTE` for materials; avoid hardcoded hex in meshes.
-5. Keep `dpr` capped via `RENDER_3D_MAX_DPR` for mobile.
+## Dev calibration PiP
+
+When 3D flags are on but you are **not** in a tower battle, a small calibration view may appear. It is suppressed during active battles.
 
 ## Vite
 
