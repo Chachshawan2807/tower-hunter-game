@@ -55,14 +55,15 @@ export const userApi = {
       | "crit_dmg"
       | "resist"
       | "eva"
-      | "acc"
+      | "acc",
+    count = 1
   ) {
     return apiRequest<StatusAllocateResponse>(
       `/api/users/${userId}/stats/allocate`,
       {
         method: "POST",
         maxRetries: 0,
-        body: JSON.stringify({ stat }),
+        body: JSON.stringify({ stat, count }),
       }
     );
   },

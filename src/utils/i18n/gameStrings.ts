@@ -222,6 +222,18 @@ export const GAME_I18N_STRINGS: Record<string, Record<Locale, string>> = {
     en: "Spend {cost} status point (+1 stat)",
     th: "ใช้ {cost} แต้มสถานะ (+1 ค่าสถานะ)",
   },
+  "char.allocate.open_picker": {
+    en: "Choose how many points to add to {stat}",
+    th: "เลือกจำนวนแต้มที่จะเพิ่มให้ {stat}",
+  },
+  "char.allocate.picker_aria": {
+    en: "Add points to {stat}",
+    th: "เพิ่มแต้มให้ {stat}",
+  },
+  "char.allocate.amount_aria": {
+    en: "Add {amount} to {stat}",
+    th: "เพิ่ม {stat} +{amount}",
+  },
   "char.slot.weapon": { en: "Weapon", th: "อาวุธ" },
   "char.slot.helm": { en: "Helm", th: "หมวก" },
   "char.slot.chest": { en: "Armor", th: "เกราะ" },

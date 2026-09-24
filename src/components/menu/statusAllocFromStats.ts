@@ -58,10 +58,16 @@ function readAllocations(stats: PlayerStats): StatusAllocations {
 /** Client-side mirror of server allocateStatusPoint for instant UI feedback. */
 export function optimisticStatusAllocate(
   stats: PlayerStats,
-  stat: StatusStatKey
+  stat: StatusStatKey,
+  times = 1
 ): PlayerStats {
+  if (!Number.isInteger(times) || times < 1) {
+    return stats;
+  }
+
   const statusPoints = stats.status_points ?? 0;
-  if (statusPoints < STATUS_POINT_COST) {
+  const totalCost = times * STATUS_POINT_COST;
+  if (statusPoints < totalCost) {
     return stats;
   }
 
@@ -69,18 +75,18 @@ export function optimisticStatusAllocate(
   const allocColumn = allocationColumnForStat(stat);
   const nextAllocations: StatusAllocations = {
     ...allocations,
-    [allocColumn]: allocations[allocColumn] + 1,
+    [allocColumn]: allocations[allocColumn] + times,
   };
   const merged = mergedPlayerStatsFromAllocations(stats.level, nextAllocations);
   const delta = STATUS_POINT_DELTAS[stat];
-  const hpGain = delta.maxHp ?? 0;
-  const mpGain = delta.maxMp ?? 0;
+  const hpGain = (delta.maxHp ?? 0) * times;
+  const mpGain = (delta.maxMp ?? 0) * times;
   const allocField = ALLOC_DB_FIELD[stat];
 
   return {
     ...stats,
-    status_points: statusPoints - STATUS_POINT_COST,
-    [allocField]: (stats[allocField] ?? 0) + 1,
+    status_points: statusPoints - totalCost,
+    [allocField]: (stats[allocField] ?? 0) + times,
     max_hp: String(merged.maxHp),
     max_mp: String(merged.maxMp),
     atk: String(merged.atk),

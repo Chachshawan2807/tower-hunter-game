@@ -26,11 +26,18 @@ export { StatusAllocationError } from "./statusAllocationHelpers";
 export async function allocateStatusPoint(
   pool: DbPool,
   userId: string,
-  stat: string
+  stat: string,
+  times = 1
 ): Promise<PlayerStatsRow> {
   if (!isStatusStatKey(stat)) {
     throw new StatusAllocationError("Invalid stat", "INVALID_STAT");
   }
+
+  if (!Number.isInteger(times) || times < 1) {
+    throw new StatusAllocationError("Invalid count", "INVALID_COUNT");
+  }
+
+  const totalCost = times * STATUS_POINT_COST;
 
   return withTransaction(pool, async (client) => {
     const stats = await getPlayerStatsForUpdate(client, userId);
@@ -38,7 +45,7 @@ export async function allocateStatusPoint(
       throw new StatusAllocationError("Player stats not found", "STATS_NOT_FOUND");
     }
 
-    if (stats.status_points < STATUS_POINT_COST) {
+    if (stats.status_points < totalCost) {
       throw new StatusAllocationError(
         "Insufficient status points",
         "INSUFFICIENT_POINTS"
@@ -49,20 +56,21 @@ export async function allocateStatusPoint(
     const allocColumn = ALLOC_COLUMNS[stat];
     const nextAllocations = {
       ...allocations,
-      [allocationColumnForStat(stat)]: allocations[allocationColumnForStat(stat)] + 1,
+      [allocationColumnForStat(stat)]:
+        allocations[allocationColumnForStat(stat)] + times,
     };
     const merged = mergedPlayerStatsFromAllocations(stats.level, nextAllocations);
     const formatted = formatMergedStats(merged);
     const delta = STATUS_POINT_DELTAS[stat];
-    const hpGain = delta.maxHp ?? 0;
-    const mpGain = delta.maxMp ?? 0;
+    const hpGain = (delta.maxHp ?? 0) * times;
+    const mpGain = (delta.maxMp ?? 0) * times;
     const nextHp = Number(stats.hp) + hpGain;
     const nextMp = Number(stats.mp) + mpGain;
 
     const result = await client.query<PlayerStatsRow>(
       `UPDATE player_stats
        SET status_points = status_points - $2,
-           ${allocColumn} = ${allocColumn} + 1,
+           ${allocColumn} = ${allocColumn} + $15,
            max_hp = $3,
            max_mp = $4,
            atk = $5,
@@ -80,7 +88,7 @@ export async function allocateStatusPoint(
        RETURNING ${STATS_COLUMNS}`,
       [
         userId,
-        STATUS_POINT_COST,
+        totalCost,
         formatted.maxHp,
         formatted.maxMp,
         formatted.atk,
@@ -93,6 +101,7 @@ export async function allocateStatusPoint(
         formatted.accuracy,
         nextHp.toString(),
         nextMp.toString(),
+        times,
       ]
     );
 

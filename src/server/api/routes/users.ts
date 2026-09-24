@@ -125,14 +125,17 @@ userRoutes.get("/:userId/stats", async (c) => {
 
 userRoutes.post("/:userId/stats/allocate", async (c) => {
   const userId = c.req.param("userId");
-  const body = await c.req.json<{ stat?: string }>();
+  const body = await c.req.json<{ stat?: string; count?: number }>();
 
   if (!body.stat || typeof body.stat !== "string") {
     return c.json({ error: "stat required", code: "INVALID_BODY" }, 400);
   }
 
+  const count =
+    body.count === undefined || body.count === null ? 1 : Number(body.count);
+
   try {
-    const stats = await allocateStatusPoint(c.get("db"), userId, body.stat);
+    const stats = await allocateStatusPoint(c.get("db"), userId, body.stat, count);
     const revision = buildPlayerRevision(stats);
     return jsonBigInt(c, {
       stats,

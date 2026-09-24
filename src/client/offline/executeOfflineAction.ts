@@ -64,7 +64,8 @@ export async function executeOfflineAction(item: OfflineQueueItem): Promise<void
     case "status_allocate":
       await api.allocateStatusPoint(
         item.userId,
-        item.payload.stat as Parameters<typeof api.allocateStatusPoint>[1]
+        item.payload.stat as Parameters<typeof api.allocateStatusPoint>[1],
+        item.payload.count ? Number(item.payload.count) : 1
       );
       return;
 

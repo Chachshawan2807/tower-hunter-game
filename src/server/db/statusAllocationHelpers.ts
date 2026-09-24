@@ -10,6 +10,7 @@ export class StatusAllocationError extends Error {
     message: string,
     readonly code:
       | "INVALID_STAT"
+      | "INVALID_COUNT"
       | "INSUFFICIENT_POINTS"
       | "STATS_NOT_FOUND"
       | "NOTHING_TO_RESET"

@@ -20,6 +20,7 @@
 
 .stat-grid--character {
   grid-template-columns: repeat(5, minmax(0, 1fr));
+  overflow: visible;
 }
 
 .stat-grid__spacer {
@@ -317,6 +318,93 @@
 
 .stat-item__alloc-btn:not(:disabled):active {
   transform: scale(0.92);
+}
+
+.stat-item--alloc-picker-open {
+  position: relative;
+  z-index: 46;
+  overflow: visible;
+}
+
+.stat-item__alloc-btn--active {
+  color: var(--antique-gold, var(--dark-yellow-deep));
+  opacity: 1;
+}
+
+.stat-item__alloc-anchor {
+  position: relative;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+}
+
+.stat-item__alloc-anchor .stat-alloc-picker-panel {
+  top: auto;
+  bottom: calc(100% + 5px);
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
+  min-width: 0;
+  width: max-content;
+  max-width: none;
+  padding: 4px 5px;
+}
+
+.stat-item__alloc-anchor .stat-alloc-picker-panel::before {
+  top: auto;
+  bottom: -7px;
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%) rotate(45deg);
+  border-left: none;
+  border-top: none;
+  border-right: 1px solid rgba(0, 0, 0, 0.14);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.14);
+}
+
+.stat-alloc-picker-panel__grid {
+  display: grid;
+  grid-template-columns: repeat(3, auto);
+  gap: 5px;
+  width: max-content;
+}
+
+.stat-item__alloc-anchor .stat-alloc-picker-panel__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: auto;
+  min-width: 1.5rem;
+  min-height: 1.34rem;
+  padding: 3px 5px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  background: rgba(255, 252, 245, 0.96);
+  color: var(--ink-black);
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  cursor: pointer;
+  pointer-events: auto;
+  transition:
+    background var(--duration-fast),
+    border-color var(--duration-fast);
+}
+
+.stat-item__alloc-anchor .stat-alloc-picker-panel__btn:hover:not(:disabled),
+.stat-item__alloc-anchor .stat-alloc-picker-panel__btn:focus-visible {
+  background: rgba(242, 234, 218, 0.98);
+  border-color: var(--dark-yellow-deep);
+  outline: none;
+}
+
+.stat-item__alloc-anchor .stat-alloc-picker-panel__btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
 }
 
 .char-menu__alloc-message {

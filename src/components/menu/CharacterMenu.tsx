@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { GearStatBonus } from "../../engine/art/equipment";
 import { STATUS_POINT_COST, type StatusStatKey } from "../../engine/formulas/statusPoints";
 import { runWithOfflineQueue } from "../../client/offline/queueMutation";
+import { useDismissOnOutside } from "../../hooks/useDismissOnOutside";
 import { t, type Locale } from "../../utils/i18n";
 import { api, type PlayerStatsResponse } from "../../utils/api";
 import { createActionIdempotencyKey } from "../../utils/idempotencyKey";
@@ -11,6 +12,7 @@ import type { SkillPath } from "../../engine/types";
 import { CharacterEquipmentPanel } from "../character/CharacterEquipmentPanel";
 import { ConfirmDialog } from "../ui/ConfirmDialog";
 import { CharacterStatCard } from "./CharacterStatCard";
+import type { StatusAllocAmount } from "./CharacterStatAllocPicker";
 import { buildCharacterStatRows, totalAllocatedFromStats } from "./characterStatRows";
 import {
   optimisticStatusAllocate,
@@ -53,7 +55,16 @@ export function CharacterMenu({
   const [resetBusy, setResetBusy] = useState(false);
   const [resetConfirmOpen, setResetConfirmOpen] = useState(false);
   const [allocMessage, setAllocMessage] = useState<string | null>(null);
+  const [activeAllocStat, setActiveAllocStat] = useState<StatusStatKey | null>(
+    null
+  );
   const { displayStats, pushStats } = useCharacterMenuStats(stats, onStatsChange);
+
+  useDismissOnOutside(
+    activeAllocStat !== null && !resetConfirmOpen,
+    () => setActiveAllocStat(null),
+    [".stat-item__alloc-anchor", ".stat-alloc-picker-panel"]
+  );
 
   if (!displayStats) {
     return <p className="menu-empty">{t("char.stats", locale)}...</p>;
@@ -66,24 +77,30 @@ export function CharacterMenu({
     statusPoints >= STATUS_POINT_COST && !resetBusy && !resetConfirmOpen;
   const canReset = allocatedTotal > 0 && !resetInteractionBusy && Boolean(userId);
 
-  const handleAllocate = async (stat: StatusStatKey) => {
+  const handleToggleAllocPicker = (stat: StatusStatKey) => {
+    if (!canAllocate || !userId) return;
+    setActiveAllocStat(stat);
+  };
+
+  const handleAllocate = async (stat: StatusStatKey, amount: StatusAllocAmount) => {
     if (!userId || !canAllocate) return;
+    if (statusPoints < amount * STATUS_POINT_COST) return;
     const snapshot = displayStats;
-    pushStats(optimisticStatusAllocate(displayStats, stat));
+    pushStats(optimisticStatusAllocate(displayStats, stat, amount));
     setAllocBusy((prev) => new Set(prev).add(stat));
     setAllocMessage(null);
     try {
       const idempotencyKey = createActionIdempotencyKey(
         "status_allocate",
         userId,
-        stat
+        `${stat}:${amount}`
       );
       const result = await runWithOfflineQueue(
         "status_allocate",
         userId,
         idempotencyKey,
-        { stat },
-        () => api.allocateStatusPoint(userId, stat)
+        { stat, count: String(amount) },
+        () => api.allocateStatusPoint(userId, stat, amount)
       );
 
       if (result.status === "queued") {
@@ -211,7 +228,13 @@ export function CharacterMenu({
               allocBusy={allocBusy}
               userId={userId}
               locale={locale}
-              onAllocate={(key) => void handleAllocate(key)}
+              statusPoints={statusPoints}
+              isPickerOpen={
+                stat.allocStat !== undefined &&
+                activeAllocStat === stat.allocStat
+              }
+              onTogglePicker={handleToggleAllocPicker}
+              onAllocate={(key, amount) => void handleAllocate(key, amount)}
             />
           ))}
         </div>

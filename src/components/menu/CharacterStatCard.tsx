@@ -1,6 +1,10 @@
 import { STATUS_POINT_COST, type StatusStatKey } from "../../engine/formulas/statusPoints";
 import { t, type Locale } from "../../utils/i18n";
 import type { StatRow } from "./characterStatRows";
+import {
+  CharacterStatAllocPicker,
+  type StatusAllocAmount,
+} from "./CharacterStatAllocPicker";
 
 interface CharacterStatCardProps {
   stat: StatRow;
@@ -8,7 +12,10 @@ interface CharacterStatCardProps {
   allocBusy: ReadonlySet<StatusStatKey>;
   userId: string | null;
   locale: Locale;
-  onAllocate: (stat: StatusStatKey) => void;
+  statusPoints: number;
+  isPickerOpen: boolean;
+  onTogglePicker: (stat: StatusStatKey) => void;
+  onAllocate: (stat: StatusStatKey, amount: StatusAllocAmount) => void;
 }
 
 export function CharacterStatCard({
@@ -17,10 +24,15 @@ export function CharacterStatCard({
   allocBusy,
   userId,
   locale,
+  statusPoints,
+  isPickerOpen,
+  onTogglePicker,
   onAllocate,
 }: CharacterStatCardProps) {
   const hasGearBonus = Boolean(stat.gearBonus);
   const allocatable = Boolean(stat.allocStat);
+  const statKey = stat.allocStat;
+  const isBusy = statKey !== undefined && allocBusy.has(statKey);
 
   return (
     <div
@@ -30,31 +42,46 @@ export function CharacterStatCard({
         stat.vital ? "stat-item--vital" : "",
         allocatable ? "stat-item--allocatable" : "",
         allocatable && canAllocate ? "stat-item--alloc-ready" : "",
+        isPickerOpen ? "stat-item--alloc-picker-open" : "",
       ]
         .filter(Boolean)
         .join(" ")}
     >
       <div className="stat-item__head">
         <span className="stat-item__label">{stat.key}</span>
-        {allocatable && (
-          <button
-            type="button"
-            className="stat-item__alloc-btn"
-            disabled={
-              !canAllocate ||
-              !userId ||
-              (stat.allocStat !== undefined && allocBusy.has(stat.allocStat))
-            }
-            aria-label={t("char.allocate.aria", locale, { stat: stat.key })}
-            title={t("char.allocate.hint", locale, { cost: STATUS_POINT_COST })}
-            onClick={() => onAllocate(stat.allocStat!)}
-          >
-            <span className="stat-item__alloc-btn-icon" aria-hidden="true">
-              {stat.allocStat !== undefined && allocBusy.has(stat.allocStat)
-                ? "…"
-                : "+"}
-            </span>
-          </button>
+        {allocatable && statKey && (
+          <span className="stat-item__alloc-anchor">
+            <button
+              type="button"
+              className={[
+                "stat-item__alloc-btn",
+                isPickerOpen ? "stat-item__alloc-btn--active" : "",
+              ]
+                .filter(Boolean)
+                .join(" ")}
+              disabled={!canAllocate || !userId || isBusy}
+              aria-label={t("char.allocate.open_picker", locale, { stat: stat.key })}
+              aria-expanded={isPickerOpen}
+              title={t("char.allocate.hint", locale, { cost: STATUS_POINT_COST })}
+              onClick={(e) => {
+                e.stopPropagation();
+                onTogglePicker(statKey);
+              }}
+            >
+              <span className="stat-item__alloc-btn-icon" aria-hidden="true">
+                {isBusy ? "…" : "+"}
+              </span>
+            </button>
+            {isPickerOpen ? (
+              <CharacterStatAllocPicker
+                locale={locale}
+                statLabel={stat.key}
+                statusPoints={statusPoints}
+                busy={isBusy}
+                onPick={(amount) => onAllocate(statKey, amount)}
+              />
+            ) : null}
+          </span>
         )}
       </div>
 
