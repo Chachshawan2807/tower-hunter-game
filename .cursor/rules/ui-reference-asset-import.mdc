@@ -1,0 +1,43 @@
+---
+description: Import user reference images as UI assets (any source path)
+alwaysApply: true
+---
+
+# UI reference asset import
+
+When the user provides a **reference image path or attachment** and wants UI to match it:
+
+## User input (any path — not limited to Downloads)
+
+- Absolute path, workspace path, or chat attachment
+- Target: which component/button/HUD slot
+- Tint: `currentColor` (semantic crimson/gold) vs fixed art-bible color
+- Optional: crop region, output basename under `public/icons/ui/`
+
+## Pipeline (do not skip)
+
+1. **Read the file** from the path given; verify it exists.
+2. **Export** with Pillow (requires `py -3 -m pip install pillow` once):
+   ```powershell
+   py -3 scripts/export-ui-icon.py --src "<FULL_PATH_TO_REFERENCE>" --out public/icons/ui/<name>.png
+   ```
+   - White/near-white → transparent; silhouette → opaque black (for masking).
+   - Do **not** use JPG/white PNG directly with CSS `mask` (shows as solid square).
+3. **Wire UI** — tinted icons:
+   - `span.game-icon.game-icon--file` + `--icon-mask: url(/icons/ui/<name>.png)` + `background-color: currentColor`
+   - Add `mask-mode: alpha` on that control if needed (see `.stat-item__reset-btn` / `.skill-menu__reset-btn`).
+   - Prefer a small wrapper component (e.g. `ResetUndoIcon`) over inlining URLs.
+4. **Art bible**: readable surfaces use `--ink-black`; danger actions use crimson via parent `color`, not hardcoded fill in the PNG.
+5. **Verify**: user hard-refreshes (Ctrl+F5) after asset change.
+
+## Avoid
+
+- Hand-drawn SVG “close enough” when user supplied a reference file
+- AI-generated PNG with opaque white background for mask icons
+- Hardcoding source paths in repo scripts — CLI `--src` only (see `scripts/export-reset-icon.py` wrapper for reset-undo)
+
+## Re-export example
+
+```powershell
+py -3 scripts/export-reset-icon.py --src "D:\Assets\my-reset.jpg"
+```
