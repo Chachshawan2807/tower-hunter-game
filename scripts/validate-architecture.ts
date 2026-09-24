@@ -99,6 +99,17 @@ checkImportPatterns(
 );
 
 checkImportPatterns(
+  "Engine must not import Three.js / R3F",
+  engineFiles,
+  [
+    /from\s+['"]three['"]/,
+    /from\s+['"]three\//,
+    /from\s+['"]@react-three\//,
+  ],
+  "keep WebGL in src/components/render3d only"
+);
+
+checkImportPatterns(
   "Types layer purity",
   collectTsFiles(join(SRC, "types")),
   [

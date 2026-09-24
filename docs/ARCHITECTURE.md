@@ -186,13 +186,19 @@ src/
 │   ├── skills/         # SkillEquipPanel, SkillListCard
 │   ├── character/      # equipment panel, hero portrait
 │   ├── layouts/        # GameShell, TopHud, BottomNav
+│   ├── render3d/       # Three.js + R3F (optional view; see docs/RENDER_3D.md)
 │   └── zones/          # per-tower-zone arena backgrounds
 ├── utils/api.ts        # Facade — re-exports api/* + legacy helpers
 └── styles/             # Design tokens + layout CSS
 ```
 
+## Optional 3D view (Three.js + R3F)
+
+Combat authority is unchanged. WebGL scenes belong in `src/components/render3d/` behind `GameCanvas`; art constants in `src/engine/art/render3d.ts`. Full setup: [RENDER_3D.md](RENDER_3D.md).
+
 ## Related docs
 
 - [docs/README.md](README.md) — documentation index
+- [RENDER_3D.md](RENDER_3D.md) — Three.js / R3F packages, dev preview, boundaries
 - [.cursorrules](../.cursorrules) — AI/editor coding rules
 - [art-bible/MASTER_ART_BIBLE.md](art-bible/MASTER_ART_BIBLE.md) — visual spec

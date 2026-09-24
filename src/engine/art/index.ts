@@ -1,4 +1,5 @@
 export { ART_PALETTE, type ArtPaletteKey } from "./palette";
+export { RENDER_3D_ART } from "./render3d";
 export { SKIN_TONES, SKIN_CSS_VARS } from "./skinTones";
 export { mapEventToCharacterState } from "./mapAnimationEvent";
 export { resolveItemWeaponVisual, type ItemWeaponVisual } from "./resolveItemWeaponVisual";

@@ -1,0 +1,13 @@
+.render3d-dev-preview {
+  position: fixed;
+  right: 0.75rem;
+  bottom: calc(4.5rem + env(safe-area-inset-bottom, 0px));
+  z-index: 60;
+  width: min(42vw, 17.5rem);
+  height: min(32vh, 12.5rem);
+  overflow: hidden;
+  border: 2px solid var(--ink-black, #000);
+  border-radius: 4px;
+  box-shadow: 0 4px 24px rgb(0 0 0 / 0.45);
+  pointer-events: auto;
+}

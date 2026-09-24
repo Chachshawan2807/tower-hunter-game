@@ -79,6 +79,9 @@ export default defineConfig({
       "react-dom/client",
       "react/jsx-dev-runtime",
       "react/jsx-runtime",
+      "three",
+      "@react-three/fiber",
+      "@react-three/drei",
     ],
   },
   server: {
@@ -93,5 +96,17 @@ export default defineConfig({
   },
   build: {
     outDir: "dist",
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (
+            id.includes("node_modules/three") ||
+            id.includes("node_modules/@react-three")
+          ) {
+            return "vendor-three";
+          }
+        },
+      },
+    },
   },
 });

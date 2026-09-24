@@ -17,6 +17,7 @@ import { useAudioSettings } from "./hooks/useAudioSettings";
 import { useMailboxCount } from "./hooks/useMailboxCount";
 import { useBottomNavKeyboard } from "./hooks/useBottomNavKeyboard";
 import { formatBattleEvent } from "./components/battle/battleLog";
+import { Render3dDevPreview } from "./components/render3d";
 
 export function App() {
   const { locale, toggleLocale } = useLocale();
@@ -185,6 +186,8 @@ export function App() {
           blocked={isDialogOpen}
           onSelect={selectTab}
         />
+
+        <Render3dDevPreview />
       </div>
     </GameShell>
   );

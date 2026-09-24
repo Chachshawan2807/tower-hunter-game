@@ -12,6 +12,7 @@
     "db:check": "tsx scripts/db-check.ts",
     "dev": "node scripts/dev.mjs",
     "dev:web": "vite",
+    "dev:web:3d": "vite --mode render3d",
     "dev:api": "tsx watch src/server/index.ts",
     "build": "vite build",
     "generate:audio": "node scripts/generateAudioAssets.mjs",
@@ -29,14 +30,18 @@
   },
   "dependencies": {
     "@hono/node-server": "^1.13.8",
+    "@react-three/drei": "^10.7.8",
+    "@react-three/fiber": "^9.8.0",
     "dotenv": "^17.4.2",
     "hono": "^4.7.4",
     "pg": "^8.13.1",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "three": "^0.186.0"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@react-three/eslint-plugin": "^0.1.2",
     "@types/node": "^22.13.10",
     "@types/pg": "^8.11.10",
     "@types/react": "^19.0.10",

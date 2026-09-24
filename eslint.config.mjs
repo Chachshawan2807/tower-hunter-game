@@ -1,4 +1,5 @@
 import js from "@eslint/js";
+import { rules as reactThreeEslintRules } from "@react-three/eslint-plugin";
 import tseslint from "typescript-eslint";
 
 export default tseslint.config(
@@ -15,6 +16,18 @@ export default tseslint.config(
         "warn",
         { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
       ],
+    },
+  },
+  {
+    files: ["src/components/render3d/**/*.{ts,tsx}"],
+    plugins: {
+      "@react-three": {
+        rules: reactThreeEslintRules,
+      },
+    },
+    rules: {
+      "@react-three/no-clone-in-loop": "error",
+      "@react-three/no-new-in-loop": "error",
     },
   },
   {
