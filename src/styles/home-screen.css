@@ -1,37 +1,21 @@
 /* Home / Hero showcase — Art Bible §06 + §08 */
 
 .game-frame--home {
-  background-color: var(--surface-stone-warm);
-  background-image:
-    radial-gradient(ellipse 85% 70% at 50% 42%, rgba(255, 248, 230, 0.55) 0%, transparent 62%),
-    radial-gradient(ellipse 100% 100% at 50% 50%, transparent 55%, var(--vignette-edge) 100%),
-    repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 3px,
-      rgba(0, 0, 0, 0.018) 3px,
-      rgba(0, 0, 0, 0.018) 4px
-    ),
-    linear-gradient(
-      180deg,
-      #ede8de 0%,
-      var(--surface-readable) 38%,
-      var(--surface-stone-deep) 100%
-    );
+  background-color: var(--ink-black);
+  background-image: none;
 }
 
 .game-frame--home::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  opacity: 0.35;
-  background-image:
-    linear-gradient(335deg, rgba(0, 0, 0, 0.04) 18px, transparent 18px),
-    linear-gradient(155deg, rgba(0, 0, 0, 0.03) 18px, transparent 18px);
-  background-size: 48px 28px;
-  background-position: 0 0, 24px 0;
+  content: none;
+}
+
+/* Match character overlay EXP (char-overlay-title__exp) */
+.game-frame--home .view-readable .hud-exp-gauge__label {
+  color: var(--crimson-deep);
+}
+
+.game-frame--home .view-readable .hud-exp-gauge__fill {
+  background: var(--crimson-deep);
 }
 
 .main-stage {

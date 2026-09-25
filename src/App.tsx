@@ -98,7 +98,7 @@ export function App() {
           towerLobbyMode ? "is-tower-lobby" : "",
           isDialogOpen ? "is-dialog-open" : "",
           inTowerBattle ? "is-tower-battle" : "",
-          inTowerBattle || towerLobbyMode ? "is-dark-stage" : "",
+          "is-dark-stage",
         ]
           .filter(Boolean)
           .join(" ")}

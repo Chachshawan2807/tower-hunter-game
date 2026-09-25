@@ -7,7 +7,7 @@
 import { ART_PALETTE } from "./palette";
 
 export const RENDER_3D_ART = {
-  backgroundHex: ART_PALETTE.primaryBlackDeep,
+  backgroundHex: ART_PALETTE.inkBlack,
   floorHex: ART_PALETTE.primaryBlack,
   accentHex: ART_PALETTE.antiqueGold,
   dangerHex: ART_PALETTE.crimson,

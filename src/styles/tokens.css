@@ -49,6 +49,7 @@
   --rarity-legendary: var(--antique-gold-deep);
 
   /* Semantic aliases */
+  --bg-canvas: var(--ink-black);
   --bg-deep: var(--primary-black-deep);
   --bg-panel: var(--primary-black);
   --bg-panel-light: var(--stone-800);

@@ -13,7 +13,7 @@ export default defineConfig({
         short_name: "TowerHunter",
         description: "100-floor turn-based tower climbing RPG — Aggressive Minimalism",
         theme_color: "#0d0d0d",
-        background_color: "#0d0d0d",
+        background_color: "#000000",
         display: "standalone",
         orientation: "portrait-primary",
         start_url: "/",

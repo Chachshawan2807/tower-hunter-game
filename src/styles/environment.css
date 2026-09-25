@@ -161,31 +161,15 @@
 }
 
 .env-backdrop--home::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: radial-gradient(
-    ellipse 75% 65% at 50% 45%,
-    transparent 50%,
-    rgba(26, 22, 18, 0.06) 100%
-  );
+  content: none;
 }
 
 .env-fog--home {
-  background: radial-gradient(
-    ellipse 100% 60% at 50% 80%,
-    rgba(218, 165, 32, 0.06) 0%,
-    transparent 60%
-  );
-  opacity: 0.5;
-  animation: env-fog-drift 24s ease-in-out infinite alternate;
+  display: none;
 }
 
 .env-backdrop--home .env-illustration {
-  opacity: 0.2;
-  background-image:
-    radial-gradient(ellipse 40% 25% at 50% 90%, rgba(197, 160, 89, 0.12) 0%, transparent 70%);
+  opacity: 0;
 }
 
 @keyframes env-fog-drift {
