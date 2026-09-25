@@ -70,12 +70,14 @@
   background: rgba(255, 255, 255, 0.22);
   overflow: hidden;
   border: none;
-  box-shadow: none;
+  box-shadow: inset 0 0 0 0.5px rgba(255, 255, 255, 0.55);
 }
 
 .view-readable .hud-exp-gauge__track {
   background: rgba(0, 0, 0, 0.14);
-  border: none;
+  box-shadow:
+    inset 0 0 0 0.5px rgba(255, 255, 255, 0.62),
+    0 0 0 0.5px rgba(13, 13, 13, 0.1);
 }
 
 .hud-exp-gauge__fill {
