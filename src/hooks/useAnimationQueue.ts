@@ -23,6 +23,7 @@ export function useAnimationQueue(options: UseAnimationQueueOptions = {}) {
 
   const queueRef = useRef<AnimationEvent[]>([]);
   const snapshotRef = useRef<BattleSnapshot | null>(null);
+  const isPlayingRef = useRef(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const speedRef = useRef(speed);
   const onCompleteRef = useRef(options.onQueueComplete);
@@ -41,6 +42,7 @@ export function useAnimationQueue(options: UseAnimationQueueOptions = {}) {
     clearTimer();
     queueRef.current = [];
     setFinalState(snapshot);
+    isPlayingRef.current = false;
     setIsPlaying(false);
     onCompleteRef.current?.(snapshot);
   }, []);
@@ -50,7 +52,12 @@ export function useAnimationQueue(options: UseAnimationQueueOptions = {}) {
 
     if (!next) {
       const snapshot = snapshotRef.current;
-      if (snapshot) complete(snapshot);
+      if (snapshot) {
+        complete(snapshot);
+      } else {
+        isPlayingRef.current = false;
+        setIsPlaying(false);
+      }
       return;
     }
 
@@ -77,6 +84,7 @@ export function useAnimationQueue(options: UseAnimationQueueOptions = {}) {
         return;
       }
 
+      isPlayingRef.current = true;
       setIsPlaying(true);
       timerRef.current = setTimeout(tick, BASE_EVENT_MS / speedRef.current);
     },
@@ -96,6 +104,7 @@ export function useAnimationQueue(options: UseAnimationQueueOptions = {}) {
     clearTimer();
     queueRef.current = [];
     snapshotRef.current = null;
+    isPlayingRef.current = false;
     setDisplayedEvents([]);
     setFinalState(null);
     setIsPlaying(false);
@@ -111,6 +120,7 @@ export function useAnimationQueue(options: UseAnimationQueueOptions = {}) {
     displayedEvents,
     finalState,
     isPlaying,
+    isPlayingRef,
     speed,
     skipped,
     setSpeed: changeSpeed,

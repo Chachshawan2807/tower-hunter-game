@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { AnimationSpeed } from "./useAnimationQueue";
 import {
   pickSkillForTurn,
@@ -17,6 +17,7 @@ import {
 } from "./battleLoadoutContext";
 import { useCombatQueue } from "./use-combat-queue";
 import { inferBattleResultFromEntities } from "../engine/states/battleOutcome";
+import { projectSnapshotHpFromEvents, baselineSnapshotBeforeEvents } from "../engine/states/animationHpProjection";
 import { stepPausesForPlayer } from "./battlePause";
 import { useBattleAutoSubmit, useBattleStallWatchdog } from "./useBattleEffects";
 import {
@@ -59,6 +60,8 @@ export function useBattle(
   const resumeGenerationRef = useRef(0);
   const resumeAttemptedUserRef = useRef<string | null>(null);
   const applyStepRef = useRef<(step: BattleStepResponse) => void>(() => {});
+  const battleSnapshotRef = useRef<BattleSnapshot | null>(null);
+  const stepStartSnapshotRef = useRef<BattleSnapshot | null>(null);
 
   const persistActiveSession = useCallback(
     (activeSessionId: string, battleFloor: number) => {
@@ -74,6 +77,8 @@ export function useBattle(
 
   const animation = useCombatQueue({
     onQueueComplete: (snapshot) => {
+      battleSnapshotRef.current = snapshot;
+      stepStartSnapshotRef.current = null;
       setBattleSnapshot(snapshot);
       setIsComplete(snapshot.isComplete);
       isCompleteRef.current = snapshot.isComplete;
@@ -87,6 +92,14 @@ export function useBattle(
       }
     },
   });
+
+  const visibleBattleSnapshot = useMemo(() => {
+    const start = stepStartSnapshotRef.current;
+    if (!animation.isPlaying || !start) {
+      return battleSnapshot;
+    }
+    return projectSnapshotHpFromEvents(start, animation.displayedEvents);
+  }, [animation.isPlaying, animation.displayedEvents, battleSnapshot]);
 
   const applyStep = useCallback(
     (step: BattleStepResponse) => {
@@ -107,11 +120,26 @@ export function useBattle(
           : null) ??
         inferBattleResultFromEntities(finalState);
 
-      setBattleSnapshot(finalState);
-      setIsComplete(step.state.isComplete || resolvedResult !== null);
       isCompleteRef.current =
         step.state.isComplete || resolvedResult !== null;
+
       setResult(resolvedResult);
+
+      const hasAnimatedEvents = step.animationQueue.events.length > 0;
+      if (hasAnimatedEvents) {
+        stepStartSnapshotRef.current =
+          battleSnapshotRef.current ??
+          baselineSnapshotBeforeEvents(
+            finalState,
+            step.animationQueue.events
+          );
+      } else {
+        stepStartSnapshotRef.current = null;
+        setBattleSnapshot(finalState);
+        battleSnapshotRef.current = finalState;
+      }
+
+      setIsComplete(step.state.isComplete || resolvedResult !== null);
 
       if (step.state.isComplete || resolvedResult !== null) {
         animation.enqueue({ events: [], finalState });
@@ -233,6 +261,8 @@ export function useBattle(
       setOfflineMessage(null);
       animation.reset();
       setBattleSnapshot(null);
+      battleSnapshotRef.current = null;
+      stepStartSnapshotRef.current = null;
       setLoadoutContext(null);
       setIsComplete(false);
       setResult(null);
@@ -281,7 +311,7 @@ export function useBattle(
       busy ||
       isComplete ||
       isCompleteRef.current ||
-      animation.isPlaying
+      animation.isPlayingRef.current
     ) {
       return;
     }
@@ -303,7 +333,7 @@ export function useBattle(
     } finally {
       setBusy(false);
     }
-  }, [sessionId, userId, busy, isComplete, animation.isPlaying, applyStep]);
+  }, [sessionId, userId, busy, isComplete, applyStep]);
 
   continueBattleRef.current = continueBattle;
 
@@ -429,6 +459,8 @@ export function useBattle(
     setTurnNonce(null);
     animation.reset();
     setBattleSnapshot(null);
+    battleSnapshotRef.current = null;
+    stepStartSnapshotRef.current = null;
     setLoadoutContext(null);
     setActionRequired(false);
     actionRequiredRef.current = false;
@@ -460,7 +492,7 @@ export function useBattle(
   return {
     sessionId,
     floor,
-    battleSnapshot,
+    battleSnapshot: visibleBattleSnapshot,
     loadoutContext,
     displayedEvents: animation.displayedEvents,
     actionRequired,

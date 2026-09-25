@@ -26,3 +26,4 @@ export {
   type AdvanceBattleResult,
   type AdvanceBattleOptions,
 } from "./battleAdvance";
+export { projectSnapshotHpFromEvents } from "./animationHpProjection";
