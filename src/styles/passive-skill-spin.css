@@ -33,6 +33,7 @@
 /* Thai locale sets `overflow: visible` on buttons — must clip rotating ring hosts. */
 html:lang(th) button.battle-command-btn--auto-on,
 html:lang(th) button.battle-command-skill--passive,
-html:lang(th) button.skill-equip-slot--passive {
+html:lang(th) button.skill-equip-slot--passive,
+html:lang(th) button.bag-item-slot--equipped {
   overflow: hidden;
 }

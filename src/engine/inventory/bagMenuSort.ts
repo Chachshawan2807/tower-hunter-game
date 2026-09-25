@@ -32,7 +32,7 @@ function tieBreak(a: BagMenuSortableRow, b: BagMenuSortableRow): number {
   return a.id.localeCompare(b.id);
 }
 
-export function sortBagMenuInventory<T extends BagMenuSortableRow>(
+function sortByMode<T extends BagMenuSortableRow>(
   items: T[],
   mode: BagMenuSortMode
 ): T[] {
@@ -61,4 +61,26 @@ export function sortBagMenuInventory<T extends BagMenuSortableRow>(
     return diff !== 0 ? diff : tieBreak(a, b);
   });
   return sorted;
+}
+
+export function sortBagMenuInventory<T extends BagMenuSortableRow>(
+  items: T[],
+  mode: BagMenuSortMode,
+  equippedGearIds?: ReadonlySet<string>
+): T[] {
+  if (!equippedGearIds || equippedGearIds.size === 0) {
+    return sortByMode(items, mode);
+  }
+
+  const equipped: T[] = [];
+  const rest: T[] = [];
+  for (const row of items) {
+    if (equippedGearIds.has(row.item_id)) {
+      equipped.push(row);
+    } else {
+      rest.push(row);
+    }
+  }
+
+  return [...sortByMode(equipped, mode), ...sortByMode(rest, mode)];
 }

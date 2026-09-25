@@ -56,9 +56,18 @@ export function BagMenu({
     8_000
   );
   const inventory = inventoryQuery.data ?? [];
+  const equippedGearIds = useMemo(
+    () =>
+      new Set(
+        Object.values(equipment.gearIds).filter(
+          (gearId): gearId is string => Boolean(gearId)
+        )
+      ),
+    [equipment.gearIds]
+  );
   const sortedInventory = useMemo(
-    () => sortBagMenuInventory(inventory, sortMode),
-    [inventory, sortMode]
+    () => sortBagMenuInventory(inventory, sortMode, equippedGearIds),
+    [inventory, sortMode, equippedGearIds]
   );
   const loading = inventoryQuery.loading;
 
@@ -133,9 +142,6 @@ export function BagMenu({
   const selectedItem = inventory.find((item) => item.id === selectedId) ?? null;
   const pendingSellItem =
     inventory.find((item) => item.id === pendingSellId) ?? null;
-  const equippedGearIds = new Set(
-    Object.values(equipment.gearIds).filter((gearId): gearId is string => Boolean(gearId))
-  );
 
   return (
     <div className="bag-menu">
@@ -202,6 +208,7 @@ export function BagMenu({
             ),
           })}
           confirmLabel={t("bag.sell", locale)}
+          confirmTone="crimson"
           busy={sellBusy}
           onConfirm={confirmSell}
           onCancel={() => setPendingSellId(null)}

@@ -194,6 +194,97 @@
   border-color: var(--antique-gold);
 }
 
+/* Menu overlays — black sheet behind readable tiles (skill, bag, character, shop) */
+.view-readable
+  .overlay__panel:has(
+    .overlay__body > :is(.skill-menu, .bag-menu, .char-menu, .shop-menu)
+  ) {
+  background: var(--ink-black);
+  background-image: none;
+  filter: none;
+}
+
+.view-readable
+  .overlay__panel:has(
+    .overlay__body > :is(.skill-menu, .bag-menu, .char-menu, .shop-menu)
+  )
+  .overlay__header {
+  background: var(--ink-black);
+  border-bottom-color: rgba(255, 255, 255, 0.12);
+}
+
+.view-readable
+  .overlay__panel:has(
+    .overlay__body > :is(.skill-menu, .bag-menu, .char-menu, .shop-menu)
+  )
+  .overlay__title {
+  color: #ffffff;
+}
+
+.view-readable
+  .overlay__panel:has(
+    .overlay__body > :is(.skill-menu, .bag-menu, .char-menu, .shop-menu)
+  )
+  .overlay__header
+  .icon-btn--close,
+.view-readable
+  .overlay__panel:has(
+    .overlay__body > :is(.skill-menu, .bag-menu, .char-menu, .shop-menu)
+  )
+  .overlay__header
+  .icon-btn--close
+  .game-icon {
+  color: #ffffff;
+}
+
+.view-readable
+  .overlay__panel:has(.overlay__body > .skill-menu)
+  .skill-overlay-title__label,
+.view-readable
+  .overlay__panel:has(.overlay__body > :is(.bag-menu, .char-menu, .shop-menu))
+  .overlay__title {
+  color: #ffffff;
+}
+
+.view-readable
+  .overlay__panel:has(.overlay__body > .shop-menu)
+  .shop-overlay-title__label {
+  color: #ffffff;
+}
+
+.view-readable
+  .overlay__panel:has(.overlay__body > .char-menu)
+  .char-overlay-title__level,
+.view-readable
+  .overlay__panel:has(.overlay__body > .char-menu)
+  .char-overlay-title__name {
+  color: #ffffff;
+}
+
+.view-readable
+  .overlay__body:has(
+    > :is(.skill-menu, .bag-menu, .char-menu, .shop-menu)
+  ) {
+  background: var(--ink-black);
+}
+
+.view-readable .overlay__body:has(> .skill-menu) .menu-empty,
+.view-readable .overlay__body:has(> .bag-menu) .menu-empty,
+.view-readable .overlay__body:has(> .bag-menu) .bag-equip-message,
+.view-readable .overlay__body:has(> .char-menu) .menu-empty,
+.view-readable .overlay__body:has(> .shop-menu) .menu-empty,
+.view-readable .overlay__body:has(> .shop-menu) .shop-message {
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.view-readable .overlay__body:has(> .skill-menu) > .skill-menu,
+.view-readable .overlay__body:has(> .bag-menu) > .bag-menu,
+.view-readable .overlay__body:has(> .char-menu) > .char-menu,
+.view-readable .overlay__body:has(> .shop-menu) > .shop-menu {
+  background: transparent;
+  color: inherit;
+}
+
 /* Tower lobby — same dark base as overlay tab backdrop (no beige sheet) */
 .view-readable.is-tower-lobby .stage:has(.tower-view:not(.tower-view--battle)) {
   background: #06080c;
@@ -275,6 +366,15 @@
 .view-readable .skill-path-tab--active {
   background: rgba(197, 160, 89, 0.22);
   border-color: var(--antique-gold-deep);
+  color: var(--ink-black);
+}
+
+.view-readable .skill-filter-btn--active {
+  color: var(--ink-black);
+  border: 2px solid var(--antique-gold-deep);
+}
+
+.view-readable .skill-filter-btn--active:hover {
   color: var(--ink-black);
 }
 

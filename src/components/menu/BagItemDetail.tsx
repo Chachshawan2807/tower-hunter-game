@@ -116,7 +116,7 @@ export function BagItemDetail({
         {showSell ? (
           <button
             type="button"
-            className="bag-item__sell-btn"
+            className="bag-item__sell-btn ui-btn--crimson-danger"
             disabled={actionBusy}
             onClick={() => onSellRequest(id)}
           >
