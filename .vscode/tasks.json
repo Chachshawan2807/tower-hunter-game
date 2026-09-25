@@ -1,0 +1,33 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    { "label": "dev", "type": "shell", "command": "npm run dev", "problemMatcher": [], "group": "build" },
+    { "label": "dev:3d", "type": "shell", "command": "npm run dev:3d", "problemMatcher": [] },
+    { "label": "dev:2d", "type": "shell", "command": "npm run dev:2d", "problemMatcher": [] },
+    { "label": "dev:web", "type": "shell", "command": "npm run dev:web", "problemMatcher": [] },
+    { "label": "dev:web:3d", "type": "shell", "command": "npm run dev:web:3d", "problemMatcher": [] },
+    { "label": "dev:api", "type": "shell", "command": "npm run dev:api", "problemMatcher": [] },
+    { "label": "build", "type": "shell", "command": "npm run build", "problemMatcher": [], "group": "build" },
+    { "label": "preview", "type": "shell", "command": "npm run preview", "problemMatcher": [] },
+    { "label": "start", "type": "shell", "command": "npm run start", "problemMatcher": [] },
+    { "label": "typecheck", "type": "shell", "command": "npm run typecheck", "problemMatcher": [] },
+    { "label": "lint", "type": "shell", "command": "npm run lint", "problemMatcher": [] },
+    { "label": "lint:strict", "type": "shell", "command": "npm run lint:strict", "problemMatcher": [] },
+    { "label": "validate", "type": "shell", "command": "npm run validate", "problemMatcher": [], "group": "test" },
+    { "label": "seed", "type": "shell", "command": "npm run seed", "problemMatcher": [] },
+    { "label": "db:check", "type": "shell", "command": "npm run db:check", "problemMatcher": [] },
+    { "label": "generate:audio", "type": "shell", "command": "npm run generate:audio", "problemMatcher": [] },
+    { "label": "generate:sprites", "type": "shell", "command": "npm run generate:sprites", "problemMatcher": [] },
+    { "label": "generate:battle-models", "type": "shell", "command": "npm run generate:battle-models", "problemMatcher": [] },
+    { "label": "export:nav", "type": "shell", "command": "npm run export:nav", "problemMatcher": [] },
+    { "label": "export:equip-slots", "type": "shell", "command": "npm run export:equip-slots", "problemMatcher": [] },
+    { "label": "export:equip-items", "type": "shell", "command": "npm run export:equip-items", "problemMatcher": [] },
+    { "label": "export:icons", "type": "shell", "command": "npm run export:icons", "problemMatcher": [] },
+    { "label": "export:mailbox-icon", "type": "shell", "command": "npm run export:mailbox-icon", "problemMatcher": [] },
+    { "label": "export:hero", "type": "shell", "command": "npm run export:hero", "problemMatcher": [] },
+    { "label": "import:skill-icons", "type": "shell", "command": "npm run import:skill-icons", "problemMatcher": [] },
+    { "label": "split:equipment-sheet", "type": "shell", "command": "npm run split:equipment-sheet", "problemMatcher": [] },
+    { "label": "split:hero-turnaround", "type": "shell", "command": "npm run split:hero-turnaround", "problemMatcher": [] },
+    { "label": "fetch:audio", "type": "shell", "command": "npm run fetch:audio", "problemMatcher": [] }
+  ]
+}
