@@ -14,6 +14,7 @@ import { createActionIdempotencyKey } from "../../utils/idempotencyKey";
 import { formatDialogMessage } from "../../utils/formatDialogMessage";
 import { formatGoldAmount } from "../../utils/formatGold";
 import { t, type Locale } from "../../utils/i18n";
+import { ItemStatBonusLine } from "../items/ItemStatBonusLine";
 import { GameIcon } from "../ui/icons";
 import { ShopCategorySection } from "./ShopCategorySection";
 import { ShopItemIcon } from "./ShopItemIcon";
@@ -176,7 +177,9 @@ export function ShopMenu({
                       aria-label={t("char.stats", locale)}
                     >
                       {item.statPreview.map((line) => (
-                        <li key={line}>{line}</li>
+                        <li key={line}>
+                          <ItemStatBonusLine line={line} />
+                        </li>
                       ))}
                     </ul>
                     <button

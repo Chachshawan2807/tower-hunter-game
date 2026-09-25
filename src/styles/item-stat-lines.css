@@ -1,0 +1,31 @@
+.item-stat-line__label {
+  color: var(--ink-black);
+}
+
+.item-stat-line__value {
+  color: var(--dark-yellow-deep);
+}
+
+.view-readable .item-stat-line__value {
+  color: var(--dark-yellow-deep);
+}
+
+.bag-slot-detail__expiry-label {
+  color: var(--ink-black);
+}
+
+.bag-slot-detail__expiry-date {
+  color: var(--crimson-deep);
+}
+
+.view-readable .bag-slot-detail__expiry-label {
+  color: var(--ink-black);
+}
+
+.view-readable .bag-slot-detail__expiry-date {
+  color: var(--crimson-deep);
+}
+
+.view-readable .bag-slot-detail .bag-item__equipped-label {
+  color: var(--ink-black);
+}

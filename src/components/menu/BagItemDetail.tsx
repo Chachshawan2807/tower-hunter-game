@@ -13,6 +13,7 @@ import type { SkillPath } from "../../engine/types";
 import type { EquipmentSlot } from "../../engine/art/equipment/slots";
 import { t, type Locale } from "../../utils/i18n";
 import { resolveItemLabel } from "../../utils/itemLabel";
+import { ItemStatBonusLines } from "../items/ItemStatBonusLine";
 
 export interface BagItemDetailProps {
   id: string;
@@ -79,15 +80,19 @@ export function BagItemDetail({
           <p className="bag-slot-detail__name">{displayName}</p>
         </div>
         {statLines.length > 0 && (
-          <ul className="bag-slot-detail__stat-lines">
-            {statLines.map((line) => (
-              <li key={line}>{line}</li>
-            ))}
-          </ul>
+          <ItemStatBonusLines
+            lines={statLines}
+            className="bag-slot-detail__stat-lines"
+          />
         )}
         {expiresAt && (
           <p className="bag-slot-detail__expiry">
-            {t("bag.expires", locale)}: {new Date(expiresAt).toLocaleDateString()}
+            <span className="bag-slot-detail__expiry-label">
+              {t("bag.expires", locale)}:
+            </span>{" "}
+            <span className="bag-slot-detail__expiry-date tabular-nums">
+              {new Date(expiresAt).toLocaleDateString()}
+            </span>
           </p>
         )}
       </div>

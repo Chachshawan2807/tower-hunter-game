@@ -294,10 +294,6 @@
   color: var(--antique-gold-deep);
 }
 
-.view-readable .bag-slot-detail__expiry {
-  color: var(--crimson-deep);
-}
-
 .view-readable .bag-item__expiry {
   color: var(--crimson-deep);
 }

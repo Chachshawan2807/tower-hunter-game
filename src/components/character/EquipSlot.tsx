@@ -10,6 +10,7 @@ import type { EquipmentSlot } from "../../engine/art/equipment/slots";
 import type { InventoryBagEntry } from "../../engine/art/equipment/slotInventory";
 import type { CharacterEquipmentVisual } from "../../engine/art/equipment/catalog";
 import type { SkillPath } from "../../engine/types";
+import { ItemStatBonusLines } from "../items/ItemStatBonusLine";
 import { EquipmentItemIcon } from "../items/EquipmentItemIcon";
 import { EquipSlotPicker } from "./EquipSlotPicker";
 import { t, type Locale } from "../../utils/i18n";
@@ -160,11 +161,10 @@ export function EquipSlot({
             <p className="char-equip-tooltip__empty">{slotName}</p>
           )}
           {isEquipped && bonusLines.length > 0 && (
-            <ul className="char-equip-tooltip__stats">
-              {bonusLines.map((line) => (
-                <li key={line}>{line}</li>
-              ))}
-            </ul>
+            <ItemStatBonusLines
+              lines={bonusLines}
+              className="char-equip-tooltip__stats"
+            />
           )}
           {showPicker && (
             <EquipSlotPicker
@@ -180,7 +180,7 @@ export function EquipSlot({
           {showUnequip && (
             <button
               type="button"
-              className="char-equip-tooltip__unequip"
+              className="char-equip-tooltip__unequip ui-btn--crimson-danger"
               disabled={unequipBusy}
               onClick={(e) => {
                 e.stopPropagation();

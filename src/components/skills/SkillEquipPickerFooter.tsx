@@ -32,7 +32,7 @@ export function SkillEquipPickerFooter({
     <div className="skill-equip-picker-panel__footer">
       <button
         type="button"
-        className="skill-equip-picker-panel__unequip"
+        className="skill-equip-picker-panel__unequip ui-btn--crimson-danger"
         disabled={busy}
         onClick={onUnequip}
       >

@@ -139,7 +139,7 @@ export function SkillDetailDialog({
             <button
               ref={closeRef}
               type="button"
-              className="confirm-dialog__btn confirm-dialog__btn--confirm"
+              className="confirm-dialog__btn confirm-dialog__btn--confirm-crimson"
               disabled={busy}
               onClick={onUnequip}
             >
@@ -147,55 +147,55 @@ export function SkillDetailDialog({
             </button>
           ) : (
             <>
-          <button
-            ref={closeRef}
-            type="button"
-            className="confirm-dialog__btn confirm-dialog__btn--cancel"
-            disabled={busy}
-            onClick={onClose}
-          >
-            {t("dialog.cancel", locale)}
-          </button>
-          {onPickSkill ? (
-            <button
-              type="button"
-              className="confirm-dialog__btn confirm-dialog__btn--confirm"
-              disabled={busy}
-              onClick={onPickSkill}
-            >
-              {pickSkillActionLabel ?? t("skills.equip_pick_skill", locale)}
-            </button>
-          ) : null}
-          {onEquip ? (
-            <button
-              type="button"
-              className="confirm-dialog__btn confirm-dialog__btn--confirm"
-              disabled={busy}
-              onClick={onEquip}
-            >
-              {equipActionLabel ?? t("skills.equip_add", locale)}
-            </button>
-          ) : null}
-          {!unlocked && canUnlock && onUnlockRequest ? (
-            <button
-              type="button"
-              className="confirm-dialog__btn confirm-dialog__btn--confirm"
-              disabled={busy}
-              onClick={onUnlockRequest}
-            >
-              {t("skills.unlock_confirm_action", locale)}
-            </button>
-          ) : null}
-          {onUnequip && !unequipOnly ? (
-            <button
-              type="button"
-              className="confirm-dialog__btn confirm-dialog__btn--confirm"
-              disabled={busy}
-              onClick={onUnequip}
-            >
-              {unequipActionLabel ?? t("bag.unequip", locale)}
-            </button>
-          ) : null}
+              <button
+                ref={closeRef}
+                type="button"
+                className="confirm-dialog__btn confirm-dialog__btn--cancel"
+                disabled={busy}
+                onClick={onClose}
+              >
+                {t("dialog.cancel", locale)}
+              </button>
+              {onPickSkill ? (
+                <button
+                  type="button"
+                  className="confirm-dialog__btn confirm-dialog__btn--confirm"
+                  disabled={busy}
+                  onClick={onPickSkill}
+                >
+                  {pickSkillActionLabel ?? t("skills.equip_pick_skill", locale)}
+                </button>
+              ) : null}
+              {onEquip ? (
+                <button
+                  type="button"
+                  className="confirm-dialog__btn confirm-dialog__btn--confirm"
+                  disabled={busy}
+                  onClick={onEquip}
+                >
+                  {equipActionLabel ?? t("skills.equip_add", locale)}
+                </button>
+              ) : null}
+              {!unlocked && canUnlock && onUnlockRequest ? (
+                <button
+                  type="button"
+                  className="confirm-dialog__btn confirm-dialog__btn--confirm"
+                  disabled={busy}
+                  onClick={onUnlockRequest}
+                >
+                  {t("skills.unlock_confirm_action", locale)}
+                </button>
+              ) : null}
+              {onUnequip && !unequipOnly ? (
+                <button
+                  type="button"
+                  className="confirm-dialog__btn confirm-dialog__btn--confirm-crimson"
+                  disabled={busy}
+                  onClick={onUnequip}
+                >
+                  {unequipActionLabel ?? t("bag.unequip", locale)}
+                </button>
+              ) : null}
             </>
           )}
         </div>

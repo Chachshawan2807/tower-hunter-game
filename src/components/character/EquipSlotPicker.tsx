@@ -8,6 +8,7 @@ import type { ItemRarityVisual } from "../../engine/art/weaponTypes";
 import type { SkillPath } from "../../engine/types";
 import { resolveItemLabel } from "../../utils/itemLabel";
 import { t, type Locale } from "../../utils/i18n";
+import { ItemStatBonusLine } from "../items/ItemStatBonusLine";
 import { EquipmentItemIcon } from "../items/EquipmentItemIcon";
 
 interface EquipSlotPickerProps {
@@ -79,7 +80,7 @@ export function EquipSlotPicker({
                   <ul className="char-equip-picker__stats">
                     {statLines.map((line) => (
                       <li key={line} className="char-equip-picker__stat">
-                        {line}
+                        <ItemStatBonusLine line={line} />
                       </li>
                     ))}
                   </ul>

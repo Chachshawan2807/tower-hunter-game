@@ -668,9 +668,6 @@
   margin: 0;
   padding: 0.35rem 0.45rem;
   border-radius: var(--radius-sm);
-  border: 1px solid rgba(0, 0, 0, 0.2);
-  background: rgba(255, 252, 245, 0.96);
-  color: var(--ink-black);
   font-family: var(--font-body);
   font-size: 0.62rem;
   font-weight: 700;
@@ -682,14 +679,8 @@
   pointer-events: auto;
   transition:
     background var(--duration-fast),
-    border-color var(--duration-fast);
-}
-
-.skill-equip-picker-panel__unequip:hover:not(:disabled),
-.skill-equip-picker-panel__unequip:focus-visible {
-  background: rgba(242, 234, 218, 0.98);
-  border-color: var(--dark-yellow-deep);
-  outline: none;
+    border-color var(--duration-fast),
+    box-shadow var(--duration-fast);
 }
 
 .skill-equip-picker-panel__unequip:disabled {
@@ -1447,7 +1438,7 @@
   text-align: center;
   font-size: 0.62rem;
   line-height: 1.25;
-  color: var(--text-muted);
+  color: var(--ink-black);
   flex-shrink: 0;
   min-height: calc(0.62rem * 1.25 * 2);
 }
@@ -1812,7 +1803,7 @@
   font-size: 0.6rem;
   font-weight: 700;
   font-family: var(--font-mono);
-  color: var(--dark-yellow-deep);
+  color: var(--ink-black);
   line-height: 1.25;
 }
 
@@ -1828,7 +1819,6 @@
 .bag-slot-detail__expiry {
   margin: 2px 0 0;
   font-size: 0.58rem;
-  color: var(--crimson-deep);
   line-height: 1.2;
 }
 
