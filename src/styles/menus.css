@@ -918,12 +918,19 @@
 }
 
 .skill-equip-tooltip__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
   margin: 0;
   font-family: var(--font-mono);
   font-size: 0.62rem;
   font-weight: 600;
   line-height: 1.3;
   color: var(--text-muted);
+}
+
+.skill-equip-tooltip__meta-line {
+  display: block;
 }
 
 .skill-menu .shop-section__panel.ui-disclosure .ui-disclosure__inner {

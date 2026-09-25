@@ -3,16 +3,9 @@ import { getSkillById, isPassiveSkillType } from "../../engine/skills";
 import type { SkillDefinition } from "../../engine/skills/types";
 import { useDismissOnOutside } from "../../hooks/useDismissOnOutside";
 import { t, type Locale } from "../../utils/i18n";
+import { formatSkillEquipTooltipLines } from "./skillDetailStats";
 import { PassiveSkillSpinFrame } from "./PassiveSkillSpinFrame";
 import { SkillIcon } from "./SkillIcon";
-
-function formatSkillMeta(skill: SkillDefinition, locale: Locale): string {
-  const parts = [`MP ${skill.mpCost}`];
-  if (skill.cooldownTurns > 0) {
-    parts.push(`${t("skills.cooldown", locale)} ${skill.cooldownTurns}`);
-  }
-  return parts.join(" · ");
-}
 
 export interface SkillEquipSlotProps {
   locale: Locale;
@@ -166,9 +159,16 @@ export function SkillEquipSlot({
             </p>
           )}
           {isEquipped && skill && (
-            <p className="skill-equip-tooltip__meta tabular-nums">
-              {formatSkillMeta(skill, locale)}
-            </p>
+            <div className="skill-equip-tooltip__meta tabular-nums">
+              {formatSkillEquipTooltipLines(skill, locale).map((line, index) => (
+                <span
+                  key={`${line}-${index}`}
+                  className="skill-equip-tooltip__meta-line"
+                >
+                  {line}
+                </span>
+              ))}
+            </div>
           )}
         </div>
       )}

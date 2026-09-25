@@ -1,10 +1,42 @@
 import type { SkillDefinition } from "../../engine/skills/types";
+import { isPassiveSkillType } from "../../engine/skills/skillTypes";
 import { skillDescriptionKey } from "../../engine/skills/skillIcon";
 import type { Locale } from "../../utils/i18n";
 import { t } from "../../utils/i18n";
 
 function pct(value: number): string {
   return `${Math.round(value * 100)}%`;
+}
+
+/** Equip tooltip + detail rows: `Label: value` (label-only when value omitted). */
+export function skillMetaLine(label: string, value?: string | number): string {
+  if (value === undefined) {
+    return `${label}:`;
+  }
+  return `${label}: ${value}`;
+}
+
+export function formatSkillEquipTooltipLines(
+  skill: SkillDefinition,
+  locale: Locale
+): string[] {
+  const lines: string[] = [];
+  const passive =
+    skill.skillType !== undefined && isPassiveSkillType(skill.skillType);
+
+  if (passive) {
+    lines.push(skillMetaLine(t("skills.detail.passive_label", locale)));
+  } else {
+    lines.push(skillMetaLine("MP", skill.mpCost));
+  }
+
+  if (skill.cooldownTurns > 0) {
+    lines.push(
+      skillMetaLine(t("skills.cooldown", locale), skill.cooldownTurns)
+    );
+  }
+
+  return lines;
 }
 
 export function getSkillDescription(skill: SkillDefinition, locale: Locale): string {
@@ -24,11 +56,13 @@ export function formatSkillDetailLines(
   }
 
   if (skill.mpCost > 0) {
-    lines.push(`MP ${skill.mpCost}`);
+    lines.push(skillMetaLine("MP", skill.mpCost));
   }
 
   if (skill.cooldownTurns > 0) {
-    lines.push(`${t("skills.cooldown", locale)} ${skill.cooldownTurns}`);
+    lines.push(
+      skillMetaLine(t("skills.cooldown", locale), skill.cooldownTurns)
+    );
   }
 
   lines.push(
@@ -37,16 +71,23 @@ export function formatSkillDetailLines(
 
   if (skill.damageMultiplier !== undefined) {
     lines.push(
-      `${t("skills.detail.damage", locale)} ×${skill.damageMultiplier.toFixed(2)}`
+      skillMetaLine(
+        t("skills.detail.damage", locale),
+        `×${skill.damageMultiplier.toFixed(2)}`
+      )
     );
   }
 
   if (skill.healPercent !== undefined) {
-    lines.push(`${t("skills.detail.heal", locale)} ${pct(skill.healPercent)}`);
+    lines.push(
+      skillMetaLine(t("skills.detail.heal", locale), pct(skill.healPercent))
+    );
   }
 
   if (skill.defPierce !== undefined && skill.defPierce > 0) {
-    lines.push(`${t("skills.detail.def_pierce", locale)} ${pct(skill.defPierce)}`);
+    lines.push(
+      skillMetaLine(t("skills.detail.def_pierce", locale), pct(skill.defPierce))
+    );
   }
 
   if (skill.guaranteedStatus) {
@@ -67,12 +108,14 @@ export function formatSkillDetailLines(
         effect.magnitude <= 1 && effect.magnitude > -1 && effect.stat !== "speed"
           ? `+${pct(effect.magnitude)}`
           : `+${effect.magnitude}`;
-      lines.push(`${effect.stat} ${mag}`);
+      lines.push(skillMetaLine(effect.stat, mag));
     }
   }
 
   if (skill.gaugeBoost) {
-    lines.push(`${t("skills.detail.gauge", locale)} +${skill.gaugeBoost}`);
+    lines.push(
+      skillMetaLine(t("skills.detail.gauge", locale), `+${skill.gaugeBoost}`)
+    );
   }
 
   return lines;
