@@ -59,6 +59,7 @@ export function TowerView({
       autoBattle={autoBattle}
       isComplete={battle.isComplete}
       result={battle.result}
+      rewards={battle.rewards}
       busy={battle.busy}
       isPlaying={battle.isPlaying}
       speed={battle.speed}

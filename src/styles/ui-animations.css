@@ -81,7 +81,7 @@
 .hud-exp-gauge__fill {
   height: 100%;
   border-radius: var(--radius-full);
-  background: var(--dark-yellow);
+  background: var(--accent-exp);
   transform-origin: left center;
   transition: width 0.6s var(--ease-out);
   box-shadow: none;
@@ -97,7 +97,7 @@
 }
 
 .view-readable .hud-exp-gauge__label {
-  color: var(--dark-yellow-deep);
+  color: var(--accent-exp);
 }
 
 /* ── Bottom nav — floating, stroke active state §08 ── */

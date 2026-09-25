@@ -9,15 +9,6 @@
   content: none;
 }
 
-/* Match character overlay EXP (char-overlay-title__exp) */
-.game-frame--home .view-readable .hud-exp-gauge__label {
-  color: var(--crimson-deep);
-}
-
-.game-frame--home .view-readable .hud-exp-gauge__fill {
-  background: var(--crimson-deep);
-}
-
 .main-stage {
   flex: 1;
   display: flex;

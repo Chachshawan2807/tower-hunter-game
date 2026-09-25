@@ -15,6 +15,8 @@ interface TopHudProps {
   onOpenSettings: () => void;
   /** Home view: stats-only bar (name shown inline, editable) */
   compact?: boolean;
+  /** Tower battle: hide LV / name / EXP (shown on home screen) */
+  hideIdentity?: boolean;
   nameEditable?: boolean;
   nameBusy?: boolean;
   onRename?: (name: string) => Promise<void>;
@@ -30,6 +32,7 @@ export function TopHud({
   onOpenMailbox,
   onOpenSettings,
   compact = false,
+  hideIdentity = false,
   nameEditable = false,
   nameBusy = false,
   onRename,
@@ -59,32 +62,40 @@ export function TopHud({
 
   return (
     <header
-      className={`top-hud ${compact ? "top-hud--compact" : ""}`}
+      className={[
+        "top-hud",
+        compact ? "top-hud--compact" : "",
+        hideIdentity ? "top-hud--identity-hidden" : "",
+      ]
+        .filter(Boolean)
+        .join(" ")}
       aria-label="Player status"
     >
       <div className="top-hud__dock hud-chrome">
-        <div className="hud-chrome__identity">
-          {!compact && <span className="hud-name">{displayName}</span>}
-          <div className="hud-level-row">
-            <span className="hud-level-badge tabular-nums">
-              LV {level}
-            </span>
-            {compact && nameEditable && onRename ? (
-              <CharacterNameEditor
-                locale={locale}
-                displayName={displayName}
-                busy={nameBusy}
-                variant="hud"
-                onSave={onRename}
-              />
-            ) : compact ? (
-              <span className="hud-name--inline player-display-name">
-                {displayName}
+        {!hideIdentity ? (
+          <div className="hud-chrome__identity">
+            {!compact && <span className="hud-name">{displayName}</span>}
+            <div className="hud-level-row">
+              <span className="hud-level-badge tabular-nums">
+                LV {level}
               </span>
-            ) : null}
+              {compact && nameEditable && onRename ? (
+                <CharacterNameEditor
+                  locale={locale}
+                  displayName={displayName}
+                  busy={nameBusy}
+                  variant="hud"
+                  onSave={onRename}
+                />
+              ) : compact ? (
+                <span className="hud-name--inline player-display-name">
+                  {displayName}
+                </span>
+              ) : null}
+            </div>
+            {expGauge}
           </div>
-          {expGauge}
-        </div>
+        ) : null}
 
         <div className="hud-chrome__wallet">
           <span className="hud-gold tabular-nums" aria-label={`Gold: ${gold}`}>

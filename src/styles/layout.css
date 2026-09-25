@@ -161,6 +161,10 @@
   gap: var(--space-4);
 }
 
+.top-hud--identity-hidden .hud-chrome {
+  justify-content: flex-end;
+}
+
 .top-hud--compact .hud-actions {
   gap: 10px;
 }

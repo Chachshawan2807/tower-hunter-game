@@ -29,6 +29,7 @@ export const BattleArena = memo(function BattleArena({
   autoBattle,
   isComplete,
   result,
+  rewards,
   busy,
   isPlaying,
   speed,
@@ -134,7 +135,12 @@ export const BattleArena = memo(function BattleArena({
         )}
         {showResult && outcome ? (
           <div className="battle-result-overlay" role="presentation">
-            <BattleArenaResult locale={locale} result={outcome} onReset={onReset} />
+            <BattleArenaResult
+              locale={locale}
+              result={outcome}
+              rewards={rewards}
+              onReset={onReset}
+            />
           </div>
         ) : null}
       </div>

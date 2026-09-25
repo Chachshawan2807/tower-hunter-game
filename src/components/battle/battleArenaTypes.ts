@@ -2,6 +2,7 @@ import type { CharacterEquipmentVisual } from "../../engine/art/equipment/catalo
 import type { AnimationEvent, BattleSnapshot } from "../../engine/types";
 import type { SkillUpgradeRanks } from "../../engine/skills/types";
 import type { AnimationSpeed } from "../../hooks/useAnimationQueue";
+import type { BattleStepResponse } from "../../utils/api";
 import type { Locale } from "../../utils/i18n";
 
 export interface BattleArenaProps {
@@ -12,6 +13,7 @@ export interface BattleArenaProps {
   autoBattle: boolean;
   isComplete: boolean;
   result: "win" | "lose" | null;
+  rewards?: BattleStepResponse["rewards"];
   busy: boolean;
   isPlaying: boolean;
   speed: AnimationSpeed;

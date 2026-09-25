@@ -111,6 +111,7 @@ export function App() {
           gold={player.gold}
           mailboxCount={mailboxCount}
           compact
+          hideIdentity={inTowerBattle}
           nameEditable={isMainView}
           nameBusy={player.nameBusy}
           onRename={player.changeDisplayName}

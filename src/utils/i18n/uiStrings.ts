@@ -20,6 +20,8 @@ export const UI_I18N_STRINGS: Record<string, Record<Locale, string>> = {
   "battle.lose": { en: "Defeated", th: "แพ้" },
   "battle.waiting": { en: "Your turn", th: "ถึงตาคุณ" },
   "battle.continue": { en: "Continue", th: "ดำเนินการต่อ" },
+  "battle.rewards": { en: "Battle rewards", th: "รางวัลจากการต่อสู้" },
+  "battle.reward.gold": { en: "Gold", th: "ทอง" },
   "settings.lang": { en: "Language", th: "ภาษา" },
   "settings.title": { en: "Settings", th: "ตั้งค่า" },
   "settings.audio": { en: "Audio", th: "เสียง" },

@@ -46,7 +46,7 @@
 .view-readable .hud-exp {
   background: transparent;
   padding: 0;
-  color: var(--dark-yellow-deep);
+  color: var(--accent-exp);
   font-weight: 700;
 }
 

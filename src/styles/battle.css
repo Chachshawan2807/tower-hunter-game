@@ -162,6 +162,46 @@
   outline-offset: 3px;
 }
 
+.battle-result-rewards {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  width: 100%;
+}
+
+.battle-result-rewards__row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  font-family: var(--font-stat);
+  font-size: var(--text-md);
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.battle-result-rewards__label {
+  color: var(--ink-black);
+}
+
+.battle-result-rewards__row--exp .battle-result-rewards__label,
+.battle-result-rewards__row--exp .battle-result-rewards__value {
+  color: var(--accent-exp);
+}
+
+.battle-result-rewards__value {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.battle-result-rewards__value--gold {
+  color: var(--antique-gold-deep);
+}
+
 .battle-entities--overlay-only {
   margin-top: auto;
   min-height: 0;
