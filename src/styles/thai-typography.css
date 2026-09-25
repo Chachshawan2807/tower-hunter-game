@@ -1,0 +1,108 @@
+/* Thai locale typography — diacritic stacking (สระบน + วรรณยุกต์) project-wide. */
+
+html:lang(th) {
+  --font-display: var(--font-thai-display);
+  --font-body: var(--font-thai-body);
+  --font-mono: var(--font-thai-mono);
+  --font-stat: var(--font-thai-stat);
+  --font-player-name: var(--font-thai-player-name);
+}
+
+html:lang(th),
+html:lang(th) body {
+  line-height: var(--thai-line-height-body);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+/* Beat EN-centric line-height: 1 on labels, tabs, and compact menu chrome */
+html:lang(th) :is(
+  button,
+  label,
+  a,
+  p,
+  span,
+  li,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  dt,
+  dd,
+  td,
+  th,
+  [role="button"],
+  [role="tab"],
+  [role="menuitem"],
+  .stat-item__status-row
+):not(.tabular-nums):not(.sr-only):not([class*="game-icon"]) {
+  line-height: var(--thai-line-height-ui);
+}
+
+html:lang(th) button,
+html:lang(th) [role="button"],
+html:lang(th) [role="tab"],
+html:lang(th) [role="menuitem"],
+html:lang(th) label {
+  overflow: visible;
+  text-transform: none;
+  letter-spacing: var(--thai-letter-spacing-ui);
+}
+
+html:lang(th) :is(
+  [class$="__name"],
+  [class$="__label"],
+  [class*="__title"],
+  [class*="__title__"],
+  .stat-item__status-label,
+  .skill-overlay-title,
+  .skill-overlay-title__label,
+  .shop-overlay-title,
+  .shop-overlay-title__label,
+  .char-overlay-title
+) {
+  line-height: var(--thai-line-height-ui);
+  padding-block: 0.08em;
+  text-transform: none;
+  letter-spacing: var(--thai-letter-spacing-ui);
+}
+
+html:lang(th) .skill-filter-btn {
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  min-height: 2.5rem;
+  padding-block: 0.35em;
+  line-height: var(--thai-line-height-ui);
+  text-transform: none;
+  letter-spacing: var(--thai-letter-spacing-ui);
+}
+
+html:lang(th) :is(
+  .bag-item__equip-btn,
+  .bag-item__sell-btn,
+  .bag-item__claim-btn,
+  .skill-equip-picker-panel__swap
+) {
+  line-height: var(--thai-line-height-ui);
+  padding-block: 0.2em;
+}
+
+html:lang(th) .bag-item-slot__name,
+html:lang(th) .bag-item-slot__rarity {
+  line-height: var(--thai-line-height-tight);
+}
+
+html:lang(th) .view-readable .hud-name {
+  letter-spacing: var(--thai-letter-spacing-ui);
+  text-transform: none;
+}
+
+html:lang(th) .tabular-nums,
+html:lang(th) .bag-slot-detail__qty,
+html:lang(th) .stat-item__status-value {
+  line-height: 1.2;
+  font-family: var(--font-mono);
+}

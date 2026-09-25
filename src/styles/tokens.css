@@ -88,6 +88,19 @@
     "Barlow Condensed", "Noto Sans Thai", "Noto Sans JP", "Noto Sans SC",
     "Noto Sans KR", "Noto Sans Arabic", "Noto Sans", system-ui, sans-serif;
 
+  /* Thai locale — stacked สระบน + วรรณยุกต์ need taller line boxes */
+  --thai-line-height-body: 1.62;
+  --thai-line-height-ui: 1.52;
+  --thai-line-height-tight: 1.38;
+  --thai-letter-spacing-ui: 0.02em;
+  --font-thai-display: "Noto Sans Thai", "Barlow Condensed", system-ui, sans-serif;
+  --font-thai-body: "Noto Sans Thai", "Barlow", system-ui, sans-serif;
+  --font-thai-stat: "Noto Sans Thai", "Barlow Condensed", system-ui, sans-serif;
+  --font-thai-mono: "Noto Sans Thai", "Barlow", system-ui, sans-serif;
+  --font-thai-player-name:
+    "Noto Sans Thai", "Noto Sans JP", "Noto Sans SC", "Noto Sans KR",
+    "Noto Sans Arabic", "Noto Sans", system-ui, sans-serif;
+
   /* Type scale — mobile-first readable */
   --text-xs: 0.88rem;
   --text-sm: 1rem;
