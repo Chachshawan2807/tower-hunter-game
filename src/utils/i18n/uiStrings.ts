@@ -114,6 +114,19 @@ export const UI_I18N_STRINGS: Record<string, Record<Locale, string>> = {
     en: "Details for {skill}",
     th: "รายละเอียด {skill}",
   },
+  "bag.sort.group_label": { en: "Sort inventory", th: "เรียงลำดับกระเป๋า" },
+  "bag.sort.recent_acquired": {
+    en: "Newest",
+    th: "ได้ล่าสุด",
+  },
+  "bag.sort.recent_equipped": {
+    en: "Last equipped",
+    th: "สวมใส่ล่าสุด",
+  },
+  "bag.sort.category": {
+    en: "By gear type",
+    th: "ตามประเภท",
+  },
   "bag.empty": { en: "Bag is empty", th: "กระเป๋าว่าง" },
   "bag.mailbox_empty": { en: "Mailbox is empty", th: "กล่องจดหมายว่าง" },
   "bag.inventory": { en: "Inventory", th: "กระเป๋า" },

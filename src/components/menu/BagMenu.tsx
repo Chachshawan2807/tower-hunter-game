@@ -1,4 +1,8 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import {
+  sortBagMenuInventory,
+  type BagMenuSortMode,
+} from "../../engine/inventory/bagMenuSort";
 import type { SkillPath } from "../../engine/types";
 import type { ItemRarityVisual } from "../../engine/art/weaponTypes";
 import type { EquipmentSlot } from "../../engine/art/equipment/slots";
@@ -17,6 +21,7 @@ import { formatGoldAmount } from "../../utils/formatGold";
 import { resolveItemLabel } from "../../utils/itemLabel";
 import { BagItemDetail } from "./BagItemDetail";
 import { BagItemSlot } from "./BagItemSlot";
+import { BagMenuSortBar } from "./BagMenuSortBar";
 
 interface BagMenuProps {
   locale: Locale;
@@ -43,6 +48,7 @@ export function BagMenu({
   const [sellBusy, setSellBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [pendingSellId, setPendingSellId] = useState<string | null>(null);
+  const [sortMode, setSortMode] = useState<BagMenuSortMode>("recent_acquired");
 
   const inventoryQuery = useCachedQuery(
     userId ? panelCacheKey.inventory(userId) : null,
@@ -50,6 +56,10 @@ export function BagMenu({
     8_000
   );
   const inventory = inventoryQuery.data ?? [];
+  const sortedInventory = useMemo(
+    () => sortBagMenuInventory(inventory, sortMode),
+    [inventory, sortMode]
+  );
   const loading = inventoryQuery.loading;
 
   useDismissOnOutside(
@@ -139,8 +149,13 @@ export function BagMenu({
         <p className="menu-empty">{t("bag.empty", locale)}</p>
       ) : (
         <>
+          <BagMenuSortBar
+            locale={locale}
+            sortMode={sortMode}
+            onSortModeChange={setSortMode}
+          />
           <ul className="bag-slot-grid" role="list">
-            {inventory.map((item) => (
+            {sortedInventory.map((item) => (
               <li key={item.id} className="bag-slot-grid__cell">
                 <BagItemSlot
                   id={item.id}

@@ -1539,6 +1539,10 @@
   list-style: none;
 }
 
+.bag-menu .skill-menu__filters {
+  margin-bottom: var(--space-2);
+}
+
 .bag-slot-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
