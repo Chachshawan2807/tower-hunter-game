@@ -181,6 +181,10 @@
   grid-auto-rows: var(--skill-tile-height, 122px);
   align-items: stretch;
   justify-items: stretch;
+  min-height: calc(
+    var(--skill-catalog-min-rows, 1) * var(--skill-tile-height, 122px) +
+      (var(--skill-catalog-min-rows, 1) - 1) * var(--space-1)
+  );
 }
 
 .skill-menu .stat-grid--skills-catalog.stat-grid--skill-icons .skill-icon-tile {

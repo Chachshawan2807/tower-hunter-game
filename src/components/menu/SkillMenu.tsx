@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, type CSSProperties } from "react";
 import {
   equipSkillToLoadout,
   getPlayerCatalogSkills,
@@ -19,7 +19,11 @@ import { ConfirmDialog } from "../ui/ConfirmDialog";
 import { SkillCategorySection } from "./SkillCategorySection";
 import { SkillMenuTypeFilters } from "./SkillMenuTypeFilters";
 import { SkillStatGrid } from "./SkillStatGrid";
-import { isDefaultExpanded, sortCatalogSkills } from "./skillMenuConstants";
+import {
+  getSkillCatalogMinRows,
+  isDefaultExpanded,
+  sortCatalogSkills,
+} from "./skillMenuConstants";
 import { usePersistSkillLoadout } from "../../hooks/usePersistSkillLoadout";
 import { useSkillMenuProgression } from "./useSkillMenuProgression";
 
@@ -59,6 +63,11 @@ export function SkillMenu({
     if (typeFilter === "all") return base;
     return getSkillsByType(typeFilter);
   }, [typeFilter]);
+
+  const catalogMinRows = useMemo(
+    () => getSkillCatalogMinRows(getPlayerCatalogSkills().length),
+    []
+  );
 
   const pendingUnlock = progression.pendingUnlock;
 
@@ -118,7 +127,14 @@ export function SkillMenu({
   };
 
   return (
-    <div className="skill-menu">
+    <div
+      className="skill-menu"
+      style={
+        {
+          "--skill-catalog-min-rows": catalogMinRows,
+        } as CSSProperties
+      }
+    >
       {progression.offlineMessage ? (
         <p className="skill-menu__offline-notice" role="status">
           {t(progression.offlineMessage, locale)}

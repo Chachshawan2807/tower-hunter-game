@@ -4,6 +4,13 @@ import type { SkillMenuCategory } from "./SkillCategorySection";
 
 export const DEFAULT_EXPANDED: SkillMenuCategory[] = ["all"];
 
+/** Skill catalog grid in SkillMenu — keep in sync with CSS `repeat(4, …)`. */
+export const SKILL_CATALOG_GRID_COLUMNS = 4;
+
+export function getSkillCatalogMinRows(skillCount: number): number {
+  return Math.max(1, Math.ceil(skillCount / SKILL_CATALOG_GRID_COLUMNS));
+}
+
 export const TYPE_FILTERS: Array<SkillType | "all"> = [
   "all",
   "active",

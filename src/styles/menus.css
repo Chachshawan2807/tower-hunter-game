@@ -1214,9 +1214,9 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
-  flex: 0 0 auto;
-  min-height: auto;
-  overflow: visible;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
   color: var(--text-primary);
   position: relative;
   --shop-value-size: 0.76rem;
@@ -1235,8 +1235,7 @@
 .overlay__body:has(> .skill-menu) {
   display: flex;
   flex-direction: column;
-  overflow-x: hidden;
-  overflow-y: auto;
+  overflow: hidden;
   min-height: 0;
 }
 
@@ -1291,8 +1290,12 @@
 }
 
 .skill-menu .shop-sections {
-  flex: 0 0 auto;
-  overflow: visible;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--stone-600) transparent;
 }
 
 .shop-section {
