@@ -285,45 +285,66 @@
   color: inherit;
 }
 
-/* Settings dialog — black sheet behind readable sections */
-.view-readable .overlay--dialog .overlay__panel:has(.settings-menu) {
+/* Centered dialogs — black sheet behind readable content (settings, mailbox) */
+.view-readable
+  .overlay--dialog
+  .overlay__panel:has(.overlay__body > :is(.settings-menu, .mailbox-menu)) {
   background: var(--ink-black);
   background-image: none;
   filter: none;
 }
 
-.view-readable .overlay--dialog .overlay__panel:has(.settings-menu) .overlay__header {
+.view-readable
+  .overlay--dialog
+  .overlay__panel:has(.overlay__body > :is(.settings-menu, .mailbox-menu))
+  .overlay__header {
   background: var(--ink-black);
   border-bottom-color: rgba(255, 255, 255, 0.12);
 }
 
-.view-readable .overlay--dialog .overlay__panel:has(.settings-menu) .overlay__title {
+.view-readable
+  .overlay--dialog
+  .overlay__panel:has(.overlay__body > :is(.settings-menu, .mailbox-menu))
+  .overlay__title {
   color: #ffffff;
 }
 
 .view-readable
   .overlay--dialog
-  .overlay__panel:has(.settings-menu)
+  .overlay__panel:has(.overlay__body > :is(.settings-menu, .mailbox-menu))
   .overlay__header
   .icon-btn--close,
 .view-readable
   .overlay--dialog
-  .overlay__panel:has(.settings-menu)
+  .overlay__panel:has(.overlay__body > :is(.settings-menu, .mailbox-menu))
   .overlay__header
   .icon-btn--close
   .game-icon {
   color: #ffffff;
 }
 
-.view-readable .overlay--dialog .overlay__body:has(.settings-menu) {
+.view-readable
+  .overlay--dialog
+  .overlay__body:has(> :is(.settings-menu, .mailbox-menu)) {
   background: var(--ink-black);
 }
 
 .view-readable
   .overlay--dialog
   .overlay__body:has(> .settings-menu)
-  > .settings-menu {
+  > .settings-menu,
+.view-readable
+  .overlay--dialog
+  .overlay__body:has(> .mailbox-menu)
+  > .mailbox-menu {
   background: transparent;
+}
+
+.view-readable
+  .overlay--dialog
+  .overlay__body:has(> .mailbox-menu)
+  .menu-empty {
+  color: rgba(255, 255, 255, 0.78);
 }
 
 /* Tower lobby — same dark base as overlay tab backdrop (no beige sheet) */
