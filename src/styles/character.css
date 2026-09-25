@@ -410,6 +410,7 @@
 }
 
 .char-equip-slot-wrap {
+  --char-equip-tooltip-slot-gap: var(--space-2);
   position: relative;
   flex-shrink: 0;
   overflow: visible;
@@ -727,25 +728,31 @@
 
 /* Default (touch): open toward center for thumb reach */
 .char-equip-slot-wrap--left .char-equip-tooltip {
-  left: calc(100% + 6px);
+  left: 100%;
   right: auto;
+  margin-left: var(--char-equip-tooltip-slot-gap);
 }
 
 .char-equip-slot-wrap--right .char-equip-tooltip {
-  right: calc(100% + 6px);
+  right: 100%;
   left: auto;
+  margin-right: var(--char-equip-tooltip-slot-gap);
 }
 
 /* Desktop hover: open outward into side margin, not over the hero */
 @media (hover: hover) and (pointer: fine) {
   .char-equip-slot-wrap--left .char-equip-tooltip {
     left: auto;
-    right: calc(100% + 6px);
+    right: 100%;
+    margin-left: 0;
+    margin-right: var(--char-equip-tooltip-slot-gap);
   }
 
   .char-equip-slot-wrap--right .char-equip-tooltip {
     right: auto;
-    left: calc(100% + 6px);
+    left: 100%;
+    margin-right: 0;
+    margin-left: var(--char-equip-tooltip-slot-gap);
   }
 }
 
