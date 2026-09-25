@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 
-const SPIN_PERIOD_MS = 3200;
+const SPIN_PERIOD_MS = 4800;
 
 /** Rotates `.passive-skill-spin__ring` via transform (not CSS animation). */
 export function usePassiveBorderSpin(active: boolean) {
