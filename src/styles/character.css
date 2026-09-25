@@ -399,6 +399,7 @@
   gap: var(--space-1);
   width: 100%;
   margin-bottom: var(--section-gap);
+  overflow: visible;
 }
 
 .char-equip-rail {
@@ -411,6 +412,7 @@
 .char-equip-slot-wrap {
   position: relative;
   flex-shrink: 0;
+  overflow: visible;
 }
 
 .char-equip-stage {
@@ -423,6 +425,7 @@
   background: transparent;
   border: none;
   box-shadow: none;
+  overflow: visible;
 }
 
 .char-equip-stage__hero {
@@ -527,7 +530,7 @@
   border: 1px solid rgba(0, 0, 0, 0.16);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.14);
   pointer-events: none;
-  transform: translateY(-50%);
+  transform: translateY(-50%) translateX(var(--tooltip-shift-x, 0px));
 }
 
 .char-equip-tooltip--actions {
@@ -535,21 +538,103 @@
 }
 
 .char-equip-tooltip--picker {
-  min-width: 260px;
-  max-width: min(360px, 94vw);
-  max-height: min(280px, 48vh);
+  width: max-content;
+  min-width: 108px;
+  max-width: min(280px, calc(100vw - var(--space-8)));
+}
+
+/* Equip list centered on hero figure */
+.char-equip-picker-flyout {
+  top: 50%;
+  left: 50%;
+  right: auto;
+  transform: translate(-50%, -50%);
+  z-index: 40;
+  max-height: min(520px, 94%);
+  overflow-x: hidden;
   overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: var(--stone-600) transparent;
+  overscroll-behavior: contain;
+}
+
+.char-equip-picker-flyout .char-equip-picker {
+  margin: 0;
+  width: 100%;
+  max-width: none;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-auto-rows: 1fr;
+  gap: var(--space-1);
+  align-items: stretch;
+}
+
+.char-equip-picker-flyout .char-equip-picker > li {
+  display: contents;
+}
+
+.char-equip-picker-flyout .char-equip-picker__item {
+  grid-template-columns: 24px minmax(0, 1fr);
+  min-width: 0;
+  width: 100%;
+  min-height: 100%;
+  align-items: center;
+}
+
+.char-equip-picker-flyout .char-equip-picker__stats {
+  min-height: calc(2 * 0.58rem * 1.25 + 1px);
+  justify-content: center;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .char-equip-picker-flyout {
+    scrollbar-width: thin;
+    scrollbar-color: var(--stone-600) transparent;
+  }
+
+  .char-equip-picker-flyout::-webkit-scrollbar {
+    width: 6px;
+    height: 0;
+  }
+
+  .char-equip-picker-flyout::-webkit-scrollbar:horizontal {
+    display: none;
+    height: 0;
+  }
+
+  .char-equip-picker-flyout::-webkit-scrollbar-button {
+    display: none;
+    width: 0;
+    height: 0;
+  }
+
+  .char-equip-picker-flyout::-webkit-scrollbar-thumb {
+    background: var(--stone-600);
+    border-radius: 3px;
+  }
+}
+
+@media (hover: none), (pointer: coarse) {
+  .char-equip-picker-flyout {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .char-equip-picker-flyout::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+  }
 }
 
 .char-equip-picker {
   list-style: none;
-  margin: var(--space-1) 0 0;
+  margin: 0;
   padding: 0;
-  display: flex;
+  display: inline-flex;
   flex-direction: column;
+  align-items: stretch;
   gap: var(--space-1);
+  max-width: min(280px, calc(100vw - var(--space-8)));
 }
 
 .char-equip-picker__status {
@@ -560,12 +645,18 @@
   color: rgba(0, 0, 0, 0.48);
 }
 
+.char-equip-picker > li {
+  min-width: 0;
+}
+
 .char-equip-picker__item {
   display: grid;
-  grid-template-columns: 24px minmax(0, 1fr);
+  grid-template-columns: 24px max-content;
   gap: var(--space-2);
   align-items: center;
+  justify-content: start;
   width: 100%;
+  box-sizing: border-box;
   padding: var(--space-1) var(--space-2);
   border-radius: var(--radius-sm);
   border: 1px solid rgba(0, 0, 0, 0.1);
@@ -597,26 +688,41 @@
 .char-equip-picker__main {
   display: flex;
   flex-direction: column;
-  gap: 1px;
+  align-items: flex-start;
+  gap: 2px;
   min-width: 0;
+  max-width: 100%;
 }
 
 .char-equip-picker__name {
   font-size: 0.62rem;
   font-weight: 700;
-  line-height: 1.2;
+  line-height: 1.3;
   color: var(--ink-black);
-  overflow: hidden;
-  text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.char-equip-picker__stats {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  width: 0;
+  min-width: 100%;
+  overflow-wrap: break-word;
+  line-break: auto;
+  word-break: normal;
 }
 
 .char-equip-picker__stat {
   font-size: 0.58rem;
   font-weight: 700;
   font-family: var(--font-mono);
-  line-height: 1.2;
+  line-height: 1.25;
   color: var(--dark-yellow-deep);
+  white-space: nowrap;
 }
 
 /* Default (touch): open toward center for thumb reach */

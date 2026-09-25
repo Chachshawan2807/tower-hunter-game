@@ -42,7 +42,12 @@ export function EquipSlotPicker({
   }
 
   return (
-    <ul className="char-equip-picker" role="listbox" aria-label={t("char.slot.pick_item", locale)}>
+    <ul
+      className="char-equip-picker"
+      lang={locale}
+      role="listbox"
+      aria-label={t("char.slot.pick_item", locale)}
+    >
       {items.map((item) => {
         const name = resolveItemLabel(item.itemId, locale, skillPath);
         const statLines = formatStatBonus(
@@ -70,8 +75,14 @@ export function EquipSlotPicker({
               </span>
               <span className="char-equip-picker__main">
                 <span className="char-equip-picker__name">{name}</span>
-                {statLines[0] ? (
-                  <span className="char-equip-picker__stat">{statLines[0]}</span>
+                {statLines.length > 0 ? (
+                  <ul className="char-equip-picker__stats">
+                    {statLines.map((line) => (
+                      <li key={line} className="char-equip-picker__stat">
+                        {line}
+                      </li>
+                    ))}
+                  </ul>
                 ) : null}
               </span>
             </button>

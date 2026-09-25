@@ -12,6 +12,7 @@ import { panelCacheKey } from "../../client/cache/readCache";
 import { useCachedQuery } from "../../hooks/useCachedQuery";
 import { t, type Locale } from "../../utils/i18n";
 import { PlayerHeroShowcase } from "./PlayerHeroShowcase";
+import { CharacterEquipPickerFlyout } from "./CharacterEquipPickerFlyout";
 import { EquipSlot } from "./EquipSlot";
 
 const LEFT_SLOTS: EquipmentSlot[] = ["helm", "chest", "boots"];
@@ -22,6 +23,10 @@ function toBagEntries(items: InventoryItem[]): InventoryBagEntry[] {
     inventoryId: item.id,
     itemId: item.item_id,
     rarity: item.rarity,
+    lastPurchasedAtMs: Date.parse(item.updated_at),
+    lastEquippedAtMs: item.last_equipped_at
+      ? Date.parse(item.last_equipped_at)
+      : null,
   }));
 }
 
@@ -40,6 +45,7 @@ function SlotRail({
   onDismissActive,
   onUnequip,
   onEquipFromBag,
+  heroPickerActive,
 }: {
   locale: Locale;
   slots: EquipmentSlot[];
@@ -55,6 +61,7 @@ function SlotRail({
   onDismissActive: () => void;
   onUnequip?: (slot: EquipmentSlot) => void;
   onEquipFromBag?: (slot: EquipmentSlot, inventoryId: string) => void;
+  heroPickerActive: boolean;
 }) {
   return (
     <div className={`char-equip-rail char-equip-rail--${side}`}>
@@ -84,6 +91,7 @@ function SlotRail({
                 ? (inventoryId) => onEquipFromBag(slot, inventoryId)
                 : undefined
             }
+            heroPickerActive={heroPickerActive}
           />
         );
       })}
@@ -158,6 +166,11 @@ export function CharacterEquipmentPanel({
     return filterInventoryForEquipmentSlot(bagEntries, activeSlot, skillPath);
   }, [activeSlot, bagEntries, skillPath]);
 
+  const heroPickerActive =
+    activeSlot !== null &&
+    !isEquipmentSlotEquipped(equipment, activeSlot) &&
+    Boolean(onEquipFromBag);
+
   const railProps = {
     locale,
     equipment,
@@ -167,6 +180,7 @@ export function CharacterEquipmentPanel({
     slotBagItems: activeSlotBagItems,
     equipBusy,
     unequipBusy,
+    heroPickerActive,
     onSlotActivate: handleSlotActivate,
     onDismissActive: () => setActiveSlot(null),
     onUnequip: onUnequip ? handleUnequip : undefined,
@@ -188,6 +202,17 @@ export function CharacterEquipmentPanel({
           displayName={displayName}
           equipment={equipment}
         />
+        {heroPickerActive && activeSlot && onEquipFromBag ? (
+          <CharacterEquipPickerFlyout
+            locale={locale}
+            slot={activeSlot}
+            skillPath={skillPath}
+            items={activeSlotBagItems}
+            loading={inventoryLoading}
+            busy={equipBusy}
+            onEquip={(inventoryId) => handleEquipFromBag(activeSlot, inventoryId)}
+          />
+        ) : null}
       </div>
 
       <SlotRail slots={RIGHT_SLOTS} side="right" {...railProps} />

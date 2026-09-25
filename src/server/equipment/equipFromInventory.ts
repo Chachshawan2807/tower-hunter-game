@@ -15,7 +15,7 @@ import {
   type EquipmentSlotDto,
   type PlayerEquipmentDto,
 } from "../db/equipment";
-import { getInventoryItemById } from "../db/inventory";
+import { getInventoryItemById, touchInventoryLastEquipped } from "../db/inventory";
 import { getPlayerSkillPath } from "../db/playerStats";
 import { withTransaction } from "../db/client";
 
@@ -74,6 +74,8 @@ export async function equipFromInventory(
     }
 
     const rarity = invRow.rarity as EquipmentSlotDto["rarity"];
+    await touchInventoryLastEquipped(client, input.userId, input.inventoryId);
+
     const equipped = await upsertEquipmentSlot(
       client,
       input.userId,

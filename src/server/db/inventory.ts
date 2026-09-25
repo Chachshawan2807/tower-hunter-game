@@ -50,7 +50,7 @@ async function upsertInventoryItem(
        quantity = inventory_items.quantity + EXCLUDED.quantity,
        rarity = EXCLUDED.rarity,
        updated_at = NOW()
-     RETURNING id, user_id, item_id, quantity, rarity, created_at, updated_at`,
+     RETURNING id, user_id, item_id, quantity, rarity, created_at, updated_at, last_equipped_at`,
     [userId, item.itemId, item.quantity, item.rarity]
   );
 
@@ -110,7 +110,7 @@ export async function listInventoryItems(
   userId: string
 ): Promise<InventoryItemRow[]> {
   const result = await pool.query<InventoryItemRow>(
-    `SELECT id, user_id, item_id, quantity, rarity, created_at, updated_at
+    `SELECT id, user_id, item_id, quantity, rarity, created_at, updated_at, last_equipped_at
      FROM inventory_items
      WHERE user_id = $1
      ORDER BY created_at ASC`,
@@ -126,7 +126,7 @@ export async function getInventoryItemById(
   inventoryId: string
 ): Promise<InventoryItemRow | null> {
   const result = await client.query<InventoryItemRow>(
-    `SELECT id, user_id, item_id, quantity, rarity, created_at, updated_at
+    `SELECT id, user_id, item_id, quantity, rarity, created_at, updated_at, last_equipped_at
      FROM inventory_items
      WHERE id = $1 AND user_id = $2
      FOR UPDATE`,
@@ -163,6 +163,19 @@ export async function removeInventoryQuantity(
      SET quantity = quantity - $3, updated_at = NOW()
      WHERE id = $1 AND user_id = $2`,
     [inventoryId, userId, quantity]
+  );
+}
+
+export async function touchInventoryLastEquipped(
+  client: DbClient,
+  userId: string,
+  inventoryId: string
+): Promise<void> {
+  await client.query(
+    `UPDATE inventory_items
+     SET last_equipped_at = NOW()
+     WHERE id = $1 AND user_id = $2`,
+    [inventoryId, userId]
   );
 }
 

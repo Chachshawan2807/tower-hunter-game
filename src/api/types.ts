@@ -132,6 +132,7 @@ export interface InventoryItem {
   rarity: string;
   created_at: string;
   updated_at: string;
+  last_equipped_at: string | null;
 }
 
 export interface MailboxItem {

@@ -26,27 +26,6 @@ export const SHOP_CATEGORY_LABEL_KEY: Record<ShopItemCategory, string> = {
   boots: "shop.category.boots",
 };
 
-/** Weapon sub-type order within the weapon shop category */
-const WEAPON_TYPE_ORDER = [
-  "weapon-sword",
-  "weapon-sword-cross",
-  "shield",
-  "weapon-axe",
-  "weapon-axe-cross",
-] as const;
-
-function resolveWeaponTypePrefix(itemId: string): string {
-  const assetKey = getEquipmentShopAssetKey(itemId);
-  if (!assetKey) return "";
-  return assetKey.replace(/-\d{2}$/, "");
-}
-
-function weaponTypeRank(itemId: string): number {
-  const prefix = resolveWeaponTypePrefix(itemId);
-  const index = WEAPON_TYPE_ORDER.indexOf(prefix as (typeof WEAPON_TYPE_ORDER)[number]);
-  return index >= 0 ? index : WEAPON_TYPE_ORDER.length;
-}
-
 export function resolveShopItemCategory(itemId: string): ShopItemCategory {
   const assetKey = getEquipmentShopAssetKey(itemId);
   if (!assetKey) return "weapon";
@@ -70,19 +49,7 @@ function compareByPriceAsc<T extends { id: string; cost: string }>(a: T, b: T): 
   return a.id.localeCompare(b.id);
 }
 
-function compareWeaponItems<T extends { id: string; cost: string }>(a: T, b: T): number {
-  const typeDiff = weaponTypeRank(a.id) - weaponTypeRank(b.id);
-  if (typeDiff !== 0) return typeDiff;
-  return compareByPriceAsc(a, b);
-}
-
-function sortCategoryItems<T extends { id: string; cost: string }>(
-  category: ShopItemCategory,
-  items: T[]
-): T[] {
-  if (category === "weapon") {
-    return [...items].sort(compareWeaponItems);
-  }
+function sortCategoryItems<T extends { id: string; cost: string }>(items: T[]): T[] {
   return [...items].sort(compareByPriceAsc);
 }
 
@@ -101,6 +68,6 @@ export function groupShopCatalogByCategory<T extends { id: string; cost: string 
   return SHOP_CATEGORY_ORDER.filter((category) => buckets.has(category)).map((category) => ({
     category,
     labelKey: SHOP_CATEGORY_LABEL_KEY[category],
-    items: sortCategoryItems(category, buckets.get(category) ?? []),
+    items: sortCategoryItems(buckets.get(category) ?? []),
   }));
 }

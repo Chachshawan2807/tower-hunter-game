@@ -31,6 +31,8 @@ export interface EquipSlotProps {
   onDismissActive?: () => void;
   onUnequip?: (slot: EquipmentSlot) => void;
   onEquipFromBag?: (inventoryId: string) => void;
+  /** Picker renders on hero stage; hide side tooltip for empty-slot equip flow */
+  heroPickerActive?: boolean;
 }
 
 export function EquipSlot({
@@ -49,6 +51,7 @@ export function EquipSlot({
   onDismissActive,
   onUnequip,
   onEquipFromBag,
+  heroPickerActive = false,
 }: EquipSlotProps) {
   const [hovered, setHovered] = useState(false);
   const tooltipId = useId();
@@ -65,10 +68,12 @@ export function EquipSlot({
     : [];
   const visible = isActive || (hovered && !hasPinnedTooltip);
   const showUnequip = isActive && isEquipped && Boolean(onUnequip);
-  const showPicker = isActive && !isEquipped && Boolean(onEquipFromBag);
+  const showPicker =
+    isActive && !isEquipped && Boolean(onEquipFromBag) && !heroPickerActive;
   const showActions = showUnequip || showPicker;
+  const showTooltip = visible && (showActions || (hovered && !hasPinnedTooltip));
 
-  useEquipTooltipPanelInset(visible, tooltipRef);
+  useEquipTooltipPanelInset(showTooltip, tooltipRef);
 
   useDismissOnOutside(
     hovered && !hasPinnedTooltip,
@@ -79,7 +84,7 @@ export function EquipSlot({
   useDismissOnOutside(
     isActive,
     () => onDismissActive?.(),
-    [".char-equip-slot-wrap"]
+    [".char-equip-slot-wrap", ".char-equip-picker-flyout"]
   );
 
   return (
@@ -94,7 +99,7 @@ export function EquipSlot({
           .filter(Boolean)
           .join(" ")}
         aria-label={label}
-        aria-describedby={visible ? tooltipId : undefined}
+        aria-describedby={showTooltip ? tooltipId : undefined}
         aria-expanded={isActive}
         onClick={(e) => {
           e.stopPropagation();
@@ -135,7 +140,7 @@ export function EquipSlot({
         </span>
       </button>
 
-      {visible && (
+      {showTooltip && (
         <div
           ref={tooltipRef}
           id={tooltipId}

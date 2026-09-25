@@ -53,6 +53,7 @@ export interface InventoryItemRow {
   rarity: ItemRarity;
   created_at: Date;
   updated_at: Date;
+  last_equipped_at: Date | null;
 }
 
 export interface MailboxItemRow {

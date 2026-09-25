@@ -21,6 +21,7 @@ export {
 export { resolveEquippableItem, isEquippableItem } from "./itemMapping";
 export {
   filterInventoryForEquipmentSlot,
+  sortInventoryForEquipmentSlotPicker,
   type InventoryBagEntry,
 } from "./slotInventory";
 export {
