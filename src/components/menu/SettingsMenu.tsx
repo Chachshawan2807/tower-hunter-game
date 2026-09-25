@@ -1,5 +1,8 @@
 import { useAudioSettings } from "../../hooks/useAudioSettings";
 import { t, type Locale } from "../../utils/i18n";
+import { SettingsLocaleToggle } from "./SettingsLocaleToggle";
+import { SettingsToggle } from "./SettingsToggle";
+import { SettingsVolumeSlider } from "./SettingsVolumeSlider";
 
 interface SettingsMenuProps {
   locale: Locale;
@@ -11,56 +14,40 @@ export function SettingsMenu({ locale, onToggleLocale }: SettingsMenuProps) {
 
   return (
     <div className="settings-menu">
-      <section className="settings-section ui-section" aria-labelledby="settings-audio-title">
-        <h3 className="settings-section__title ui-section__title" id="settings-audio-title">
-          {t("settings.audio", locale)}
-        </h3>
+      <section className="settings-section" aria-label={t("settings.audio", locale)}>
+        <div className="settings-section__body">
+          <div className="settings-item">
+            <span className="settings-item__label">{t("settings.mute", locale)}</span>
+            <SettingsToggle
+              label={t("settings.mute", locale)}
+              checked={settings.muted}
+              onChange={setMuted}
+            />
+          </div>
 
-        <label className="settings-row">
-          <span>{t("settings.mute", locale)}</span>
-          <input
-            type="checkbox"
-            checked={settings.muted}
-            onChange={(e) => setMuted(e.target.checked)}
-          />
-        </label>
-
-        <label className="settings-row">
-          <span>{t("settings.music_volume", locale)}</span>
-          <input
-            type="range"
-            min={0}
-            max={100}
-            value={Math.round(settings.musicVolume * 100)}
-            onChange={(e) => setMusicVolume(Number(e.target.value) / 100)}
+          <SettingsVolumeSlider
+            label={t("settings.music_volume", locale)}
+            valuePercent={Math.round(settings.musicVolume * 100)}
             disabled={settings.muted}
+            onChange={(v) => setMusicVolume(v / 100)}
           />
-        </label>
 
-        <label className="settings-row">
-          <span>{t("settings.sfx_volume", locale)}</span>
-          <input
-            type="range"
-            min={0}
-            max={100}
-            value={Math.round(settings.sfxVolume * 100)}
-            onChange={(e) => setSfxVolume(Number(e.target.value) / 100)}
+          <SettingsVolumeSlider
+            label={t("settings.sfx_volume", locale)}
+            valuePercent={Math.round(settings.sfxVolume * 100)}
             disabled={settings.muted}
+            onChange={(v) => setSfxVolume(v / 100)}
           />
-        </label>
+        </div>
       </section>
 
-      <section className="settings-section ui-section" aria-labelledby="settings-display-title">
-        <h3 className="settings-section__title ui-section__title" id="settings-display-title">
-          {t("settings.display", locale)}
-        </h3>
-
-        <label className="settings-row">
-          <span>{t("settings.lang", locale)}</span>
-          <button type="button" className="settings-lang-btn" onClick={onToggleLocale}>
-            {locale === "en" ? "ไทย (TH)" : "English (EN)"}
-          </button>
-        </label>
+      <section className="settings-section" aria-label={t("settings.display", locale)}>
+        <div className="settings-section__body">
+          <div className="settings-item">
+            <span className="settings-item__label">{t("settings.lang", locale)}</span>
+            <SettingsLocaleToggle locale={locale} onToggle={onToggleLocale} />
+          </div>
+        </div>
       </section>
     </div>
   );

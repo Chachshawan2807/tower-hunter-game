@@ -771,6 +771,39 @@
   box-shadow: 0 16px 48px rgba(0, 0, 0, 0.45);
 }
 
+.overlay--dialog .overlay__panel:has(.settings-menu) {
+  width: min(92vw, 420px);
+  min-width: min(92vw, 420px);
+  max-width: min(92vw, 420px);
+}
+
+.overlay--dialog .overlay__panel:has(.settings-menu) .overlay__header {
+  min-height: 3.25rem;
+  box-sizing: border-box;
+}
+
+.overlay--dialog .overlay__panel:has(.settings-menu) .overlay__title {
+  line-height: 1.25;
+  padding-block: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+html:lang(en) .overlay--dialog .overlay__panel:has(.settings-menu) .overlay__title {
+  font-size: 1.05rem;
+  letter-spacing: 0.06em;
+}
+
+html:lang(th) .overlay--dialog .overlay__panel:has(.settings-menu) .overlay__title {
+  font-size: 1rem;
+  letter-spacing: var(--thai-letter-spacing-ui);
+}
+
+.overlay--dialog .overlay__body:has(.settings-menu) {
+  padding: var(--space-3) var(--content-inline) var(--space-4);
+}
+
 .view-readable .overlay--dialog .overlay__panel {
   border-color: var(--antique-gold);
 }
