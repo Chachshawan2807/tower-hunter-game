@@ -8,10 +8,10 @@ function pct(value: number): string {
   return `${Math.round(value * 100)}%`;
 }
 
-/** Equip tooltip + detail rows: `Label: value` (label-only when value omitted). */
+/** Equip tooltip + detail rows: `Label: value`, or label alone when no value. */
 export function skillMetaLine(label: string, value?: string | number): string {
   if (value === undefined) {
-    return `${label}:`;
+    return label;
   }
   return `${label}: ${value}`;
 }
