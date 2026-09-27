@@ -123,8 +123,17 @@
 
 .battle-entities--sprites {
   align-items: flex-end;
+  justify-content: center;
+  gap: clamp(1.25rem, 28vw, 6rem);
   min-height: 160px;
   position: relative;
+  width: 100%;
+  padding-inline: var(--space-2);
+}
+
+.battle-entities--sprites .battle-entity-slot {
+  flex: 0 1 7.5rem;
+  max-width: 7.5rem;
 }
 
 .battle-entity-slot {

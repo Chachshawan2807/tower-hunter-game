@@ -68,8 +68,8 @@ If using AI mesh tools (Meshy, Tripo, etc.): use the attached **full-body ink re
 
 ## 2. GLB export checklist (`BattleFighterGltf` integration)
 
-**Drop-in path:** `public/models/battle-fighter.glb`  
-**Code:** `src/components/render3d/battle/BattleFighterGltf.tsx`
+**Enemy / shared placeholder:** `public/models/battle-fighter.glb` → `BattleFighterGltf.tsx`  
+**Player hero (Imperial Knight):** `public/models/battle-hero.glb` → `BattlePlayerHeroGltf.tsx`
 
 ### File & format
 - [ ] **Binary GLB** (`.glb`), glTF 2.0
@@ -84,7 +84,8 @@ If using AI mesh tools (Meshy, Tripo, etc.): use the attached **full-body ink re
 ### Materials (current engine behavior)
 - [ ] Meshes use **`MeshStandardMaterial`** (required for current tint pass)
 - [ ] Name the sword mesh (or mesh group leaf) **`Weapon`** — it receives a distinct tint (EXP yellow for player, crimson for enemy)
-- [ ] **Warning:** `tintFighterMaterials.ts` **replaces `material.color`** on every mesh with palette hex (gold vs crimson). **Albedo textures may look wrong** until engineering disables tint for textured assets. For first delivery, **simple metal materials** work with tint; for full PBR textures, coordinate a small code change.
+- [ ] **Textured glTF:** Runtime keeps **embedded albedo maps** at white (`preserveTexturedMeshes` / `applyAuthoredHeroMaterials.ts`). Untextured meshes still get palette tint; mesh named **`Weapon`** may get accent tint if it has no map.
+- [ ] Procedural fallback (no maps in file): `npm run generate:battle-hero` builds a hull mesh; engine projects `battle-hero-front.png` until a modeler GLB replaces the file.
 
 ### Animations (critical)
 - [ ] Exactly four clips, names **case-sensitive**:
@@ -106,9 +107,10 @@ If using AI mesh tools (Meshy, Tripo, etc.): use the attached **full-body ink re
 
 ### Verification in project
 ```bash
-# Replace public/models/battle-fighter.glb, then:
+# Player hero: copy modeler GLB to public/models/battle-hero.glb
+# Enemy placeholder: public/models/battle-fighter.glb
 npm run dev          # or npm run dev:3d
-# Enter tower battle — 3D fighters when render3d mode is on
+# Tower battle — player uses battle-hero.glb when render3d mode is on
 npm run typecheck
 ```
 
@@ -131,6 +133,14 @@ npm run typecheck
 
 ---
 
-## 4. Engineering follow-up (textured hero)
+## 4. Textured hero integration (implemented)
 
-When a textured GLB is approved, update `tintFighterMaterials.ts` to **skip tint** (or tint only `Weapon`) so ink-accurate albedo/normal maps display correctly. Home screen may continue using the SVG billboard (`HomeHeroBillboard`) until battle mesh is approved.
+| File | Behavior |
+|------|----------|
+| `battle-hero.glb` | If materials include **maps**, `configurePlayerHeroMaterials` preserves PBR; no portrait overlay. |
+| `battle-fighter.glb` | Enemy tint applies only to **untextured** meshes when maps are present. |
+| Home screen | Still uses `HomeHeroBillboard` + SVG/PNG portrait until you switch the showcase to GLB. |
+
+**Modeler handoff:** Export with embedded textures (1K), clips `idle` / `attack` / `hit_cc` / `defeat`, feet on **Y = 0**, forward **+X**, replace `public/models/battle-hero.glb`, set `BATTLE_HERO_GLTF_AUTHORED = true` in `src/engine/art/battleFighterModels.ts`, hard-refresh.
+
+Until then, battle uses **ink turnaround billboards** (not the procedural `npm run generate:battle-hero` hull — that mesh must not be textured with a front PNG).

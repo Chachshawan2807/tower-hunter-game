@@ -1,12 +1,12 @@
 import { useEffect } from "react";
 
-import { HomeHeroBillboard } from "./HomeHeroBillboard";
-import { preloadHomeHeroPortrait } from "./homeHeroPortraitPreload";
+import { preloadBattleHeroViews } from "../battle/battleHeroViewPreload";
+import { InkKnightTurnaroundBillboard } from "../hero/InkKnightTurnaroundBillboard";
 
 export function HomeHeroScene3D() {
   useEffect(() => {
-    preloadHomeHeroPortrait();
+    preloadBattleHeroViews();
   }, []);
 
-  return <HomeHeroBillboard />;
+  return <InkKnightTurnaroundBillboard presentation="showcase" animState="idle" />;
 }

@@ -129,6 +129,8 @@
 .hero-portrait--battle {
   height: 160px;
   width: auto;
+  transform: scaleX(-1);
+  transform-origin: center bottom;
 }
 
 .hero-portrait--npc {
@@ -445,7 +447,7 @@
   position: absolute;
   inset: 0;
   z-index: 1;
-  pointer-events: none;
+  pointer-events: auto;
 }
 
 .char-equip-stage__canvas3d .hero-showcase__canvas3d-inner,

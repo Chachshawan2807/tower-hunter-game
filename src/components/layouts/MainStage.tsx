@@ -19,7 +19,6 @@ export function MainStage({
   return (
     <div className="main-stage" role="main" aria-label={t("nav.character", locale)}>
       <div className="hero-showcase">
-        <div className="hero-showcase__spotlight" aria-hidden="true" />
         <div className="hero-showcase__platform">
           <div className="hero-showcase__pedestal" aria-hidden="true" />
           <PlayerHeroShowcase

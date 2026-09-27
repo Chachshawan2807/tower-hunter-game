@@ -1,8 +1,13 @@
-import { Mesh, MeshStandardMaterial } from "three";
+import { Mesh, MeshStandardMaterial, SRGBColorSpace } from "three";
 import type { Object3D } from "three";
 
 import { RENDER_3D_ART } from "../../../engine/art/render3d";
 import type { FighterSide } from "./fighterPose";
+
+export type TintFighterOptions = {
+  /** Keep glTF albedo maps at white; still tints untextured meshes (e.g. placeholder). */
+  preserveTexturedMeshes?: boolean;
+};
 
 function tintForMesh(name: string, side: FighterSide): string {
   if (name === "Weapon") {
@@ -11,18 +16,39 @@ function tintForMesh(name: string, side: FighterSide): string {
   return side === "player" ? RENDER_3D_ART.accentHex : RENDER_3D_ART.dangerHex;
 }
 
-export function tintFighterMaterials(root: Object3D, side: FighterSide): void {
+function tintStandardMaterial(
+  mat: MeshStandardMaterial,
+  meshName: string,
+  side: FighterSide,
+  options?: TintFighterOptions
+): MeshStandardMaterial {
+  const cloned = mat.clone();
+  if (options?.preserveTexturedMeshes && cloned.map) {
+    cloned.map.colorSpace = SRGBColorSpace;
+    cloned.color.set("#ffffff");
+    return cloned;
+  }
+  cloned.color.set(tintForMesh(meshName, side));
+  return cloned;
+}
+
+export function tintFighterMaterials(
+  root: Object3D,
+  side: FighterSide,
+  options?: TintFighterOptions
+): void {
   root.traverse((obj) => {
     if (!(obj instanceof Mesh)) return;
-    const tint = (mat: MeshStandardMaterial) => {
-      const cloned = mat.clone();
-      cloned.color.set(tintForMesh(obj.name, side));
-      return cloned;
-    };
     if (Array.isArray(obj.material)) {
-      obj.material = obj.material.map((m) => tint(m as MeshStandardMaterial));
+      obj.material = obj.material.map((m) =>
+        m instanceof MeshStandardMaterial
+          ? tintStandardMaterial(m, obj.name, side, options)
+          : m
+      );
       return;
     }
-    obj.material = tint(obj.material as MeshStandardMaterial);
+    if (obj.material instanceof MeshStandardMaterial) {
+      obj.material = tintStandardMaterial(obj.material, obj.name, side, options);
+    }
   });
 }

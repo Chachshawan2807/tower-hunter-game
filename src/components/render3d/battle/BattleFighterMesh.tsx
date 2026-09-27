@@ -3,7 +3,9 @@ import { useMemo, useRef } from "react";
 import type { Group } from "three";
 
 import type { AnimationState } from "../../../engine/art/animationStates";
+import { applyFaceOpponent } from "./applyFaceOpponent";
 import { BattleFighterGltf } from "./BattleFighterGltf";
+import { BattlePlayerHeroGltf } from "./BattlePlayerHeroGltf";
 import { slotPoseForSide, type FighterSide } from "./fighterPose";
 
 const LERP = 10;
@@ -11,9 +13,15 @@ const LERP = 10;
 type BattleFighterMeshProps = {
   side: FighterSide;
   animState: AnimationState;
+  /** Player-only: visual-hull GLB from turnaround PNGs. */
+  playerHeroGltf?: boolean;
 };
 
-export function BattleFighterMesh({ side, animState }: BattleFighterMeshProps) {
+export function BattleFighterMesh({
+  side,
+  animState,
+  playerHeroGltf = false,
+}: BattleFighterMeshProps) {
   const groupRef = useRef<Group>(null);
   const slot = useMemo(() => slotPoseForSide(side), [side]);
 
@@ -25,12 +33,15 @@ export function BattleFighterMesh({ side, animState }: BattleFighterMeshProps) {
     group.position.x += (slot.x - group.position.x) * t;
     group.position.y += (slot.y - group.position.y) * t;
     group.position.z += (slot.z - group.position.z) * t;
-    group.rotation.y += (slot.rotY - group.rotation.y) * t;
+    applyFaceOpponent(group, side);
   });
 
-  return (
-    <group ref={groupRef}>
+  const model =
+    side === "player" && playerHeroGltf ? (
+      <BattlePlayerHeroGltf animState={animState} />
+    ) : (
       <BattleFighterGltf side={side} animState={animState} />
-    </group>
-  );
+    );
+
+  return <group ref={groupRef}>{model}</group>;
 }

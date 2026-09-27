@@ -90,6 +90,23 @@
   overflow: hidden;
 }
 
+.battle-arena__stage--3d {
+  min-height: 12rem;
+}
+
+.battle-arena__stage--3d > :not(.battle-arena__canvas3d) {
+  position: relative;
+  z-index: 1;
+}
+
+.battle-arena__stage--sprites .battle-entities--sprites {
+  flex: 1;
+  align-self: stretch;
+  min-height: 10rem;
+  width: 100%;
+  z-index: 2;
+}
+
 .battle-result-overlay {
   position: absolute;
   inset: 0;
@@ -536,7 +553,7 @@
   position: absolute;
   inset: 0;
   z-index: 0;
-  pointer-events: none;
+  pointer-events: auto;
 }
 
 .battle-arena__canvas3d-inner {
@@ -552,6 +569,20 @@
 .battle-entities--3d-overlay {
   min-height: 9.5rem;
   align-items: flex-end;
+  justify-content: center;
+  gap: clamp(2rem, 34vw, 7.5rem);
+  width: 100%;
+  padding-inline: var(--space-2);
+  pointer-events: none;
+}
+
+.battle-entities--3d-overlay .hp-bar-wrap {
+  pointer-events: auto;
+}
+
+.battle-entities--3d-overlay .battle-entity-slot {
+  flex: 0 1 7.5rem;
+  max-width: 7.5rem;
 }
 
 .battle-entities--3d-overlay .battle-entity-label {

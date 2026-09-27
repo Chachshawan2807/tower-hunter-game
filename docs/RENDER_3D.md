@@ -42,7 +42,11 @@ Tower battles flow: `TowerView` → `ZoneBattleArena` → `BattleArena` → lazy
 3. `BattleArena` passes `playerAnim` / `enemyAnim` into `BattleScene3D` → `BattleFighterMesh` lerps poses from `fighterPose.ts`.
 4. With 3D on, 2D sprites hide (`hideSprites`); HP bars and HUD stay DOM.
 
-Battle uses one `public/models/battle-fighter.glb` (clips: `idle`, `attack`, `hit_cc`, `defeat`). Player/enemy tint in `tintFighterMaterials.ts`. Regenerate placeholder: `npm run generate:battle-models`. **Authoring brief for real hero mesh:** [art-bible/BATTLE_FIGHTER_3D_BRIEF.md](art-bible/BATTLE_FIGHTER_3D_BRIEF.md).
+Battle uses one `public/models/battle-fighter.glb` (clips: `idle`, `attack`, `hit_cc`, `defeat`). Player/enemy tint in `tintFighterMaterials.ts`. Regenerate placeholder: `npm run generate:battle-models`.
+
+**Player hero in battle:** ink turnaround billboards (`battle-hero-*.png`) by default. Modeler GLB → `public/models/battle-hero.glb` + `BATTLE_HERO_GLTF_AUTHORED = true`. Procedural `npm run generate:battle-hero` is dev-only (not shown in battle).
+
+**Authoring brief for sculpted hero mesh:** [art-bible/BATTLE_FIGHTER_3D_BRIEF.md](art-bible/BATTLE_FIGHTER_3D_BRIEF.md).
 
 ## Dev calibration PiP
 

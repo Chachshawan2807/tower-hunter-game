@@ -2,8 +2,12 @@ import { useEffect } from "react";
 
 import type { AnimationState } from "../../../engine/art/animationStates";
 import { RENDER_3D_ART } from "../../../engine/art/render3d";
+import { BattleArenaCameraRig } from "./BattleArenaCameraRig";
+import { BattlePlayerHero } from "./BattlePlayerHero";
 import { BattleFighterMesh } from "./BattleFighterMesh";
 import { preloadBattleFighterModels } from "./battleModelPreload";
+import { preloadBattleHeroViews } from "./battleHeroViewPreload";
+import { preloadHomeHeroPortrait } from "../home/homeHeroPortraitPreload";
 import { floorColorForBattle } from "./zoneFloorColor";
 
 export type BattleScene3DProps = {
@@ -17,6 +21,8 @@ export function BattleScene3D({ floor, playerAnim, enemyAnim }: BattleScene3DPro
 
   useEffect(() => {
     preloadBattleFighterModels();
+    preloadHomeHeroPortrait();
+    preloadBattleHeroViews();
   }, []);
 
   return (
@@ -25,11 +31,12 @@ export function BattleScene3D({ floor, playerAnim, enemyAnim }: BattleScene3DPro
       <ambientLight intensity={0.5} />
       <directionalLight position={[3, 5, 2]} intensity={1.05} />
       <directionalLight position={[-4, 2, -2]} intensity={0.35} />
+      <BattleArenaCameraRig />
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]} receiveShadow>
-        <planeGeometry args={[7, 4]} />
+        <planeGeometry args={[5, 3]} />
         <meshStandardMaterial color={floorColor} />
       </mesh>
-      <BattleFighterMesh side="player" animState={playerAnim} />
+      <BattlePlayerHero animState={playerAnim} />
       <BattleFighterMesh side="enemy" animState={enemyAnim} />
     </>
   );

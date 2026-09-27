@@ -37,24 +37,6 @@
   min-height: 0;
 }
 
-.hero-showcase__spotlight {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -52%);
-  width: min(calc(var(--hero-stage-height) * 0.72), calc(var(--frame-width) * 0.88));
-  height: min(calc(var(--hero-stage-height) * 0.72), calc(var(--frame-width) * 0.88));
-  border-radius: 50%;
-  background: radial-gradient(
-    circle,
-    rgba(218, 165, 32, 0.22) 0%,
-    rgba(197, 160, 89, 0.08) 45%,
-    transparent 72%
-  );
-  pointer-events: none;
-  animation: hero-spotlight-pulse 4s ease-in-out infinite;
-}
-
 /* Soft ambient pool — tight contact shadow is on .character-figure--stage::after */
 .hero-showcase__pedestal {
   position: absolute;
@@ -109,7 +91,7 @@
   position: absolute;
   inset: 0;
   z-index: 1;
-  pointer-events: none;
+  pointer-events: auto;
 }
 
 .hero-showcase__canvas3d-inner {
@@ -124,13 +106,3 @@
   height: 100% !important;
 }
 
-@keyframes hero-spotlight-pulse {
-  0%, 100% { opacity: 0.85; transform: translate(-50%, -52%) scale(1); }
-  50% { opacity: 1; transform: translate(-50%, -52%) scale(1.04); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .hero-showcase__spotlight {
-    animation: none;
-  }
-}

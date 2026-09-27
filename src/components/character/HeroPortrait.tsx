@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { PLAYER_HERO_PORTRAIT_URL } from "../../engine/art/sprites/characterSheetConfig";
+import { BATTLE_HERO_VIEW_URLS } from "../../engine/art/battleHeroViews";
 
 interface HeroPortraitProps {
   size?: "stage" | "battle" | "menu" | "npc";
@@ -13,7 +13,7 @@ export const HeroPortrait = memo(function HeroPortrait({
   return (
     <img
       className={["hero-portrait", `hero-portrait--${size}`, className].filter(Boolean).join(" ")}
-      src={PLAYER_HERO_PORTRAIT_URL}
+      src={BATTLE_HERO_VIEW_URLS.front}
       alt=""
       draggable={false}
       aria-hidden="true"

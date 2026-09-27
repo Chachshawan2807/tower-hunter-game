@@ -16,6 +16,8 @@ import {
   joinBattleClasses,
   resolveBattleOutcomeDisplay,
 } from "./battleArenaUtils";
+import { isBattle3dEnabled } from "../../utils/render3dEnv";
+import { BattleArena3DSlot } from "./BattleArena3DSlot";
 import { CombatFxCanvas } from "./CombatFxCanvas";
 import { useBattleArenaKeyboard } from "./useBattleArenaKeyboard";
 
@@ -102,17 +104,34 @@ export const BattleArena = memo(function BattleArena({
     result
   );
 
+  const battle3d = isBattle3dEnabled();
+  const battleFloor = snapshot?.floor ?? 1;
+
   return (
     <div
       className={joinBattleClasses(
         "battle-arena",
         "battle-arena--command",
+        battle3d && "battle-arena--3d",
         showResult && "battle-arena--result"
       )}
       role="region"
       aria-label="Battle"
     >
-      <div className="battle-arena__stage">
+      <div
+        className={joinBattleClasses(
+          "battle-arena__stage",
+          battle3d && "battle-arena__stage--3d",
+          !battle3d && Boolean(snapshot) && "battle-arena__stage--sprites"
+        )}
+      >
+        {battle3d && snapshot ? (
+          <BattleArena3DSlot
+            floor={battleFloor}
+            playerAnim={playerAnim}
+            enemyAnim={enemyAnim}
+          />
+        ) : null}
         <CombatFxCanvas displayedEvents={displayedEvents} />
         {snapshot ? (
           <BattleArenaEntities
@@ -126,7 +145,7 @@ export const BattleArena = memo(function BattleArena({
             enemyHp={enemyHp}
             playerAnim={playerAnim}
             enemyAnim={enemyAnim}
-            overlayOnly
+            hideSprites={battle3d}
           />
         ) : (
           <p className="battle-arena__loading" role="status" aria-live="polite">

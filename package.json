@@ -21,6 +21,7 @@
     "generate:audio": "node scripts/generateAudioAssets.mjs",
     "generate:sprites": "node scripts/generateCharacterSheets.mjs",
     "generate:battle-models": "node scripts/generateBattleFighterGlbs.mjs",
+    "generate:battle-hero": "node scripts/generateBattleHeroGlb.mjs",
     "export:nav": "node scripts/buildNavButtonSvgs.mjs && node scripts/buildBagIconSvg.mjs && node scripts/buildShopIconSvg.mjs",
     "export:equip-slots": "node scripts/buildEquipmentSlotSvgs.mjs",
     "export:equip-items": "node scripts/buildEquipmentItemSvgs.mjs",
