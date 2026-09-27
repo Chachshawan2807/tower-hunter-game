@@ -3,8 +3,10 @@ import { useEffect } from "react";
 import type { AnimationState } from "../../../engine/art/animationStates";
 import { RENDER_3D_ART } from "../../../engine/art/render3d";
 import { BattleArenaCameraRig } from "./BattleArenaCameraRig";
+import { BattleTurntableProvider } from "./BattleTurntableContext";
+import { BattleEnemyHero } from "./BattleEnemyHero";
 import { BattlePlayerHero } from "./BattlePlayerHero";
-import { BattleFighterMesh } from "./BattleFighterMesh";
+import { preloadBattleEnemyViews } from "./battleEnemyViewPreload";
 import { preloadBattleFighterModels } from "./battleModelPreload";
 import { preloadBattleHeroViews } from "./battleHeroViewPreload";
 import { preloadHomeHeroPortrait } from "../home/homeHeroPortraitPreload";
@@ -23,10 +25,11 @@ export function BattleScene3D({ floor, playerAnim, enemyAnim }: BattleScene3DPro
     preloadBattleFighterModels();
     preloadHomeHeroPortrait();
     preloadBattleHeroViews();
+    preloadBattleEnemyViews();
   }, []);
 
   return (
-    <>
+    <BattleTurntableProvider>
       <color attach="background" args={[RENDER_3D_ART.backgroundHex]} />
       <ambientLight intensity={0.5} />
       <directionalLight position={[3, 5, 2]} intensity={1.05} />
@@ -37,7 +40,7 @@ export function BattleScene3D({ floor, playerAnim, enemyAnim }: BattleScene3DPro
         <meshStandardMaterial color={floorColor} />
       </mesh>
       <BattlePlayerHero animState={playerAnim} />
-      <BattleFighterMesh side="enemy" animState={enemyAnim} />
-    </>
+      <BattleEnemyHero animState={enemyAnim} />
+    </BattleTurntableProvider>
   );
 }

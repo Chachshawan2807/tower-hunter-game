@@ -6,8 +6,14 @@ import {
 
 const TAU = Math.PI * 2;
 
-/** Horizontal drag sensitivity (radians per screen pixel). */
-export const SHOWCASE_DRAG_RAD_PER_PX = 0.014;
+/** Orbit speed while pointer is held (about one turn every 22s). */
+export const SHOWCASE_HOLD_RAD_PER_SEC = TAU / 22;
+
+/** One click advances to the next turnaround sector (45°). */
+export const SHOWCASE_CLICK_STEP_RAD = Math.PI / 4;
+
+export const SHOWCASE_CLICK_MAX_MS = 220;
+export const SHOWCASE_CLICK_MAX_MOVE_PX = 10;
 
 export function normalizeShowcaseYaw(yaw: number): number {
   return ((yaw % TAU) + TAU) % TAU;

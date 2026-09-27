@@ -1,5 +1,5 @@
 import { useFrame } from "@react-three/fiber";
-import { useRef } from "react";
+import { useContext, useRef } from "react";
 import {
   DoubleSide,
   type Group,
@@ -12,23 +12,43 @@ import type { AnimationState } from "../../../engine/art/animationStates";
 import type { BattleHeroViewId } from "../../../engine/art/battleHeroViews";
 import { applyShowcaseViewLayer } from "./applyShowcaseViewLayer";
 import { type HeroBillboardPresentation } from "./heroViewPlaneSize";
+import { BattleTurntableContext } from "../battle/BattleTurntableContext";
+import type { FighterSide } from "../battle/fighterPose";
 import { showcaseViewFromYaw } from "./showcaseHeroTurntable";
-import { useShowcaseTurntableYawRef } from "./ShowcaseTurntableContext";
+import { ShowcaseTurntableContext } from "./ShowcaseTurntableContext";
+import type { TurnaroundTextureAnchor } from "./turnaroundTextureAnchor";
 
 type TurnaroundHeroSingleMeshProps = {
   animState: AnimationState;
   presentation: HeroBillboardPresentation;
   textures: Record<BattleHeroViewId, Texture>;
+  anchors: Record<BattleHeroViewId, TurnaroundTextureAnchor>;
   basePlane: { width: number; height: number };
+  /** When set, reads yaw from battle arena turntable (per-fighter drag). */
+  battleSide?: FighterSide;
 };
 
 export function TurnaroundHeroSingleMesh({
   animState,
   presentation,
   textures,
+  anchors,
   basePlane,
+  battleSide,
 }: TurnaroundHeroSingleMeshProps) {
-  const { yawRef } = useShowcaseTurntableYawRef();
+  const battleTurntable = useContext(BattleTurntableContext);
+  const showcaseTurntable = useContext(ShowcaseTurntableContext);
+  const yawRef =
+    battleSide !== undefined
+      ? battleTurntable?.yawRefForSide(battleSide)
+      : showcaseTurntable?.yawRef;
+  if (!yawRef) {
+    throw new Error(
+      battleSide !== undefined
+        ? "TurnaroundHeroSingleMesh battleSide requires BattleTurntableProvider"
+        : "TurnaroundHeroSingleMesh requires ShowcaseTurntableProvider"
+    );
+  }
   const meshRef = useRef<Mesh>(null);
   const matRef = useRef<MeshBasicMaterial>(null);
   const rootRef = useRef<Group>(null);
@@ -78,7 +98,8 @@ export function TurnaroundHeroSingleMesh({
       textures,
       presentation,
       basePlane,
-      scaleMul
+      scaleMul,
+      anchors[viewId]
     );
   });
 
@@ -95,7 +116,7 @@ export function TurnaroundHeroSingleMesh({
           map={textures.front}
           transparent
           opacity={1}
-          alphaTest={0.001}
+          alphaTest={0.02}
           side={DoubleSide}
           toneMapped={false}
           depthWrite={false}

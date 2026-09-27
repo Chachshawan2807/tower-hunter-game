@@ -15,7 +15,12 @@ export function BattleArena3DLayer({
 }: BattleArena3DLayerProps) {
   return (
     <div className="battle-arena__canvas3d" aria-hidden>
-      <GameCanvas className="battle-arena__canvas3d-inner">
+      <GameCanvas
+        className="battle-arena__canvas3d-inner"
+        options={{
+          gl: { alpha: true, premultipliedAlpha: true },
+        }}
+      >
         <BattleScene3D floor={floor} playerAnim={playerAnim} enemyAnim={enemyAnim} />
       </GameCanvas>
     </div>

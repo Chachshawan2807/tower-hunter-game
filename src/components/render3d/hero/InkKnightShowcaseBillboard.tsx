@@ -11,6 +11,10 @@ import { HomeHeroCameraRig } from "../home/HomeHeroCameraRig";
 import { heroViewPlaneSize, type HeroBillboardPresentation } from "./heroViewPlaneSize";
 import { ShowcaseTurnaroundMeshes } from "./ShowcaseTurnaroundMeshes";
 import { ShowcaseTurntableProvider } from "./ShowcaseTurntableContext";
+import {
+  turnaroundAnchorsForViews,
+  type TurnaroundTextureAnchor,
+} from "./turnaroundTextureAnchor";
 
 const VIEW_URLS = Object.values(BATTLE_HERO_VIEW_URLS);
 
@@ -42,6 +46,8 @@ function InkKnightShowcaseBillboardMesh({ animState }: InkKnightShowcaseBillboar
     [textures.front]
   );
 
+  const anchors = useMemo(() => turnaroundAnchorsForViews(textures), [textures]);
+
   const cameraFraming = useMemo(() => {
     const sizes = Object.values(textures).map((tex) =>
       heroViewPlaneSize(tex, presentation)
@@ -61,6 +67,7 @@ function InkKnightShowcaseBillboardMesh({ animState }: InkKnightShowcaseBillboar
         animState={animState}
         presentation={presentation}
         textures={textures}
+        anchors={anchors as Record<BattleHeroViewId, TurnaroundTextureAnchor>}
         basePlane={basePlane}
       />
     </ShowcaseTurntableProvider>
