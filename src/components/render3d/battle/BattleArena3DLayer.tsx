@@ -20,7 +20,10 @@ export function BattleArena3DLayer({
       <GameCanvas
         className="battle-arena__canvas3d-inner"
         options={{
-          gl: { alpha: true, premultipliedAlpha: true },
+          gl: { alpha: false, premultipliedAlpha: false },
+          onCreated: ({ gl }) => {
+            gl.setClearColor(0x000000, 1);
+          },
         }}
       >
         <BattleScene3D

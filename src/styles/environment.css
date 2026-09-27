@@ -106,8 +106,8 @@
   pointer-events: none;
 }
 
-.env-zone--forgotten-dungeon .env-rain,
-.env-zone--knight-citadel .env-rain {
+.game-frame.env-zone--forgotten-dungeon .env-rain,
+.game-frame.env-zone--knight-citadel .env-rain {
   opacity: 0.35;
 }
 
@@ -116,41 +116,41 @@
   display: none;
 }
 
-.game-frame:has(.game-viewport.is-tower-battle)[class*="env-zone--"] {
+.game-frame:has(.game-viewport.is-tower-battle) {
   background: var(--ink-black);
 }
 
-/* Zone-specific atmosphere */
-.env-zone--forgotten-dungeon {
+/* Zone-specific atmosphere — game frame only (not battle zone-arena wrappers) */
+.game-frame.env-zone--forgotten-dungeon {
   background:
     radial-gradient(ellipse 90% 40% at 50% 0%, rgba(139, 0, 0, 0.08) 0%, transparent 55%),
     linear-gradient(180deg, var(--stone-850) 0%, var(--primary-black-deep) 100%);
 }
 
-.env-zone--imperial-bastion {
+.game-frame.env-zone--imperial-bastion {
   background:
     radial-gradient(ellipse 80% 35% at 50% 0%, rgba(218, 165, 32, 0.1) 0%, transparent 50%),
     linear-gradient(180deg, #1a1410 0%, var(--primary-black-deep) 100%);
 }
 
-.env-zone--imperial-bastion .env-wall {
+.game-frame.env-zone--imperial-bastion .env-wall {
   background: linear-gradient(90deg, #1a100c 0%, #2a1810 50%, #1a100c 100%);
 }
 
-.env-zone--knight-citadel {
+.game-frame.env-zone--knight-citadel {
   background:
     radial-gradient(ellipse 70% 30% at 50% 0%, rgba(100, 100, 110, 0.12) 0%, transparent 50%),
     linear-gradient(180deg, #141418 0%, var(--primary-black-deep) 100%);
 }
 
-.env-zone--void-pinnacle {
+.game-frame.env-zone--void-pinnacle {
   background:
     radial-gradient(ellipse 60% 50% at 50% 45%, rgba(197, 160, 89, 0.12) 0%, transparent 55%),
     radial-gradient(ellipse 40% 30% at 50% 60%, rgba(178, 34, 34, 0.1) 0%, transparent 50%),
     var(--primary-black-deep);
 }
 
-.env-zone--void-pinnacle .env-fog {
+.game-frame.env-zone--void-pinnacle .env-fog {
   background: radial-gradient(
     ellipse 80% 60% at 50% 50%,
     rgba(0, 0, 0, 0.7) 0%,
@@ -158,7 +158,7 @@
   );
 }
 
-.env-zone--void-pinnacle .env-chains {
+.game-frame.env-zone--void-pinnacle .env-chains {
   opacity: 0.15;
 }
 

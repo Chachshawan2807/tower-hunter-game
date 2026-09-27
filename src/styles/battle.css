@@ -47,6 +47,10 @@
   gap: 0;
 }
 
+.tower-view--battle .zone-arena {
+  background: var(--ink-black);
+}
+
 .tower-view--battle .battle-arena__frame {
   flex: 1;
   min-height: 0;
@@ -82,17 +86,20 @@
   flex-direction: column;
   justify-content: flex-end;
   padding: var(--space-2) var(--space-1) var(--space-3);
-  background: linear-gradient(
-    180deg,
-    rgba(8, 10, 14, 0.35) 0%,
-    rgba(8, 10, 14, 0.72) 100%
-  );
+  background: var(--ink-black);
   border-radius: var(--radius-md);
   overflow: hidden;
 }
 
 .tower-view--battle .battle-arena__stage {
   background: var(--ink-black);
+  border-radius: 0;
+}
+
+.game-viewport.is-tower-battle .battle-arena__canvas3d,
+.game-viewport.is-tower-battle .battle-arena__canvas3d-inner,
+.game-viewport.is-tower-battle .battle-arena__canvas3d canvas {
+  background-color: var(--ink-black);
 }
 
 .battle-arena__stage--3d {

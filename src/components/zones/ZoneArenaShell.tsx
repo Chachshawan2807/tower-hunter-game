@@ -11,7 +11,7 @@ export function ZoneArenaShell({ floor, children }: ZoneArenaShellProps) {
   const zone = getTowerZone(floor);
 
   return (
-    <div className={`zone-arena ${zone.cssClass}`} data-zone={zone.id}>
+    <div className="zone-arena" data-zone={zone.id}>
       {children}
     </div>
   );

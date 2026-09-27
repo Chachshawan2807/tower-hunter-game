@@ -19,6 +19,7 @@
   padding-bottom: var(--overlay-bottom-inset);
   justify-content: stretch;
   overflow: hidden;
+  background: var(--ink-black);
 }
 
 .game-viewport.is-tower-battle .stage > .tower-view {
