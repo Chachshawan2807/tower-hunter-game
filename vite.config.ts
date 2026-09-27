@@ -42,10 +42,22 @@ export default defineConfig({
         ],
       },
       workbox: {
-        globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2,glb}"],
+        // GLBs (e.g. battle-hero ~7 MB) exceed Workbox precache size limit; cache on demand instead.
+        globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
         navigateFallback: "index.html",
         navigateFallbackDenylist: [/^\/api/, /^\/health/],
         runtimeCaching: [
+          {
+            urlPattern: /\/models\/.*\.glb$/i,
+            handler: "CacheFirst",
+            options: {
+              cacheName: "game-models-glb",
+              expiration: {
+                maxEntries: 16,
+                maxAgeSeconds: 60 * 60 * 24 * 30,
+              },
+            },
+          },
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
             handler: "CacheFirst",
