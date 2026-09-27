@@ -11,6 +11,7 @@ type BattleArena3DProps = {
   floor: number;
   playerAnim: AnimationState;
   enemyAnim: AnimationState;
+  battleSessionKey?: string | null;
 };
 
 export function BattleArena3D(props: BattleArena3DProps) {

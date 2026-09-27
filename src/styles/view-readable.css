@@ -489,6 +489,17 @@
   color: var(--ink-black);
 }
 
+.view-readable.is-tower-battle .battle-skill-btn:not(:disabled) {
+  border-color: #ffffff;
+  color: var(--text-primary);
+  background: rgba(0, 0, 0, 0.72);
+}
+
+.view-readable.is-tower-battle .battle-skill-btn--ready:not(:disabled),
+.view-readable.is-tower-battle .battle-skill-btn--mp {
+  border-color: #ffffff;
+}
+
 .view-readable .tower-view__footer .action-btn--climb {
   border: 2px solid var(--ember-500);
   background: var(--ember-500);

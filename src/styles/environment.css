@@ -111,6 +111,15 @@
   opacity: 0.35;
 }
 
+/* Tower battle — single ink-black window (no zone gradient / backdrop bleed) */
+.game-frame:has(.game-viewport.is-tower-battle) .env-backdrop {
+  display: none;
+}
+
+.game-frame:has(.game-viewport.is-tower-battle)[class*="env-zone--"] {
+  background: var(--ink-black);
+}
+
 /* Zone-specific atmosphere */
 .env-zone--forgotten-dungeon {
   background:

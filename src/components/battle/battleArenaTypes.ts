@@ -27,6 +27,8 @@ export interface BattleArenaProps {
   playerSkillUpgrades?: Record<string, SkillUpgradeRanks>;
   unlockedSkillIds?: string[];
   enemyTargetId?: string;
+  /** New battle / refresh — remounts 3D turntable at default yaw. */
+  battleSessionKey?: string | null;
   onReset: () => void;
 }
 

@@ -72,6 +72,7 @@ export function TowerView({
       playerSkillUpgrades={playerSkillUpgrades}
       unlockedSkillIds={unlockedSkillIds}
       enemyTargetId={`enemy_floor_${currentFloor}`}
+      battleSessionKey={battle.sessionId}
       onReset={battle.resetBattle}
     />
   );

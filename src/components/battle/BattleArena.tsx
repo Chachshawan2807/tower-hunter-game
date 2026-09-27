@@ -45,6 +45,7 @@ export const BattleArena = memo(function BattleArena({
   playerSkillUpgrades = {},
   unlockedSkillIds = [],
   enemyTargetId,
+  battleSessionKey,
   onReset,
 }: BattleArenaProps) {
   const playerHp = useMemo(() => getEntityHp(snapshot, "player"), [snapshot]);
@@ -127,9 +128,11 @@ export const BattleArena = memo(function BattleArena({
       >
         {battle3d && snapshot ? (
           <BattleArena3DSlot
+            key={battleSessionKey ?? "battle-3d"}
             floor={battleFloor}
             playerAnim={playerAnim}
             enemyAnim={enemyAnim}
+            battleSessionKey={battleSessionKey}
           />
         ) : null}
         <CombatFxCanvas displayedEvents={displayedEvents} />

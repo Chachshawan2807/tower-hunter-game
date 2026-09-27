@@ -16,9 +16,15 @@ export type BattleScene3DProps = {
   floor: number;
   playerAnim: AnimationState;
   enemyAnim: AnimationState;
+  battleSessionKey?: string | null;
 };
 
-export function BattleScene3D({ floor, playerAnim, enemyAnim }: BattleScene3DProps) {
+export function BattleScene3D({
+  floor,
+  playerAnim,
+  enemyAnim,
+  battleSessionKey,
+}: BattleScene3DProps) {
   const floorColor = floorColorForBattle(floor);
 
   useEffect(() => {
@@ -29,7 +35,10 @@ export function BattleScene3D({ floor, playerAnim, enemyAnim }: BattleScene3DPro
   }, []);
 
   return (
-    <BattleTurntableProvider>
+    <BattleTurntableProvider
+      key={battleSessionKey ?? "battle-turntable"}
+      resetKey={battleSessionKey}
+    >
       <color attach="background" args={[RENDER_3D_ART.backgroundHex]} />
       <ambientLight intensity={0.5} />
       <directionalLight position={[3, 5, 2]} intensity={1.05} />

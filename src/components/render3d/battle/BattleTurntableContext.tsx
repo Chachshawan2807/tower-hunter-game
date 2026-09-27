@@ -2,6 +2,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useLayoutEffect,
   useMemo,
   useRef,
   type MutableRefObject,
@@ -9,8 +10,10 @@ import {
 } from "react";
 import { useThree } from "@react-three/fiber";
 
-import { BATTLE_ENEMY_DEFAULT_TURN_YAW } from "../../../engine/art/battleEnemyTurnaround";
-import { BATTLE_PLAYER_DEFAULT_TURN_YAW } from "../../../engine/art/battleHeroTurnaround";
+import {
+  BATTLE_ENEMY_DEFAULT_TURN_YAW,
+  BATTLE_PLAYER_DEFAULT_TURN_YAW,
+} from "../../../engine/art/battleArenaOpening";
 import { TurntablePointerSurface } from "../hero/TurntablePointerSurface";
 import type { FighterSide } from "./fighterPose";
 
@@ -48,9 +51,30 @@ function BattleTurntablePointerSurface() {
   return <TurntablePointerSurface resolveYawRef={resolveYawRef} />;
 }
 
-export function BattleTurntableProvider({ children }: { children: ReactNode }) {
+export function resetBattleTurntableYaw(
+  playerYawRef: MutableRefObject<number>,
+  enemyYawRef: MutableRefObject<number>
+): void {
+  playerYawRef.current = BATTLE_PLAYER_DEFAULT_TURN_YAW;
+  enemyYawRef.current = BATTLE_ENEMY_DEFAULT_TURN_YAW;
+}
+
+type BattleTurntableProviderProps = {
+  children: ReactNode;
+  /** New battle session id — resets both fighters to the canonical opening stance. */
+  resetKey?: string | null;
+};
+
+export function BattleTurntableProvider({
+  children,
+  resetKey,
+}: BattleTurntableProviderProps) {
   const playerYawRef = useRef(BATTLE_PLAYER_DEFAULT_TURN_YAW);
   const enemyYawRef = useRef(BATTLE_ENEMY_DEFAULT_TURN_YAW);
+
+  useLayoutEffect(() => {
+    resetBattleTurntableYaw(playerYawRef, enemyYawRef);
+  }, [resetKey]);
 
   const value = useMemo(
     (): BattleTurntableContextValue => ({

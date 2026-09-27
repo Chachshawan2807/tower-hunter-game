@@ -35,6 +35,7 @@
   width: 100%;
   z-index: 1;
   padding: 0 var(--space-1);
+  background: var(--ink-black);
 }
 
 .tower-view--battle .zone-arena,
@@ -88,6 +89,10 @@
   );
   border-radius: var(--radius-md);
   overflow: hidden;
+}
+
+.tower-view--battle .battle-arena__stage {
+  background: var(--ink-black);
 }
 
 .battle-arena__stage--3d {
@@ -364,8 +369,18 @@
   z-index: 2;
 }
 
-.battle-command-skill--ready:not(:disabled) {
-  border-color: rgba(255, 236, 160, 0.85);
+.battle-command-skill:not(.battle-command-skill--passive):not(
+    .battle-command-skill--empty
+  ) {
+  border-color: #ffffff;
+}
+
+.battle-command-skill--ready:not(:disabled):not(.battle-command-skill--passive) {
+  border-color: #ffffff;
+}
+
+.battle-command-skill--mp:not(.battle-command-skill--passive) {
+  border-color: #ffffff;
 }
 
 .battle-command-skill:disabled:not(.battle-command-skill--empty) {

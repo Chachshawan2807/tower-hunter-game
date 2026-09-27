@@ -6,12 +6,14 @@ export type BattleArena3DLayerProps = {
   floor: number;
   playerAnim: AnimationState;
   enemyAnim: AnimationState;
+  battleSessionKey?: string | null;
 };
 
 export function BattleArena3DLayer({
   floor,
   playerAnim,
   enemyAnim,
+  battleSessionKey,
 }: BattleArena3DLayerProps) {
   return (
     <div className="battle-arena__canvas3d" aria-hidden>
@@ -21,7 +23,12 @@ export function BattleArena3DLayer({
           gl: { alpha: true, premultipliedAlpha: true },
         }}
       >
-        <BattleScene3D floor={floor} playerAnim={playerAnim} enemyAnim={enemyAnim} />
+        <BattleScene3D
+          floor={floor}
+          playerAnim={playerAnim}
+          enemyAnim={enemyAnim}
+          battleSessionKey={battleSessionKey}
+        />
       </GameCanvas>
     </div>
   );
