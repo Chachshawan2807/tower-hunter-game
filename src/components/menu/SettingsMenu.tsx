@@ -1,4 +1,5 @@
 import { useAudioSettings } from "../../hooks/useAudioSettings";
+import { useBattle3dSetting } from "../../hooks/useBattle3dSetting";
 import { t, type Locale } from "../../utils/i18n";
 import { SettingsLocaleToggle } from "./SettingsLocaleToggle";
 import { SettingsToggle } from "./SettingsToggle";
@@ -11,6 +12,7 @@ interface SettingsMenuProps {
 
 export function SettingsMenu({ locale, onToggleLocale }: SettingsMenuProps) {
   const { settings, setMuted, setMusicVolume, setSfxVolume } = useAudioSettings();
+  const { battle3dEnabled, setBattle3dEnabled } = useBattle3dSetting();
 
   return (
     <div className="settings-menu">
@@ -46,6 +48,16 @@ export function SettingsMenu({ locale, onToggleLocale }: SettingsMenuProps) {
           <div className="settings-item">
             <span className="settings-item__label">{t("settings.lang", locale)}</span>
             <SettingsLocaleToggle locale={locale} onToggle={onToggleLocale} />
+          </div>
+          <div className="settings-item">
+            <span className="settings-item__label">
+              {t("settings.battle_3d", locale)}
+            </span>
+            <SettingsToggle
+              label={t("settings.battle_3d", locale)}
+              checked={battle3dEnabled}
+              onChange={setBattle3dEnabled}
+            />
           </div>
         </div>
       </section>

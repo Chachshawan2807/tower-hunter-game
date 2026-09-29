@@ -7,7 +7,7 @@
 | Doc | Purpose |
 |-----|---------|
 | [ARCHITECTURE.md](ARCHITECTURE.md) | MVC layers, battle data flow, feature checklist, boundary rules |
-| [RENDER_3D.md](RENDER_3D.md) | Three.js + React Three Fiber (optional view layer, dev preview) |
+| [RENDER_3D.md](RENDER_3D.md) | Three.js + R3F view layer, player 3D toggle, future 3D roadmap |
 
 **No Phaser** — turn-based combat uses engine + animation queue, not a real-time game loop.
 

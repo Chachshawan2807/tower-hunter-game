@@ -194,7 +194,7 @@ src/
 
 ## Optional 3D view (Three.js + R3F)
 
-Combat authority is unchanged. WebGL scenes belong in `src/components/render3d/` behind `GameCanvas`; art constants in `src/engine/art/render3d.ts`. Full setup: [RENDER_3D.md](RENDER_3D.md).
+Combat authority is unchanged. WebGL scenes belong in `src/components/render3d/` behind `GameCanvas`; art constants in `src/engine/art/render3d.ts`. Players can enable **3D battle arena** in Settings; production builds can default WebGL with `VITE_BATTLE_3D=1`. Roadmap and toggles: [RENDER_3D.md](RENDER_3D.md).
 
 ## Related docs
 

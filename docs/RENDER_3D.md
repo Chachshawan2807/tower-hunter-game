@@ -28,10 +28,13 @@ public/models/                 # Place .glb / .gltf assets here
 
 | Command / flag | Effect |
 |----------------|--------|
-| **`npm run dev`** or **`npm run dev:3d`** | API + Vite with `--mode render3d` (battle WebGL **on** in dev) |
-| `npm run dev:2d` | API + Vite without render3d mode (2D-only unless `?render3d=1`) |
+| **`npm run dev`** | API + Vite — **2D default**; turn on **Settings → 3D battle arena** (saved in `localStorage`) |
+| **`npm run dev:3d`** | Same + Vite `--mode render3d` (dev calibration PiP; optional `?render3d=1`) |
+| **`npm run dev:2d`** | Alias of default dev (2D-first) |
 | `npm run dev:web:3d` | Frontend only (no API) — use `npm run dev` for full stack |
-| `VITE_BATTLE_3D=1` (build) | Battle WebGL in production |
+| `VITE_BATTLE_3D=1` (build) | Default battle WebGL on when the player has not chosen 2D/3D in Settings |
+
+**Player control:** Settings → **3D battle arena** persists `tower-hunter-battle-3d` (`1` / `0`) and overrides env defaults when set.
 
 Tower battles flow: `TowerView` → `ZoneBattleArena` → `BattleArena` → lazy `BattleArena3D` + `GameCanvas`.
 
@@ -68,3 +71,21 @@ When 3D flags are on but you are **not** in a tower battle, a small calibration 
 `scripts/validate-architecture.ts` fails if `src/engine/` imports `three` or `@react-three/*`. Swapping R3F for imperative Three.js later only rewrites `src/components/render3d/`.
 
 See also [ARCHITECTURE.md](ARCHITECTURE.md) (View layer).
+
+## Product direction (2D today, 3D-ready)
+
+The game **ships 2D-first** (sprites, ink turnarounds, DOM HUD). WebGL is an **alternate view** on the same server snapshots and `AnimationEvent[]` — not a second combat sim.
+
+| Area | Today | Future (same architecture) |
+|------|--------|----------------------------|
+| Combat authority | `src/engine/` + server | Unchanged |
+| Battle characters | 2D sprites; optional WebGL via Settings | Authored `battle-hero.glb`, enemy variants, zone props |
+| Tower zones | 2D CSS / zone art | Optional `TowerZonePresentationMode` WebGL backdrops (`hybrid` = 3D floor + DOM HUD) |
+| Assets | `public/models/*.glb`, lazy `BattleArena3DSlot` | Draco/KTX2, more clips, per-floor props |
+| Toggle | Settings → **3D battle arena** (`useBattle3dSetting`) | Same preference; production default via `VITE_BATTLE_3D=1` |
+
+**Do not** move damage, turns, or drops into Three.js. New 3D work = `src/components/render3d/` + `public/models/` + `src/engine/art/render3d.ts` only.
+
+**Types:** `BattlePresentationMode` / `TowerZonePresentationMode` in `src/types/presentation.interface.ts` (view contracts only).
+
+**Authoring:** [art-bible/BATTLE_FIGHTER_3D_BRIEF.md](art-bible/BATTLE_FIGHTER_3D_BRIEF.md) (Meshy/Tripo → Blender cleanup → GLB handoff).

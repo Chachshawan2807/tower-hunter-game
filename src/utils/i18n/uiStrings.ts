@@ -32,6 +32,10 @@ export const UI_I18N_STRINGS: Record<string, Record<Locale, string>> = {
   "settings.mute": { en: "Mute all", th: "ปิดเสียงทั้งหมด" },
   "settings.music_volume": { en: "Music", th: "เพลง" },
   "settings.sfx_volume": { en: "Sound effects", th: "เอฟเฟกต์เสียง" },
+  "settings.battle_3d": {
+    en: "3D battle arena",
+    th: "สนามต่อสู้ 3D",
+  },
   "menu.close": { en: "Close", th: "ปิด" },
   "dialog.confirm": { en: "Confirm", th: "ยืนยัน" },
   "dialog.cancel": { en: "Cancel", th: "ยกเลิก" },

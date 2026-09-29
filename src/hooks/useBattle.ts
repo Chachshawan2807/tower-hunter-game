@@ -126,13 +126,16 @@ export function useBattle(
       setResult(resolvedResult);
 
       const hasAnimatedEvents = step.animationQueue.events.length > 0;
-      if (hasAnimatedEvents) {
-        stepStartSnapshotRef.current =
-          battleSnapshotRef.current ??
-          baselineSnapshotBeforeEvents(
-            finalState,
-            step.animationQueue.events
-          );
+      const skipPauseAnimation = pausesForPlayer && hasAnimatedEvents;
+
+      if (hasAnimatedEvents && !skipPauseAnimation) {
+        // Always derive pre-step HP from final state + events. Using the last
+        // committed snapshot breaks manual turns: a pause step already applies
+        // start-of-turn events, then the intent step replays priorEvents.
+        stepStartSnapshotRef.current = baselineSnapshotBeforeEvents(
+          finalState,
+          step.animationQueue.events
+        );
       } else {
         stepStartSnapshotRef.current = null;
         setBattleSnapshot(finalState);
@@ -141,7 +144,11 @@ export function useBattle(
 
       setIsComplete(step.state.isComplete || resolvedResult !== null);
 
-      if (step.state.isComplete || resolvedResult !== null) {
+      if (
+        step.state.isComplete ||
+        resolvedResult !== null ||
+        skipPauseAnimation
+      ) {
         animation.enqueue({ events: [], finalState });
       } else {
         animation.enqueue(step.animationQueue);

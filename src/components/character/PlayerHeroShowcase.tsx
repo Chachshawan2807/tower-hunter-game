@@ -1,7 +1,7 @@
 import type { CharacterEquipmentVisual } from "../../engine/art/equipment/catalog";
 import type { SkillPath } from "../../engine/types";
 import { HomeHero3D } from "../render3d/home/HomeHero3D";
-import { isBattle3dEnabled } from "../../utils/render3dEnv";
+import { useBattle3dEnabled } from "../../hooks/useBattle3dSetting";
 import { CharacterFigure } from "./CharacterFigure";
 
 export type PlayerHeroShowcaseSize = "stage" | "menu";
@@ -19,7 +19,7 @@ export function PlayerHeroShowcase({
   displayName,
   equipment,
 }: PlayerHeroShowcaseProps) {
-  const hero3d = isBattle3dEnabled();
+  const hero3d = useBattle3dEnabled();
 
   if (!hero3d) {
     return (

@@ -16,7 +16,7 @@ import {
   joinBattleClasses,
   resolveBattleOutcomeDisplay,
 } from "./battleArenaUtils";
-import { isBattle3dEnabled } from "../../utils/render3dEnv";
+import { useBattle3dEnabled } from "../../hooks/useBattle3dSetting";
 import { BattleArena3DSlot } from "./BattleArena3DSlot";
 import { useBattleArenaKeyboard } from "./useBattleArenaKeyboard";
 
@@ -94,7 +94,7 @@ export const BattleArena = memo(function BattleArena({
   );
 
   const manualTurn =
-    actionRequired && !autoBattle && !isComplete && !isPlaying && !busy;
+    actionRequired && !autoBattle && !isComplete && !busy;
 
   useBattleArenaKeyboard({
     enabled: manualTurn,
@@ -108,7 +108,7 @@ export const BattleArena = memo(function BattleArena({
     result
   );
 
-  const battle3d = isBattle3dEnabled();
+  const battle3d = useBattle3dEnabled();
   const battleFloor = snapshot?.floor ?? floorProp ?? 1;
 
   return (

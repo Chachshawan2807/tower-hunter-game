@@ -31,3 +31,8 @@ export type {
   TurnResolutionResult,
 } from "./animation.interface";
 export { buildTurnResolutionResult } from "./animation.interface";
+
+export type {
+  BattlePresentationMode,
+  TowerZonePresentationMode,
+} from "./presentation.interface";
