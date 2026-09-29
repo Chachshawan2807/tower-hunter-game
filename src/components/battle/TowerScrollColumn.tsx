@@ -6,16 +6,25 @@ import { TOWER_TOTAL_FLOORS } from "./towerFloorScale";
 
 interface TowerScrollColumnProps {
   locale: Locale;
-  currentFloor: number;
+  maxUnlockedFloor: number;
+  selectedFloor: number;
+  onSelectFloor: (floor: number) => void;
   floorLabel: string;
+  scrollGeneration?: number;
 }
 
 export function TowerScrollColumn({
   locale,
-  currentFloor,
+  maxUnlockedFloor,
+  selectedFloor,
+  onSelectFloor,
   floorLabel,
+  scrollGeneration = 0,
 }: TowerScrollColumnProps) {
-  const { scrollRef, registerFloor } = useTowerFloorScroll(currentFloor);
+  const { scrollRef, registerFloor } = useTowerFloorScroll(
+    maxUnlockedFloor,
+    scrollGeneration
+  );
 
   const floors = useMemo(() => {
     const list: number[] = [];
@@ -37,9 +46,11 @@ export function TowerScrollColumn({
           <li key={floor} className="tower-floor-grid__cell">
             <TowerFloorBlock
               floor={floor}
-              currentFloor={currentFloor}
+              maxUnlockedFloor={maxUnlockedFloor}
+              selectedFloor={selectedFloor}
               localeLabel={floorLabel}
               lockedLabel={t("tower.locked", locale)}
+              onSelectFloor={onSelectFloor}
               onRegister={(el) => registerFloor(floor, el)}
             />
           </li>

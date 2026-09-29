@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { defaultSkillLoadout } from "../../engine/skills";
 import { t, type Locale } from "../../utils/i18n";
 import { playUiClick } from "../../hooks/useGameAudio";
@@ -14,21 +14,44 @@ interface TowerViewProps {
   currentFloor: number;
   climbFloor: number;
   playerLevel: number;
+  playerDisplayName: string;
   playerEquipment: CharacterEquipmentVisual;
   battle: ReturnType<typeof useBattle>;
   onOpenSettings: () => void;
+  onExitBattle: () => void;
+  towerScrollGeneration?: number;
 }
 
 export function TowerView({
   locale,
-  currentFloor,
+  currentFloor: _currentFloor,
   climbFloor,
   playerLevel: _playerLevel,
+  playerDisplayName,
   playerEquipment,
   battle,
   onOpenSettings,
+  onExitBattle,
+  towerScrollGeneration = 0,
 }: TowerViewProps) {
   const inBattle = battle.sessionId !== null;
+  const maxUnlockedFloor = climbFloor;
+
+  const [selectedFloor, setSelectedFloor] = useState(maxUnlockedFloor);
+
+  useEffect(() => {
+    setSelectedFloor((prev) =>
+      prev > 0 && prev <= maxUnlockedFloor ? prev : maxUnlockedFloor
+    );
+  }, [maxUnlockedFloor]);
+
+  useEffect(() => {
+    if (towerScrollGeneration > 0) {
+      setSelectedFloor(maxUnlockedFloor);
+    }
+  }, [towerScrollGeneration, maxUnlockedFloor]);
+
+  const fightFloor = inBattle ? battle.floor : selectedFloor;
 
   const floorLabel = t("tower.floor", locale);
 
@@ -49,13 +72,18 @@ export function TowerView({
 
   const autoBattle = battle.loadoutContext?.autoBattle ?? true;
 
-  const nextFloorTarget = currentFloor + 1;
+  const nextFloorTarget = fightFloor + 1;
   const nextFloorDisabled =
     battle.result === "lose" || battle.busy || nextFloorTarget > 100;
 
+  const canFight =
+    selectedFloor >= 1 &&
+    selectedFloor <= maxUnlockedFloor &&
+    !battle.busy;
+
   const battleArena = (
     <ZoneBattleArena
-      floor={currentFloor}
+      floor={fightFloor}
       locale={locale}
       snapshot={battle.battleSnapshot}
       displayedEvents={battle.displayedEvents}
@@ -68,6 +96,7 @@ export function TowerView({
       isPlaying={battle.isPlaying}
       speed={battle.speed}
       playerEquipment={playerEquipment}
+      playerDisplayName={playerDisplayName}
       onSpeedChange={battle.setSpeed}
       onToggleAuto={(enabled) => void battle.setAutoBattle(enabled)}
       onOpenSettings={onOpenSettings}
@@ -75,9 +104,9 @@ export function TowerView({
       commandSlotIds={commandSlotIds}
       playerSkillUpgrades={playerSkillUpgrades}
       unlockedSkillIds={unlockedSkillIds}
-      enemyTargetId={`enemy_floor_${currentFloor}`}
+      enemyTargetId={`enemy_floor_${fightFloor}`}
       battleSessionKey={battle.sessionId}
-      onReset={battle.resetBattle}
+      onReset={onExitBattle}
       onNextFloor={() => {
         battle.resetBattle();
         void battle.startBattle(nextFloorTarget);
@@ -92,8 +121,11 @@ export function TowerView({
         <div className="tower-view__center">
           <TowerScrollColumn
             locale={locale}
-            currentFloor={currentFloor}
+            maxUnlockedFloor={maxUnlockedFloor}
+            selectedFloor={selectedFloor}
+            onSelectFloor={setSelectedFloor}
             floorLabel={floorLabel}
+            scrollGeneration={towerScrollGeneration}
           />
         </div>
       ) : null}
@@ -121,18 +153,18 @@ export function TowerView({
           )}
           <button
             className="action-btn action-btn--climb"
-            disabled={battle.busy || !climbFloor}
+            disabled={!canFight}
             onClick={() => {
               playUiClick();
-              void battle.startBattle(climbFloor);
+              void battle.startBattle(selectedFloor);
             }}
-            aria-label={t("tower.climb", locale)}
+            aria-label={t("tower.fight", locale)}
           >
             <span className="action-btn--climb__icon" aria-hidden="true">
-              <GameIcon name="skills" size={22} />
+              <GameIcon name="sword-cross" size={22} />
             </span>
             <span className="action-btn--climb__label">
-              {t("tower.climb", locale)}
+              {t("tower.fight", locale)}
             </span>
           </button>
         </div>

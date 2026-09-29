@@ -24,6 +24,7 @@ export type { BattleArenaProps } from "./battleArenaTypes";
 
 export const BattleArena = memo(function BattleArena({
   locale,
+  floor: floorProp,
   snapshot,
   displayedEvents,
   actionRequired,
@@ -35,6 +36,7 @@ export const BattleArena = memo(function BattleArena({
   isPlaying,
   speed,
   skillPath = "imperial",
+  playerDisplayName,
   playerEquipment,
   onSpeedChange,
   onToggleAuto,
@@ -107,7 +109,7 @@ export const BattleArena = memo(function BattleArena({
   );
 
   const battle3d = isBattle3dEnabled();
-  const battleFloor = snapshot?.floor ?? 1;
+  const battleFloor = snapshot?.floor ?? floorProp ?? 1;
 
   return (
     <div
@@ -149,6 +151,8 @@ export const BattleArena = memo(function BattleArena({
             playerAnim={playerAnim}
             enemyAnim={enemyAnim}
             hideSprites={battle3d}
+            battleFloor={battleFloor}
+            playerDisplayName={playerDisplayName}
           />
         ) : (
           <p className="battle-arena__loading" role="status" aria-live="polite">

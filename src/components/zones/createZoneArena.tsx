@@ -14,7 +14,7 @@ export function createZoneArena(
   function ZoneArena({ floor, ...arenaProps }: ZoneArenaProps) {
     return (
       <ZoneArenaShell floor={floor}>
-        <BattleArena {...arenaProps} />
+        <BattleArena floor={floor} {...arenaProps} />
       </ZoneArenaShell>
     );
   }

@@ -49,6 +49,10 @@
   contain: layout style paint;
 }
 
+.tower-scroll.tower-scroll--snapping {
+  scroll-behavior: auto;
+}
+
 .tower-scroll::-webkit-scrollbar {
   width: 6px;
 }
@@ -73,8 +77,6 @@
   min-width: 0;
   flex: 0 0 calc((100% - 3 * 6px) / 4);
   max-width: calc((100% - 3 * 6px) / 4);
-  content-visibility: auto;
-  contain-intrinsic-size: auto 92px;
 }
 
 .tower-floor-block {
@@ -101,8 +103,12 @@
   justify-content: center;
   width: 100%;
   min-height: 72px;
+  margin: 0;
   padding: 6px 4px;
   border-radius: var(--radius-sm);
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
   background: linear-gradient(
     165deg,
     rgba(255, 252, 245, 0.96) 0%,
@@ -181,7 +187,8 @@
   border-bottom-color: rgba(178, 34, 34, 0.72);
 }
 
-.tower-floor-card--active {
+.tower-floor-card--active,
+.tower-floor-card--selected {
   background: linear-gradient(
     165deg,
     rgba(255, 236, 160, 0.98) 0%,
@@ -192,6 +199,20 @@
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.65),
     0 0 0 2px rgba(212, 168, 67, 0.45);
+}
+
+.tower-floor-block__num--selected {
+  color: var(--dark-yellow);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.65);
+}
+
+.tower-floor-card:disabled {
+  cursor: not-allowed;
+}
+
+.tower-floor-block--selectable .tower-floor-card:focus-visible {
+  outline: 2px solid var(--ember-400);
+  outline-offset: 2px;
 }
 
 .tower-floor-card--locked {

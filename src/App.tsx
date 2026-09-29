@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { TowerView } from "./components/battle/TowerView";
-import { BottomNav } from "./components/layouts/BottomNav";
+import { BottomNav, type NavTab } from "./components/layouts/BottomNav";
 import { GameShell } from "./components/layouts/GameShell";
 import { MainStage } from "./components/layouts/MainStage";
 import { MenuOverlay } from "./components/layouts/MenuOverlay";
@@ -35,6 +35,7 @@ export function App() {
     closeModal,
   } = useUIScreen();
   const [currentFloor, setCurrentFloor] = useState(1);
+  const [towerScrollGeneration, setTowerScrollGeneration] = useState(0);
   const navRef = useRef<HTMLElement>(null);
   const { count: mailboxCount, refresh: refreshMailboxCount } = useMailboxCount(
     player.userId
@@ -60,6 +61,13 @@ export function App() {
     [selectTab]
   );
 
+  const syncTowerViewToProgress = useCallback(() => {
+    if (player.currentFloor > 0) {
+      setCurrentFloor(player.currentFloor);
+    }
+    setTowerScrollGeneration((n) => n + 1);
+  }, [player.currentFloor]);
+
   const battle = useBattle(player.userId, onBattleComplete, onBattleResumed);
   const { visual: playerEquipment, statBonus, equipFromBag, unequipSlot, equipBusy, equipMessage, clearEquipMessage } =
     usePlayerEquipment(player.userId, player.skillPath, locale);
@@ -79,6 +87,21 @@ export function App() {
   });
 
   useBottomNavKeyboard(navRef, isAnyOverlayOpen);
+
+  const handleSelectTab = useCallback(
+    (tab: NavTab) => {
+      selectTab(tab);
+      if (tab === "tower") {
+        syncTowerViewToProgress();
+      }
+    },
+    [selectTab, syncTowerViewToProgress]
+  );
+
+  const handleExitBattle = useCallback(() => {
+    battle.resetBattle();
+    syncTowerViewToProgress();
+  }, [battle.resetBattle, syncTowerViewToProgress]);
 
   if (player.loading) {
     return <LoadingScreen locale={locale} />;
@@ -135,9 +158,12 @@ export function App() {
               currentFloor={currentFloor}
               climbFloor={player.currentFloor}
               playerLevel={player.level}
+              playerDisplayName={player.displayName}
               playerEquipment={playerEquipment}
               battle={battle}
               onOpenSettings={openSettings}
+              onExitBattle={handleExitBattle}
+              towerScrollGeneration={towerScrollGeneration}
             />
           </div>
         )}
@@ -191,7 +217,7 @@ export function App() {
           locale={locale}
           active={activeMenu}
           blocked={isDialogOpen}
-          onSelect={selectTab}
+          onSelect={handleSelectTab}
         />
 
         <Render3dDevPreview suppressed={activeBattleSession} />

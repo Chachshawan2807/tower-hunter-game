@@ -1,23 +1,44 @@
 import { useCallback, useLayoutEffect, useRef } from "react";
 
-function scrollTopToPinFloorAtBottom(
+import { towerScrollTopForFloor } from "../components/battle/towerScrollPosition";
+
+function pinFloorAtBottom(
   scrollEl: HTMLElement,
   floorEl: HTMLElement,
-): number {
+  floor: number
+): void {
+  const grid = floorEl.closest<HTMLElement>(".tower-floor-grid");
+  if (!grid) return;
+
+  const cell = floorEl.closest<HTMLElement>(".tower-floor-grid__cell");
+  if (cell) {
+    cell.style.contentVisibility = "visible";
+  }
+
+  scrollEl.scrollTop = towerScrollTopForFloor(floor, scrollEl, grid);
+
+  const cellRect = cell?.getBoundingClientRect();
   const scrollRect = scrollEl.getBoundingClientRect();
-  const floorRect = floorEl.getBoundingClientRect();
-  const floorBottomInContent =
-    scrollEl.scrollTop + (floorRect.bottom - scrollRect.top);
-  const raw = floorBottomInContent - scrollEl.clientHeight;
-  const max = scrollEl.scrollHeight - scrollEl.clientHeight;
-  return Math.max(0, Math.min(max, raw));
+  if (cell && cellRect && cellRect.height > 0) {
+    const floorBottomInContent =
+      scrollEl.scrollTop + (cellRect.bottom - scrollRect.top);
+    const refined = Math.max(
+      0,
+      Math.min(
+        scrollEl.scrollHeight - scrollEl.clientHeight,
+        floorBottomInContent - scrollEl.clientHeight
+      )
+    );
+    scrollEl.scrollTop = refined;
+  }
 }
 
-export function useTowerFloorScroll(currentFloor: number) {
+export function useTowerFloorScroll(
+  currentFloor: number,
+  focusGeneration = 0
+) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const floorRefs = useRef(new Map<number, HTMLElement>());
-  const initialScrollDone = useRef(false);
-
   const registerFloor = useCallback((floor: number, el: HTMLElement | null) => {
     if (el) floorRefs.current.set(floor, el);
     else floorRefs.current.delete(floor);
@@ -25,23 +46,41 @@ export function useTowerFloorScroll(currentFloor: number) {
 
   useLayoutEffect(() => {
     const scrollEl = scrollRef.current;
-    const floorEl = floorRefs.current.get(currentFloor);
-    if (!scrollEl || !floorEl) return;
+    if (!scrollEl || currentFloor < 1) return;
 
-    const apply = () => {
-      const targetTop = scrollTopToPinFloorAtBottom(scrollEl, floorEl);
-      scrollEl.scrollTo({
-        top: targetTop,
-        behavior: initialScrollDone.current ? "smooth" : "auto",
-      });
-      initialScrollDone.current = true;
+    const run = () => {
+      const floorEl = floorRefs.current.get(currentFloor);
+      if (!floorEl) return false;
+      pinFloorAtBottom(scrollEl, floorEl, currentFloor);
+      return true;
     };
 
-    apply();
-    if (scrollEl.clientHeight === 0) {
-      requestAnimationFrame(apply);
+    scrollEl.classList.add("tower-scroll--snapping");
+    let ok = run();
+    if (!ok) {
+      requestAnimationFrame(() => {
+        run();
+      });
     }
-  }, [currentFloor]);
+
+    requestAnimationFrame(() => {
+      run();
+      requestAnimationFrame(() => {
+        run();
+        scrollEl.classList.remove("tower-scroll--snapping");
+      });
+    });
+
+    const ro = new ResizeObserver(() => {
+      run();
+    });
+    ro.observe(scrollEl);
+
+    return () => {
+      ro.disconnect();
+      scrollEl.classList.remove("tower-scroll--snapping");
+    };
+  }, [currentFloor, focusGeneration]);
 
   return { scrollRef, registerFloor };
 }

@@ -7,6 +7,8 @@ import type { Locale } from "../../utils/i18n";
 
 export interface BattleArenaProps {
   locale: Locale;
+  /** Tower floor for this session (shown in HUD; falls back to snapshot). */
+  floor?: number;
   snapshot: BattleSnapshot | null;
   displayedEvents: AnimationEvent[];
   actionRequired: boolean;
@@ -18,6 +20,8 @@ export interface BattleArenaProps {
   isPlaying: boolean;
   speed: AnimationSpeed;
   skillPath?: "imperial" | "knight" | "vanguard";
+  /** Home / HUD display name for the player slot label. */
+  playerDisplayName?: string;
   playerEquipment: CharacterEquipmentVisual;
   onSpeedChange: (speed: AnimationSpeed) => void;
   onToggleAuto: (enabled: boolean) => void;

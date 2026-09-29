@@ -78,6 +78,25 @@
   color: var(--text-secondary);
 }
 
+.battle-entities__floor-num {
+  flex: 0 0 auto;
+  align-self: center;
+  margin: 0;
+  padding: 0 0 28px;
+  border: none;
+  background: none;
+  pointer-events: none;
+  font-family: var(--font-stat);
+  font-size: 1.25rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  text-align: center;
+  white-space: nowrap;
+  color: var(--antique-gold);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
+}
+
 .battle-arena__stage {
   position: relative;
   flex: 1;
@@ -1426,17 +1445,44 @@
 
 
 .battle-result-card .action-btn.battle-result-card__continue,
-.battle-result-card .action-btn.battle-result-card__action--primary {
+.battle-result-card .battle-result-card__actions .battle-result-card__action {
   min-height: 2.3125rem;
   padding: 6px 12px;
   font-size: 0.75rem;
   border-radius: var(--radius-sm);
   box-shadow: 0 2px 8px var(--ember-glow);
+  transition:
+    transform var(--duration-fast),
+    box-shadow var(--duration-fast),
+    background var(--duration-fast),
+    border-color var(--duration-fast);
 }
 
-.battle-result-card .action-btn.action-btn--secondary.battle-result-card__action {
-  font-size: 0.75rem;
-  border-radius: var(--radius-sm);
+.battle-result-card .battle-result-card__actions .battle-result-card__action--primary {
+  background: linear-gradient(180deg, var(--ember-500), var(--ember-600));
+  color: var(--stone-950);
+  border: 1px solid var(--ember-400);
+}
+
+.battle-result-card .battle-result-card__actions .action-btn--secondary.battle-result-card__action {
+  background: linear-gradient(180deg, var(--stone-700), var(--stone-800));
+  color: var(--text-primary);
+  border: 1px solid var(--border-strong);
+}
+
+.battle-result-card .battle-result-card__actions .battle-result-card__action:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px var(--ember-glow);
+}
+
+.battle-result-card .battle-result-card__actions .action-btn--secondary.battle-result-card__action:hover:not(:disabled) {
+  background: linear-gradient(180deg, var(--stone-600), var(--stone-700));
+  border-color: var(--ember-400);
+}
+
+.battle-result-card .battle-result-card__actions .battle-result-card__action:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px var(--ember-glow);
 }
 
 .battle-result-card .battle-result-card__action--primary:disabled {

@@ -3,8 +3,8 @@ import type { BattleEntity, BattleSnapshot } from "../../engine/types";
 import type { AnimationState } from "../../engine/art/animationStates";
 import { t, type Locale } from "../../utils/i18n";
 import { CharacterFigure } from "../character/CharacterFigure";
-import { GameIcon } from "../ui/icons";
 import type { EntityHpView } from "./battleArenaTypes";
+import { BattleFloorBadge } from "./BattleFloorBadge";
 import { HpBar } from "./HpBar";
 
 interface BattleArenaEntitiesProps {
@@ -22,6 +22,8 @@ interface BattleArenaEntitiesProps {
   hideSprites?: boolean;
   /** Minimal layout: HP + names only (no sprites, no VS). */
   overlayOnly?: boolean;
+  battleFloor?: number;
+  playerDisplayName?: string;
 }
 
 export function BattleArenaEntities({
@@ -37,9 +39,12 @@ export function BattleArenaEntities({
   enemyAnim,
   hideSprites = false,
   overlayOnly = false,
+  battleFloor = 1,
+  playerDisplayName,
 }: BattleArenaEntitiesProps) {
   const spriteHidden = hideSprites || overlayOnly;
-  const playerName = t("battle.player", locale);
+  const playerName =
+    playerDisplayName?.trim() || t("battle.player", locale);
   const enemyName = enemyEntity
     ? t(enemyEntity.name, locale)
     : t("battle.enemy", locale);
@@ -63,7 +68,7 @@ export function BattleArenaEntities({
             side="player"
             animState={playerAnim}
             statusEffects={playerEntity?.statusEffects.map((s) => s.type)}
-            label={t("battle.player", locale)}
+            label={playerName}
             size="battle"
           />
         ) : (
@@ -80,9 +85,7 @@ export function BattleArenaEntities({
       </div>
 
       {overlayOnly ? null : (
-        <span className="battle-vs" aria-hidden="true">
-          <GameIcon name="sword-cross" size={22} />
-        </span>
+        <BattleFloorBadge locale={locale} floor={battleFloor} variant="overlay-row" />
       )}
 
       <div className="battle-entity-slot battle-entity-slot--enemy">

@@ -103,6 +103,11 @@
   z-index: 2;
 }
 
+/* Tower battle overlay — full stage; no wallet / mailbox / settings chrome */
+.game-viewport.is-tower-battle .top-hud {
+  display: none;
+}
+
 .top-hud__dock,
 .hud-chrome {
   display: flex;

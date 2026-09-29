@@ -1,10 +1,14 @@
 import { memo } from "react";
 
+import { playUiClick } from "../../hooks/useGameAudio";
+
 interface TowerFloorBlockProps {
   floor: number;
-  currentFloor: number;
+  maxUnlockedFloor: number;
+  selectedFloor: number;
   localeLabel: string;
   lockedLabel: string;
+  onSelectFloor?: (floor: number) => void;
   onRegister?: (el: HTMLDivElement | null) => void;
 }
 
@@ -14,51 +18,71 @@ export function isTowerMilestoneFloor(floor: number): boolean {
 
 export const TowerFloorBlock = memo(function TowerFloorBlock({
   floor,
-  currentFloor,
+  maxUnlockedFloor,
+  selectedFloor,
   localeLabel,
   lockedLabel,
+  onSelectFloor,
   onRegister,
 }: TowerFloorBlockProps) {
-  const isActive = floor === currentFloor;
-  const isPassed = floor < currentFloor;
-  const isLocked = floor > currentFloor;
+  const isProgress = floor === maxUnlockedFloor;
+  const isPassed = floor < maxUnlockedFloor;
+  const isLocked = floor > maxUnlockedFloor;
+  const isSelected = floor === selectedFloor;
   const isMilestone = isTowerMilestoneFloor(floor);
+  const selectable = !isLocked && onSelectFloor;
+
+  const select = () => {
+    if (isLocked || !onSelectFloor) return;
+    playUiClick();
+    onSelectFloor(floor);
+  };
 
   return (
     <div
       className={[
         "tower-floor-block",
         isPassed ? "tower-floor-block--passed" : "",
-        isActive ? "tower-floor-block--active" : "",
+        isProgress ? "tower-floor-block--active" : "",
+        isSelected ? "tower-floor-block--selected" : "",
         isLocked ? "tower-floor-block--locked" : "",
+        selectable ? "tower-floor-block--selectable" : "",
       ]
         .filter(Boolean)
         .join(" ")}
       ref={onRegister}
       role="listitem"
       aria-label={`${localeLabel} ${floor}${isLocked ? ` (${lockedLabel})` : ""}`}
-      aria-current={isActive ? "true" : undefined}
+      aria-current={isSelected ? "true" : undefined}
     >
-      <div
+      <button
+        type="button"
         className={[
           "tower-floor-card",
           isMilestone ? "tower-floor-card--milestone" : "",
-          isActive ? "tower-floor-card--active" : "",
+          isProgress ? "tower-floor-card--active" : "",
+          isSelected ? "tower-floor-card--selected" : "",
           isLocked ? "tower-floor-card--locked" : "",
         ]
           .filter(Boolean)
           .join(" ")}
+        disabled={isLocked}
+        onClick={select}
+        aria-label={`${localeLabel} ${floor}`}
       >
         {isLocked ? (
           <span className="tower-floor-card__chains-back" aria-hidden />
         ) : null}
-      </div>
+      </button>
       <span
         className={[
           "tower-floor-block__num",
           "tabular-nums",
-          isLocked ? "tower-floor-block__num--badged tower-floor-block__num--locked" : "",
+          isLocked
+            ? "tower-floor-block__num--badged tower-floor-block__num--locked"
+            : "",
           isPassed ? "tower-floor-block__num--passed" : "",
+          isSelected ? "tower-floor-block__num--selected" : "",
         ]
           .filter(Boolean)
           .join(" ")}
