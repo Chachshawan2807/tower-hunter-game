@@ -933,7 +933,7 @@
   display: block;
 }
 
-.skill-menu .shop-section__panel.ui-disclosure .ui-disclosure__inner {
+.skill-menu .shop-section__panel.ui-disclosure.ui-disclosure--open .ui-disclosure__inner {
   padding: var(--space-2);
 }
 
@@ -1307,6 +1307,10 @@
   background: rgba(255, 252, 245, 0.55);
 }
 
+.shop-section--collapsed {
+  overflow: hidden;
+}
+
 .shop-section__toggle {
   display: flex;
   align-items: center;
@@ -1390,7 +1394,7 @@
   transform: rotate(-135deg);
 }
 
-.shop-section__panel.ui-disclosure .ui-disclosure__inner {
+.shop-section__panel.ui-disclosure.ui-disclosure--open .ui-disclosure__inner {
   padding: var(--space-2) var(--space-2) var(--space-3);
 }
 

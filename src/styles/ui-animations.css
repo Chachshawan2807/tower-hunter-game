@@ -188,6 +188,7 @@
 .ui-disclosure {
   display: grid;
   grid-template-rows: 0fr;
+  overflow: hidden;
   transition: grid-template-rows var(--duration-accordion) var(--ease-out);
 }
 
