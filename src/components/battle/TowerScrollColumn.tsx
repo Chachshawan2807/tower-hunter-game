@@ -22,7 +22,7 @@ export function TowerScrollColumn({
   scrollGeneration = 0,
 }: TowerScrollColumnProps) {
   const { scrollRef, registerFloor } = useTowerFloorScroll(
-    maxUnlockedFloor,
+    selectedFloor,
     scrollGeneration
   );
 

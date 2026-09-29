@@ -25,10 +25,9 @@ export const TowerFloorBlock = memo(function TowerFloorBlock({
   onSelectFloor,
   onRegister,
 }: TowerFloorBlockProps) {
-  const isProgress = floor === maxUnlockedFloor;
   const isPassed = floor < maxUnlockedFloor;
   const isLocked = floor > maxUnlockedFloor;
-  const isSelected = floor === selectedFloor;
+  const isCurrent = !isLocked && floor === selectedFloor;
   const isMilestone = isTowerMilestoneFloor(floor);
   const selectable = !isLocked && onSelectFloor;
 
@@ -42,9 +41,8 @@ export const TowerFloorBlock = memo(function TowerFloorBlock({
     <div
       className={[
         "tower-floor-block",
-        isPassed ? "tower-floor-block--passed" : "",
-        isProgress ? "tower-floor-block--active" : "",
-        isSelected ? "tower-floor-block--selected" : "",
+        isPassed && !isCurrent ? "tower-floor-block--passed" : "",
+        isCurrent ? "tower-floor-block--active tower-floor-block--selected" : "",
         isLocked ? "tower-floor-block--locked" : "",
         selectable ? "tower-floor-block--selectable" : "",
       ]
@@ -53,15 +51,14 @@ export const TowerFloorBlock = memo(function TowerFloorBlock({
       ref={onRegister}
       role="listitem"
       aria-label={`${localeLabel} ${floor}${isLocked ? ` (${lockedLabel})` : ""}`}
-      aria-current={isSelected ? "true" : undefined}
+      aria-current={isCurrent ? "true" : undefined}
     >
       <button
         type="button"
         className={[
           "tower-floor-card",
           isMilestone ? "tower-floor-card--milestone" : "",
-          isProgress ? "tower-floor-card--active" : "",
-          isSelected ? "tower-floor-card--selected" : "",
+          isCurrent ? "tower-floor-card--active tower-floor-card--selected" : "",
           isLocked ? "tower-floor-card--locked" : "",
         ]
           .filter(Boolean)
@@ -81,8 +78,8 @@ export const TowerFloorBlock = memo(function TowerFloorBlock({
           isLocked
             ? "tower-floor-block__num--badged tower-floor-block__num--locked"
             : "",
-          isPassed ? "tower-floor-block__num--passed" : "",
-          isSelected ? "tower-floor-block__num--selected" : "",
+          isPassed && !isCurrent ? "tower-floor-block__num--passed" : "",
+          isCurrent ? "tower-floor-block__num--selected" : "",
         ]
           .filter(Boolean)
           .join(" ")}
