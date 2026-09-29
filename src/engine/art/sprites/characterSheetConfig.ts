@@ -35,6 +35,8 @@ export const ANIMATION_STATE_ROW: Record<AnimationState, number> = {
 
   idle: 0,
 
+  ready: 0,
+
   attack: 1,
 
   hit_cc: 2,

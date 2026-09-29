@@ -5,6 +5,7 @@
 
 export const ANIMATION_STATES = [
   "idle",
+  "ready",
   "attack",
   "hit_cc",
   "defeat",
@@ -26,6 +27,12 @@ export const ANIMATION_STATE_SPECS: Record<AnimationState, AnimationStateSpec> =
     clipKey: "char_idle",
     loop: true,
     description: "Combat-ready stance, slow breath, subtle weapon sway",
+  },
+  ready: {
+    id: "ready",
+    clipKey: "char_idle",
+    loop: false,
+    description: "Turn wind-up — slight forward lean before acting",
   },
   attack: {
     id: "attack",

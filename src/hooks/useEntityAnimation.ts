@@ -5,6 +5,7 @@ import type { AnimationEvent } from "../engine/types";
 
 const STATE_DURATION_MS: Record<AnimationState, number> = {
   idle: 0,
+  ready: 320,
   attack: 420,
   hit_cc: 380,
   defeat: 1200,
@@ -28,14 +29,55 @@ export function useEntityAnimation({
   const [state, setState] = useState<AnimationState>("idle");
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lastIndexRef = useRef(0);
+  const queueRef = useRef<AnimationState[]>([]);
+  const playingRef = useRef(false);
+
+  const clearPlayTimer = () => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+  };
+
+  const playNextQueued = () => {
+    if (playingRef.current) return;
+    const next = queueRef.current.shift();
+    if (!next) return;
+
+    playingRef.current = true;
+    setState(next);
+
+    if (next === "defeat") {
+      playingRef.current = false;
+      playNextQueued();
+      return;
+    }
+
+    timerRef.current = setTimeout(() => {
+      setState("idle");
+      playingRef.current = false;
+      playNextQueued();
+    }, STATE_DURATION_MS[next]);
+  };
+
+  const enqueueState = (next: AnimationState) => {
+    queueRef.current.push(next);
+    playNextQueued();
+  };
 
   useEffect(() => {
     if (isBattleComplete && battleResult) {
       if (battleResult === "win" && entitySide === "enemy") {
+        clearPlayTimer();
+        queueRef.current = [];
+        playingRef.current = false;
         setState("defeat");
         return;
       }
       if (battleResult === "lose" && entitySide === "player") {
+        clearPlayTimer();
+        queueRef.current = [];
+        playingRef.current = false;
         setState("defeat");
         return;
       }
@@ -54,25 +96,20 @@ export function useEntityAnimation({
     for (const event of fresh) {
       const next = mapEventToCharacterState(event, entityId, entitySide);
       if (!next) continue;
-
-      if (timerRef.current) clearTimeout(timerRef.current);
-      setState(next);
-
-      if (next !== "defeat") {
-        timerRef.current = setTimeout(() => setState("idle"), STATE_DURATION_MS[next]);
-      }
+      enqueueState(next);
     }
   }, [displayedEvents, entityId, entitySide]);
 
   useEffect(() => {
-    return () => {
-      if (timerRef.current) clearTimeout(timerRef.current);
-    };
+    return () => clearPlayTimer();
   }, []);
 
   useEffect(() => {
     if (!isBattleComplete) return;
     lastIndexRef.current = 0;
+    queueRef.current = [];
+    playingRef.current = false;
+    clearPlayTimer();
     if (state !== "defeat") setState("idle");
   }, [isBattleComplete]);
 

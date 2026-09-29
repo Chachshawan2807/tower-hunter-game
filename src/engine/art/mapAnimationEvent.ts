@@ -4,7 +4,6 @@ import type { AnimationState } from "./animationStates";
 const ATTACK_EVENTS: ReadonlySet<AnimationEventType> = new Set([
   "attack",
   "critical",
-  "damage",
 ]);
 
 const HIT_EVENTS: ReadonlySet<AnimationEventType> = new Set([
@@ -29,8 +28,13 @@ export function mapEventToCharacterState(
   if (event.type === "battle_lose" && entitySide === "player") return "defeat";
   if (event.type === "battle_win" && isActor && entitySide === "player") return "attack";
 
+  if (event.type === "turn_start" && isActor) return "ready";
+
   if (isActor && ATTACK_EVENTS.has(event.type)) return "attack";
   if (isTarget && HIT_EVENTS.has(event.type)) return "hit_cc";
+  if (event.type === "dot_damage" && event.actorId === entityId) return "hit_cc";
+  if (event.type === "heal" && event.actorId === entityId) return "ready";
+  if (event.type === "buff_apply" && isActor) return "ready";
   if (isActor && event.type === "cc_skip") return "hit_cc";
 
   return null;

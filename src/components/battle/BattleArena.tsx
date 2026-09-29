@@ -18,7 +18,6 @@ import {
 } from "./battleArenaUtils";
 import { isBattle3dEnabled } from "../../utils/render3dEnv";
 import { BattleArena3DSlot } from "./BattleArena3DSlot";
-import { CombatFxCanvas } from "./CombatFxCanvas";
 import { useBattleArenaKeyboard } from "./useBattleArenaKeyboard";
 
 export type { BattleArenaProps } from "./battleArenaTypes";
@@ -47,6 +46,8 @@ export const BattleArena = memo(function BattleArena({
   enemyTargetId,
   battleSessionKey,
   onReset,
+  onNextFloor,
+  nextFloorDisabled,
 }: BattleArenaProps) {
   const playerHp = useMemo(() => getEntityHp(snapshot, "player"), [snapshot]);
   const enemyHp = useMemo(() => getEntityHp(snapshot, "enemy"), [snapshot]);
@@ -135,7 +136,6 @@ export const BattleArena = memo(function BattleArena({
             battleSessionKey={battleSessionKey}
           />
         ) : null}
-        <CombatFxCanvas displayedEvents={displayedEvents} />
         {snapshot ? (
           <BattleArenaEntities
             locale={locale}
@@ -162,6 +162,8 @@ export const BattleArena = memo(function BattleArena({
               result={outcome}
               rewards={rewards}
               onReset={onReset}
+              onNextFloor={onNextFloor}
+              nextFloorDisabled={nextFloorDisabled}
             />
           </div>
         ) : null}

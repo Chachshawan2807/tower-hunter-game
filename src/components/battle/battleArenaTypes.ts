@@ -30,6 +30,8 @@ export interface BattleArenaProps {
   /** New battle / refresh — remounts 3D turntable at default yaw. */
   battleSessionKey?: string | null;
   onReset: () => void;
+  onNextFloor?: () => void;
+  nextFloorDisabled?: boolean;
 }
 
 export interface EntityHpView {

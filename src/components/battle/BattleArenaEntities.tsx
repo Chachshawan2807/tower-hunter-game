@@ -39,6 +39,10 @@ export function BattleArenaEntities({
   overlayOnly = false,
 }: BattleArenaEntitiesProps) {
   const spriteHidden = hideSprites || overlayOnly;
+  const playerName = t("battle.player", locale);
+  const enemyName = enemyEntity
+    ? t(enemyEntity.name, locale)
+    : t("battle.enemy", locale);
 
   return (
     <div
@@ -63,8 +67,9 @@ export function BattleArenaEntities({
             size="battle"
           />
         ) : (
-          <span className="battle-entity-label">{t("battle.player", locale)}</span>
+          <span className="battle-entity-label">{playerName}</span>
         )}
+        <span className="battle-entity-name">{playerName}</span>
         <HpBar
           label="HP"
           hp={playerHp.hp}
@@ -91,8 +96,9 @@ export function BattleArenaEntities({
             size="battle"
           />
         ) : (
-          <span className="battle-entity-label">{t("battle.enemy", locale)}</span>
+          <span className="battle-entity-label">{enemyName}</span>
         )}
+        <span className="battle-entity-name">{enemyName}</span>
         <HpBar
           label="HP"
           hp={enemyHp.hp}

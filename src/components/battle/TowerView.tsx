@@ -49,6 +49,10 @@ export function TowerView({
 
   const autoBattle = battle.loadoutContext?.autoBattle ?? true;
 
+  const nextFloorTarget = currentFloor + 1;
+  const nextFloorDisabled =
+    battle.result === "lose" || battle.busy || nextFloorTarget > 100;
+
   const battleArena = (
     <ZoneBattleArena
       floor={currentFloor}
@@ -74,6 +78,11 @@ export function TowerView({
       enemyTargetId={`enemy_floor_${currentFloor}`}
       battleSessionKey={battle.sessionId}
       onReset={battle.resetBattle}
+      onNextFloor={() => {
+        battle.resetBattle();
+        void battle.startBattle(nextFloorTarget);
+      }}
+      nextFloorDisabled={nextFloorDisabled}
     />
   );
 
