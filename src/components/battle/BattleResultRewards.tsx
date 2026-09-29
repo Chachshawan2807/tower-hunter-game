@@ -32,7 +32,7 @@ export function BattleResultRewards({
           {t("battle.reward.gold", locale)}:
         </span>
         <span className="battle-result-rewards__value battle-result-rewards__value--gold tabular-nums">
-          <GameIcon name="gold" size={20} />
+          <GameIcon name="gold" size={16} />
           {formatGoldAmount(rewards.gold)}
         </span>
       </li>

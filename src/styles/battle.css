@@ -106,7 +106,8 @@
   min-height: 12rem;
 }
 
-.battle-arena__stage--3d > :not(.battle-arena__canvas3d) {
+.battle-arena__stage--3d
+  > :not(.battle-arena__canvas3d):not(.battle-result-overlay) {
   position: relative;
   z-index: 1;
 }
@@ -119,27 +120,27 @@
   z-index: 2;
 }
 
-.battle-result-overlay {
+.battle-arena__stage > .battle-result-overlay {
   position: absolute;
   inset: 0;
   z-index: 12;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: var(--space-4) var(--space-3);
+  padding: var(--space-3) var(--space-2);
   background: rgba(5, 5, 5, 0.62);
   border-radius: inherit;
   pointer-events: none;
 }
 
 .battle-result-card {
-  width: min(100%, 240px);
-  max-width: 240px;
+  width: min(100%, 220px);
+  max-width: 220px;
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  gap: var(--space-4);
-  padding: var(--space-4) var(--space-3) var(--space-3);
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-2) var(--space-2);
   border-radius: var(--radius-lg);
   border: 2px solid rgba(0, 0, 0, 0.12);
   background: var(--surface-readable);
@@ -152,9 +153,9 @@
 .battle-result-card__title {
   margin: 0;
   font-family: var(--font-display);
-  font-size: 1.05rem;
+  font-size: 0.875rem;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   text-align: center;
   text-transform: uppercase;
   color: var(--ink-black);
@@ -178,11 +179,11 @@
 
 .battle-result-card__continue {
   width: 100%;
-  min-height: var(--touch-min);
-  padding: 12px 20px;
+  min-height: 2.3125rem;
+  padding: 6px 12px;
   font-family: var(--font-display);
-  font-size: 0.9rem;
-  letter-spacing: 0.06em;
+  font-size: 0.65rem;
+  letter-spacing: 0.02em;
   text-transform: uppercase;
 }
 
@@ -205,9 +206,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: var(--space-2);
+  gap: var(--space-1);
   font-family: var(--font-stat);
-  font-size: var(--text-md);
+  font-size: 0.8125rem;
   font-weight: 600;
   line-height: 1.2;
 }
@@ -1374,6 +1375,16 @@
 
   letter-spacing: 0.02em;
 
+}
+
+
+
+.battle-result-card .action-btn.battle-result-card__continue {
+  min-height: 2.3125rem;
+  padding: 6px 12px;
+  font-size: 0.65rem;
+  border-radius: var(--radius-sm);
+  box-shadow: 0 2px 8px var(--ember-glow);
 }
 
 
